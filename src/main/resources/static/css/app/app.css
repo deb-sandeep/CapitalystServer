@@ -1,0 +1,19 @@
+@font-face {
+  font-family: 'Quicksand';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/quicksand-v9-latin-regular.eot');
+  src: local('Quicksand Regular'), local('Quicksand-Regular'),
+       url('/fonts/quicksand-v9-latin-regular.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/quicksand-v9-latin-regular.woff2') format('woff2'),
+       url('/fonts/quicksand-v9-latin-regular.woff') format('woff'),
+       url('/fonts/quicksand-v9-latin-regular.ttf') format('truetype'),
+       url('/fonts/quicksand-v9-latin-regular.svg#Quicksand') format('svg');
+}
+
+body {
+    font-family: Quicksand;
+    font-size: 12px;
+    background-color: #333333;
+}
+
