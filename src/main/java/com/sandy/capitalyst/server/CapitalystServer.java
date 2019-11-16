@@ -1,7 +1,10 @@
 package com.sandy.capitalyst.server ;
 
+import java.io.File ;
+
 import org.apache.log4j.Logger ;
 import org.springframework.beans.BeansException ;
+import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.boot.SpringApplication ;
 import org.springframework.boot.autoconfigure.SpringBootApplication ;
 import org.springframework.context.ApplicationContext ;
@@ -9,7 +12,11 @@ import org.springframework.context.ApplicationContextAware ;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry ;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
-import com.sandy.capitalyst.server.core.CapitalystConfig ;
+import com.sandy.capitalyst.server.config.CapitalystConfig ;
+import com.sandy.capitalyst.server.core.ledger.LedgerImporter ;
+import com.sandy.capitalyst.server.core.ledger.LedgerImporterFactory ;
+import com.sandy.capitalyst.server.dao.account.Account ;
+import com.sandy.capitalyst.server.dao.account.AccountIndexRepo ;
 import com.sandy.common.bus.EventBus ;
 
 @SpringBootApplication
@@ -37,11 +44,22 @@ public class CapitalystServer
 
     // ---------------- Instance methods start ---------------------------------
 
+    @Autowired
+    private AccountIndexRepo accountIndexRepo = null ;
+    
     public CapitalystServer() {
         APP = this ;
     }
 
-    public void initialize() {
+    public void initialize() throws Exception {
+        Account account = accountIndexRepo.findByAccountNumber( "000501005212" ) ;
+        LedgerImporter li = LedgerImporterFactory.getLedgerImporter( account ) ;
+        
+        File dir = new File( "/home/sandeep/Downloads" ) ;
+        for( int year = 2011; year<=2012; year++ ) {
+            File file = new File( dir, "Stmt-" + year + ".xls" ) ;
+            li.importLedgerEntries( account, file ) ;
+        }
     }
     
     @Override
@@ -56,7 +74,7 @@ public class CapitalystServer
 
     // --------------------- Main method ---------------------------------------
 
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws Exception {
         log.debug( "Starting Spring Booot..." ) ;
         SpringApplication.run( CapitalystServer.class, args ) ;
 

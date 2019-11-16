@@ -115,25 +115,7 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-        <!-- 
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>          
-        -->
-         
-        <!-- https://mvnrepository.com/artifact/tablelayout/TableLayout -->
-        <dependency>
-            <groupId>tablelayout</groupId>
-            <artifactId>TableLayout</artifactId>
-            <version>20050920</version>
-        </dependency>
-		<dependency>
-		    <groupId>javax.xml.bind</groupId>
-		    <artifactId>jaxb-api</artifactId>
-		</dependency>
-		
+         		
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
@@ -141,6 +123,11 @@
 		    <version>3.2</version>
 		</dependency>
 		
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>org.pegdown</groupId>
             <artifactId>pegdown</artifactId>

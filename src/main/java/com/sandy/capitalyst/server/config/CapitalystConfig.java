@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.core;
+package com.sandy.capitalyst.server.config;
 
 import org.springframework.boot.context.properties.* ;
 import org.springframework.context.annotation.* ;
