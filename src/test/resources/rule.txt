@@ -1,0 +1,3 @@
+( remark like "*DOLG*" OR
+remark like "*ANIRUDD*" ) OR
+remark like "*uber*"
