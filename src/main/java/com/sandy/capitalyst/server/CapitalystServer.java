@@ -98,8 +98,8 @@ public class CapitalystServer
         SpringApplication.run( CapitalystServer.class, args ) ;
 
         log.debug( "Starting Capitalyst Server.." ) ;
-        CapitalystServer app = CapitalystServer.getAppContext().getBean( CapitalystServer.class ) ;
+//        CapitalystServer app = CapitalystServer.getAppContext().getBean( CapitalystServer.class ) ;
 //        app.importLedgerEntries() ;
-        app.testLEClassifier() ;
+//        app.testLEClassifier() ;
     }
 }

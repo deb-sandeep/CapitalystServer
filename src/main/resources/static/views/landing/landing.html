@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html ng-app="capitalystNgApp">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capitalyst</title>
+    <script src="/js/lib/angular/angular.min.js"></script>
+    <script src="/js/lib/angular/angular-route.min.js"></script>
+    <script src="/js/lib/jquery/jquery.min.js"></script>
+    <script src="/js/lib/bootstrap/bootstrap.min.js"></script>
+    
+    <link rel="stylesheet" href="/js/lib/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/app/app.css"/>
+    <link rel="stylesheet" href="/css/app/tile.css"/>
+    
+    <script src="/js/app/app-ng.js"></script>
+    <script src="/views/landing/js/controller.js"></script>
+</head>
+
+<body ng-controller="LandingController">
+<div class="tile"
+     style="background-color:#FBEEC1"
+     ng-click="go('/views/account/account.html')">
+    <div class="tilecontent">
+        <div class="tiletable">
+            <div class="tiletable-cell">Account</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

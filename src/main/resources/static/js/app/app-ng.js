@@ -1,4 +1,4 @@
-var capitalystApp = angular.module( 'capitalystApp', ['ngRoute'] ) ;
+var capitalystNgApp = angular.module( 'capitalystNgApp', ['ngRoute'] ) ;
 
 
 
