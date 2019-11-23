@@ -21,3 +21,12 @@ nav {
     font-size:23px;
     color:#A9A9A9;
 }
+
+.page-menu-bar {
+	background-color: #565556;
+	padding: 5px;
+}
+
+.modal-title {
+	font-size:15px;
+}

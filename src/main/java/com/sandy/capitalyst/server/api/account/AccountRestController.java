@@ -24,8 +24,6 @@ public class AccountRestController {
     @GetMapping( "/Account" ) 
     public ResponseEntity<List<Account>> getAccountSummaries() {
         try {
-            log.debug( "Getting account summaries." ) ;
-            
             List<Account> accounts = new ArrayList<>() ;
             Iterable<Account> source = aiRepo.findAll() ;
             source.forEach( accounts::add ) ;

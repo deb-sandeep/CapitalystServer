@@ -1,3 +1,11 @@
+<div class="page-menu-bar">
+	<button class="btn btn-info btn-sm"
+	        ng-click="showNewAccountDialog()">
+	    <span class="glyphicon glyphicon-plus-sign"></span>
+	    New Account
+	</button>
+</div>
+
 <div style="padding: 0px; margin: 10px" align="center">
     <table class="table table-bordered table-compact js-sort-table"
            style="width: auto !important;">
@@ -8,6 +16,8 @@
                 <th>Type</th>
                 <th>Bank</th>
                 <th>Remark</th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -17,7 +27,24 @@
                <td>{{account.accountType}}</td>
                <td>{{account.bankName}}</td>
                <td>{{account.shortName}}</td>
+               <td>
+	             <span class="glyphicon glyphicon-pencil"
+	                   ng-click="editAccount( $index )">
+	             </span>&nbsp;
+               </td>
+               <td>
+                 <span class="glyphicon glyphicon-trash"
+                       ng-click="deleteAccount( $index )">
+                 </span>&nbsp;
+               </td>
             </tr>
         </tbody>
     </table>
+</div>
+
+<div id="editAccountDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'template/edit_account_dialog.html'">
 </div>
