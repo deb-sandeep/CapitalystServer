@@ -14,6 +14,7 @@ public class Account {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id ;
     
+    private String accountOwner = null ;
     private String accountNumber = null ;
     private String accountType = null ;
     private String shortName = null ;
@@ -27,6 +28,14 @@ public class Account {
     
     public void setId( Integer id ) {
         this.id = id ;
+    }
+    
+    public String getAccountOwner() {
+        return accountOwner ;
+    }
+
+    public void setAccountOwner( String accountOwner ) {
+        this.accountOwner = accountOwner ;
     }
 
     public String getAccountNumber() {

@@ -1,2 +1,23 @@
-<h2>This is the default route home html file</h2>
-<h2>{{$parent.navBarTitle}}</h2>
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="table table-bordered table-compact js-sort-table"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th>Owner</th>
+                <th>A/C #</th>
+                <th>Type</th>
+                <th>Bank</th>
+                <th>Remark</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="account in accounts">
+               <td>{{account.accountOwner}}</td>
+               <td>{{account.accountNumber}}</td>
+               <td>{{account.accountType}}</td>
+               <td>{{account.bankName}}</td>
+               <td>{{account.shortName}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

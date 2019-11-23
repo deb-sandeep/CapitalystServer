@@ -4,7 +4,9 @@ capitalystNgApp.controller( 'AccountHomeController',
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
-
+    $scope.$parent.navBarTitle = "Accounts" ;
+    $scope.accounts = null ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading AccountHomeController" ) ;
@@ -20,30 +22,24 @@ capitalystNgApp.controller( 'AccountHomeController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
+        fetchAccountSummaryListFromServer() ;
     }
     
     // ------------------- Server comm functions -----------------------------
-    /* Template server communication function
-    function <serverComm>() {
+    function fetchAccountSummaryListFromServer() {
         
         $scope.$parent.interactingWithServer = true ;
-        $http.post( '/<API endpoint>', {
-            'eventId'       : eventId,
-        } )
+        $http.get( '/Account' )
         .then ( 
             function( response ){
-                var data = response.data ;
-                // TODO: Server data processing logic
+                $scope.accounts = response.data ;
             }, 
             function( error ){
-                var errMsg = "<Error Message>" ;
-                console.log( errMsg ) ;
-                $scope.$parent.addErrorAlert( errMsg ) ;
+                $scope.$parent.addErrorAlert( "Error fetch accounts." ) ;
             }
         )
         .finally(function() {
             $scope.$parent.interactingWithServer = false ;
         }) ;
     }
-    */
 } ) ;
