@@ -1,3 +1,7 @@
+* {
+	-webkit-font-smoothing: antialiased;
+}
+
 @font-face {
   font-family: 'Quicksand';
   font-style: normal;

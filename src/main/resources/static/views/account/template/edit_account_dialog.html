@@ -8,12 +8,74 @@
     </div>
     
     <div class="modal-body" style="background-color:#FEFEFE;padding:5px">
-      <ol>
-        <li>Account number : {{account.accountNumber}}</li>
-      </ol>
+    
+    <div class="form">
+        <table class="form-table">
+            <tbody>
+                <tr>
+                    <td width="50%">
+				        <label>Account Owner</label>
+				        <select class='form-field'> 
+				            <option value="" selected="selected"></option>
+							<option value="1" >Sandeep</option>
+							<option value="2" >Sreerekha</option>
+							<option value="3" >Sova</option>
+							<option value="4" >Aniruddha</option>
+							<option value="5" >Arunima</option>
+				        </select>
+                    </td>
+                    <td>
+                        <label>Account Type</label>
+                        <select class='form-field'> 
+                            <option value="" selected="selected"></option>
+                            <option value="1" >SAVING</option>
+                            <option value="2" >PPF</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Bank</label>
+                        <select class='form-field'> 
+                            <option value="" selected="selected"></option>
+                            <option value="1" >ICICI</option>
+                            <option value="2" >SBI</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label>Branch</label>
+                        <input class='form-field' 
+                               type="text" 
+                               value=""/> 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Account Number</label>
+                        <input class='form-field' 
+                               type="text" 
+                               value=""/> 
+                    </td>
+                    <td>
+                        <label>Short Name</label>
+                        <input class='form-field' 
+                               type="text" 
+                               value=""/> 
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <label>Notes</label>
+                        <textarea class='form-field' 
+                                  rows="15">
+                        </textarea> 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     
-    <div class="modal-footer" style="background-color:#E5E5E5;padding:5px">
+    <div class="modal-footer">
       <button type="button" 
               class="btn btn-default btn-sm" 
               ng-click="cancelEdit()">
