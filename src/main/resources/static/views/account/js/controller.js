@@ -8,7 +8,6 @@ capitalystNgApp.controller( 'AccountController',
     // Common framework variables. 
     $scope.alerts = [] ;
     $scope.navBarTitle = "<Fill navbar title>" ;
-    $scope.interactingWithServer = false ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -19,6 +18,15 @@ capitalystNgApp.controller( 'AccountController',
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
+    $scope.$on( 'interactingWithServer', function( event, args ) {
+        console.log( "Interacting with server = " + args.isStart ) ;
+        if( args.isStart ) {
+            $( '#serverInteractionLoader' ).modal( 'show' ) ;
+        }
+        else {
+            $( '#serverInteractionLoader' ).modal( 'hide' ) ;
+        }
+    } ) ;
     
     // ----------- UI related scope functions --------------------------------
     $scope.addErrorAlert = function( msgString ) {
@@ -38,27 +46,4 @@ capitalystNgApp.controller( 'AccountController',
     }
     
     // ------------------- Server comm functions -----------------------------
-    /* Template server communication function
-    function <serverComm>() {
-        
-        $scope.interactingWithServer = true ;
-        $http.post( '/<API endpoint>', {
-            'eventId'       : eventId,
-        } )
-        .then ( 
-            function( response ){
-                var data = response.data ;
-                // TODO: Server data processing logic
-            }, 
-            function( error ){
-                var errMsg = "<Error Message>" ;
-                console.log( errMsg ) ;
-                $scope.addErrorAlert( errMsg ) ;
-            }
-        )
-        .finally(function() {
-            $scope.interactingWithServer = false ;
-        }) ;
-    }
-    */
 } ) ;

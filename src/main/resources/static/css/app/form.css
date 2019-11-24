@@ -31,3 +31,11 @@
 	padding:10px 10px 2px 0px;
 	border:none;
 }
+
+.ng-invalid {
+  background-color: pink;
+}
+
+.ng-valid {
+  background-color: #eafff1;
+}

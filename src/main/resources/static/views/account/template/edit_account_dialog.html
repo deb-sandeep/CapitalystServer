@@ -15,59 +15,54 @@
                 <tr>
                     <td width="50%">
 				        <label>Account Owner</label>
-				        <select class='form-field'> 
-				            <option value="" selected="selected"></option>
-							<option value="1" >Sandeep</option>
-							<option value="2" >Sreerekha</option>
-							<option value="3" >Sova</option>
-							<option value="4" >Aniruddha</option>
-							<option value="5" >Arunima</option>
+				        <select class="form-field" required
+				                ng-model="account.accountOwner"
+				                ng-options="item.firstName as item.firstName for item in refData.individuals">
 				        </select>
                     </td>
                     <td>
                         <label>Account Type</label>
-                        <select class='form-field'> 
-                            <option value="" selected="selected"></option>
-                            <option value="1" >SAVING</option>
-                            <option value="2" >PPF</option>
+                        <select class='form-field' required
+                                ng-model="account.accountType"
+                                ng-options="item for item in refData.accountTypes"> 
                         </select>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <label>Bank</label>
-                        <select class='form-field'> 
-                            <option value="" selected="selected"></option>
-                            <option value="1" >ICICI</option>
-                            <option value="2" >SBI</option>
+                        <select class='form-field' required
+                                ng-model="account.bankName"
+                                ng-options="item for item in refData.bankNames"> 
                         </select>
                     </td>
                     <td>
                         <label>Branch</label>
-                        <input class='form-field' 
+                        <input class='form-field' required
                                type="text" 
-                               value=""/> 
+                               ng-model="account.bankBranch" /> 
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <label>Account Number</label>
-                        <input class='form-field' 
+                        <input class='form-field' required
                                type="text" 
-                               value=""/> 
+                               ng-model="account.accountNumber" /> 
                     </td>
                     <td>
                         <label>Short Name</label>
-                        <input class='form-field' 
+                        <input class='form-field' required
                                type="text" 
-                               value=""/> 
+                               ng-model="account.shortName" /> 
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <label>Notes</label>
                         <textarea class='form-field' 
-                                  rows="15">
+                                  rows="10"
+                                  ng-model="account.description">
                         </textarea> 
                     </td>
                 </tr>

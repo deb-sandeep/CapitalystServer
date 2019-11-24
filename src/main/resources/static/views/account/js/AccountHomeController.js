@@ -1,5 +1,5 @@
 capitalystNgApp.controller( 'AccountHomeController', 
-    function( $scope, $http, $rootScope, $location, $window ) {
+    function( $scope, $http, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
     
@@ -22,11 +22,11 @@ capitalystNgApp.controller( 'AccountHomeController',
     // --- [START] Scope functions -------------------------------------------
     $scope.showNewAccountDialog = function() {
         broadcastEditScopeChanged( -1, {
-            accountNumber: "",
-            accountOwner: "",
-            accountType: "",
-            bankBranch: "",
-            bankName: "",
+            accountNumber: null,
+            accountOwner: null,
+            accountType: null,
+            bankBranch: null,
+            bankName: null,
             shortName: "",            
             description: "",
         }) ;
@@ -41,6 +41,29 @@ capitalystNgApp.controller( 'AccountHomeController',
     
     $scope.deleteAccount = function( index ) {
         console.log( "Deleting account at index = " + index ) ;
+        var account = $scope.accounts[ index ] ;
+        
+        $ngConfirm({
+            title: 'Confirm!',
+            content: 'Delete account ' + account.shortName ,
+            scope: $scope,
+            buttons: {
+                close: function(scope, button){
+                    console.log( "User cancelled." ) ;
+                },
+                yes: {
+                    text: 'Yes',
+                    btnClass: 'btn-blue',
+                    action: function(scope, button){
+                        console.log( "Ok to delete account." ) ;
+                        deleteAccount( account, function() {
+                            $scope.accounts.splice( index, 1 ) ;
+                        }) ;
+                        return true ;
+                    }
+                }
+            }
+        });
     }
     
     // --- [END] Scope functions
@@ -64,7 +87,7 @@ capitalystNgApp.controller( 'AccountHomeController',
     // ------------------- Server comm functions -----------------------------
     function fetchAccountSummaryListFromServer() {
         
-        $scope.$parent.interactingWithServer = true ;
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Account' )
         .then ( 
             function( response ){
@@ -75,7 +98,24 @@ capitalystNgApp.controller( 'AccountHomeController',
             }
         )
         .finally(function() {
-            $scope.$parent.interactingWithServer = false ;
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+
+    function deleteAccount( account, successCallback ) {
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.delete( '/Account/' + account.id )
+        .then ( 
+            function( response ){
+                console.log( "Deleted account data" ) ;
+                successCallback() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error deleting account." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
     }
 } ) ;
