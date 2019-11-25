@@ -7,9 +7,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.$parent.navBarTitle = "Ledger View" ;
     $scope.searchCriteria = {
         accountId : null,
-        startDate : moment().subtract(6, 'days').toDate(),
+        startDate : moment().subtract(30, 'days').toDate(),
         endDate : moment().toDate()
     } ;
+    
+    $scope.ledgerEntries = [] ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -20,6 +22,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
+    $scope.amtClass = function( amt ) {
+        return ( amt < 0 ) ? "debit" : "credit" ; 
+    }
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -30,6 +35,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
         var accountId = parameters.get( 'accountId' ) ;
         $scope.searchCriteria.accountId = accountId ;
         initializeDateRange() ;
+        fetchLedgerEntries() ;
     }
     
     function initializeDateRange() {
@@ -91,30 +97,33 @@ capitalystNgApp.controller( 'LedgerHomeController',
             ) ;
             $scope.searchCriteria.startDate = start.toDate() ;
             $scope.searchCriteria.endDate   = end.toDate() ;
-            $scope.$digest() ;
+            fetchLedgerEntries() ;
         });
     }
     
     // ------------------- Server comm functions -----------------------------
-    /* Template server communication function
-    function <serverComm>() {
+    function fetchLedgerEntries() {
+        
+        if( $scope.searchCriteria.accountId == null ) return ;
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.post( '/<API endpoint>', {
-            'eventId'       : eventId,
-        } )
+        $http.post( '/Ledger/Search', $scope.searchCriteria )
         .then ( 
             function( response ){
-                var data = response.data ;
-                // TODO: Server data processing logic
+                $scope.ledgerEntries.length = 0 ;
+                for( var i=0; i<response.data.length; i++ ) {
+                    $scope.ledgerEntries.push( response.data[i] ) ;
+                }
+                setTimeout( function(){
+                    sortTable.init() ;
+                }, 500 ) ;
             }, 
             function( error ){
-                $scope.$parent.addErrorAlert( "<Error Message>" ) ;
+                $scope.$parent.addErrorAlert( "Could not fetch search results." ) ;
             }
         )
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
     }
-    */
 } ) ;

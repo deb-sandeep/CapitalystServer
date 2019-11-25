@@ -1,0 +1,65 @@
+.ledger-table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    empty-cells: show;
+    border: 1px solid #cbcbcb;
+}
+
+.ledger-table td,
+.ledger-table th {
+    border-left: 1px solid #cbcbcb;
+    border-width: 0 0 0 1px;
+    font-size: 11px;
+    margin: 0px;
+    overflow: visible; 
+    padding: 0.5em 0.5em; 
+}
+
+.ledger-table td.fixed-font {
+    font-family:'Courier';
+}
+
+.ledger-table td.amt {
+    text-align:right;
+}
+
+.ledger-table .debit {
+    color:red;
+}
+
+.ledger-table .credit {
+    color:#295f19;
+}
+
+.ledger-table .remarks {
+	font-size:10px;
+}
+
+.ledger-table thead {
+    background-color: #e0e0e0;
+    color: #000;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+.ledger-table td {
+    background-color: transparent;
+}
+
+.ledger-table-odd td {
+    background-color: #f2f2f2;
+}
+
+/* nth-child selector for modern browsers */
+.ledger-table-striped tr:nth-child(2n-1) td {
+    background-color: #f2f2f2;
+}
+
+/* BORDERED TABLES */
+.ledger-table-bordered td {
+    border-bottom: 1px solid #cbcbcb;
+}
+.ledger-table-bordered tbody > tr:last-child > td {
+    border-bottom-width: 0;
+}
+

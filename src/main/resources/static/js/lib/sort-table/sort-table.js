@@ -140,6 +140,13 @@ sortTable.date = function(Cell) {
     }
 };
 
+sortTable.valueDate = function(Cell) {
+    
+    var content = sortTable.stripTags(Cell.innerHTML) ;
+    var dateMoment = moment( content, "YYYY-MM-DD" ) ;
+    return dateMoment.toDate() ;
+}
+
 /**
  * Helper function that converts a table cell (TD) to a comparable value
  * Converts innerHTML to a JS Number object

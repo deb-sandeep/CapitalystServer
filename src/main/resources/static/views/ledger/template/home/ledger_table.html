@@ -1,1 +1,21 @@
-<h2>Ledger</h2>
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="ledger-table ledger-table-striped js-sort-table"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th class="js-sort-valueDate">Date</th>
+                <th>Remarks</th>
+                <th class="js-sort-number">Amount</th>
+                <th class="js-sort-number">Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="entry in $parent.ledgerEntries">
+               <td class="fixed-font">{{entry.valueDate}}</td>
+               <td class="remarks">{{entry.remarks}}</td>
+               <td class="fixed-font amt" ng-class="amtClass( entry.amount )">{{entry.amount | amt}}</td>
+               <td class="fixed-font amt">{{entry.balance | amt}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
