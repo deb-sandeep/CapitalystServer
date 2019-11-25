@@ -1,0 +1,46 @@
+<table width="100%">
+ <tr>
+  <td width="350px" valign="top">
+	<div class="panel-group" id="accordion"
+	     style="font-size:12px;padding:10px;">
+	  
+	  <div class="panel panel-default">
+	    <div class="panel-heading">
+	      <h4 class="panel-title">
+	        <a data-toggle="collapse" 
+	           data-parent="#accordion" 
+	           data-target="#durationSelection">
+	        Duration
+	        </a>
+	      </h4>
+	    </div>
+	    <div id="durationSelection" class="panel-collapse collapse in">
+	        <div id="ledgerDuration"
+	             style="cursor:pointer; padding: 5px 5px; border: 1px solid #ccc;">
+	            <span></span> <b class="caret"></b>
+	        </div>
+	    </div>
+	  </div>
+	 
+	  <div class="panel panel-default">
+	    <div class="panel-heading">
+	      <h4 class="panel-title">
+	        <a data-toggle="collapse" 
+	           data-parent="#accordion" 
+	           data-target="#amtThreshold">
+	        Amount
+	        </a>
+	      </h4>
+	    </div>
+	    <div id="amtThreshold" class="panel-collapse collapse">
+	    </div>
+	  </div>
+	
+	</div>
+  </td>
+  <td width="*" valign="top">
+    <div ng-include="'template/home/ledger_table.html'">
+    </div>
+  </td>
+ </tr>
+</table>

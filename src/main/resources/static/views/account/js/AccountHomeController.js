@@ -1,5 +1,5 @@
 capitalystNgApp.controller( 'AccountHomeController', 
-    function( $scope, $http, $ngConfirm ) {
+    function( $scope, $http, $ngConfirm, $window ) {
     
     // ---------------- Local variables --------------------------------------
     
@@ -64,6 +64,11 @@ capitalystNgApp.controller( 'AccountHomeController',
                 }
             }
         });
+    }
+    
+    $scope.viewLedger = function( account ) {
+        $window.location.href = "/views/ledger/ledger.html?accountId=" + 
+                                account.id ;
     }
     
     // --- [END] Scope functions

@@ -7,7 +7,7 @@ capitalystNgApp.controller( 'LedgerController',
 
     // Common framework variables. 
     $scope.alerts = [] ;
-    $scope.navBarTitle = "<Fill navbar title>" ;
+    $scope.navBarTitle = "Ledger" ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
