@@ -5,10 +5,13 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Ledger View" ;
+    $scope.account = null ;
     $scope.searchCriteria = {
         accountId : null,
         startDate : moment().subtract(30, 'days').toDate(),
-        endDate : moment().toDate()
+        endDate : moment().toDate(),
+        lowerAmtThreshold : null,
+        upperAmtThreshold : null
     } ;
     
     $scope.ledgerEntries = [] ;
@@ -25,6 +28,20 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.amtClass = function( amt ) {
         return ( amt < 0 ) ? "debit" : "credit" ; 
     }
+    
+    $scope.searchLedgerEntries = function() {
+        fetchLedgerEntries() ;
+    }
+    
+    $scope.resetSearchCriteria = function() {
+        $scope.searchCriteria.startDate = moment().subtract(30, 'days').toDate() ;
+        $scope.searchCriteria.endDate = moment().toDate() ;
+        $scope.searchCriteria.lowerAmtThreshold = null ;
+        $scope.searchCriteria.upperAmtThreshold = null ;
+        
+        fetchLedgerEntries() ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -112,7 +129,14 @@ capitalystNgApp.controller( 'LedgerHomeController',
             function( response ){
                 $scope.ledgerEntries.length = 0 ;
                 for( var i=0; i<response.data.length; i++ ) {
-                    $scope.ledgerEntries.push( response.data[i] ) ;
+                    var entry = response.data[i] ;
+                    if( i == 0 ) {
+                        $scope.$parent.navBarTitle = 
+                            entry.account.accountOwner + " - " + 
+                            entry.account.accountNumber + " - " + 
+                            entry.account.shortName ;
+                    }
+                    $scope.ledgerEntries.push( entry ) ;
                 }
                 setTimeout( function(){
                     sortTable.init() ;

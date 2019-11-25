@@ -31,6 +31,10 @@ nav {
 	padding: 5px;
 }
 
+.page-menu-bar .btn-sm {
+    padding: 2px 5px;	
+}
+
 .modal-title {
 	font-size:15px;
 }

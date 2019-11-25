@@ -7,7 +7,8 @@ public class LedgerSearchCriteria {
     private Integer accountId = null ;
     private Date startDate = null ;
     private Date endDate = null ;
-    private Float amtThreshold = null ;
+    private Float lowerAmtThreshold = null ;
+    private Float upperAmtThreshold = null ;
 
     public LedgerSearchCriteria() {}
 
@@ -35,12 +36,20 @@ public class LedgerSearchCriteria {
         return this.endDate ;
     }
 
-    public void setAmtThreshold( Float val ) {
-        this.amtThreshold = val ;
+    public Float getLowerAmtThreshold() {
+        return lowerAmtThreshold ;
     }
-        
-    public Float getAmtThreshold() {
-        return this.amtThreshold ;
+
+    public void setLowerAmtThreshold( Float amt ) {
+        this.lowerAmtThreshold = amt ;
+    }
+
+    public Float getUpperAmtThreshold() {
+        return upperAmtThreshold ;
+    }
+
+    public void setUpperAmtThreshold( Float amt ) {
+        this.upperAmtThreshold = amt ;
     }
 
     public String toString() {
@@ -49,7 +58,8 @@ public class LedgerSearchCriteria {
         builder.append( "   accountId = " + this.accountId + "\n" ) ;
         builder.append( "   startDate = " + this.startDate + "\n" ) ;
         builder.append( "   endDate = " + this.endDate + "\n" ) ;
-        builder.append( "   amtThreshold = " + this.amtThreshold + "\n" ) ;
+        builder.append( "   lowerAmtThreshold = " + this.lowerAmtThreshold + "\n" ) ;
+        builder.append( "   upperAmtThreshold = " + this.upperAmtThreshold + "\n" ) ;
         builder.append( "]" ) ;
         
         return builder.toString() ;

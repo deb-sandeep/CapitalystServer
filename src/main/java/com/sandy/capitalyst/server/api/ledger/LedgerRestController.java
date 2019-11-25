@@ -27,12 +27,9 @@ public class LedgerRestController {
         try {
             log.debug( "Searching for ledger entries." ) ;
             log.debug( "Search criteria = " + searchCriteria ) ;
-            List<LedgerEntry> entries = null ;
             
-            entries = alRepo.findEntriesByDateRange( 
-                                        searchCriteria.getAccountId(),
-                                        searchCriteria.getStartDate(),
-                                        searchCriteria.getEndDate() ) ;
+            List<LedgerEntry> entries = null ;
+            entries = searchEntries( searchCriteria ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( entries ) ;
@@ -42,5 +39,33 @@ public class LedgerRestController {
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( null ) ;
         }
+    }
+    
+    private List<LedgerEntry> searchEntries( LedgerSearchCriteria sc ) {
+        
+        if( sc.getLowerAmtThreshold() == null && 
+            sc.getUpperAmtThreshold() == null ) {
+            
+            return alRepo.findEntries( sc.getAccountId(),
+                                       sc.getStartDate(),
+                                       sc.getEndDate() ) ;
+        }
+        else if( sc.getLowerAmtThreshold() != null || 
+                 sc.getUpperAmtThreshold() != null ) {
+            
+            Float lowerLim = sc.getLowerAmtThreshold() == null ? 
+                             -Float.MAX_VALUE : sc.getLowerAmtThreshold() ;
+            Float upperLim = sc.getUpperAmtThreshold() == null ?
+                             Float.MAX_VALUE : sc.getUpperAmtThreshold() ;
+            
+            log.debug( "Lower limit = " + lowerLim ) ;
+            log.debug( "Upper limit = " + upperLim ) ;
+            
+            return alRepo.findEntries( sc.getAccountId(),
+                                       sc.getStartDate(),
+                                       sc.getEndDate(),
+                                       lowerLim, upperLim ) ;
+        }
+        return null ;
     }
 }

@@ -24,8 +24,28 @@ public interface AccountLedgerRepo
           + "ORDER BY "
           + "    le.valueDate DESC "
     )
-    public List<LedgerEntry> findEntriesByDateRange( 
+    public List<LedgerEntry> findEntries( 
                                     @Param( "accountId" ) Integer accountId,
                                     @Param( "startDate" ) Date startDate,
                                     @Param( "endDate"   ) Date endDate ) ; 
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.account.id = :accountId AND "
+          + "    le.valueDate >= :startDate AND "
+          + "    le.valueDate <= :endDate AND "
+          + "    le.amount >= :lowerAmt AND "
+          + "    le.amount <= :upperAmt "
+          + "ORDER BY "
+          + "    le.valueDate DESC "
+    )
+    public List<LedgerEntry> findEntries( 
+                                    @Param( "accountId" ) Integer accountId,
+                                    @Param( "startDate" ) Date startDate,
+                                    @Param( "endDate"   ) Date endDate,
+                                    @Param( "lowerAmt"  ) Float lowerAmt,
+                                    @Param( "upperAmt"  ) Float upperAmt ) ; 
 }
