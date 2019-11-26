@@ -39,7 +39,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
         l2Cat : null,
         l2CatNew : null,
         saveRule : false,
-        ruleName : null
+        ruleName : null,
+        notes : null
     } ;
 
     // -----------------------------------------------------------------------
@@ -160,6 +161,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
             var entry = selectedEntries[i] ;
             entry.l1Cat = l1Cat ;
             entry.l2Cat = l2Cat ;
+            entry.notes = userSel.notes ;
         }
         
         applyClassificationOnServer( l1Cat, l2Cat, newCategory ) ;
@@ -277,6 +279,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
                 fetchClassificationCategories() ;
                 setTimeout( function(){
                     sortTable.init() ;
+                    $scope.$apply() ;
                 }, 500 ) ;
             }, 
             function( error ){
@@ -358,6 +361,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $scope.userSel.l2CatNew = null ;
         $scope.userSel.saveRule = false ;
         $scope.userSel.ruleName = null ;
+        $scope.userSel.notes = null ;
     }
     
     function applyClassificationOnServer( l1Cat, l2Cat, newCategory )  {
@@ -370,7 +374,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
             rule : $scope.searchCriteria.customRule,
             saveRule : $scope.userSel.saveRule,
             creditClassifier : false,
-            ruleName : $scope.userSel.ruleName
+            ruleName : $scope.userSel.ruleName,
+            notes : $scope.userSel.notes
         } ;
 
         for( var i=0; i<selectedEntries.length; i++ ) {

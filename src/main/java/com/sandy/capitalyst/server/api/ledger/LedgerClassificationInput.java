@@ -12,6 +12,7 @@ public class LedgerClassificationInput {
     private String rule = null ;
     private boolean saveRule = false ;
     private String ruleName = null ;
+    private String notes = null ;
 
     public LedgerClassificationInput() {}
 
@@ -79,6 +80,14 @@ public class LedgerClassificationInput {
         this.ruleName = ruleName ;
     }
 
+    public String getNotes() {
+        return notes ;
+    }
+
+    public void setNotes( String notes ) {
+        this.notes = notes ;
+    }
+
     public String toString() {
         StringBuilder builder = new StringBuilder( "LedgerClassificationInput [\n" ) ; 
 
@@ -90,6 +99,7 @@ public class LedgerClassificationInput {
         builder.append( "   rule = " + this.rule + "\n" ) ;
         builder.append( "   saveRule = " + this.saveRule + "\n" ) ;
         builder.append( "   creditClassifier = " + this.creditClassifier + "\n" ) ;
+        builder.append( "   notes = " + this.notes + "\n" ) ;
         builder.append( "]" ) ;
         
         return builder.toString() ;

@@ -86,8 +86,16 @@ public class LedgerClassificationRestController {
             saveNewClassificationRule( input ) ;
         }
         
+        String notes = input.getNotes() ;
+        if( StringUtil.isEmptyOrNull( notes ) && 
+            input.isSaveRule() ) {
+            notes = input.getRuleName() ;
+        }
+        
         lRepo.updateClassification( input.getEntryIdList(), 
-                                    input.getL1Cat(), input.getL2Cat() ) ;
+                                    input.getL1Cat(), 
+                                    input.getL2Cat(),
+                                    notes ) ;
     }
 
     private void saveNewClassificationRule( LedgerClassificationInput input ) {

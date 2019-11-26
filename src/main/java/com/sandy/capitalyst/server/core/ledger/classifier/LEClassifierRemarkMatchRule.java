@@ -12,11 +12,11 @@ public class LEClassifierRemarkMatchRule extends LEClassifierRule {
     
     public LEClassifierRemarkMatchRule( String regex ) {
         this.regex = regex.replace( "*", ".*" ) ;
-        this.pattern = Pattern.compile( this.regex ) ;
+        this.pattern = Pattern.compile( this.regex.toLowerCase() ) ;
     }
 
     public boolean isRuleMatched( LedgerEntry ledgerEntry ) {
-        Matcher m = pattern.matcher( ledgerEntry.getRemarks() ) ;
+        Matcher m = pattern.matcher( ledgerEntry.getRemarks().toLowerCase() ) ;
         return m.matches() ;
     }
 

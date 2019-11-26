@@ -59,11 +59,13 @@ public interface LedgerRepo
           + "    LedgerEntry le "
           + "SET "
           + "    le.l1Cat = :l1Cat, "
-          + "    le.l2Cat = :l2Cat "
+          + "    le.l2Cat = :l2Cat, "
+          + "    le.notes = :notes "
           + "WHERE "
           + "    le.id in :idList "
     )
     public void updateClassification( @Param( "idList" ) Integer[] idList, 
                                       @Param( "l1Cat" ) String l1Cat,
-                                      @Param( "l2Cat" ) String l2Cat ) ;
+                                      @Param( "l2Cat" ) String l2Cat,
+                                      @Param( "notes" ) String notes ) ;
 }

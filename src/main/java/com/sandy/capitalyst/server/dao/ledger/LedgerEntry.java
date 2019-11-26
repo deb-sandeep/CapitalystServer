@@ -34,6 +34,7 @@ public class LedgerEntry {
     private float amount = 0 ;
     private String chequeNumber = null ;
     private float balance = 0 ;
+    private String notes = null ;
     private String hash = null ;
     
     @Column( name = "l1_cat" )
@@ -130,6 +131,14 @@ public class LedgerEntry {
         this.l2Cat = l2Cat ;
     }
 
+    public String getNotes() {
+        return notes ;
+    }
+    
+    public void setNotes( String notes ) {
+        this.notes = notes ;
+    }
+    
     public String generateHash() throws Exception {
         
         StringBuffer buffer = new StringBuffer() ;
@@ -152,6 +161,7 @@ public class LedgerEntry {
               .append( "  Amount = " + amount ).append( "\n" )
               .append( "  l1Cat = " + l1Cat ).append( "\n" )
               .append( "  l2Cat = " + l2Cat ).append( "\n" )
+              .append( "  notes = " + notes ).append( "\n" )
               .append( "]" ) ;
         return buffer.toString() ;
     }
