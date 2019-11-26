@@ -33,11 +33,12 @@ capitalystNgApp.controller( 'LedgerHomeController',
     } ;
     
     $scope.classificationCategories = null ;
-    $scope.selectedCategories = {
+    $scope.userSel = {
         l1Cat : null,
         l1CatNew : null,
         l2Cat : null,
-        l2CatNew : null
+        l2CatNew : null,
+        saveRule : false
     } ;
 
     // -----------------------------------------------------------------------
@@ -112,15 +113,57 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.cancelClassification = function() {
+        resetClassificationState() ;
         $( '#entryCategorizationDialog' ).modal( 'hide' ) ;
     }
     
     $scope.applyClassification = function() {
         
+        var userSel = $scope.userSel ;
+        if( userSel.l1Cat == null &&
+            userSel.l1CatNew == null ) {
+            $ngConfirm( "Please add valid L1 categorization." ) ;
+            return ;
+        }
+        
+        if( userSel.l2Cat == null &&
+            userSel.l2CatNew == null ) {
+            $ngConfirm( "Please add valid L2 categorization." ) ;
+            return ;
+        }
+        
+        var newCategory = false ;
+        var l1Cat = userSel.l1Cat ;
+        if( l1Cat == null ) {
+            l1Cat = userSel.l1CatNew ;
+            newCategory = true ;
+        }
+        
+        var l2Cat = userSel.l2Cat ;
+        if( l2Cat == null ) {
+            l2Cat = userSel.l2CatNew ;
+            newCategory = true ;
+        }
+            
+        for( var i=0; i<selectedEntries.length; i++ ) {
+            var entry = selectedEntries[i] ;
+            entry.l1Cat = l1Cat ;
+            entry.l2Cat = l2Cat ;
+        }
+        
         resetClassificationState() ;
         $( '#entryCategorizationDialog' ).modal( 'hide' ) ;
     }
     
+    $scope.newL1CategoryEntered = function() {
+        $scope.userSel.l1Cat = null ;
+        $scope.userSel.l2Cat = null ;
+    }
+    
+    $scope.newL2CategoryEntered = function() {
+        $scope.userSel.l2Cat = null ;
+    }
+
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -238,7 +281,6 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $http.get( '/Ledger/Categories' )
         .then ( 
             function( response ){
-                console.log( "Classification categories received." + response.data ) ;
                 populateLedgerEntryClassificationCategories( response.data ) ;
             }, 
             function( error ){
@@ -297,9 +339,10 @@ capitalystNgApp.controller( 'LedgerHomeController',
         
         selectedEntries.length = 0 ;
         $scope.classificationCategories = null ;
-        $scope.selectedCategories.l1Cat = null ;
-        $scope.selectedCategories.l1CatNew = null ;
-        $scope.selectedCategories.l2Cat = null ;
-        $scope.selectedCategories.l2CatNew = null ;
+        $scope.userSel.l1Cat = null ;
+        $scope.userSel.l1CatNew = null ;
+        $scope.userSel.l2Cat = null ;
+        $scope.userSel.l2CatNew = null ;
+        $scope.userSel.saveRule = false ;
     }
 } ) ;

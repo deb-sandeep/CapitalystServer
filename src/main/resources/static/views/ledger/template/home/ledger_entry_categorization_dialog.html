@@ -15,32 +15,39 @@
                     <td>
 				        <label>L1 Category</label>
 				        <select class="form-field" 
-				                ng-model="selectedCategories.l1Cat"
+				                ng-model="userSel.l1Cat"
 				                ng-options="item for item in classificationCategories.l1Categories">
                             <option value=""></option>
 				        </select>
                         <input class='form-field' 
                                type="text" 
-                               ng-model="selectedCategories.l1CatNew" /> 
+                               ng-change="newL1CategoryEntered()"
+                               ng-model="userSel.l1CatNew" /> 
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <label>L2 Category</label>
                         <select class="form-field" 
-                                ng-model="selectedCategories.l2Cat"
-                                ng-options="item for item in classificationCategories.l2Categories.get(selectedCategories.l1Cat)">
+                                ng-model="userSel.l2Cat"
+                                ng-options="item for item in classificationCategories.l2Categories.get(userSel.l1Cat)">
                             <option value=""></option>
                         </select>
                         <input class='form-field' 
                                type="text" 
-                               ng-model="selectedCategories.l2CatNew" /> 
+                               ng-change="newL2CategoryEntered()"
+                               ng-model="userSel.l2CatNew" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+		                 <input type="checkbox" 
+		                        ng-model="userSel.saveRule"/> Save rule
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-    
     <div class="modal-footer">
       <button type="button" 
               class="btn btn-default btn-sm" 
