@@ -1,4 +1,3 @@
-1. Ledger upload
-2. Ledger item classification
-3. Classification view
-4. Ledger for multiple accounts at the same time?
+Save rule 
+    New table, Repo, ...
+    

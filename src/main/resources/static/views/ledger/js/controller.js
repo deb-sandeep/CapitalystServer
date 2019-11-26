@@ -19,7 +19,6 @@ capitalystNgApp.controller( 'LedgerController',
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
     $scope.$on( 'interactingWithServer', function( event, args ) {
-        console.log( "Interacting with server = " + args.isStart ) ;
         if( args.isStart ) {
             $( '#serverInteractionLoader' ).modal( 'show' ) ;
         }

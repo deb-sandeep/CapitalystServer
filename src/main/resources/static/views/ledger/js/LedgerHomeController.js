@@ -38,7 +38,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
         l1CatNew : null,
         l2Cat : null,
         l2CatNew : null,
-        saveRule : false
+        saveRule : false,
+        ruleName : null
     } ;
 
     // -----------------------------------------------------------------------
@@ -144,12 +145,24 @@ capitalystNgApp.controller( 'LedgerHomeController',
             l2Cat = userSel.l2CatNew ;
             newCategory = true ;
         }
+        
+        if( userSel.saveRule ) {
+            if( $scope.searchCriteria.customRule == null ) {
+                $ngConfigm( "There is no custom rule to save." ) ;
+            }
+            
+            if( userSel.ruleName == null ) {
+                $ngConfigm( "Please enter an unique rule name." ) ;
+            }
+        }
             
         for( var i=0; i<selectedEntries.length; i++ ) {
             var entry = selectedEntries[i] ;
             entry.l1Cat = l1Cat ;
             entry.l2Cat = l2Cat ;
         }
+        
+        applyClassificationOnServer( l1Cat, l2Cat, newCategory ) ;
         
         resetClassificationState() ;
         $( '#entryCategorizationDialog' ).modal( 'hide' ) ;
@@ -344,5 +357,43 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $scope.userSel.l2Cat = null ;
         $scope.userSel.l2CatNew = null ;
         $scope.userSel.saveRule = false ;
+        $scope.userSel.ruleName = null ;
     }
+    
+    function applyClassificationOnServer( l1Cat, l2Cat, newCategory )  {
+
+        var postData = {
+            entryIdList : [], 
+            l1Cat : l1Cat,
+            l2Cat : l2Cat,
+            newClassifier : newCategory,
+            rule : $scope.searchCriteria.customRule,
+            saveRule : $scope.userSel.saveRule,
+            creditClassifier : false,
+            ruleName : $scope.userSel.ruleName
+        } ;
+
+        for( var i=0; i<selectedEntries.length; i++ ) {
+            var entry = selectedEntries[i] ;
+            if( i == 0 ) {
+                postData.creditClassifier = ( entry.amount > 0 ) ;
+            }
+            postData.entryIdList.push( entry.id ) ;
+        }
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/Ledger/Classification', postData )
+        .then ( 
+            function( response ){
+                console.log( "Classification applied successfully." ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not apply classification." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
 } ) ;

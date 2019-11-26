@@ -1,6 +1,5 @@
 package com.sandy.capitalyst.server.api.ledger;
 
-import java.util.ArrayList ;
 import java.util.Iterator ;
 import java.util.List ;
 
@@ -8,7 +7,6 @@ import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
-import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
@@ -16,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
 import com.sandy.common.util.StringUtil ;
 
@@ -28,9 +24,6 @@ public class LedgerRestController {
     
     @Autowired
     private LedgerRepo alRepo = null ;
-    
-    @Autowired
-    private LedgerEntryCategoryRepo lecRepo = null ;
     
     @PostMapping( "/Ledger/Search" ) 
     public ResponseEntity<List<LedgerEntry>> findLedgerEntries( 
@@ -99,26 +92,4 @@ public class LedgerRestController {
         
         return entries ;
     }
-
-    @GetMapping( "/Ledger/Categories" ) 
-    public ResponseEntity<List<LedgerEntryCategory>> getLedgerEntryCategories() {
-        try {
-            log.debug( "Getting ledger entry categories." ) ;
-            List<LedgerEntryCategory> categories = new ArrayList<>() ;
-            Iterable<LedgerEntryCategory> results = null ;
-            
-            results = lecRepo.findAll() ;
-            for( LedgerEntryCategory result : results ) {
-                categories.add( result ) ;
-            }
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( categories ) ;
-        }
-        catch( Exception e ) {
-            log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
-        }
-    }
-    
 }
