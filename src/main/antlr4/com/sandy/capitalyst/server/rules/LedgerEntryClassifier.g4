@@ -6,19 +6,37 @@ le_classifier  :
 
 le_stmt : 
     ( neg_op )? 
-    ( le_group_stmt | remark_match ) ;
+    ( le_group_stmt | remark_match | amt_match ) ;
       
 le_group_stmt :
     '(' le_classifier ')' ;
                           
 remark_match : 
     'remark' 'like' Value ;
+    
+amt_match :
+    amt_gt_stmt | amt_lt_stmt | amt_eq_stmt | amt_between_stmt ;
+
+amt_gt_stmt :
+    'amt' '>' Amount ;
+    
+amt_lt_stmt :
+    'amt' '<' Amount ;
+    
+amt_eq_stmt :
+    'amt' '=' Amount ;
+    
+amt_between_stmt :
+    'amt' '<>' MinAmount MaxAmount ;
 
 neg_op : 'NOT' ;
 
 binary_op : 'AND' | 'OR' ;
 
 Value              : STRING ;
+Amount             : INT ;
+MinAmount          : INT ;
+MaxAmount          : INT ;
 
 ID                 : (LETTER|DIGIT)+ ;
 INT                : (DIGIT)+ ;

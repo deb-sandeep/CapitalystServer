@@ -9,6 +9,7 @@ import org.apache.log4j.Logger ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierBaseListener ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierLexer ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Binary_opContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Le_group_stmtContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Neg_opContext ;
@@ -85,6 +86,9 @@ public class LEClassifierRuleBuilder
             else if( child instanceof Remark_matchContext ) {
                 rule = buildRemarkMatchRule( child ) ; 
             }
+            else if( child instanceof Amt_matchContext ) {
+                rule = buildAmountMatchRule( child ) ;
+            }
         }
         
         if( negOpFound ) {
@@ -93,10 +97,16 @@ public class LEClassifierRuleBuilder
         return rule ;
     }
     
-    private LEClassifierRemarkMatchRule buildRemarkMatchRule( ParseTree tree ) {
+    private LEClassifierRule buildRemarkMatchRule( ParseTree tree ) {
         
         Remark_matchContext ctx = ( Remark_matchContext )tree ;
         String regex = ctx.Value().getText() ;
         return new LEClassifierRemarkMatchRule( regex.replace( "\"", "" ) ) ;
+    }
+    
+    private LEClassifierRule buildAmountMatchRule( ParseTree tree ) {
+        
+        Amt_matchContext ctx = ( Amt_matchContext )tree ;
+        return null ;
     }
 }

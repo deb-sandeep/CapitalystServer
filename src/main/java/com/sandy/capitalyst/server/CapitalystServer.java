@@ -2,7 +2,6 @@ package com.sandy.capitalyst.server ;
 
 import java.io.File ;
 
-import org.apache.commons.io.FileUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.BeansException ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -15,14 +14,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
 import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
-import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
-import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporter ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporterFactory ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.AccountIndexRepo ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
 import com.sandy.common.bus.EventBus ;
 
 @SpringBootApplication
@@ -53,9 +48,6 @@ public class CapitalystServer
     @Autowired
     private AccountIndexRepo accountIndexRepo = null ;
     
-    @Autowired
-    private LedgerRepo alRepo = null ;
-    
     public CapitalystServer() {
         APP = this ;
     }
@@ -75,17 +67,6 @@ public class CapitalystServer
         for( int year = 2011; year<=2019; year++ ) {
             File file = new File( dir, "Stmt-" + year + ".xls" ) ;
             li.importLedgerEntries( account, file ) ;
-        }
-    }
-    
-    public void testLEClassifier() throws Exception {
-        File file = new File( "src/test/resources/rule.txt" ) ;
-        String ruleText = FileUtils.readFileToString( file ) ;
-        LEClassifierRule rule = new LEClassifierRuleBuilder().buildClassifier( ruleText ) ;
-        for( LedgerEntry entry : alRepo.findAll() ) {
-            if( rule.isRuleMatched( entry ) ) {
-                log.debug( entry.getRemarks() ) ;
-            }
         }
     }
     
