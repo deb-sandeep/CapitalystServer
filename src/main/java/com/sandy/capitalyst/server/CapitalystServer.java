@@ -14,14 +14,15 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
 import com.sandy.capitalyst.server.config.CapitalystConfig ;
+import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporter ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporterFactory ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.AccountIndexRepo ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
+import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
 import com.sandy.common.bus.EventBus ;
 
 @SpringBootApplication
@@ -58,7 +59,14 @@ public class CapitalystServer
     public CapitalystServer() {
         APP = this ;
     }
-
+    
+    public void initialize() throws Exception {
+        if( CapitalystServer.getConfig().isRunClassificationOnStartup() ) {
+            LEClassifier classifier = new LEClassifier() ;
+            classifier.runClassification() ;
+        }
+    }
+    
     public void importLedgerEntries() throws Exception {
         Account account = accountIndexRepo.findByAccountNumber( "000501005212" ) ;
         LedgerImporter li = LedgerImporterFactory.getLedgerImporter( account ) ;
@@ -98,8 +106,7 @@ public class CapitalystServer
         SpringApplication.run( CapitalystServer.class, args ) ;
 
         log.debug( "Starting Capitalyst Server.." ) ;
-//        CapitalystServer app = CapitalystServer.getAppContext().getBean( CapitalystServer.class ) ;
-//        app.importLedgerEntries() ;
-//        app.testLEClassifier() ;
+        CapitalystServer app = CapitalystServer.getAppContext().getBean( CapitalystServer.class ) ;
+        app.initialize() ;
     }
 }

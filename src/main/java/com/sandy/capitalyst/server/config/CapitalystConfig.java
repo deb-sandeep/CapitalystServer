@@ -8,13 +8,20 @@ import org.springframework.context.annotation.* ;
 @ConfigurationProperties( "capitalyst" )
 public class CapitalystConfig {
 
-    private boolean testProperty = false ;
-
-    public boolean isTestProperty() {
-        return testProperty ;
+    private boolean runClassificationOnStartup = false ;
+    private boolean classifyOnlyUnclassifiedEntries = false ;
+    
+    public boolean isRunClassificationOnStartup() {
+        return runClassificationOnStartup ;
     }
-
-    public void setTestProperty( boolean testProperty ) {
-        this.testProperty = testProperty ;
+    public void setRunClassificationOnStartup( boolean bool ) {
+        this.runClassificationOnStartup = bool ;
+    }
+    
+    public boolean isClassifyOnlyUnclassifiedEntries() {
+        return classifyOnlyUnclassifiedEntries ;
+    }
+    public void setClassifyOnlyUnclassifiedEntries( boolean bool ) {
+        this.classifyOnlyUnclassifiedEntries = bool ;
     }
 }

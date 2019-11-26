@@ -161,7 +161,13 @@ capitalystNgApp.controller( 'LedgerHomeController',
             var entry = selectedEntries[i] ;
             entry.l1Cat = l1Cat ;
             entry.l2Cat = l2Cat ;
-            entry.notes = userSel.notes ;
+            
+            if( userSel.saveRule ) {
+                entry.notes = userSel.ruleName ;
+            }
+            else {
+                entry.notes = userSel.notes ;
+            }
         }
         
         applyClassificationOnServer( l1Cat, l2Cat, newCategory ) ;

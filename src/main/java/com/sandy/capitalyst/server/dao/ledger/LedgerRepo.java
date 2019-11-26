@@ -23,7 +23,8 @@ public interface LedgerRepo
           + "WHERE "
           + "    le.account.id = :accountId AND "
           + "    le.valueDate >= :startDate AND "
-          + "    le.valueDate <= :endDate "
+          + "    le.valueDate <= :endDate AND "
+          + "    le.l1Cat IS NULL "
           + "ORDER BY "
           + "    le.valueDate DESC "
     )
@@ -41,7 +42,8 @@ public interface LedgerRepo
           + "    le.valueDate >= :startDate AND "
           + "    le.valueDate <= :endDate AND "
           + "    le.amount >= :lowerAmt AND "
-          + "    le.amount <= :upperAmt "
+          + "    le.amount <= :upperAmt AND "
+          + "    le.l1Cat IS NULL "
           + "ORDER BY "
           + "    le.valueDate DESC "
     )
