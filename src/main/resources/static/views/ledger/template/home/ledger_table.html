@@ -10,6 +10,11 @@
            style="width: auto !important;">
         <thead>
             <tr class="success">
+                <th class="js-sort-none">
+                 <input type="checkbox" 
+                        ng-model="entriesBulkSelectionState.value"
+                        ng-change="toggleSelectionForAllEntries()"/>
+                </th>
                 <th class="js-sort-valueDate">Date</th>
                 <th>Remarks</th>
                 <th class="js-sort-number">Amount</th>
@@ -20,6 +25,10 @@
         </thead>
         <tbody>
             <tr ng-repeat="entry in $parent.ledgerEntries">
+               <td>
+                 <input type="checkbox" 
+                        ng-model="entry.selected"/>
+               </td>
                <td class="fixed-font">{{entry.valueDate}}</td>
                <td class="remarks">{{entry.remarks}}</td>
                <td class="fixed-font amt" ng-class="amtClass( entry.amount )">{{entry.amount | amt}}</td>

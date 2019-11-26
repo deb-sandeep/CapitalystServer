@@ -8,7 +8,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.account = null ;
     $scope.searchCriteria = {
         accountId : null,
-        startDate : moment().subtract(1, 'year').toDate(),
+        startDate : moment().subtract(1, 'month').toDate(),
         endDate : moment().toDate(),
         lowerAmtThreshold : null,
         upperAmtThreshold : null,
@@ -16,6 +16,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
     } ;
     
     $scope.ledgerEntries = [] ;
+    $scope.entriesBulkSelectionState = {
+       value : false
+    } ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -35,13 +38,20 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.resetSearchCriteria = function() {
-        $scope.searchCriteria.startDate = moment().subtract(30, 'year').toDate() ;
+        $scope.searchCriteria.startDate = moment().subtract(30, 'month').toDate() ;
         $scope.searchCriteria.endDate = moment().toDate() ;
         $scope.searchCriteria.lowerAmtThreshold = null ;
         $scope.searchCriteria.upperAmtThreshold = null ;
         $scope.searchCriteria.customRule = null ;
         
         fetchLedgerEntries() ;
+    }
+    
+    $scope.toggleSelectionForAllEntries = function() {
+        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
+            var entry = $scope.ledgerEntries[i] ;
+            entry.selected = $scope.entriesBulkSelectionState.value ;
+        }
     }
     
     // --- [END] Scope functions
@@ -137,6 +147,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
                             entry.account.accountNumber + " - " + 
                             entry.account.shortName ;
                     }
+                    
+                    // Additional attribute to track user selection in view
+                    entry.selected = false ;
                     $scope.ledgerEntries.push( entry ) ;
                 }
                 setTimeout( function(){
