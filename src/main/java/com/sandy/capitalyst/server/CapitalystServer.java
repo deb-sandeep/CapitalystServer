@@ -20,7 +20,7 @@ import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporter ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporterFactory ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.AccountIndexRepo ;
-import com.sandy.capitalyst.server.dao.ledger.AccountLedgerRepo ;
+import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.common.bus.EventBus ;
 
@@ -53,7 +53,7 @@ public class CapitalystServer
     private AccountIndexRepo accountIndexRepo = null ;
     
     @Autowired
-    private AccountLedgerRepo alRepo = null ;
+    private LedgerRepo alRepo = null ;
     
     public CapitalystServer() {
         APP = this ;

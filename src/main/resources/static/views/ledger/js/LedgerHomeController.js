@@ -1,7 +1,8 @@
 capitalystNgApp.controller( 'LedgerHomeController', 
-    function( $scope, $http, $rootScope, $location, $window ) {
+    function( $scope, $http, $rootScope, $location, $window, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
+    var selectedEntries = [] ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Ledger View" ;
@@ -18,6 +19,25 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.ledgerEntries = [] ;
     $scope.entriesBulkSelectionState = {
        value : false
+    } ;
+    
+    $scope.ledgerCategories = {
+       credit : {
+           l1Categories : [],
+           l2Categories : new Map()
+       },
+       debit : {
+           l1Categories : [],
+           l2Categories : new Map()
+       }
+    } ;
+    
+    $scope.classificationCategories = null ;
+    $scope.selectedCategories = {
+        l1Cat : null,
+        l1CatNew : null,
+        l2Cat : null,
+        l2CatNew : null
     } ;
 
     // -----------------------------------------------------------------------
@@ -52,6 +72,53 @@ capitalystNgApp.controller( 'LedgerHomeController',
             var entry = $scope.ledgerEntries[i] ;
             entry.selected = $scope.entriesBulkSelectionState.value ;
         }
+    }
+    
+    $scope.showCategorizationDialog = function() {
+        var numEntriesSelected = 0 ;
+        var entryTypeCount = 0 ;
+        
+        resetClassificationState() ;
+        
+        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
+            var entry = $scope.ledgerEntries[i] ;
+            if( entry.selected ) {
+                selectedEntries.push( entry ) ;
+                numEntriesSelected++ ;
+                if( entry.amount < 0 ) {
+                    entryTypeCount-- ;
+                }
+                else {
+                    entryTypeCount++ ;
+                }
+            }
+        }
+        
+        if( numEntriesSelected > 0 ) {
+            if( Math.abs( entryTypeCount ) != numEntriesSelected ) {
+                $ngConfirm( 'Selected entries contain both credit and debit entries.' ) ;
+            }
+            else {
+                $scope.classificationCategories = 
+                                        ( selectedEntries[0].amount < 0 ) ?
+                                        $scope.ledgerCategories.debit :
+                                        $scope.ledgerCategories.credit ;
+                $( '#entryCategorizationDialog' ).modal( 'show' ) ;
+            }
+        }
+        else {
+            $ngConfirm( 'Please select some ledger entries to categorize.' ) ;
+        }
+    }
+    
+    $scope.cancelClassification = function() {
+        $( '#entryCategorizationDialog' ).modal( 'hide' ) ;
+    }
+    
+    $scope.applyClassification = function() {
+        
+        resetClassificationState() ;
+        $( '#entryCategorizationDialog' ).modal( 'hide' ) ;
     }
     
     // --- [END] Scope functions
@@ -147,11 +214,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
                             entry.account.accountNumber + " - " + 
                             entry.account.shortName ;
                     }
-                    
                     // Additional attribute to track user selection in view
                     entry.selected = false ;
                     $scope.ledgerEntries.push( entry ) ;
                 }
+                fetchClassificationCategories() ;
                 setTimeout( function(){
                     sortTable.init() ;
                 }, 500 ) ;
@@ -163,5 +230,76 @@ capitalystNgApp.controller( 'LedgerHomeController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function fetchClassificationCategories() {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.get( '/Ledger/Categories' )
+        .then ( 
+            function( response ){
+                console.log( "Classification categories received." + response.data ) ;
+                populateLedgerEntryClassificationCategories( response.data ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch classification categories." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function populateLedgerEntryClassificationCategories( categories ) {
+        
+        $scope.ledgerCategories.credit.l1Categories.length = 0 ;
+        $scope.ledgerCategories.credit.l2Categories.clear() ;
+        $scope.ledgerCategories.debit.l1Categories.length = 0 ;
+        $scope.ledgerCategories.debit.l2Categories.clear() ;
+        $scope.selectedL1Category = null ;
+        $scope.selectedL2Category = null ;
+        
+        for( var i=0; i<categories.length; i++ ) {
+            var category = categories[i] ;
+            if( category.creditClassification ) {
+                classifyCategory( 
+                        $scope.ledgerCategories.credit.l1Categories, 
+                        $scope.ledgerCategories.credit.l2Categories,
+                        category ) ; 
+            }
+            else {
+                classifyCategory( 
+                        $scope.ledgerCategories.debit.l1Categories, 
+                        $scope.ledgerCategories.debit.l2Categories,
+                        category ) ; 
+            }
+        }
+    }
+    
+    function classifyCategory( l1CatList, l2CatMap, category ) {
+        
+        var l1 = category.l1CatName ;
+        var l2 = category.l2CatName ;
+        
+        if( l1CatList.indexOf( l1 ) == -1 ) {
+            l1CatList.push( l1 ) ;
+        }
+        
+        if( !l2CatMap.has( l1 ) ) {
+            l2CatMap.set( l1, [] ) ;
+        }
+        
+        var l2List = l2CatMap.get( l1 ) ;
+        l2List.push( l2 ) ;
+    }
+    
+    function resetClassificationState() {
+        
+        selectedEntries.length = 0 ;
+        $scope.classificationCategories = null ;
+        $scope.selectedCategories.l1Cat = null ;
+        $scope.selectedCategories.l1CatNew = null ;
+        $scope.selectedCategories.l2Cat = null ;
+        $scope.selectedCategories.l2CatNew = null ;
     }
 } ) ;

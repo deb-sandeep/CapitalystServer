@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query ;
 import org.springframework.data.repository.CrudRepository ;
 import org.springframework.data.repository.query.Param ;
 
-public interface AccountLedgerRepo 
+public interface LedgerRepo 
     extends CrudRepository<LedgerEntry, Integer> {
     
     public LedgerEntry findByHash( String hash ) ;
