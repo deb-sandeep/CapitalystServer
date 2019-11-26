@@ -13,6 +13,8 @@
                 <th class="js-sort-valueDate">Date</th>
                 <th>Remarks</th>
                 <th class="js-sort-number">Amount</th>
+                <th>L1</th>
+                <th>L2</th>
                 <th class="js-sort-number">Balance</th>
             </tr>
         </thead>
@@ -21,6 +23,8 @@
                <td class="fixed-font">{{entry.valueDate}}</td>
                <td class="remarks">{{entry.remarks}}</td>
                <td class="fixed-font amt" ng-class="amtClass( entry.amount )">{{entry.amount | amt}}</td>
+               <td>{{entry.l1Cat}}</td>
+               <td>{{entry.l2Cat}}</td>
                <td class="fixed-font amt">{{entry.balance | amt}}</td>
             </tr>
         </tbody>

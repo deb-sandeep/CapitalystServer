@@ -8,10 +8,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.account = null ;
     $scope.searchCriteria = {
         accountId : null,
-        startDate : moment().subtract(30, 'days').toDate(),
+        startDate : moment().subtract(1, 'year').toDate(),
         endDate : moment().toDate(),
         lowerAmtThreshold : null,
-        upperAmtThreshold : null
+        upperAmtThreshold : null,
+        customRule : null
     } ;
     
     $scope.ledgerEntries = [] ;
@@ -34,10 +35,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.resetSearchCriteria = function() {
-        $scope.searchCriteria.startDate = moment().subtract(30, 'days').toDate() ;
+        $scope.searchCriteria.startDate = moment().subtract(30, 'year').toDate() ;
         $scope.searchCriteria.endDate = moment().toDate() ;
         $scope.searchCriteria.lowerAmtThreshold = null ;
         $scope.searchCriteria.upperAmtThreshold = null ;
+        $scope.searchCriteria.customRule = null ;
         
         fetchLedgerEntries() ;
     }
@@ -114,7 +116,6 @@ capitalystNgApp.controller( 'LedgerHomeController',
             ) ;
             $scope.searchCriteria.startDate = start.toDate() ;
             $scope.searchCriteria.endDate   = end.toDate() ;
-            fetchLedgerEntries() ;
         });
     }
     

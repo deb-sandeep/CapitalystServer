@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.api.ledger;
 
+import java.util.Iterator ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
@@ -10,8 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
+import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
 import com.sandy.capitalyst.server.dao.ledger.AccountLedgerRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
+import com.sandy.common.util.StringUtil ;
 
 @RestController
 public class LedgerRestController {
@@ -30,6 +34,7 @@ public class LedgerRestController {
             
             List<LedgerEntry> entries = null ;
             entries = searchEntries( searchCriteria ) ;
+            entries = filterResultsByCustomRule( searchCriteria, entries ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( entries ) ;
@@ -67,5 +72,24 @@ public class LedgerRestController {
                                        lowerLim, upperLim ) ;
         }
         return null ;
+    }
+    
+    private List<LedgerEntry> filterResultsByCustomRule( 
+                LedgerSearchCriteria sc, List<LedgerEntry> entries ) {
+        
+        String customRule = sc.getCustomRule() ;
+        if( StringUtil.isNotEmptyOrNull( customRule ) ) {
+            LEClassifierRuleBuilder ruleBuilder = new LEClassifierRuleBuilder() ;
+            LEClassifierRule rule = ruleBuilder.buildClassifier( customRule ) ;
+            
+            for( Iterator<LedgerEntry> iter = entries.iterator(); iter.hasNext(); ) {
+                LedgerEntry entry = iter.next() ;
+                if( !rule.isRuleMatched( entry ) ) {
+                    iter.remove() ;
+                }
+            }
+        }
+        
+        return entries ;
     }
 }

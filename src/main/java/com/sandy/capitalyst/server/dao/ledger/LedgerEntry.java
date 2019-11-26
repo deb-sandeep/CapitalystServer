@@ -3,6 +3,7 @@ package com.sandy.capitalyst.server.dao.ledger;
 import java.sql.Date ;
 import java.text.SimpleDateFormat ;
 
+import javax.persistence.Column ;
 import javax.persistence.Entity ;
 import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
@@ -34,6 +35,12 @@ public class LedgerEntry {
     private String chequeNumber = null ;
     private float balance = 0 ;
     private String hash = null ;
+    
+    @Column( name = "l1_cat" )
+    private String l1Cat = null ;
+    
+    @Column( name = "l2_cat" )
+    private String l2Cat = null ;
     
     public Integer getId() {
         return id ;
@@ -107,6 +114,22 @@ public class LedgerEntry {
         return StringUtil.isNotEmptyOrNull( chequeNumber ) ;
     }
     
+    public String getL1Cat() {
+        return l1Cat ;
+    }
+
+    public void setL1Cat( String l1Cat ) {
+        this.l1Cat = l1Cat ;
+    }
+
+    public String getL2Cat() {
+        return l2Cat ;
+    }
+
+    public void setL2Cat( String l2Cat ) {
+        this.l2Cat = l2Cat ;
+    }
+
     public String generateHash() throws Exception {
         
         StringBuffer buffer = new StringBuffer() ;
@@ -127,6 +150,8 @@ public class LedgerEntry {
               .append( "  Value date = " + HASH_SDF.format( valueDate ) ).append( "\n" )
               .append( "  Remarks = " + remarks ).append( "\n" )
               .append( "  Amount = " + amount ).append( "\n" )
+              .append( "  l1Cat = " + l1Cat ).append( "\n" )
+              .append( "  l2Cat = " + l2Cat ).append( "\n" )
               .append( "]" ) ;
         return buffer.toString() ;
     }

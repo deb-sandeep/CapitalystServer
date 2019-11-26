@@ -45,6 +45,25 @@
                    ng-model="searchCriteria.upperAmtThreshold" /> 
 	    </div>
 	  </div>
+	  
+	  <div class="panel panel-default">
+	    <div class="panel-heading">
+	      <h4 class="panel-title">
+	        <a data-toggle="collapse" 
+	           data-parent="#accordion" 
+	           data-target="#customRuleDiv">
+	        Custom Rule
+	        </a>
+	      </h4>
+	    </div>
+	    <div id="customRuleDiv" class="panel-collapse collapse">
+          <textarea class='form-field' 
+                    rows="5"
+                    ng-model="searchCriteria.customRule">
+          </textarea> 
+	    </div>
+	  </div>	  
+	  
       <span style="display:block;padding:10px;"></span> 
 	  <button class="btn btn-info btn-sm"
 	          ng-click="searchLedgerEntries()">

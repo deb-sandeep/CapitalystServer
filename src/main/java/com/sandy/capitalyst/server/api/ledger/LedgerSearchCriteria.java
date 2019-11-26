@@ -9,6 +9,7 @@ public class LedgerSearchCriteria {
     private Date endDate = null ;
     private Float lowerAmtThreshold = null ;
     private Float upperAmtThreshold = null ;
+    private String customRule = null ;
 
     public LedgerSearchCriteria() {}
 
@@ -51,6 +52,14 @@ public class LedgerSearchCriteria {
     public void setUpperAmtThreshold( Float amt ) {
         this.upperAmtThreshold = amt ;
     }
+    
+    public String getCustomRule() {
+        return customRule ;
+    }
+
+    public void setCustomRule( String customRule ) {
+        this.customRule = customRule ;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "LedgerSearchCriteria [\n" ) ; 
@@ -60,6 +69,7 @@ public class LedgerSearchCriteria {
         builder.append( "   endDate = " + this.endDate + "\n" ) ;
         builder.append( "   lowerAmtThreshold = " + this.lowerAmtThreshold + "\n" ) ;
         builder.append( "   upperAmtThreshold = " + this.upperAmtThreshold + "\n" ) ;
+        builder.append( "   customRule = " + this.customRule + "\n" ) ;
         builder.append( "]" ) ;
         
         return builder.toString() ;
