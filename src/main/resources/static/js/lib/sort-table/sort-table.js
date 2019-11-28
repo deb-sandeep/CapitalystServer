@@ -238,6 +238,7 @@ sortTable.getClickHandler = function(Table, col) {
  *  first row
  */
 sortTable.init = function() {
+    
     var THead, Tables, Handler;
     if (document.querySelectorAll) {
         Tables = document.querySelectorAll('table.js-sort-table');

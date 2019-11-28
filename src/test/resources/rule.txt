@@ -1,4 +1,2 @@
-( remark like "*DOLG*" OR
-remark like "*ANIRUDD*" ) OR
-remark like "*uber*" AND
-( amt = 5332 )
+remark like "*LIC*" AND
+( amt = -5410 OR amt = -5335 )

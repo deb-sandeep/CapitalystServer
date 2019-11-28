@@ -3,6 +3,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     // ---------------- Local variables --------------------------------------
     var selectedEntries = [] ;
+    var pivotSrcColNames = [ "Type", "L1", "L2", "Amount" ] ;
+    var pivotSrcData = [] ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Ledger View" ;
@@ -13,7 +15,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
         endDate : moment().toDate(),
         lowerAmtThreshold : null,
         upperAmtThreshold : null,
-        customRule : null
+        customRule : null,
+        showOnlyUnclassified : false
     } ;
     
     $scope.ledgerEntries = [] ;
@@ -42,6 +45,13 @@ capitalystNgApp.controller( 'LedgerHomeController',
         ruleName : null,
         notes : null
     } ;
+    
+    $scope.entryFilterText = null ;
+    $scope.totalAmtForVisibleRows = {
+            total : 0,
+            credit : 0,
+            debit : 0
+    } ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -61,11 +71,12 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.resetSearchCriteria = function() {
-        $scope.searchCriteria.startDate = moment().subtract(30, 'month').toDate() ;
+        $scope.searchCriteria.startDate = moment().subtract(1, 'month').toDate() ;
         $scope.searchCriteria.endDate = moment().toDate() ;
         $scope.searchCriteria.lowerAmtThreshold = null ;
         $scope.searchCriteria.upperAmtThreshold = null ;
         $scope.searchCriteria.customRule = null ;
+        $scope.searchCriteria.showOnlyUnclassified = false ;
         
         fetchLedgerEntries() ;
     }
@@ -73,7 +84,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.toggleSelectionForAllEntries = function() {
         for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
             var entry = $scope.ledgerEntries[i] ;
-            entry.selected = $scope.entriesBulkSelectionState.value ;
+            entry.selected = false ;
+            if( $scope.entriesBulkSelectionState.value == true && 
+                entry.visible ) {
+                entry.selected = true ;
+            }
         }
     }
     
@@ -184,6 +199,41 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.newL2CategoryEntered = function() {
         $scope.userSel.l2Cat = null ;
     }
+    
+    $scope.entryFilterTextChanged = function() {
+        $scope.entriesBulkSelectionState.value = false ;
+        filterEntries() ;
+    }
+    
+    $scope.selectPrevMonth = function() {
+
+        var crit = $scope.searchCriteria ;
+        var m1 = moment( crit.endDate ).subtract( 1, 'month' ) ;
+        var m2 = moment( crit.endDate ).subtract( 1, 'month' ) ;
+        
+        crit.startDate = m1.startOf( 'month' ) ; 
+        crit.endDate = m2.endOf( 'month' ) ;
+
+        refreshDatePickerLabel() ;
+        fetchLedgerEntries() ;
+    }
+
+    $scope.selectNextMonth = function() {
+
+        var crit = $scope.searchCriteria ;
+        var m1 = moment( crit.endDate ).add( 1, 'month' ) ;
+        var m2 = moment( crit.endDate ).add( 1, 'month' ) ;
+        
+        crit.startDate = m1.startOf( 'month' ) ; 
+        crit.endDate = m2.endOf( 'month' ) ;
+        
+        refreshDatePickerLabel() ;
+        fetchLedgerEntries() ;
+    }
+    
+    $scope.showOnlyUnclassifiedCriteriaChanged = function() {
+        filterEntries() ;
+    }
 
     // --- [END] Scope functions
 
@@ -280,13 +330,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
                     }
                     // Additional attribute to track user selection in view
                     entry.selected = false ;
+                    entry.visible = true ;
                     $scope.ledgerEntries.push( entry ) ;
                 }
+                filterEntries() ;
                 fetchClassificationCategories() ;
-                setTimeout( function(){
-                    sortTable.init() ;
-                    $scope.$apply() ;
-                }, 500 ) ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not fetch search results." ) ;
@@ -397,6 +445,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
         .then ( 
             function( response ){
                 console.log( "Classification applied successfully." ) ;
+                if( postData.saveRule ) {
+                    fetchLedgerEntries() ;
+                }
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not apply classification." ) ;
@@ -405,6 +456,96 @@ capitalystNgApp.controller( 'LedgerHomeController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function filterEntries() {
+        
+        $scope.totalAmtForVisibleRows.total = 0 ;
+        $scope.totalAmtForVisibleRows.credit = 0 ;
+        $scope.totalAmtForVisibleRows.debit = 0 ;
+        pivotSrcData = [] ;
+        
+        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
+            var entry = $scope.ledgerEntries[i] ;
+            entry.selected = false ;
+            entry.visible = true ;
+            
+            if( !( $scope.entryFilterText == null || 
+                   $scope.entryFilterText.trim() == "" ) ) {
+                
+                if( !entry.remarks
+                          .toLowerCase()
+                          .includes( $scope.entryFilterText
+                                           .toLowerCase() ) ) {
+                    entry.visible = false ;
+                }
+            }
+            
+            if( $scope.searchCriteria.showOnlyUnclassified ) {
+                if( entry.l1Cat != null ) {
+                    entry.visible = false ;
+                }
+            }
+            
+            if( entry.visible ) {
+                if( entry.amount > 0 ) {
+                    $scope.totalAmtForVisibleRows.credit += entry.amount ;
+                    pivotSrcData.push( [ "Income", entry.l1Cat, entry.l2Cat, entry.amount ] ) ;
+                }
+                else {
+                    $scope.totalAmtForVisibleRows.debit += entry.amount ;
+                    pivotSrcData.push( [ "Expense", entry.l1Cat, entry.l2Cat, entry.amount ] ) ;
+                }
+                $scope.totalAmtForVisibleRows.total += entry.amount ;
+            }
+        }
+        
+        refreshPivotTable() ;
+    }
+    
+    function refreshPivotTable() {
+        var pivotTable = new PivotTable() ;
+        pivotSrcData.sort( function( element1, element2 ) {
+            return element1[0].localeCompare( element2[0] ) ;
+        } ) ;
+        pivotTable.setPivotData( pivotSrcColNames, pivotSrcData ) ;
+        pivotTable.initializePivotTable( [ "Type", "L1", "L2" ], "Type", "Amount" ) ;
+        pivotTable.renderPivotTable( "pivot_table_div", "Ledger Pivot", renderHelperCallback, false, false ) ;
+        pivotTable.expandFirstLevel() ;
+    }
+    
+    function renderHelperCallback( rowIndex, colIndex, cellData ) {
+        var fmt = "" ;
+        if( cellData != null ) {
+            if( !isNaN( cellData ) ) {
+                var amt = parseFloat( cellData ) ;
+                var fmt = amt.toLocaleString('en-IN', {
+                    maximumFractionDigits: 2,
+                    style: 'currency',
+                    currency: 'INR'
+                } ) ;
+                
+                if( fmt.indexOf( '.' ) != -1 ) {
+                    fmt = fmt.substring( 0, fmt.indexOf( '.' ) ) ; 
+                }
+                
+                fmt = fmt.replace( "\u20B9", "" ) ;
+                fmt = fmt.replace( /\s/g, '' ) ;
+            }
+            else {
+                fmt = cellData ;
+            }
+        }
+        return fmt ;
+    }
+
+    function refreshDatePickerLabel() {
+        var crit = $scope.searchCriteria ;
+        $('#ledgerDuration span').html( 
+            crit.startDate.format('MMM D, YYYY') 
+            + ' - ' + 
+            crit.endDate.format('MMM D, YYYY')
+        ) ;
     }
     
 } ) ;

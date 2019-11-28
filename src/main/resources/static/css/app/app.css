@@ -62,3 +62,20 @@ nav {
 	padding: 5px 10px 5px 10px ;
 	background-color: #effdff !important;
 }
+
+table.treetable tr.leaf {
+    font-weight: normal;
+}
+
+table.treetable tr.branch {
+    background-color: #eff8ff;
+}
+
+table.treetable {
+    font-family: inherit;
+    font-size: 12px;
+    border: 1px solid #888;
+    border-collapse: collapse;
+    line-height: 1;
+    margin: .6em 0 1.8em 0;
+}

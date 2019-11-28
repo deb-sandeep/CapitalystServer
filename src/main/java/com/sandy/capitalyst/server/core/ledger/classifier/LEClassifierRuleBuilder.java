@@ -6,9 +6,14 @@ import org.antlr.v4.runtime.CommonTokenStream ;
 import org.antlr.v4.runtime.tree.ParseTree ;
 import org.apache.log4j.Logger ;
 
+import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierAmtMatchRule.OpType ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierBaseListener ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierLexer ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_bw_stmtContext ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_eq_stmtContext ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_gt_stmtContext ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_lt_stmtContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Binary_opContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Le_group_stmtContext ;
@@ -106,7 +111,36 @@ public class LEClassifierRuleBuilder
     
     private LEClassifierRule buildAmountMatchRule( ParseTree tree ) {
         
+        Amt_eq_stmtContext eqStmt = null ;
+        Amt_gt_stmtContext gtStmt = null ;
+        Amt_lt_stmtContext ltStmt = null ;
+        Amt_bw_stmtContext bwStmt = null ;
+        
+        LEClassifierAmtMatchRule rule = null ;
         Amt_matchContext ctx = ( Amt_matchContext )tree ;
-        return null ;
+        
+        ParseTree stmt = ctx.getChild( 0 ) ;
+        if( stmt instanceof Amt_eq_stmtContext ) {
+            eqStmt = ( Amt_eq_stmtContext )stmt ;
+            rule = new LEClassifierAmtMatchRule( OpType.EQ ) ;
+            rule.setAmt( Float.parseFloat( eqStmt.Amount().getText() ) ) ;
+        }
+        else if( stmt instanceof Amt_lt_stmtContext ) {
+            ltStmt = ( Amt_lt_stmtContext )stmt ;
+            rule = new LEClassifierAmtMatchRule( OpType.LT ) ;
+            rule.setAmt( Float.parseFloat( ltStmt.Amount().getText() ) ) ;
+        }
+        else if( stmt instanceof Amt_gt_stmtContext ) {
+            gtStmt = ( Amt_gt_stmtContext )stmt ;
+            rule = new LEClassifierAmtMatchRule( OpType.GT ) ;
+            rule.setAmt( Float.parseFloat( gtStmt.Amount().getText() ) ) ;
+        }
+        else if( stmt instanceof Amt_bw_stmtContext ) {
+            bwStmt = ( Amt_bw_stmtContext )stmt ;
+            rule = new LEClassifierAmtMatchRule( OpType.BW ) ;
+            rule.setMinAmt( Float.parseFloat( bwStmt.Amount( 0 ).getText() ) ) ;
+            rule.setMaxAmt( Float.parseFloat( bwStmt.Amount( 1 ).getText() ) ) ;
+        }
+        return rule ;
     }
 }

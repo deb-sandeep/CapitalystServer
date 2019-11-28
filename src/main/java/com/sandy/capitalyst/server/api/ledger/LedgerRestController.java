@@ -48,12 +48,14 @@ public class LedgerRestController {
     
     private List<LedgerEntry> searchEntries( LedgerSearchCriteria sc ) {
         
+        List<LedgerEntry> results = null ;
+        
         if( sc.getLowerAmtThreshold() == null && 
             sc.getUpperAmtThreshold() == null ) {
             
-            return alRepo.findEntries( sc.getAccountId(),
-                                       sc.getStartDate(),
-                                       sc.getEndDate() ) ;
+            results = alRepo.findEntries( sc.getAccountId(),
+                                          sc.getStartDate(),
+                                          sc.getEndDate() ) ;
         }
         else if( sc.getLowerAmtThreshold() != null || 
                  sc.getUpperAmtThreshold() != null ) {
@@ -66,12 +68,22 @@ public class LedgerRestController {
             log.debug( "Lower limit = " + lowerLim ) ;
             log.debug( "Upper limit = " + upperLim ) ;
             
-            return alRepo.findEntries( sc.getAccountId(),
-                                       sc.getStartDate(),
-                                       sc.getEndDate(),
-                                       lowerLim, upperLim ) ;
+            results = alRepo.findEntries( sc.getAccountId(),
+                                          sc.getStartDate(),
+                                          sc.getEndDate(),
+                                          lowerLim, upperLim ) ;
         }
-        return null ;
+        
+        if( results != null && sc.isShowOnlyUnclassified() ) {
+            for( Iterator<LedgerEntry> entries = results.iterator(); entries.hasNext(); ) {
+                LedgerEntry entry = entries.next() ;
+                if( StringUtil.isNotEmptyOrNull( entry.getL1Cat() ) ) {
+                    entries.remove() ;
+                }
+            }
+        }
+        
+        return results ;
     }
     
     private List<LedgerEntry> filterResultsByCustomRule( 

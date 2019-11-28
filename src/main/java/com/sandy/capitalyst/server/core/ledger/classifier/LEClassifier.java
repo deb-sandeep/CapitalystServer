@@ -58,6 +58,48 @@ public class LEClassifier {
         }
     }
     
+    public void runClassification( LedgerEntryClassificationRule lecr ) {
+        
+        String ruleName = lecr.getRuleName() ;
+        log.debug( "Running Ledger Classifier for rule " + ruleName ) ;
+        
+        LEClassifierRule rule = ruleBuilder.buildClassifier( lecr.getRuleText() ) ;
+        
+        List<LedgerEntry> entriesToSave = new ArrayList<>() ;
+        Iterable<LedgerEntry> entries = lRepo.findAll() ;
+        
+        boolean classifyEntry = false ;
+        for( LedgerEntry entry : entries ) {
+            classifyEntry = false ;
+            if( config.isClassifyOnlyUnclassifiedEntries() ) {
+                if( isUnclassifiedEntry( entry ) ) {
+                    classifyEntry = true ;
+                }
+            }
+            else {
+                classifyEntry = true ;
+            }
+            
+            if( classifyEntry ) {
+                if( ( lecr.isICreditClassifier() && entry.isCredit() ) || 
+                    ( !lecr.isICreditClassifier() && !entry.isCredit() ) ) {
+                    
+                    if( rule.isRuleMatched( entry ) ) {
+                        entry.setL1Cat( lecr.getL1Category() ) ;
+                        entry.setL2Cat( lecr.getL2Category() ) ;
+                        entry.setNotes( lecr.getRuleName() ) ;
+                        entriesToSave.add( entry ) ;
+                    }
+                }
+            }
+        }
+        
+        if( !entriesToSave.isEmpty() ) {
+            log.debug( "Classified " + entriesToSave.size() + " entries." ) ;
+            lRepo.saveAll( entriesToSave ) ;
+        }
+    }
+    
     public void runClassification() {
         log.debug( "Running Ledger Classifier" ) ;
         List<LedgerEntry> entriesToSave = new ArrayList<>() ;
@@ -68,9 +110,7 @@ public class LEClassifier {
         
         for( LedgerEntry entry : entries ) {
             if( config.isClassifyOnlyUnclassifiedEntries() ) {
-                if( StringUtil.isEmptyOrNull( entry.getL1Cat() ) || 
-                    StringUtil.isEmptyOrNull( entry.getL2Cat() ) ||
-                    StringUtil.isEmptyOrNull( entry.getNotes() ) ) {
+                if( isUnclassifiedEntry( entry ) ) {
                     classifyEntry( entry, entriesToSave ) ;
                 }
             }
@@ -104,4 +144,15 @@ public class LEClassifier {
             }
         }
     }
+    
+    private boolean isUnclassifiedEntry( LedgerEntry entry ) {
+        
+        if( StringUtil.isEmptyOrNull( entry.getL1Cat() ) || 
+            StringUtil.isEmptyOrNull( entry.getL2Cat() ) ||
+            StringUtil.isEmptyOrNull( entry.getNotes() ) ) {
+            return true ;
+        }
+        return false ;
+    }
+
 }

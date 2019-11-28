@@ -15,7 +15,7 @@ remark_match :
     'remark' 'like' Value ;
     
 amt_match :
-    amt_gt_stmt | amt_lt_stmt | amt_eq_stmt | amt_between_stmt ;
+    amt_gt_stmt | amt_lt_stmt | amt_eq_stmt | amt_bw_stmt ;
 
 amt_gt_stmt :
     'amt' '>' Amount ;
@@ -26,23 +26,27 @@ amt_lt_stmt :
 amt_eq_stmt :
     'amt' '=' Amount ;
     
-amt_between_stmt :
-    'amt' '<>' MinAmount MaxAmount ;
+amt_bw_stmt :
+    'amt' '<>' Amount ':' Amount ;
 
 neg_op : 'NOT' ;
 
 binary_op : 'AND' | 'OR' ;
 
 Value              : STRING ;
-Amount             : INT ;
-MinAmount          : INT ;
-MaxAmount          : INT ;
+Amount             : FLOAT ;
 
 ID                 : (LETTER|DIGIT)+ ;
 INT                : (DIGIT)+ ;
 LETTER             : [\-a-zA-Z\u0080-\u00FF\u002e\u007e\u0040\u0023\u0024\u0025\u005e\u0026\u002a\u005f\u002b\u003f\u003a\u0027\u002f] ;
 DIGIT              : [0-9] ;
 STRING             : '"' ('\\"'|~'"')*? '"' ;
+FLOAT
+                   :   ('0'..'9')+ '.' ('0'..'9')*
+                   |   '.' ('0'..'9')+
+                   |   ('0'..'9')+
+                   |   '-' FLOAT
+                   ;
 
 WS                 : [ \t\n\r]+                     -> skip ;
 COMMENT            : '/*' .*? '*/'                  -> skip ;

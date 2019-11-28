@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryClassificationRule ;
@@ -83,7 +84,10 @@ public class LedgerClassificationRestController {
         
         if( input.isSaveRule() && 
             StringUtil.isNotEmptyOrNull( input.getRule() ) ) {
-            saveNewClassificationRule( input ) ;
+            LedgerEntryClassificationRule rule = null ;
+            rule = saveNewClassificationRule( input ) ;
+            
+            new LEClassifier().runClassification( rule ) ;
         }
         
         String notes = input.getNotes() ;
@@ -98,7 +102,8 @@ public class LedgerClassificationRestController {
                                     notes ) ;
     }
 
-    private void saveNewClassificationRule( LedgerClassificationInput input ) {
+    private LedgerEntryClassificationRule saveNewClassificationRule( 
+                                          LedgerClassificationInput input ) {
         log.debug( "Saving new classification rule" ) ;
         LedgerEntryClassificationRule newRule = null ;
         newRule = new LedgerEntryClassificationRule() ;
@@ -109,6 +114,7 @@ public class LedgerClassificationRestController {
         newRule.setRuleName( input.getRuleName() ) ;
         newRule.setLastUpdate( new Date( System.currentTimeMillis() ) ) ;
         leClassificationRuleRepo.save( newRule ) ;
+        return newRule ;
     }
 
     private void saveNewClassifier( LedgerClassificationInput input ) {

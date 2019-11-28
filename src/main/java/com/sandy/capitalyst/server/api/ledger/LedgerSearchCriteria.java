@@ -10,7 +10,8 @@ public class LedgerSearchCriteria {
     private Float lowerAmtThreshold = null ;
     private Float upperAmtThreshold = null ;
     private String customRule = null ;
-
+    private boolean showOnlyUnclassified = false ;
+    
     public LedgerSearchCriteria() {}
 
     public void setAccountId( Integer val ) {
@@ -61,6 +62,14 @@ public class LedgerSearchCriteria {
         this.customRule = customRule ;
     }
 
+    public boolean isShowOnlyUnclassified() {
+        return showOnlyUnclassified ;
+    }
+
+    public void setShowOnlyUnclassified( boolean bool ) {
+        this.showOnlyUnclassified = bool ;
+    }
+
     public String toString() {
         StringBuilder builder = new StringBuilder( "LedgerSearchCriteria [\n" ) ; 
 
@@ -70,6 +79,7 @@ public class LedgerSearchCriteria {
         builder.append( "   lowerAmtThreshold = " + this.lowerAmtThreshold + "\n" ) ;
         builder.append( "   upperAmtThreshold = " + this.upperAmtThreshold + "\n" ) ;
         builder.append( "   customRule = " + this.customRule + "\n" ) ;
+        builder.append( "   showOnlyUnclassified = " + this.showOnlyUnclassified + "\n" ) ;
         builder.append( "]" ) ;
         
         return builder.toString() ;
