@@ -16,7 +16,7 @@
 				        <label>L1 Category</label>
 				        <select class="form-field" 
 				                ng-model="userSel.l1Cat"
-				                ng-options="item for item in classificationCategories.l1Categories">
+				                ng-options="item for item in relevantCategoriesForSelectedEntries.l1Categories">
                             <option value=""></option>
 				        </select>
                         <input class='form-field' 
@@ -30,7 +30,7 @@
                         <label>L2 Category</label>
                         <select class="form-field" 
                                 ng-model="userSel.l2Cat"
-                                ng-options="item for item in classificationCategories.l2Categories.get(userSel.l1Cat)">
+                                ng-options="item for item in relevantCategoriesForSelectedEntries.l2Categories.get(userSel.l1Cat)">
                             <option value=""></option>
                         </select>
                         <input class='form-field' 
