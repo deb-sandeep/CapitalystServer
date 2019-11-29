@@ -5,6 +5,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
     var selectedEntries = [] ;
     var pivotSrcColNames = [ "Type", "L1", "L2", "Amount" ] ;
     var pivotSrcData = [] ;
+    var l1FilterSelections = [] ;
+    var l2FilterSelections = [] ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Ledger View" ;
@@ -185,7 +187,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     $scope.entryFilterTextChanged = function() {
         $scope.bulkSelState.value = false ;
-        filterEntries() ;
+        filterEntries( true ) ;
     }
     
     $scope.selectPrevMonth = function() {
@@ -197,7 +199,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.showOnlyUnclassifiedCriteriaChanged = function() {
-        filterEntries() ;
+        filterEntries( true ) ;
     }
 
     // --- [END] Scope functions
@@ -296,7 +298,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
                     entry.visible = true ;
                     $scope.ledgerEntries.push( entry ) ;
                 }
-                filterEntries() ;
+                resetPivotCatSelection() ;
+                filterEntries( true ) ;
                 fetchClassificationCategories() ;
             }, 
             function( error ){
@@ -422,7 +425,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }) ;
     }
     
-    function filterEntries() {
+    function filterEntries( refreshPivot ) {
         
         pivotSrcData = [] ;
         
@@ -443,14 +446,30 @@ capitalystNgApp.controller( 'LedgerHomeController',
                 }
             }
             
-            if( $scope.searchQuery.showOnlyUnclassified ) {
+            if( $scope.searchQuery.showOnlyUnclassified && entry.visible ) {
                 if( entry.l1Cat != null ) {
                     entry.visible = false ;
                 }
             }
             
             if( entry.visible ) {
-                var type = ( entry.amount > 0 ? "Income" : "Expense" ) ;
+                entry.visible = !( l1FilterSelections.length > 0 || 
+                                   l2FilterSelections.length > 0 ) ;
+                
+                if( l1FilterSelections.length > 0 && 
+                    l1FilterSelections.indexOf( entry.l1Cat ) != -1 ) {
+                    entry.visible = true ;
+                }
+                
+                if( !entry.visible && 
+                    l2FilterSelections.length > 0 && 
+                    l2FilterSelections.indexOf( entry.l2Cat ) != -1 ) {
+                    entry.visible = true ;
+                }
+            }
+            
+            if( entry.visible ) {
+                var type = entry.amount > 0 ? "Income" : "Expense" ;
                 pivotSrcData.push( [ 
                     type, 
                     entry.l1Cat, 
@@ -460,7 +479,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
             }
         }
         
-        refreshPivotTable() ;
+        if( refreshPivot ) refreshPivotTable() ;
     }
     
     function refreshPivotTable() {
@@ -473,8 +492,10 @@ capitalystNgApp.controller( 'LedgerHomeController',
         pivotTable.initializePivotTable( [ "Type", "L1", "L2" ], "Type", "Amount" ) ;
         pivotTable.renderPivotTable( "pivot_table_div", "Ledger Pivot", 
                                      ledgerPivotRenderHelperCallback, 
+                                     ledgerPivotRowSelectionCallback,
                                      false, false ) ;
         pivotTable.expandFirstLevel() ;
+        resetPivotCatSelection() ;
     }
     
     function ledgerPivotRenderHelperCallback( rowIndex, colIndex, cellData ) {
@@ -501,6 +522,27 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }
         return fmt ;
     }
+    
+    function ledgerPivotRowSelectionCallback( depth, selected, rowCellValues ) {
+        var cat = rowCellValues[0] ;
+        var catArray = null ;
+        
+        if( depth == 2 )     { catArray = l1FilterSelections ; }
+        else if( depth == 3 ){ catArray = l2FilterSelections ; }
+        
+        if( catArray != null ) {
+            if( selected ) {
+                catArray.push( cat ) ;
+            }
+            else {
+                var index = catArray.indexOf( cat ) ;
+                if ( index != -1 )catArray.splice( index, 1 ) ;
+            }
+        }
+        
+        filterEntries( false ) ;
+        $scope.$apply() ;
+    }
 
     function selectPrevNextMonth( isNext ) {
         
@@ -523,10 +565,14 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     function refreshDatePickerLabel() {
-        
         var crit = $scope.searchQuery ;
-        var text = crit.startDate.format(' MM D, YYYY') + ' - ' + 
+        var text = crit.startDate.format('MMM D, YYYY') + ' - ' + 
                    crit.endDate.format('MMM D, YYYY') ; 
         $('#ledgerDuration span').html( text ) ;
+    }
+    
+    function resetPivotCatSelection() {
+        l1FilterSelections.length = 0 ;
+        l2FilterSelections.length = 0 ;
     }
 } ) ;

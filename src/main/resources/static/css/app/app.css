@@ -79,3 +79,7 @@ table.treetable {
     line-height: 1;
     margin: .6em 0 1.8em 0;
 }
+
+.pivot-row-selected {
+    background-color: yellow !important;	
+}

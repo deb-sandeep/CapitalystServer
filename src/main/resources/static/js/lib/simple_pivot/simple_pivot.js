@@ -388,16 +388,25 @@ function PivotTable() {
         }
     }
 
-    this.renderPivotTable = function( divName, caption, renderHelperCallback, expandAll, showColumns ) {
+    this.renderPivotTable = function( divName, caption, 
+                                     renderHelperCallback,
+                                     selectionCallback,
+                                     expandAll, showColumns ) {
 
         caption = typeof caption !== 'undefined' ? caption : "" ;
-        renderHelperCallback = typeof renderHelperCallback !== 'undefined' ? renderHelperCallback : null ;
+        renderHelperCallback = typeof renderHelperCallback !== 'undefined' ? 
+                              renderHelperCallback : null ;
 
         var tableId = divName + "_table" ;
         var renderString = "<table border='1' id='" + tableId + "'>" ;
         renderString += "<caption>" + caption + "</caption>" ;
-        renderString += getPivotTableHeaderRenderString( this.dataGrid, renderHelperCallback, showColumns ) ;
-        renderString += getPivotTableBodyRenderString( this.dataGrid, this.parentRowIds, renderHelperCallback, showColumns ) ;
+        renderString += getPivotTableHeaderRenderString( this.dataGrid, 
+                                                         renderHelperCallback, 
+                                                         showColumns ) ;
+        renderString += getPivotTableBodyRenderString( this.dataGrid, 
+                                                       this.parentRowIds, 
+                                                       renderHelperCallback, 
+                                                       showColumns ) ;
         renderString += "</table>" ;
 
         document.getElementById( divName ).innerHTML = renderString ;
@@ -408,8 +417,28 @@ function PivotTable() {
         }
 
         this.pivotTableId = tableId ;
+        if( selectionCallback != null ) {
+            var nodes = $( "#" + this.pivotTableId + " tbody tr" ) ;
+            for( var i=0; i<nodes.length; i++ ) {
+                attachHandler( nodes[i], selectionCallback ) ;
+            }
+        }
     }
-
+    
+    function attachHandler( node, selectionCallback ) {
+        node.onclick = function() {
+            node.classList.toggle( 'pivot-row-selected' ) ;
+            
+            var selected = node.classList.contains( 'pivot-row-selected' ) ;
+            var depth = node.attributes['depth'].nodeValue ;
+            var cellValues = [] ;
+            for( var i=0; i<node.children.length; i++ ) {
+                cellValues.push( node.children[i].innerText.trim() ) ;
+            }
+            selectionCallback( depth, selected, cellValues ) ;
+        } ;
+    }
+    
     this.expandFirstRow = function() {
         if( this.dataGrid.length > 2 ) {
             $( "#" + this.pivotTableId ).treetable( "expandNode", "2" ) ;
@@ -421,7 +450,7 @@ function PivotTable() {
             }
         }
     }
-
+    
     this.expandFirstLevel = function() {
         var nodes = $( "#" + this.pivotTableId + " tbody tr").not( "[data-tt-parent-id]" ) ;
         for( var i=0; i<nodes.length; i++ ) {
@@ -463,26 +492,42 @@ function PivotTable() {
         return renderString ;
     }
 
-    var getPivotTableBodyRenderString = function( grid, parentRowIds, renderHelperCallback, showColumns ) {
+    var getPivotTableBodyRenderString = function( 
+                    grid, parentRowIds, renderHelperCallback, showColumns ) {
 
         var renderString = "<tbody>" ;
         for( var rowIndex=2; rowIndex<grid.length; rowIndex++ ) {
+            var depth = calculateNodeDepth( parentRowIds, rowIndex ) ;
             renderString += getPivotTableBodyRowRenderString( 
                                                     rowIndex,
                                                     grid, 
                                                     rowIndex, 
                                                     parentRowIds[rowIndex],
+                                                    depth,
                                                     renderHelperCallback,
                                                     showColumns ) ;
         }
         renderString += "</tbody>" ;
         return renderString ;
     }
+    
+    var calculateNodeDepth = function( parentRowIds, rowIndex ) {
+        var depth = 0 ;
+        var parentRowNum = parentRowIds[ rowIndex ] ;
+        while( parentRowNum > -1 ) {
+            depth++ ;
+            parentRowNum = parentRowIds[ parentRowNum ] ;
+        }
+        return depth ;
+    }
 
-    var getPivotTableBodyRowRenderString = function( rowIndex, grid, rowNum, parentRowNum, renderHelperCallback, showColumns ) {
+    var getPivotTableBodyRowRenderString = function( 
+                                rowIndex, grid, rowNum, parentRowNum, 
+                                depth, renderHelperCallback, showColumns ) {
 
         var gridRow = grid[rowIndex] ;
         var attrList = "data-tt-id='" + rowNum + "'" ;
+        attrList += " depth='" + depth + "'"
         if( parentRowNum != 1 ) {
             attrList += " data-tt-parent-id='" + parentRowNum + "'" ;
         }
