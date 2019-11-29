@@ -453,19 +453,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
             }
             
             if( entry.visible ) {
-                entry.visible = !( l1FilterSelections.length > 0 || 
-                                   l2FilterSelections.length > 0 ) ;
-                
-                if( l1FilterSelections.length > 0 && 
-                    l1FilterSelections.indexOf( entry.l1Cat ) != -1 ) {
-                    entry.visible = true ;
-                }
-                
-                if( !entry.visible && 
-                    l2FilterSelections.length > 0 && 
-                    l2FilterSelections.indexOf( entry.l2Cat ) != -1 ) {
-                    entry.visible = true ;
-                }
+                determineVisibilityBasedOnPivotTableSelections( entry ) ;
             }
             
             if( entry.visible ) {
@@ -480,6 +468,23 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }
         
         if( refreshPivot ) refreshPivotTable() ;
+    }
+    
+    function determineVisibilityBasedOnPivotTableSelections( entry ) {
+        
+        entry.visible = !( l1FilterSelections.length > 0 || 
+                           l2FilterSelections.length > 0 ) ;
+        
+        if( l1FilterSelections.length > 0 && 
+            l1FilterSelections.indexOf( entry.l1Cat ) != -1 ) {
+            entry.visible = true ;
+        }
+        
+        if( !entry.visible && 
+            l2FilterSelections.length > 0 && 
+            l2FilterSelections.indexOf( entry.l2Cat ) != -1 ) {
+            entry.visible = true ;
+        }
     }
     
     function refreshPivotTable() {
@@ -527,7 +532,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
         var cat = rowCellValues[0] ;
         var catArray = null ;
         
-        if( depth == 2 )     { catArray = l1FilterSelections ; }
+        if( depth == 2 ){ catArray = l1FilterSelections ; }
         else if( depth == 3 ){ catArray = l2FilterSelections ; }
         
         if( catArray != null ) {
