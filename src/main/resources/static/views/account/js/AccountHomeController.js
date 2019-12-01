@@ -71,6 +71,10 @@ capitalystNgApp.controller( 'AccountHomeController',
                                 account.id ;
     }
     
+    $scope.showAccountStmtUploadDialog = function( account ) {
+        $( '#uploadAccountStmtDialog' ).modal( 'show' ) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

@@ -1,0 +1,40 @@
+<div class="modal-dialog" 
+     style="width:600px;"
+     ng-controller="UploadAccountStmtController">
+     
+  <div class="modal-content" >
+    <div class="modal-header" style="background-color:#E5E5E5;padding:5px">
+      <h4 class="modal-title">Upload Account Statements</h4>
+    </div>
+
+	<div class="modal-body"
+		style="background-color: #FEFEFE; padding: 5px">
+      <h4>Account : </h4>
+	  <button ngf-select="uploadFiles( $files, $invalidFiles )" 
+	          multiple>
+	      Select Files
+	  </button>
+	  <br>
+	  Files:
+	  <ul>
+	    <li ng-repeat="f in files" style="font:smaller">{{f.name}} {{f.$errorParam}}
+	      <span class="progress" ng-show="f.progress >= 0">
+	        <div style="width:{{f.progress}}%"  
+	            ng-bind="f.progress + '%'"></div>
+	      </span>
+	    </li>
+	    <li ng-repeat="f in errFiles" style="font:smaller">{{f.name}} {{f.$error}} {{f.$errorParam}}
+	    </li> 
+	  </ul>
+	  {{errorMsg}}
+	</div>
+
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-default btn-sm" 
+              ng-click="cancelDialog()">
+            Cancel
+      </button>
+    </div>
+  </div>
+</div>

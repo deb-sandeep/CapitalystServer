@@ -1,4 +1,4 @@
-var capitalystNgApp = angular.module( 'capitalystNgApp', ['ngRoute','cp.ngConfirm'] ) ;
+var capitalystNgApp = angular.module( 'capitalystNgApp', ['ngRoute','cp.ngConfirm','ngFileUpload'] ) ;
 
 
 

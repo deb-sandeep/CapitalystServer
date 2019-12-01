@@ -19,6 +19,7 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -43,6 +44,11 @@
                        ng-click="viewLedger( account )">
                  </span>&nbsp;
                </td>
+               <td>
+                 <span class="glyphicon glyphicon-cloud-upload"
+                       ng-click="showAccountStmtUploadDialog( account )">
+                 </span>&nbsp;
+               </td>
             </tr>
         </tbody>
     </table>
@@ -53,4 +59,11 @@
      role="dialog"
      data-backdrop="static"
      ng-include="'template/edit_account_dialog.html'">
+</div>
+
+<div id="uploadAccountStmtDialog"
+     class="modal"
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'template/upload_account_stmt_dialog.html'">
 </div>
