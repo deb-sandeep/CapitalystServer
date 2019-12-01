@@ -152,8 +152,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
 
         if( l1Cat == null || l2Cat == null ) {
             newCategory = true ;
-            l1Cat = ( l1Cat == null ) ? l1CatName : l1Cat ;
-            l2Cat = ( l2Cat == null ) ? l2CatName : l2Cat ;
+            l1Cat = ( l1Cat == null ) ? input.l1CatNew : l1Cat ;
+            l2Cat = ( l2Cat == null ) ? input.l2CatNew : l2Cat ;
         }
         
         if( input.saveRule ) {

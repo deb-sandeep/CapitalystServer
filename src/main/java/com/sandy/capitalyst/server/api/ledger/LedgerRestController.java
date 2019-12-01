@@ -50,20 +50,20 @@ public class LedgerRestController {
         
         List<LedgerEntry> results = null ;
         
-        if( sc.getLowerAmtThreshold() == null && 
-            sc.getUpperAmtThreshold() == null ) {
+        if( sc.getMinAmt() == null && 
+            sc.getMaxAmt() == null ) {
             
             results = alRepo.findEntries( sc.getAccountId(),
                                           sc.getStartDate(),
                                           sc.getEndDate() ) ;
         }
-        else if( sc.getLowerAmtThreshold() != null || 
-                 sc.getUpperAmtThreshold() != null ) {
+        else if( sc.getMinAmt() != null || 
+                 sc.getMaxAmt() != null ) {
             
-            Float lowerLim = sc.getLowerAmtThreshold() == null ? 
-                             -Float.MAX_VALUE : sc.getLowerAmtThreshold() ;
-            Float upperLim = sc.getUpperAmtThreshold() == null ?
-                             Float.MAX_VALUE : sc.getUpperAmtThreshold() ;
+            Float lowerLim = sc.getMinAmt() == null ? 
+                             -Float.MAX_VALUE : sc.getMinAmt() ;
+            Float upperLim = sc.getMaxAmt() == null ?
+                             Float.MAX_VALUE : sc.getMaxAmt() ;
             
             log.debug( "Lower limit = " + lowerLim ) ;
             log.debug( "Upper limit = " + upperLim ) ;

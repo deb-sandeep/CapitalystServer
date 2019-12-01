@@ -23,10 +23,28 @@
 	        </li>
 	    </ul>
 	    Progress:
-	    <br>
 	    <span class="progress" ng-show="progress >= 0">
 	        <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
 	    </span>
+	    <br>
+	    <table class="table table-bordered table-compact">
+	       <thead>
+	            <tr class="success">
+	                <th>File</th>
+	                <th># Entries</th>
+	                <th># Imported</th>
+	                <th># Dup</th>
+	            </tr>
+	       </thead>
+	       <tbody>
+            <tr ng-repeat="entry in results">
+               <td>{{entry.fileName}}</td>
+               <td>{{entry.numEntriesFound}}</td>
+               <td>{{entry.numEntriesImported}}</td>
+               <td>{{entry.numDuplicateEntries}}</td>
+            </tr>
+	       </tbody>
+	    </table>
 	</div>
 
     <div class="modal-footer">

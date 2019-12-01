@@ -5,7 +5,7 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
     
     // ---------------- Scope variables --------------------------------------
     $scope.files = null ;
-    $scope.result = null ;
+    $scope.results = null ;
     $scope.errorMsg = null ;
     $scope.progress = 0 ;
     
@@ -32,7 +32,7 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
             })
             .then( function( response ) {
                 $timeout( function () {
-                    $scope.result = response.data ;
+                    $scope.results = response.data ;
                 }) ;
             }, 
             function( response ) {

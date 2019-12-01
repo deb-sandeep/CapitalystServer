@@ -7,8 +7,8 @@ public class LedgerSearchCriteria {
     private Integer accountId = null ;
     private Date startDate = null ;
     private Date endDate = null ;
-    private Float lowerAmtThreshold = null ;
-    private Float upperAmtThreshold = null ;
+    private Float minAmt = null ;
+    private Float maxAmt = null ;
     private String customRule = null ;
     private boolean showOnlyUnclassified = false ;
     
@@ -38,22 +38,22 @@ public class LedgerSearchCriteria {
         return this.endDate ;
     }
 
-    public Float getLowerAmtThreshold() {
-        return lowerAmtThreshold ;
+    public Float getMinAmt() {
+        return minAmt ;
     }
 
-    public void setLowerAmtThreshold( Float amt ) {
-        this.lowerAmtThreshold = amt ;
+    public void setMinAmt( Float minAmt ) {
+        this.minAmt = minAmt ;
     }
 
-    public Float getUpperAmtThreshold() {
-        return upperAmtThreshold ;
+    public Float getMaxAmt() {
+        return maxAmt ;
     }
 
-    public void setUpperAmtThreshold( Float amt ) {
-        this.upperAmtThreshold = amt ;
+    public void setMaxAmt( Float maxAmt ) {
+        this.maxAmt = maxAmt ;
     }
-    
+
     public String getCustomRule() {
         return customRule ;
     }
@@ -76,8 +76,8 @@ public class LedgerSearchCriteria {
         builder.append( "   accountId = " + this.accountId + "\n" ) ;
         builder.append( "   startDate = " + this.startDate + "\n" ) ;
         builder.append( "   endDate = " + this.endDate + "\n" ) ;
-        builder.append( "   lowerAmtThreshold = " + this.lowerAmtThreshold + "\n" ) ;
-        builder.append( "   upperAmtThreshold = " + this.upperAmtThreshold + "\n" ) ;
+        builder.append( "   minAmt = " + this.minAmt + "\n" ) ;
+        builder.append( "   maxAmt = " + this.maxAmt + "\n" ) ;
         builder.append( "   customRule = " + this.customRule + "\n" ) ;
         builder.append( "   showOnlyUnclassified = " + this.showOnlyUnclassified + "\n" ) ;
         builder.append( "]" ) ;
