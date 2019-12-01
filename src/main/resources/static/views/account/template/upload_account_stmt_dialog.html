@@ -9,24 +9,20 @@
 
 	<div class="modal-body"
 		style="background-color: #FEFEFE; padding: 5px">
-      <h4>Account : </h4>
-	  <button ngf-select="uploadFiles( $files, $invalidFiles )" 
-	          multiple>
-	      Select Files
-	  </button>
-	  <br>
-	  Files:
-	  <ul>
-	    <li ng-repeat="f in files" style="font:smaller">{{f.name}} {{f.$errorParam}}
-	      <span class="progress" ng-show="f.progress >= 0">
-	        <div style="width:{{f.progress}}%"  
-	            ng-bind="f.progress + '%'"></div>
-	      </span>
-	    </li>
-	    <li ng-repeat="f in errFiles" style="font:smaller">{{f.name}} {{f.$error}} {{f.$errorParam}}
-	    </li> 
-	  </ul>
-	  {{errorMsg}}
+        <b>Account : </b> {{$parent.stmtUploadAccount.accountNumber }} ::
+                          {{$parent.stmtUploadAccount.shortName}}
+        <span style="height:10px;display:block;"></span>
+	    <button ngf-select="uploadFiles($files)" multiple>Select Files</button>
+	    <br>
+	    Files:
+	    <ul>
+	        <li ng-repeat="f in files" style="font:smaller">
+	            {{f.name}}
+	        </li>
+	    </ul>
+	    <span class="progress" ng-show="progress >= 0">
+	        <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
+	    </span>
 	</div>
 
     <div class="modal-footer">

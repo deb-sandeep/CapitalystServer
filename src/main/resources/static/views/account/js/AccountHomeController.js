@@ -11,6 +11,8 @@ capitalystNgApp.controller( 'AccountHomeController',
         account : null
     } ;
     
+    $scope.stmtUploadAccount = null ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading AccountHomeController" ) ;
@@ -72,6 +74,7 @@ capitalystNgApp.controller( 'AccountHomeController',
     }
     
     $scope.showAccountStmtUploadDialog = function( account ) {
+        $scope.stmtUploadAccount = account ;
         $( '#uploadAccountStmtDialog' ).modal( 'show' ) ;
     }
     

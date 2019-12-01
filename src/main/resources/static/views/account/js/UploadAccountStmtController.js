@@ -1,5 +1,5 @@
 capitalystNgApp.controller( 'UploadAccountStmtController', 
-        function( $scope, $http, Upload ) {
+        function( $scope, $http, Upload, $timeout ) {
     
     // ---------------- Local variables --------------------------------------
     
@@ -15,29 +15,34 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
     // --- [START] Scope event listeners -------------------------------------
     
     // --- [START] Scope functions -------------------------------------------
-    $scope.uploadFiles = function( files, errFiles ) {
-        $scope.files = files;
-        $scope.errFiles = errFiles;
-        angular.forEach( files, function( file ) {
-            file.upload = Upload.upload( {
-                url: 'https://angular-file-upload-cors-srv.appspot.com/upload',
-                data: {file: file}
-            } ) ;
-
-            file.upload.then( function ( response ) {
+    $scope.uploadFiles = function( files ) {
+        $scope.files = files ;
+        if( files && files.length ) {
+            Upload.upload( {
+                url: '/Account/Statement/Upload',
+                data: {
+                    files: files
+                }
+            } )
+            .then( function( response ) {
                 $timeout( function () {
-                    file.result = response.data;
+                    $scope.result = response.data ;
                 } ) ;
             }, 
             function( response ) {
-                if( response.status > 0 )
-                    $scope.errorMsg = response.status + ': ' + response.data ;
-            },
+                if( response.status > 0 ) {
+                    $scope.errorMsg = response.status + ': ' + response.data;
+                }
+            }, 
             function( evt ) {
-                file.progress = Math.min(100, parseInt(100.0 * 
-                                         evt.loaded / evt.total) ) ;
-            } ) ;
-        } ) ;
+                var pct = parseInt( 100.0 * evt.loaded / evt.total ) ;
+                $scope.progress = Math.min( 100, pct ) ;
+            });
+        }
+    }
+    
+    $scope.cancelDialog = function() {
+        $( '#uploadAccountStmtDialog' ).modal( 'hide' ) ;
     }
     
     // --- [END] Scope functions
