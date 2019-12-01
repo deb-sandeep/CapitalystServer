@@ -4,6 +4,10 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
+    $scope.files = null ;
+    $scope.result = null ;
+    $scope.errorMsg = null ;
+    $scope.progress = 0 ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -16,29 +20,32 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
     
     // --- [START] Scope functions -------------------------------------------
     $scope.uploadFiles = function( files ) {
+        resetState() ;
         $scope.files = files ;
         if( files && files.length ) {
             Upload.upload( {
                 url: '/Account/Statement/Upload',
+                arrayKey:'',
                 data: {
-                    files: files
+                    files: files,
+                    accountId : $scope.$parent.stmtUploadAccount.id
                 }
-            } )
+            })
             .then( function( response ) {
                 $timeout( function () {
                     $scope.result = response.data ;
-                } ) ;
+                }) ;
             }, 
             function( response ) {
                 if( response.status > 0 ) {
-                    $scope.errorMsg = response.status + ': ' + response.data;
+                    $scope.errorMsg = response.status + ': ' + response.data ;
                 }
             }, 
             function( evt ) {
-                var pct = parseInt( 100.0 * evt.loaded / evt.total ) ;
+                var pct = parseInt(100.0 * evt.loaded / evt.total) ;
                 $scope.progress = Math.min( 100, pct ) ;
-            });
-        }
+            } ) ;
+        } 
     }
     
     $scope.cancelDialog = function() {
@@ -52,6 +59,12 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
     function initializeController() {
     }
     
+    function resetState() {
+        $scope.files = null ;
+        $scope.result = null ;
+        $scope.errorMsg = null ;
+        $scope.progress = null ;
+    }
     
     // ------------------- Server comm functions -----------------------------
 } ) ;

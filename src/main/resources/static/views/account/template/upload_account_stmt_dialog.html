@@ -12,14 +12,18 @@
         <b>Account : </b> {{$parent.stmtUploadAccount.accountNumber }} ::
                           {{$parent.stmtUploadAccount.shortName}}
         <span style="height:10px;display:block;"></span>
-	    <button ngf-select="uploadFiles($files)" multiple>Select Files</button>
-	    <br>
+        
+        <button ngf-select="uploadFiles($files)" multiple>Select Files</button>
+		
+		<br>
 	    Files:
 	    <ul>
 	        <li ng-repeat="f in files" style="font:smaller">
 	            {{f.name}}
 	        </li>
 	    </ul>
+	    Progress:
+	    <br>
 	    <span class="progress" ng-show="progress >= 0">
 	        <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
 	    </span>
