@@ -90,6 +90,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }
     }
     
+    $scope.selectAndCategorize = function( entry ) {
+        entry.selected = true ;
+        $scope.showCategorizationDialog() ;
+    }
+    
     $scope.showCategorizationDialog = function() {
         var numEntriesSelected = 0 ;
         var entryTypeCount = 0 ;

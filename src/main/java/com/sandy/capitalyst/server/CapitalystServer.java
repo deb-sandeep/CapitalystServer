@@ -59,17 +59,6 @@ public class CapitalystServer
         }
     }
     
-    public void importLedgerEntries() throws Exception {
-        Account account = accountIndexRepo.findByAccountNumber( "000501005212" ) ;
-        LedgerImporter li = LedgerImporterFactory.getLedgerImporter( account ) ;
-        
-        File dir = new File( "/home/sandeep/Downloads" ) ;
-        for( int year = 2011; year<=2019; year++ ) {
-            File file = new File( dir, "Stmt-" + year + ".xls" ) ;
-            li.importLedgerEntries( account, file ) ;
-        }
-    }
-    
     @Override
     public void setApplicationContext( ApplicationContext applicationContext )
             throws BeansException {

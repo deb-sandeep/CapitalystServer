@@ -20,6 +20,6 @@ public abstract class LedgerImporter {
         this.accountIndexRepo = appCtx.getBean( AccountIndexRepo.class ) ;
     }
 
-    public abstract void importLedgerEntries( Account account, File file )
+    public abstract LedgerImportResult importLedgerEntries( Account account, File file )
         throws Exception ;
 }

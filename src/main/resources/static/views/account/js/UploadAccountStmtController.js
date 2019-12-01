@@ -20,7 +20,6 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
     
     // --- [START] Scope functions -------------------------------------------
     $scope.uploadFiles = function( files ) {
-        resetState() ;
         $scope.files = files ;
         if( files && files.length ) {
             Upload.upload( {
@@ -48,7 +47,8 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
         } 
     }
     
-    $scope.cancelDialog = function() {
+    $scope.hideDialog = function() {
+        resetState() ;
         $( '#uploadAccountStmtDialog' ).modal( 'hide' ) ;
     }
     
@@ -63,7 +63,7 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
         $scope.files = null ;
         $scope.result = null ;
         $scope.errorMsg = null ;
-        $scope.progress = null ;
+        $scope.progress = 0 ;
     }
     
     // ------------------- Server comm functions -----------------------------

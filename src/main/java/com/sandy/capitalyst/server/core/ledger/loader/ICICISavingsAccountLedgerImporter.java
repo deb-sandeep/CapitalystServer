@@ -8,6 +8,7 @@ import java.util.List ;
 
 import org.apache.log4j.Logger ;
 
+import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.common.util.StringUtil ;
@@ -51,9 +52,14 @@ public class ICICISavingsAccountLedgerImporter extends LedgerImporter {
         }
     }
     
+    private LEClassifier classifier = new LEClassifier() ;
+    
     @Override
-    public void importLedgerEntries( Account account, File file ) 
+    public LedgerImportResult importLedgerEntries( Account account, File file ) 
         throws Exception {
+        
+        LedgerImportResult result = new LedgerImportResult() ;
+        result.setFileName( file.getName() ) ;
         
         log.debug( "Parsing ledger entries for account " + account.getShortName() ) ;
         XLSWrapper wrapper = new XLSWrapper( file ) ;
@@ -61,6 +67,7 @@ public class ICICISavingsAccountLedgerImporter extends LedgerImporter {
         List<LedgerEntry> entries = parseLedgerEntries( account, wrapper ) ;
         log.debug( "Ledger entries parsed." ) ;
         log.debug( "\tNum ledger entries = " + entries.size() ) ;
+        result.setNumEntriesFound( entries.size() ) ;
         
         LedgerEntry possibleDup = null ;
         for( LedgerEntry entry : entries ) {
@@ -71,12 +78,15 @@ public class ICICISavingsAccountLedgerImporter extends LedgerImporter {
                            entry.getRemarks() + " :: " + 
                            entry.getAmount() ) ; 
                 ledgerRepo.save( entry ) ;
+                result.incrementImportCount() ;
             }
             else {
                 log.info( "Found a duplicate entry " + entry ) ;
+                result.incrementDupCount() ;
             }
         }
         log.debug( "Ledger entries saved" ) ;
+        return result ;
     }
     
     private List<LedgerEntry> parseLedgerEntries( Account account, 
@@ -121,8 +131,9 @@ public class ICICISavingsAccountLedgerImporter extends LedgerImporter {
         }
         
         entry.setBalance( Float.parseFloat( row.getCellValue( 7 ) ) ) ;
-        
         entry.generateHash() ;
+        
+        classifier.classifyEntry( entry, null ) ;
 
         return entry ;
     }

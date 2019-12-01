@@ -125,7 +125,7 @@ public class LEClassifier {
         }
     }
     
-    private void classifyEntry( LedgerEntry entry, 
+    public void classifyEntry( LedgerEntry entry, 
                                 List<LedgerEntry> entriesToSave ) {
         
         Map<String, RuleData> ruleSet = null ;
@@ -136,7 +136,10 @@ public class LEClassifier {
                 entry.setL1Cat( ruleData.ruleMeta.getL1Category() ) ;
                 entry.setL2Cat( ruleData.ruleMeta.getL2Category() ) ;
                 entry.setNotes( ruleData.ruleMeta.getRuleName() ) ;
-                entriesToSave.add( entry ) ;
+                
+                if( entriesToSave != null ) {
+                    entriesToSave.add( entry ) ;
+                }
                 
                 log.debug( "Rule : " + entry.getNotes() + " matched " + entry ) ;
                 

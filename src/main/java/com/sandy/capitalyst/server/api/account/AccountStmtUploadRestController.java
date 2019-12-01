@@ -1,9 +1,16 @@
 package com.sandy.capitalyst.server.api.account;
 
+import static com.sandy.capitalyst.server.core.ledger.loader.LedgerImporterFactory.getLedgerImporter ;
+
+import java.io.File ;
+import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
+import java.util.Date ;
 import java.util.List ;
 
+import org.apache.commons.io.FileUtils ;
 import org.apache.log4j.Logger ;
+import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
 import org.springframework.web.bind.annotation.PostMapping ;
@@ -11,27 +18,46 @@ import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 import org.springframework.web.multipart.MultipartFile ;
 
+import com.sandy.capitalyst.server.config.CapitalystConfig ;
+import com.sandy.capitalyst.server.core.ledger.loader.LedgerImportResult ;
+import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporter ;
+import com.sandy.capitalyst.server.dao.account.Account ;
+import com.sandy.capitalyst.server.dao.account.AccountIndexRepo ;
+
 @RestController
 public class AccountStmtUploadRestController {
 
     private static final Logger log = Logger.getLogger( AccountStmtUploadRestController.class ) ;
     
+    private static final SimpleDateFormat SDF = new SimpleDateFormat( "YYYYMMdd" ) ;
+
+    @Autowired
+    private CapitalystConfig config = null ;
+    
+    @Autowired
+    private AccountIndexRepo aiRepo = null ;
+    
     @PostMapping( "/Account/Statement/Upload" ) 
-    public ResponseEntity<List<StmtUploadResult>> uploadAccountStatements( 
+    public ResponseEntity<List<LedgerImportResult>> uploadAccountStatements( 
             @RequestParam( "files" ) MultipartFile[] files,
             @RequestParam( "accountId" ) Integer accountId ) {
         try {
-            List<StmtUploadResult> results = new ArrayList<>() ;
-            log.debug( "Saving uploaded statements. " ) ;
-            log.debug( "Account id = " + accountId ) ;
-            log.debug( "Number of files = " + files.length ) ;
+            
+            log.debug( "Uploading stmts for accountId = " + accountId ) ;
+            
+            List<LedgerImportResult> results = new ArrayList<>() ;
+            Account account = aiRepo.findById( accountId ).get() ; 
+            File uploadDir = getUploadFileStorageDir( account ) ;
+            
+            List<File> uploadedFiles = new ArrayList<>() ;
             for( MultipartFile file : files ) {
-                log.debug( "File -->\n--------------------------------------" ) ;
-                log.debug( "\t " + file.getOriginalFilename() ) ;
-                log.debug( "\t " + file.getSize() ) ;
-                log.debug( "\t " + new String( file.getBytes() ) ) ;
-                log.debug( "\n\n" );
+                uploadedFiles.add( saveMultipartFile( file, uploadDir ) ) ;
             }
+            
+            for( File file : uploadedFiles ) {
+                results.add( importLedgerEntries( file, account ) ) ;
+            }
+            
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( results ) ;
         }
@@ -40,5 +66,41 @@ public class AccountStmtUploadRestController {
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( null ) ;
         }
+    }
+    
+    private File getUploadFileStorageDir( Account account ) {
+        File wkspDir = config.getWorkspaceDir() ;
+        File uploadDir = new File( wkspDir, "account_stmts/" + account.getAccountNumber() ) ;
+        if( !uploadDir.exists() ) {
+            uploadDir.mkdirs() ;
+        }
+        return uploadDir ;
+    }
+    
+    private File saveMultipartFile( MultipartFile mpFile, File uploadDir ) 
+        throws Exception {
+        
+        String destFileName = SDF.format( new Date() ) + 
+                              "_" + 
+                              mpFile.getOriginalFilename() ;
+        
+        File destFile = new File( uploadDir, destFileName ) ;
+        
+        log.debug( "\tSaving file - " + destFile.getAbsolutePath() ) ;
+        FileUtils.writeByteArrayToFile( destFile, mpFile.getBytes() ) ;
+        return destFile ;
+    }
+    
+    private LedgerImportResult importLedgerEntries( File file, Account account ) 
+        throws Exception {
+        
+        LedgerImportResult result = new LedgerImportResult() ;
+        
+        log.debug( "\nImporting ledger entries from " + file.getAbsolutePath() ) ;
+        LedgerImporter importer = getLedgerImporter( account ) ;
+        result = importer.importLedgerEntries( account, file ) ;
+        result.setFileName( file.getName().substring( 9 ) ) ;
+        
+        return result ;
     }
 }

@@ -1,8 +1,8 @@
-package com.sandy.capitalyst.server.api.account;
+package com.sandy.capitalyst.server.core.ledger.loader;
 
 import java.util.List ;
 
-public class StmtUploadResult {
+public class LedgerImportResult {
 
     private String fileName = null ;
     private int numEntriesFound = 0 ;
@@ -10,7 +10,7 @@ public class StmtUploadResult {
     private int numDuplicateEntries = 0 ;
     private List<String> errMsgs = null ;
 
-    public StmtUploadResult() {}
+    public LedgerImportResult() {}
 
     public void setFileName( String val ) {
         this.fileName = val ;
@@ -50,6 +50,14 @@ public class StmtUploadResult {
         
     public List<String> getErrMsgs() {
         return this.errMsgs ;
+    }
+    
+    public void incrementImportCount() {
+        this.numEntriesImported++ ;
+    }
+    
+    public void incrementDupCount() {
+        this.numDuplicateEntries++ ;
     }
 
     public String toString() {
