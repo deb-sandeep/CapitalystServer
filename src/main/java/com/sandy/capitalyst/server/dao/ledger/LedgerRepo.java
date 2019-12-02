@@ -66,4 +66,19 @@ public interface LedgerRepo
                                       @Param( "l1Cat" ) String l1Cat,
                                       @Param( "l2Cat" ) String l2Cat,
                                       @Param( "notes" ) String notes ) ;
+    
+    @Query( nativeQuery = true,
+            value =   
+            "SELECT "
+          + "    le.balance "
+          + "FROM "
+          + "    account_ledger le "
+          + "WHERE "
+          + "    le.account_id = :accountId "
+          + "ORDER BY "
+          + "    le.value_date DESC, "
+          + "    le.id DESC "
+          + "LIMIT 1"
+    )
+    public Float getAccountBalance( @Param( "accountId" ) Integer accountId ) ;
 }

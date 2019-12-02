@@ -1,7 +1,5 @@
 package com.sandy.capitalyst.server ;
 
-import java.io.File ;
-
 import org.apache.log4j.Logger ;
 import org.springframework.beans.BeansException ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -14,17 +12,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
 import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
-import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporter ;
-import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporterFactory ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.AccountIndexRepo ;
+import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
 import com.sandy.common.bus.EventBus ;
 
 @SpringBootApplication
 public class CapitalystServer 
     implements ApplicationContextAware, WebMvcConfigurer {
 
-    private static final Logger log = Logger.getLogger( CapitalystServer.class ) ;
+    static final Logger log = Logger.getLogger( CapitalystServer.class ) ;
     
     private static ApplicationContext APP_CTX   = null ;
     private static CapitalystServer   APP       = null ;
@@ -43,11 +40,13 @@ public class CapitalystServer
         return APP ;
     }
 
-    // ---------------- Instance methods start ---------------------------------
-
+    // ---------------- Instance methods start ------------------------------
     @Autowired
-    private AccountIndexRepo accountIndexRepo = null ;
+    private AccountIndexRepo aiRepo = null ;
     
+    @Autowired
+    private LedgerRepo ledgerRepo = null ;
+
     public CapitalystServer() {
         APP = this ;
     }
@@ -56,6 +55,19 @@ public class CapitalystServer
         if( CapitalystServer.getConfig().isRunClassificationOnStartup() ) {
             LEClassifier classifier = new LEClassifier() ;
             classifier.runClassification() ;
+        }
+        updateAccountBalanceOnStartup() ;
+    }
+    
+    private void updateAccountBalanceOnStartup() {
+        
+        for( Account account : aiRepo.findAll() ) {
+            log.debug( "Updating balance for account = " + account.getShortName() ) ;
+            Float balance = this.ledgerRepo.getAccountBalance( account.getId() ) ;
+            if( balance != null ) {
+                account.setBalance( balance ) ;
+                this.aiRepo.save( account ) ;
+            }
         }
     }
     

@@ -16,6 +16,7 @@
                 <th>Type</th>
                 <th>Bank</th>
                 <th>Remark</th>
+                <th>Balance</th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -29,6 +30,7 @@
                <td>{{account.accountType}}</td>
                <td>{{account.bankName}}</td>
                <td>{{account.shortName}}</td>
+               <td class="fixed-font amt">{{account.balance | amt}}</td>
                <td>
 	             <span class="glyphicon glyphicon-pencil"
 	                   ng-click="editAccount( $index )">
@@ -51,6 +53,13 @@
                </td>
             </tr>
         </tbody>
+            <tr class="success">
+                <th colspan="5"></th>
+                <th class="fixed-font amt">{{totalBalance | amt}}</th>
+                <th colspan="4"></th>
+            </tr>
+        <tfoot>
+        </tfoot>
     </table>
 </div>
 

@@ -22,4 +22,12 @@ public abstract class LedgerImporter {
 
     public abstract LedgerImportResult importLedgerEntries( Account account, File file )
         throws Exception ;
+    
+    public void updateAccountBalance( Account account ) {
+        Float balance = this.ledgerRepo.getAccountBalance( account.getId() ) ;
+        if( balance != null ) {
+            account.setBalance( balance ) ;
+            this.accountIndexRepo.save( account ) ;
+        }
+    }
 }

@@ -12,6 +12,7 @@ capitalystNgApp.controller( 'AccountHomeController',
     } ;
     
     $scope.stmtUploadAccount = null ;
+    $scope.totalBalance = 0 ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -104,6 +105,9 @@ capitalystNgApp.controller( 'AccountHomeController',
         .then ( 
             function( response ){
                 $scope.accounts = response.data ;
+                angular.forEach( $scope.accounts, function( account, key ){
+                    $scope.totalBalance += account.balance ;
+                }) ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Error fetch accounts." ) ;

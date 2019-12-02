@@ -15,8 +15,9 @@ public class Account {
     private Integer id ;
     
     private String accountOwner = null ;
-    private String accountNumber = null ;
     private String accountType = null ;
+    private String accountNumber = null ;
+    private Float  balance = null ;
     private String shortName = null ;
     private String bankName = null ;
     private String bankBranch = null ;
@@ -85,5 +86,12 @@ public class Account {
     public void setDescription( String description ) {
         this.description = description ;
     }
-    
+
+    public Float getBalance() {
+        return balance ;
+    }
+
+    public void setBalance( Float balance ) {
+        this.balance = balance ;
+    }
 }

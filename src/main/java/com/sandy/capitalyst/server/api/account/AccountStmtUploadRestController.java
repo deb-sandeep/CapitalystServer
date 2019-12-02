@@ -48,6 +48,7 @@ public class AccountStmtUploadRestController {
             List<LedgerImportResult> results = new ArrayList<>() ;
             Account account = aiRepo.findById( accountId ).get() ; 
             File uploadDir = getUploadFileStorageDir( account ) ;
+            LedgerImporter importer = getLedgerImporter( account ) ;
             
             List<File> uploadedFiles = new ArrayList<>() ;
             for( MultipartFile file : files ) {
@@ -55,8 +56,10 @@ public class AccountStmtUploadRestController {
             }
             
             for( File file : uploadedFiles ) {
-                results.add( importLedgerEntries( file, account ) ) ;
+                results.add( importLedgerEntries( file, account, importer ) ) ;
             }
+
+            importer.updateAccountBalance( account ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( results ) ;
@@ -91,13 +94,13 @@ public class AccountStmtUploadRestController {
         return destFile ;
     }
     
-    private LedgerImportResult importLedgerEntries( File file, Account account ) 
+    private LedgerImportResult importLedgerEntries( 
+            File file, Account account, LedgerImporter importer ) 
         throws Exception {
         
         LedgerImportResult result = new LedgerImportResult() ;
         
         log.debug( "\nImporting ledger entries from " + file.getAbsolutePath() ) ;
-        LedgerImporter importer = getLedgerImporter( account ) ;
         result = importer.importLedgerEntries( account, file ) ;
         result.setFileName( file.getName().substring( 9 ) ) ;
         

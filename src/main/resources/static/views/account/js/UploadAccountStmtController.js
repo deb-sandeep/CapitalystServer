@@ -61,7 +61,7 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
     
     function resetState() {
         $scope.files = null ;
-        $scope.result = null ;
+        $scope.results = null ;
         $scope.errorMsg = null ;
         $scope.progress = 0 ;
     }

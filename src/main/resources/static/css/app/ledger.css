@@ -15,14 +15,6 @@
     padding: 0.5em 0.5em; 
 }
 
-.ledger-table td.fixed-font {
-    font-family:'Courier';
-}
-
-.ledger-table td.amt {
-    text-align:right;
-}
-
 .ledger-table .debit {
     color:red;
 }

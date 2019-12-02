@@ -83,3 +83,12 @@ table.treetable {
 .pivot-row-selected {
     background-color: yellow !important;	
 }
+
+
+.fixed-font {
+    font-family:'Courier';
+}
+
+.amt {
+    text-align:right;
+}

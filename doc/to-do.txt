@@ -1,2 +1,10 @@
-File upload for ledger
-Multiple accounts in ledger view
+X ICICI - Joint Account
+X ICICI - Ma A/C ledger 
+X ICICI - Deba
+X ICICI - Munni
+X Cheque payments are now identifiable
+
+Ledger multiple accounts
+Ledger account current balances
+SBI Ma Account
+    SBI acct statement parser

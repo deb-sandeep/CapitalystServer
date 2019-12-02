@@ -45,7 +45,10 @@
                         ng-model="entry.selected"/>
                </td>
                <td class="fixed-font">{{entry.valueDate}}</td>
-               <td class="remarks">{{entry.remarks}}</td>
+               <td class="remarks">{{entry.remarks}}
+               <span ng-if="entry.chequePayment"
+                     class="glyphicon glyphicon-map-marker"></span>
+               </td>
                <td class="fixed-font amt" ng-class="amtClass( entry.amount )">{{entry.amount | amt}}</td>
                <td class="remarks">{{entry.l1Cat}}</td>
                <td class="remarks">{{entry.l2Cat}}</td>
