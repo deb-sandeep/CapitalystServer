@@ -26,6 +26,8 @@
 	                           size="50"/>
                     </div>
                 </th>
+                <th ng-if="searchQuery.accountIds.length > 1">
+                </th>
                 <th class="js-sort-number">Amount</th>
                 <th>L1</th>
                 <th>L2</th>
@@ -45,7 +47,10 @@
                         ng-model="entry.selected"/>
                </td>
                <td class="fixed-font">{{entry.valueDate}}</td>
-               <td class="remarks">{{entry.remarks}}
+               <td class="remarks">{{entry.remarks | remark}}
+               <td ng-if="searchQuery.accountIds.length > 1">
+                    {{entry.account.accountOwner}}
+               </td>
                <span ng-if="entry.chequePayment"
                      class="glyphicon glyphicon-map-marker"></span>
                </td>

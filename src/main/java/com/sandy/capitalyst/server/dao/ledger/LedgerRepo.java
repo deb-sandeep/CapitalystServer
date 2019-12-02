@@ -21,13 +21,13 @@ public interface LedgerRepo
           + "FROM "
           + "    LedgerEntry le "
           + "WHERE "
-          + "    le.account.id = :accountId AND "
+          + "    le.account.id IN :accountIds AND "
           + "    le.valueDate between :startDate AND :endDate "
           + "ORDER BY "
           + "    le.valueDate DESC "
     )
     public List<LedgerEntry> findEntries( 
-                                    @Param( "accountId" ) Integer accountId,
+                                    @Param( "accountIds" ) int[] accountIds,
                                     @Param( "startDate" ) Date startDate,
                                     @Param( "endDate"   ) Date endDate ) ; 
     @Query( value =   
@@ -36,7 +36,7 @@ public interface LedgerRepo
           + "FROM "
           + "    LedgerEntry le "
           + "WHERE "
-          + "    le.account.id = :accountId AND "
+          + "    le.account.id IN :accountIds AND "
           + "    le.valueDate between :startDate AND :endDate AND "
           + "    le.amount >= :lowerAmt AND "
           + "    le.amount <= :upperAmt "
@@ -44,7 +44,7 @@ public interface LedgerRepo
           + "    le.valueDate DESC "
     )
     public List<LedgerEntry> findEntries( 
-                                    @Param( "accountId" ) Integer accountId,
+                                    @Param( "accountIds" ) int[] accountIds,
                                     @Param( "startDate" ) Date startDate,
                                     @Param( "endDate"   ) Date endDate,
                                     @Param( "lowerAmt"  ) Float lowerAmt,

@@ -70,8 +70,18 @@ capitalystNgApp.controller( 'AccountHomeController',
     }
     
     $scope.viewLedger = function( account ) {
-        $window.location.href = "/views/ledger/ledger.html?accountId=" + 
-                                account.id ;
+        
+        account.selected = true ;
+        
+        var selAccIds = [] ;
+        angular.forEach( $scope.accounts, function( account, key ){
+            if( account.selected ) {
+                selAccIds.push( account.id ) ;
+            }
+        }) ;
+        
+        $window.location.href = "/views/ledger/ledger.html?accountIds=" + 
+                                selAccIds.join() ;
     }
     
     $scope.showAccountStmtUploadDialog = function( account ) {
@@ -106,6 +116,7 @@ capitalystNgApp.controller( 'AccountHomeController',
             function( response ){
                 $scope.accounts = response.data ;
                 angular.forEach( $scope.accounts, function( account, key ){
+                    account.selected = false ;
                     $scope.totalBalance += account.balance ;
                 }) ;
             }, 

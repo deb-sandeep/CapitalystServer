@@ -2,9 +2,12 @@ package com.sandy.capitalyst.server.api.ledger;
 
 import java.util.Date ;
 
+import org.apache.commons.lang.ArrayUtils ;
+import org.apache.commons.lang.StringUtils ;
+
 public class LedgerSearchCriteria {
 
-    private Integer accountId = null ;
+    private int[] accountIds = null ;
     private Date startDate = null ;
     private Date endDate = null ;
     private Float minAmt = null ;
@@ -14,12 +17,12 @@ public class LedgerSearchCriteria {
     
     public LedgerSearchCriteria() {}
 
-    public void setAccountId( Integer val ) {
-        this.accountId = val ;
+    public void setAccountIds( int[] val ) {
+        this.accountIds = val ;
     }
         
-    public Integer getAccountId() {
-        return this.accountId ;
+    public int[] getAccountIds() {
+        return this.accountIds ;
     }
 
     public void setStartDate( Date val ) {
@@ -73,7 +76,7 @@ public class LedgerSearchCriteria {
     public String toString() {
         StringBuilder builder = new StringBuilder( "LedgerSearchCriteria [\n" ) ; 
 
-        builder.append( "   accountId = " + this.accountId + "\n" ) ;
+        builder.append( "   accountId = " + StringUtils.join( ArrayUtils.toObject( this.accountIds ), ",") + "\n" ) ;
         builder.append( "   startDate = " + this.startDate + "\n" ) ;
         builder.append( "   endDate = " + this.endDate + "\n" ) ;
         builder.append( "   minAmt = " + this.minAmt + "\n" ) ;

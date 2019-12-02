@@ -11,6 +11,7 @@
            style="width: auto !important;">
         <thead>
             <tr class="success">
+                <th></th>
                 <th>Owner</th>
                 <th>A/C #</th>
                 <th>Type</th>
@@ -25,6 +26,10 @@
         </thead>
         <tbody>
             <tr ng-repeat="account in accounts">
+               <td>
+                 <input type="checkbox" 
+                        ng-model="account.selected"/>
+               </td>
                <td>{{account.accountOwner}}</td>
                <td>{{account.accountNumber}}</td>
                <td>{{account.accountType}}</td>
@@ -54,7 +59,7 @@
             </tr>
         </tbody>
             <tr class="success">
-                <th colspan="5"></th>
+                <th colspan="6"></th>
                 <th class="fixed-font amt">{{totalBalance | amt}}</th>
                 <th colspan="4"></th>
             </tr>

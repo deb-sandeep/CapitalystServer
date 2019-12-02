@@ -13,7 +13,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.account = null ;
     
     $scope.searchQuery = {
-        accountId : null,
+        accountIds : [],
         startDate : moment().subtract(1, 'month').toDate(),
         endDate : moment().toDate(),
         minAmt : null,
@@ -214,8 +214,14 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     function initializeController() {
         var parameters = new URLSearchParams( window.location.search ) ;
-        var accountId = parameters.get( 'accountId' ) ;
-        $scope.searchQuery.accountId = accountId ;
+        var accountIds = parameters.get( 'accountIds' ) ;
+        
+        if( accountIds == null || accountIds.length == 0 ) {
+            $scope.searchQuery.accountIds = null ;
+        }
+        else {
+            $scope.searchQuery.accountIds = accountIds.split( "," ) ;
+        }
         initializeDateRange() ;
         fetchLedgerEntries() ;
     }
@@ -283,7 +289,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
     // ------------------- Server comm functions -----------------------------
     function fetchLedgerEntries() {
         
-        if( $scope.searchQuery.accountId == null ) return ;
+        if( $scope.searchQuery.accountIds == null || 
+            $scope.searchQuery.accountIds.length == 0 ) return ;
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.post( '/Ledger/Search', $scope.searchQuery )

@@ -53,7 +53,7 @@ public class LedgerRestController {
         if( sc.getMinAmt() == null && 
             sc.getMaxAmt() == null ) {
             
-            results = alRepo.findEntries( sc.getAccountId(),
+            results = alRepo.findEntries( sc.getAccountIds(),
                                           sc.getStartDate(),
                                           sc.getEndDate() ) ;
         }
@@ -68,7 +68,7 @@ public class LedgerRestController {
             log.debug( "Lower limit = " + lowerLim ) ;
             log.debug( "Upper limit = " + upperLim ) ;
             
-            results = alRepo.findEntries( sc.getAccountId(),
+            results = alRepo.findEntries( sc.getAccountIds(),
                                           sc.getStartDate(),
                                           sc.getEndDate(),
                                           lowerLim, upperLim ) ;
