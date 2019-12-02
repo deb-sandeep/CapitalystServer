@@ -2,13 +2,11 @@ package com.sandy.capitalyst.server.core.ledger.loader;
 
 import java.io.File ;
 import java.sql.Date ;
-import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.common.util.StringUtil ;
@@ -20,8 +18,6 @@ import com.sandy.common.xlsutil.XLSWrapper ;
 public class ICICISavingsAccountLedgerImporter extends LedgerImporter {
     
     static final Logger log = Logger.getLogger( ICICISavingsAccountLedgerImporter.class ) ;
-    
-    private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd/MM/yyyy" ) ;
     
     private class RowFilter implements XLSRowFilter {
         
@@ -52,49 +48,15 @@ public class ICICISavingsAccountLedgerImporter extends LedgerImporter {
         }
     }
     
-    private LEClassifier classifier = new LEClassifier() ;
-    
     @Override
-    public LedgerImportResult importLedgerEntries( Account account, File file ) 
+    public List<LedgerEntry> parseLedgerEntries( Account account, 
+                                                 File file ) 
         throws Exception {
         
-        LedgerImportResult result = new LedgerImportResult() ;
-        result.setFileName( file.getName() ) ;
-        
-        log.debug( "Parsing ledger entries for account " + account.getShortName() ) ;
         XLSWrapper wrapper = new XLSWrapper( file ) ;
         
-        List<LedgerEntry> entries = parseLedgerEntries( account, wrapper ) ;
-        log.debug( "Ledger entries parsed." ) ;
-        log.debug( "\tNum ledger entries = " + entries.size() ) ;
-        result.setNumEntriesFound( entries.size() ) ;
-        
-        LedgerEntry possibleDup = null ;
-        for( LedgerEntry entry : entries ) {
-            possibleDup = ledgerRepo.findByHash( entry.getHash() ) ;
-            if( possibleDup == null ) {
-                log.debug( "\tSaving ledger entry = " + 
-                           SDF.format( entry.getValueDate() ) + " - " +
-                           entry.getRemarks() + " :: " + 
-                           entry.getAmount() ) ; 
-                ledgerRepo.save( entry ) ;
-                result.incrementImportCount() ;
-            }
-            else {
-                log.info( "Found a duplicate entry " + entry ) ;
-                result.incrementDupCount() ;
-            }
-        }
-        log.debug( "Ledger entries saved" ) ;
-        return result ;
-    }
-    
-    private List<LedgerEntry> parseLedgerEntries( Account account, 
-                                                  XLSWrapper xls ) 
-        throws Exception {
-        
         List<LedgerEntry> entries = new ArrayList<>() ;
-        List<XLSRow> rows = xls.getRows( new RowFilter(), 12, 1, 8 ) ;
+        List<XLSRow> rows = wrapper.getRows( new RowFilter(), 12, 1, 8 ) ;
         XLSUtil.printRows( rows ) ;
         for( XLSRow row : rows ) {
             entries.add( constructLedgerEntry( account, row ) ) ;
@@ -133,8 +95,6 @@ public class ICICISavingsAccountLedgerImporter extends LedgerImporter {
         entry.setBalance( Float.parseFloat( row.getCellValue( 7 ) ) ) ;
         entry.generateHash() ;
         
-        classifier.classifyEntry( entry, null ) ;
-
         return entry ;
     }
 }

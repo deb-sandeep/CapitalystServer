@@ -80,7 +80,7 @@ public class CapitalystServer
     @Override
     public void addResourceHandlers( ResourceHandlerRegistry registry ) {
     }
-
+    
     // --------------------- Main method ---------------------------------------
 
     public static void main( String[] args ) throws Exception {

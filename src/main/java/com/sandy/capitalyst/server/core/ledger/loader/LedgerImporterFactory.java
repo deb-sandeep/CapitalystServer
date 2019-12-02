@@ -10,12 +10,31 @@ public class LedgerImporterFactory {
     private static Logger log = Logger.getLogger( LedgerImporterFactory.class ) ;
 
     public static LedgerImporter getLedgerImporter( Account account ) {
-        if( account.getBankName().equals( Bank.ICICI.name() ) &&
-            account.getAccountType().equals( AccountType.SAVING.name() ) ) {
-            return new ICICISavingsAccountLedgerImporter() ;
+        
+        LedgerImporter importer = null ;
+        if( account.getAccountType().equals( AccountType.SAVING.name() ) ) {
+            importer = getSavingBankLedgerImporter( account ) ;
+        }
+
+        if( importer == null ) {
+            log.error( "LedgerImporter not defined for account = " + account ) ;
         }
         
-        log.error( "LedgerImporter not defined for account = " + account ) ;
-        return null ;
+        return importer ;
+    }
+    
+    private static LedgerImporter getSavingBankLedgerImporter( Account account ) {
+        
+        LedgerImporter importer = null ;
+        String bankName = account.getBankName() ;
+        
+        if( bankName.equals( Bank.ICICI.name() ) ) {
+            importer = new ICICISavingsAccountLedgerImporter() ;
+        }
+        else if( bankName.equals( Bank.SBI.name() ) ) {
+            importer = new SBISavingsAccountLedgerImporter() ;
+        }
+        
+        return importer ;
     }
 }
