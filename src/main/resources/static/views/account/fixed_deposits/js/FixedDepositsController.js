@@ -1,41 +1,20 @@
-capitalystNgApp.controller( 'AccountController', 
-    function( $scope, $http, $rootScope, $location, $window ) {
+capitalystNgApp.controller( 'FixedDepositsController', 
+    function( $scope, $http, $ngConfirm, $window ) {
     
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
-
-    // Common framework variables. 
-    $scope.alerts = [] ;
-    $scope.navBarTitle = "<Fill navbar title>" ;
+    $scope.$parent.navBarTitle = "Fixed Deposits" ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
-    console.log( "Loading AccountController" ) ;
+    console.log( "Loading FixedDepositsController" ) ;
     initializeController() ;
     // --- [END] Controller initialization -----------------------------------
     
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
-    $scope.$on( 'interactingWithServer', function( event, args ) {
-        if( args.isStart ) {
-            $( '#serverInteractionLoader' ).modal( 'show' ) ;
-        }
-        else {
-            $( '#serverInteractionLoader' ).modal( 'hide' ) ;
-        }
-    } ) ;
-    
-    // ----------- UI related scope functions --------------------------------
-    $scope.addErrorAlert = function( msgString ) {
-        console.log( msgString ) ;
-        $scope.alerts.push( { type: 'danger', msg: msgString } ) ;
-    } ;
-    
-    $scope.dismissAlert = function( index ) {
-        $scope.alerts.splice( index, 1 ) ;
-    }
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

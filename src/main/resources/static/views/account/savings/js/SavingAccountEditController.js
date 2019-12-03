@@ -1,4 +1,4 @@
-capitalystNgApp.controller( 'AccountEditController', function( $scope, $http ) {
+capitalystNgApp.controller( 'SavingAccountEditController', function( $scope, $http ) {
     
     // ---------------- Local variables --------------------------------------
     

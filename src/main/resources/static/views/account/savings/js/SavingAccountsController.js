@@ -1,10 +1,10 @@
-capitalystNgApp.controller( 'AccountHomeController', 
+capitalystNgApp.controller( 'SavingAccountsController', 
     function( $scope, $http, $ngConfirm, $window ) {
     
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
-    $scope.$parent.navBarTitle = "Accounts" ;
+    $scope.$parent.navBarTitle = "Saving Accounts" ;
     $scope.accounts = null ;
     $scope.editScope = {
         index : -1,
@@ -16,7 +16,7 @@ capitalystNgApp.controller( 'AccountHomeController',
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
-    console.log( "Loading AccountHomeController" ) ;
+    console.log( "Loading SavingAccountsController" ) ;
     initializeController() ;
     // --- [END] Controller initialization -----------------------------------
     

@@ -20,13 +20,18 @@
     
     <script src="/js/app/app-ng.js"></script>
     <script src="/js/app/filter.js"></script>
-    <script src="/views/account/js/controller.js"></script>
-    <script src="/views/account/js/directive.js"></script>
-    <script src="/views/account/js/route.js"></script>
-    <script src="/views/account/js/filter.js"></script>
-    <script src="/views/account/js/AccountHomeController.js"></script>
-    <script src="/views/account/js/AccountEditController.js"></script>
-    <script src="/views/account/js/UploadAccountStmtController.js"></script>
+    
+    <script src="/views/account/_common/js/controller.js"></script>
+    <script src="/views/account/_common/js/directive.js"></script>
+    <script src="/views/account/_common/js/route.js"></script>
+    <script src="/views/account/_common/js/filter.js"></script>
+    
+    <script src="/views/account/_common/js/UploadAccountStmtController.js"></script>
+    
+    <script src="/views/account/savings/js/SavingAccountsController.js"></script>
+    <script src="/views/account/savings/js/SavingAccountEditController.js"></script>
+    
+    <script src="/views/account/fixed_deposits/js/FixedDepositsController.js"></script>
 </head>
 
 <body ng-controller="AccountController"
@@ -50,6 +55,15 @@
 <a ng-click="dismissAlert( $index )" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 {{alert.msg}}
 </div>
+
+<ul class="nav nav-tabs">
+  <li class="active">
+    <a data-toggle="tab" ng-click="showRoute( '/savingAccounts' )">Savings Bank Accounts</a>
+  </li>
+  <li>
+    <a data-toggle="tab" ng-click="showRoute( '/fixedDeposits' )">Fixed Deposits</a>
+  </li>
+</ul>
 
 <div ng-view></div>
 
