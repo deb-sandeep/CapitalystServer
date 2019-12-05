@@ -111,7 +111,7 @@ capitalystNgApp.controller( 'SavingAccountsController',
     function fetchAccountSummaryListFromServer() {
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.get( '/Account' )
+        $http.get( '/Account/SavingAccount' )
         .then ( 
             function( response ){
                 $scope.accounts = response.data ;
@@ -131,7 +131,7 @@ capitalystNgApp.controller( 'SavingAccountsController',
 
     function deleteAccount( account, successCallback ) {
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.delete( '/Account/' + account.id )
+        $http.delete( '/Account/SavingAccount/' + account.id )
         .then ( 
             function( response ){
                 console.log( "Deleted account data" ) ;

@@ -7,7 +7,7 @@ import javax.persistence.Id ;
 import javax.persistence.Table ;
 
 @Entity
-@Table( name = "account_index" )
+@Table( name = "account" )
 public class Account {
 
     @Id

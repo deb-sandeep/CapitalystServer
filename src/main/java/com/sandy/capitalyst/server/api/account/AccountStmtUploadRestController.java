@@ -22,7 +22,7 @@ import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImportResult ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporter ;
 import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.account.AccountIndexRepo ;
+import com.sandy.capitalyst.server.dao.account.AccountRepo ;
 
 @RestController
 public class AccountStmtUploadRestController {
@@ -35,7 +35,7 @@ public class AccountStmtUploadRestController {
     private CapitalystConfig config = null ;
     
     @Autowired
-    private AccountIndexRepo aiRepo = null ;
+    private AccountRepo aiRepo = null ;
     
     @PostMapping( "/Account/Statement/Upload" ) 
     public ResponseEntity<List<LedgerImportResult>> uploadAccountStatements( 

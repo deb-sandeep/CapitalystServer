@@ -12,21 +12,23 @@ import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.PathVariable ;
 import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
+import org.springframework.web.bind.annotation.RequestMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.account.AccountIndexRepo ;
+import com.sandy.capitalyst.server.dao.account.AccountRepo ;
 
 @RestController
+@RequestMapping( "/Account" )
 public class AccountRestController {
 
     private static final Logger log = Logger.getLogger( AccountRestController.class ) ;
     
     @Autowired
-    private AccountIndexRepo aiRepo = null ;
+    private AccountRepo aiRepo = null ;
     
-    @GetMapping( "/Account" ) 
+    @GetMapping( "/SavingAccount" ) 
     public ResponseEntity<List<Account>> getAccountSummaries() {
         try {
             List<Account> accounts = new ArrayList<>() ;
@@ -43,7 +45,7 @@ public class AccountRestController {
         }
     }
 
-    @PostMapping( "/Account" ) 
+    @PostMapping( "/SavingAccount" ) 
     public ResponseEntity<Account> saveAccount( @RequestBody Account input ) {
         try {
             log.debug( "Saving account data." ) ;
@@ -58,7 +60,7 @@ public class AccountRestController {
         }
     }
 
-    @DeleteMapping( "/Account/{id}" ) 
+    @DeleteMapping( "/SavingAccount/{id}" ) 
     public ResponseEntity<APIResponse> deleteAccount( @PathVariable Integer id ) {
         try {
             log.debug( "Deleting account. " + id ) ;

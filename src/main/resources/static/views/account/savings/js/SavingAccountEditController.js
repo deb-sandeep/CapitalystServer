@@ -98,7 +98,7 @@ capitalystNgApp.controller( 'SavingAccountEditController', function( $scope, $ht
 
     function saveAccount( successCallback ) {
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.post( '/Account', $scope.account )
+        $http.post( '/Account/SavingAccount', $scope.account )
         .then ( 
             function( response ){
                 console.log( "Saved account data" ) ;
