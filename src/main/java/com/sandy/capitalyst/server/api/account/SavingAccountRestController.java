@@ -1,6 +1,5 @@
 package com.sandy.capitalyst.server.api.account;
 
-import java.util.ArrayList ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
@@ -15,26 +14,25 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RequestMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.core.CapitalystConstants.AccountType ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.AccountRepo ;
 
 @RestController
 @RequestMapping( "/Account" )
-public class AccountRestController {
+public class SavingAccountRestController {
 
-    private static final Logger log = Logger.getLogger( AccountRestController.class ) ;
+    private static final Logger log = Logger.getLogger( SavingAccountRestController.class ) ;
     
     @Autowired
-    private AccountRepo aiRepo = null ;
+    private AccountRepo accountRepo = null ;
     
     @GetMapping( "/SavingAccount" ) 
-    public ResponseEntity<List<Account>> getAccountSummaries() {
+    public ResponseEntity<List<Account>> getAccounts() {
         try {
-            List<Account> accounts = new ArrayList<>() ;
-            Iterable<Account> source = aiRepo.findAll() ;
-            source.forEach( accounts::add ) ;
-            
+            List<Account> accounts = null ;
+            accounts = accountRepo.findByAccountType( AccountType.SAVING.name() ) ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( accounts ) ;
         }
@@ -49,7 +47,7 @@ public class AccountRestController {
     public ResponseEntity<Account> saveAccount( @RequestBody Account input ) {
         try {
             log.debug( "Saving account data." ) ;
-            Account result = aiRepo.save( input ) ;
+            Account result = accountRepo.save( input ) ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( result ) ;
         }
@@ -64,7 +62,7 @@ public class AccountRestController {
     public ResponseEntity<APIResponse> deleteAccount( @PathVariable Integer id ) {
         try {
             log.debug( "Deleting account. " + id ) ;
-            aiRepo.deleteById( id ) ;
+            accountRepo.deleteById( id ) ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( new APIResponse( "Successfully deleted" ) ) ;
         }

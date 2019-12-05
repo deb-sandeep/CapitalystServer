@@ -8,6 +8,9 @@ public class CapitalystConstants {
     } ;
     
     public static enum AccountType {
-        SAVING
+        SAVING,
+        FIXED_DEPOSIT,
+        RECURRING_DEPOSIT,
+        LINKED_FD
     }
 }

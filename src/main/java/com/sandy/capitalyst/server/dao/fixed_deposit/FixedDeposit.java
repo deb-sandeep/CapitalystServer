@@ -24,6 +24,10 @@ public class FixedDeposit {
     @JoinColumn( name="base_account_id" )
     private Account baseAccount = null ;
     
+    @ManyToOne
+    @JoinColumn( name="parent_account_id" )
+    private Account parentAccount = null ;
+    
     private Date openDate = null ;
     private Date matureDate = null ;
     private int openAmt = 0 ;
@@ -114,12 +118,21 @@ public class FixedDeposit {
     public int getRecurringDom() {
         return this.recurringDom ;
     }
+    
+    public Account getParentAccount() {
+        return parentAccount ;
+    }
+
+    public void setParentAccount( Account parentAccount ) {
+        this.parentAccount = parentAccount ;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "FixedDeposit [\n" ) ; 
 
         builder.append( "   id = " + this.id + "\n" ) ;
         builder.append( "   baseAccount = " + this.baseAccount + "\n" ) ;
+        builder.append( "   parentAccount = " + this.parentAccount + "\n" ) ;
         builder.append( "   openDate = " + this.openDate + "\n" ) ;
         builder.append( "   matureDate = " + this.matureDate + "\n" ) ;
         builder.append( "   openAmt = " + this.openAmt + "\n" ) ;
