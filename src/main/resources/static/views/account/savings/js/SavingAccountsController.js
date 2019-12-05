@@ -6,13 +6,14 @@ capitalystNgApp.controller( 'SavingAccountsController',
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Saving Accounts" ;
     $scope.accounts = null ;
+    $scope.totalBalance = 0 ;
+    
     $scope.editScope = {
         index : -1,
         account : null
     } ;
     
     $scope.stmtUploadAccount = null ;
-    $scope.totalBalance = 0 ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -33,13 +34,13 @@ capitalystNgApp.controller( 'SavingAccountsController',
             shortName: "",            
             description: "",
         }) ;
-        $( '#editAccountDialog' ).modal( 'show' ) ;
+        $( '#savingAccountEditDialog' ).modal( 'show' ) ;
     }
     
     $scope.editAccount = function( index ) {
         var clonedAccount = JSON.parse( JSON.stringify( $scope.accounts[index] ) ) ;
         broadcastEditScopeChanged( index, clonedAccount ) ;
-        $( '#editAccountDialog' ).modal( 'show' ) ;
+        $( '#savingAccountEditDialog' ).modal( 'show' ) ;
     }
     
     $scope.deleteAccount = function( index ) {
@@ -96,7 +97,7 @@ capitalystNgApp.controller( 'SavingAccountsController',
     
     function initializeController() {
         $scope.editScope = null ;
-        fetchAccountSummaryListFromServer() ;
+        fetchAccountsFromServer() ;
     }
     
     function broadcastEditScopeChanged( index, accountClone ) {
@@ -104,11 +105,11 @@ capitalystNgApp.controller( 'SavingAccountsController',
             index : index,
             account : accountClone
         } ;
-        $scope.$broadcast( 'editScopeChanged', null ) ;
+        $scope.$broadcast( 'savingAccountEditScopeChanged', null ) ;
     }
     
     // ------------------- Server comm functions -----------------------------
-    function fetchAccountSummaryListFromServer() {
+    function fetchAccountsFromServer() {
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Account/SavingAccount' )

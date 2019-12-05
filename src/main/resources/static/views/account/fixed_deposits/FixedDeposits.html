@@ -1,9 +1,55 @@
 <div class="page-menu-bar">
 	<button class="btn btn-success btn-sm"
-	        ng-click="showNewAccountDialog()">
+	        ng-click="showNewFixedDepositDialog()">
 	    <span class="glyphicon glyphicon-plus-sign"></span>
 	    New Fixed Deposit
 	</button>
 </div>
 
-<h2>This is fixed deposits page.</h2>
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="table table-bordered table-compact js-sort-table"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th>Owner</th>
+                <th>Type</th>
+                <th>A/C #</th>
+                <th>Parent A/C #</th>
+                <th>Open Dt</th>
+                <th>Mature Dt</th>
+                <th>Open Amt</th>
+                <th>Mature Amt</th>
+                <th>%</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="account in accounts">
+               <td>{{account.baseAccount.accountOwner}}</td>
+               <td>{{account.baseAccount.accountType}}</td>
+               <td>{{account.baseAccount.accountNumber}}</td>
+               <td>{{account.parentAccount.accountNumber}}</td>
+               <td>{{account.openDate | date}}</td>
+               <td>{{account.matureDate | date}}</td>
+               <td class="fixed-font amt">{{account.openAmt | amt}}</td>
+               <td class="fixed-font amt">{{account.matureAmt | amt}}</td>
+               <td class="fixed-font amt">{{account.interestRate}}%</td>
+               <td class="fixed-font amt">{{account.baseAccount.balance | amt}}</td>
+            </tr>
+        </tbody>
+            <tr class="success">
+                <th colspan="9"></th>
+                <th class="fixed-font amt">{{totalBalance | amt}}</th>
+            </tr>
+        <tfoot>
+        </tfoot>
+    </table>
+</div>
+
+<div id="fixedDepositEditDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'fixed_deposits/edit_fixed_deposit_dialog.html'">
+</div>
+

@@ -1,10 +1,10 @@
 <div class="modal-dialog" 
      style="width:600px;"
-     ng-controller="SavingAccountEditController">
+     ng-controller="FixedDepositEditController">
      
   <div class="modal-content" >
     <div class="modal-header" style="background-color:#E5E5E5;padding:5px">
-      <h4 class="modal-title">Edit Saving Account</h4>
+      <h4 class="modal-title">Edit Fixed Deposit</h4>
     </div>
     
     <div class="modal-body" style="background-color:#FEFEFE;padding:5px">
@@ -16,14 +16,14 @@
 	                    <td width="50%">
 					        <label>Account Owner</label>
 					        <select class="form-field" required
-					                ng-model="account.accountOwner"
+					                ng-model="account.baseAccount.accountOwner"
 					                ng-options="item.firstName as item.firstName for item in refData.individuals">
 					        </select>
 	                    </td>
 	                    <td>
 	                        <label>Account Type</label>
 	                        <select class='form-field' required
-	                                ng-model="account.accountType"
+	                                ng-model="account.baseAccount.accountType"
 	                                ng-options="item for item in refData.accountTypes"> 
 	                        </select>
 	                    </td>
@@ -32,7 +32,7 @@
 	                    <td>
 	                        <label>Bank</label>
 	                        <select class='form-field' required
-	                                ng-model="account.bankName"
+	                                ng-model="account.baseAccount.bankName"
 	                                ng-options="item for item in refData.bankNames"> 
 	                        </select>
 	                    </td>
@@ -40,7 +40,7 @@
 	                        <label>Branch</label>
 	                        <input class='form-field' required
 	                               type="text" 
-	                               ng-model="account.bankBranch" /> 
+	                               ng-model="account.baseAccount.bankBranch" /> 
 	                    </td>
 	                </tr>
 	                <tr>
@@ -48,13 +48,13 @@
 	                        <label>Account Number</label>
 	                        <input class='form-field' required
 	                               type="text" 
-	                               ng-model="account.accountNumber" /> 
+	                               ng-model="account.baseAccount.accountNumber" /> 
 	                    </td>
 	                    <td>
 	                        <label>Short Name</label>
 	                        <input class='form-field' required
 	                               type="text" 
-	                               ng-model="account.shortName" /> 
+	                               ng-model="account.baseAccount.shortName" /> 
 	                    </td>
 	                </tr>
 	                <tr>
@@ -62,7 +62,7 @@
 	                        <label>Notes</label>
 	                        <textarea class='form-field' 
 	                                  rows="10"
-	                                  ng-model="account.description">
+	                                  ng-model="account.baseAccount.description">
 	                        </textarea> 
 	                    </td>
 	                </tr>
