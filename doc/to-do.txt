@@ -1,1 +1,6 @@
-Ref data refactor to base controller
+X Ref data refactor to base controller
+X Get list of saving accounts as ref data (reuse?)
+Add FD fields to edit dialog
+Link FD to edit dialog
+Save validation
+Save on server

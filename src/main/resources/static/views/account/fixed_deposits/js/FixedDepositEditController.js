@@ -3,13 +3,13 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
-    $scope.refData = null ;
     $scope.accountIndex = -1 ;
     $scope.account = null ;
+    $scope.savingAccounts = null ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
-    console.log( "Loading AccountEditController" ) ;
+    console.log( "Loading FixedDepositEditController" ) ;
     initializeController() ;
     // --- [END] Controller initialization -----------------------------------
     
@@ -38,7 +38,7 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     function initializeController() {
-        loadRefData() ;
+        fetchSavingAccounts() ;
     }
     
     function resetEditControllerState() {
@@ -47,19 +47,10 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
     }
     
     // ------------------- Server comm functions -----------------------------
-    function loadRefData() {
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.get( '/RefData' )
-        .then ( 
-            function( response ){
-                $scope.refData = response.data ;
-            }, 
-            function( error ){
-                $scope.$parent.addErrorAlert( "Error fetch RefData." ) ;
-            }
-        )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
+    function fetchSavingAccounts() {
+        $http.get( '/Account/SavingAccount' )
+        .then ( function( response ){
+            $scope.savingAccounts = response.data ;
+        })
     }
 } ) ;

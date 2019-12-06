@@ -9,6 +9,8 @@ capitalystNgApp.controller( 'AccountController',
     $scope.alerts = [] ;
     $scope.navBarTitle = "<Fill navbar title>" ;
     
+    $scope.refData = null ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading AccountController" ) ;
@@ -47,7 +49,24 @@ capitalystNgApp.controller( 'AccountController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
+        loadRefData() ;
     }
     
     // ------------------- Server comm functions -----------------------------
+    function loadRefData() {
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.get( '/RefData' )
+        .then ( 
+            function( response ){
+                $scope.refData = response.data ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error fetch RefData." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+
 } ) ;

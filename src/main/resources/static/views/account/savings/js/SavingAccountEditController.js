@@ -3,7 +3,6 @@ capitalystNgApp.controller( 'SavingAccountEditController', function( $scope, $ht
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
-    $scope.refData = null ;
     $scope.accountIndex = -1 ;
     $scope.account = null ;
     
@@ -49,7 +48,6 @@ capitalystNgApp.controller( 'SavingAccountEditController', function( $scope, $ht
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     function initializeController() {
-        loadRefData() ;
     }
     
     function resetEditControllerState() {
@@ -80,22 +78,6 @@ capitalystNgApp.controller( 'SavingAccountEditController', function( $scope, $ht
     }
     
     // ------------------- Server comm functions -----------------------------
-    function loadRefData() {
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.get( '/RefData' )
-        .then ( 
-            function( response ){
-                $scope.refData = response.data ;
-            }, 
-            function( error ){
-                $scope.$parent.addErrorAlert( "Error fetch RefData." ) ;
-            }
-        )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
-    }
-
     function saveAccount( successCallback ) {
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.post( '/Account/SavingAccount', $scope.account )
