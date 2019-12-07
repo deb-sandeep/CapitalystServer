@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.dao.fixed_deposit;
 
 import java.util.Date ;
 
+import javax.persistence.CascadeType ;
 import javax.persistence.Entity ;
 import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
@@ -20,7 +21,7 @@ public class FixedDeposit {
     @GeneratedValue( strategy=GenerationType.AUTO )
     private Integer id = null ;
     
-    @ManyToOne
+    @ManyToOne( cascade= {CascadeType.ALL} )
     @JoinColumn( name="base_account_id" )
     private Account baseAccount = null ;
     

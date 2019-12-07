@@ -54,6 +54,19 @@ capitalystNgApp.controller( 'FixedDepositsController',
         $( '#fixedDepositEditDialog' ).modal( 'show' ) ;
     }
     
+    $scope.duplicateAccount = function( index ) {
+        var clonedAccount = JSON.parse( JSON.stringify( $scope.accounts[index] ) ) ;
+        broadcastEditScopeChanged( -1, clonedAccount ) ;
+        $( '#fixedDepositEditDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.recomputeTotalBalance = function() {
+        $scope.totalBalance = 0 ;
+        angular.forEach( $scope.accounts, function( account, key ){
+            $scope.totalBalance += account.baseAccount.balance ;
+        }) ;
+    }
+    
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     

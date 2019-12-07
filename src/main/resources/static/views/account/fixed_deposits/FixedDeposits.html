@@ -22,6 +22,7 @@
                 <th>%</th>
                 <th>Balance</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -41,12 +42,17 @@
                        ng-click="editAccount( $index )">
                  </span>&nbsp;
                </td>
+               <td>
+                 <span class="glyphicon glyphicon-duplicate"
+                       ng-click="duplicateAccount( $index )">
+                 </span>&nbsp;
+               </td>
             </tr>
         </tbody>
             <tr class="success">
                 <th colspan="9"></th>
                 <th class="fixed-font amt">{{totalBalance | amt}}</th>
-                <th colspan="1"></th>
+                <th colspan="2"></th>
             </tr>
         <tfoot>
         </tfoot>

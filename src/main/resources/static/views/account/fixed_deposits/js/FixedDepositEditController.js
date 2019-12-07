@@ -21,6 +21,21 @@ capitalystNgApp.controller( 'FixedDepositEditController',
         var editScope = $scope.$parent.$parent.editScope ;
         $scope.accountIndex = editScope.index ;
         $scope.account = editScope.account ;
+        
+        if( $scope.accountIndex == -1 ) {
+            $scope.account.id = null ;
+            $scope.account.baseAccount.id = null ;
+        }
+        
+        if( $scope.account.parentAccount != null ) {
+            for( var i=0; i<$scope.savingAccounts.length; i++ ) {
+                var sa = $scope.savingAccounts[i] ;
+                if( sa.id == $scope.account.parentAccount.id ) {
+                    $scope.account.parentAccount = sa ;
+                    break ;
+                }
+            }
+        }
 
         prePopulateDatePicker( "opening_date", $scope.account.openDate ) ;
         prePopulateDatePicker( "maturity_date", $scope.account.matureDate ) ;
@@ -38,6 +53,8 @@ capitalystNgApp.controller( 'FixedDepositEditController',
                 else {
                     accounts[ $scope.accountIndex ] = savedAccount ;
                 }
+                
+                $scope.$parent.$parent.recomputeTotalBalance() ;
                 resetEditControllerState() ;
                 $( '#fixedDepositEditDialog' ).modal( 'hide' ) ;
             } ) ;
@@ -158,7 +175,8 @@ capitalystNgApp.controller( 'FixedDepositEditController',
                 successCallback( response.data ) ;
             }, 
             function( error ){
-                $scope.$parent.addErrorAlert( "Error fetch RefData." ) ;
+                console.log( error ) ;
+                $scope.$parent.addErrorAlert( "Error saving fixed deposit." + error ) ;
             }
         )
         .finally(function() {
