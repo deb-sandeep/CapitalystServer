@@ -18,6 +18,8 @@
                 <th>Bank</th>
                 <th>Remark</th>
                 <th>Balance</th>
+                <th>Deposits</th>
+                <th>Total</th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -36,6 +38,8 @@
                <td>{{account.bankName}}</td>
                <td>{{account.shortName}}</td>
                <td class="fixed-font amt">{{account.balance | amt}}</td>
+               <td class="fixed-font amt">{{account.depositBalance | amt}}</td>
+               <td class="fixed-font amt">{{account.depositBalance + account.balance | amt}}</td>
                <td>
 	             <span class="glyphicon glyphicon-pencil"
 	                   ng-click="editAccount( $index )">
@@ -61,6 +65,8 @@
             <tr class="success">
                 <th colspan="6"></th>
                 <th class="fixed-font amt">{{totalBalance | amt}}</th>
+                <th class="fixed-font amt">{{totalDepositBalance | amt}}</th>
+                <th class="fixed-font amt">{{totalBalance + totalDepositBalance | amt}}</th>
                 <th colspan="4"></th>
             </tr>
         <tfoot>

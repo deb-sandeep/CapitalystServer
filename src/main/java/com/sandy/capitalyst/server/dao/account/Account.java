@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
+import javax.persistence.Transient ;
 
 @Entity
 @Table( name = "account" )
@@ -22,6 +23,9 @@ public class Account {
     private String bankName = null ;
     private String bankBranch = null ;
     private String description = null ;
+    
+    @Transient
+    private Float  depositBalance = 0.0F ;
     
     public Integer getId() {
         return id ;
@@ -93,5 +97,13 @@ public class Account {
 
     public void setBalance( Float balance ) {
         this.balance = balance ;
+    }
+
+    public Float getDepositBalance() {
+        return depositBalance ;
+    }
+
+    public void setDepositBalance( Float balance ) {
+        this.depositBalance = balance ;
     }
 }

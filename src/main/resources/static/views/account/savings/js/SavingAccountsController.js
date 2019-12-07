@@ -7,6 +7,7 @@ capitalystNgApp.controller( 'SavingAccountsController',
     $scope.$parent.navBarTitle = "Saving Accounts" ;
     $scope.accounts = null ;
     $scope.totalBalance = 0 ;
+    $scope.totalDepositBalance = 0 ;
     
     $scope.editScope = {
         index : -1,
@@ -24,6 +25,10 @@ capitalystNgApp.controller( 'SavingAccountsController',
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
+    $scope.$on( 'refreshTotals', function( event, args ) {
+        refreshTotals() ;
+    } ) ;
+    
     $scope.showNewAccountDialog = function() {
         broadcastEditScopeChanged( -1, {
             accountNumber: null,
@@ -119,8 +124,8 @@ capitalystNgApp.controller( 'SavingAccountsController',
                 $scope.accounts = response.data ;
                 angular.forEach( $scope.accounts, function( account, key ){
                     account.selected = false ;
-                    $scope.totalBalance += account.balance ;
                 }) ;
+                refreshTotals() ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Error fetch accounts." ) ;
@@ -145,6 +150,15 @@ capitalystNgApp.controller( 'SavingAccountsController',
         )
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function refreshTotals() {
+        $scope.totalBalance = 0 ;
+        $scope.totalDepositBalance = 0 ;
+        angular.forEach( $scope.accounts, function( account, key ){
+            $scope.totalBalance += account.balance ;
+            $scope.totalDepositBalance += account.depositBalance ;
         }) ;
     }
 } ) ;

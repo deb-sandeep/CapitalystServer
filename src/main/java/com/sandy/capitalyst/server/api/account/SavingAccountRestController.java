@@ -18,6 +18,8 @@ import com.sandy.capitalyst.server.core.CapitalystConstants.AccountType ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.AccountRepo ;
+import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDeposit ;
+import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDepositRepo ;
 
 @RestController
 @RequestMapping( "/Account" )
@@ -28,11 +30,25 @@ public class SavingAccountRestController {
     @Autowired
     private AccountRepo accountRepo = null ;
     
+    @Autowired
+    private FixedDepositRepo fdRepo = null ;
+    
     @GetMapping( "/SavingAccount" ) 
     public ResponseEntity<List<Account>> getAccounts() {
         try {
             List<Account> accounts = null ;
             accounts = accountRepo.findByAccountType( AccountType.SAVING.name() ) ;
+            
+            List<FixedDeposit> fds = fdRepo.findAllActiveDeposits() ;
+            for( Account account : accounts ) {
+                for( FixedDeposit fd : fds ) {
+                    if( account.getId() == fd.getParentAccount().getId() ) {
+                        account.setDepositBalance( account.getDepositBalance() + 
+                                                   fd.getBaseAccount().getBalance() ) ;
+                    }
+                }
+            }
+            
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( accounts ) ;
         }

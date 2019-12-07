@@ -1,6 +1,5 @@
 package com.sandy.capitalyst.server.api.account;
 
-import java.util.ArrayList ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
@@ -31,10 +30,7 @@ public class FixedDepositRestController {
     @GetMapping( "/FixedDeposit" ) 
     public ResponseEntity<List<FixedDeposit>> getAccounts() {
         try {
-            List<FixedDeposit> accounts = new ArrayList<>() ;
-            for( FixedDeposit deposit : fdRepo.findAll() ) {
-                accounts.add( deposit ) ;
-            }
+            List<FixedDeposit> accounts = fdRepo.findAllActiveDeposits() ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( accounts ) ;
         }
