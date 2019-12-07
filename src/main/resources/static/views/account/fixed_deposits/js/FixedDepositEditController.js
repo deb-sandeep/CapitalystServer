@@ -39,11 +39,37 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
     // --- [START] Local functions -------------------------------------------
     function initializeController() {
         fetchSavingAccounts() ;
+        initDatePickers() ;
     }
     
     function resetEditControllerState() {
         $scope.accountIndex = -1 ;
         $scope.account = null ;
+    }
+    
+    function initDatePickers() {
+        
+        console.log( "Initializing date pickers." ) ;
+        
+        var dpStart = $( '#opening_date' ) ;
+        var dpEnd   = $( '#maturity_date' ) ;
+        
+        dpStart.datetimepicker({
+            format: "MMM / DD / YYYY"
+        }) ;
+        dpEnd.datetimepicker({
+            format: "MMM / DD / YYYY"
+        }) ;
+        
+        dpStart.off( "dp.change" ) ;
+        dpEnd.off( "dp.change" ) ;
+        
+        dpStart.on( "dp.change", function( e ){
+            console.log( "Start date = " + e.date ) ;
+        }) ;
+        dpEnd.on( "dp.change", function( e ){
+            console.log( "End date = " + e.date ) ;
+        }) ;
     }
     
     // ------------------- Server comm functions -----------------------------

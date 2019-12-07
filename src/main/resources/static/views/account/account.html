@@ -5,15 +5,18 @@
     <meta charset="ISO-8859-1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account</title>
-    <script src="/js/lib/jquery/jquery.min.js"></script>
+    <script src="/js/lib/jquery/jquery-2.1.1.min.js"></script>
     <script src="/js/lib/angular/angular.min.js"></script>
     <script src="/js/lib/angular/angular-route.min.js"></script>
     <script src="/js/lib/angular/confirm/angular-confirm.min.js"></script>
+    <script src="/js/lib/moment/moment.min.js"></script>
     <script src="/js/lib/bootstrap/bootstrap.min.js"></script>
+    <script src="/js/lib/bootstrap/bootstrap-datetimepicker.js"></script>
     <script src="/js/lib/sort-table/sort-table.js"></script>
     <script src="/js/lib/ng-file-upload/ng-file-upload-all.js"></script>
-    
+
     <link rel="stylesheet" href="/js/lib/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/js/lib/bootstrap/bootstrap-datetimepicker.css"/>
     <link rel="stylesheet" href="/js/lib/angular/confirm/angular-confirm.min.css"/>
     <link rel="stylesheet" href="/css/app/app.css"/>
     <link rel="stylesheet" href="/css/app/form.css"/>
@@ -58,10 +61,10 @@
 </div>
 
 <ul class="nav nav-tabs">
-  <li class="active">
+  <li ng-class="getTabActiveClass( 'SB' )">
     <a data-toggle="tab" ng-click="showRoute( '/savingAccounts' )">Savings Bank Accounts</a>
   </li>
-  <li>
+  <li ng-class="getTabActiveClass( 'FD' )">
     <a data-toggle="tab" ng-click="showRoute( '/fixedDeposits' )">Fixed Deposits</a>
   </li>
 </ul>

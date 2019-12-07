@@ -32,7 +32,8 @@ capitalystNgApp.controller( 'FixedDepositsController',
                 "shortName": null,
                 "bankName": null,
                 "bankBranch": null,
-                "description": null
+                "description": null,
+                "balance" : 0
             },
             "parentAccount": null,
             "openDate": null,
@@ -51,6 +52,7 @@ capitalystNgApp.controller( 'FixedDepositsController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
+        $scope.$parent.activeTabKey = "FD" ;
         fetchAccountsFromServer() ;
     }
     

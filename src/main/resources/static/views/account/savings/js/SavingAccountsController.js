@@ -96,6 +96,7 @@ capitalystNgApp.controller( 'SavingAccountsController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
+        $scope.$parent.activeTabKey = "SB" ;
         $scope.editScope = null ;
         fetchAccountsFromServer() ;
     }

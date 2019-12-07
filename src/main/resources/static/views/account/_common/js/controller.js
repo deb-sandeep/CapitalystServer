@@ -8,6 +8,7 @@ capitalystNgApp.controller( 'AccountController',
     // Common framework variables. 
     $scope.alerts = [] ;
     $scope.navBarTitle = "<Fill navbar title>" ;
+    $scope.activeTabKey = "SB" ;
     
     $scope.refData = null ;
     
@@ -43,6 +44,14 @@ capitalystNgApp.controller( 'AccountController',
         console.log( "Route path = " + routePath ) ;
         $location.path( routePath ) ;
     }
+    
+    $scope.getTabActiveClass = function( tabKey ) {
+        if( tabKey == $scope.activeTabKey ) {
+            return "active" ;
+        }
+        return "" ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

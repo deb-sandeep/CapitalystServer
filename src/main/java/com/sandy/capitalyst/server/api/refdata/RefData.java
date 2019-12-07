@@ -32,6 +32,9 @@ public class RefData {
     private List<String> createAccountTypesList() {
         List<String> values = new ArrayList<>() ;
         values.add( "SAVING" ) ;
+        values.add( "FIXED_DEPOSIT" ) ;
+        values.add( "RECURRING_DEPOSIT" ) ;
+        values.add( "LINKED_FD" ) ;
         values.add( "CREDIT CARD" ) ;
         values.add( "PPF" ) ;
         return values ;

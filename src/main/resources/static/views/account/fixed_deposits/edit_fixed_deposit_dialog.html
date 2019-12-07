@@ -57,11 +57,60 @@
 	                               ng-model="account.baseAccount.shortName" /> 
 	                    </td>
 	                </tr>
+                    <tr>
+                        <td>
+                            <label>Parent Account</label>
+                            <select class='form-field' required
+                                    ng-model="account.parentAccount"
+                                    ng-options="item as item.shortName for item in savingAccounts"> 
+                            </select>
+                        </td>
+                        <td>
+                            <label>Balance</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.baseAccount.balance" /> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Opening date</label>
+							<div class='input-group date' id="opening_date">
+							    <input type='text' class="form-control" />
+							    <span class="input-group-addon">
+							        <span class="glyphicon glyphicon-calendar"></span>
+							    </span>
+							</div>
+                        </td>
+                        <td>
+                            <label>Maturity date</label>
+                            <div class='input-group date' id="maturity_date">
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Opening amount</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.openAmt" /> 
+                        </td>
+                        <td>
+                            <label>Mature amount</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.matureAmt" /> 
+                        </td>
+                    </tr>
 	                <tr>
 	                    <td colspan="2">
 	                        <label>Notes</label>
 	                        <textarea class='form-field' 
-	                                  rows="10"
+	                                  rows="5"
 	                                  ng-model="account.baseAccount.description">
 	                        </textarea> 
 	                    </td>
