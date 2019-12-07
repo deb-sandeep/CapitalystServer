@@ -65,10 +65,10 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
         dpEnd.off( "dp.change" ) ;
         
         dpStart.on( "dp.change", function( e ){
-            console.log( "Start date = " + e.date ) ;
+            account.openDate = e.date.toDate() ;
         }) ;
         dpEnd.on( "dp.change", function( e ){
-            console.log( "End date = " + e.date ) ;
+            account.matureDate = e.date.toDate() ;
         }) ;
     }
     

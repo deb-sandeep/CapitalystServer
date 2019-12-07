@@ -106,6 +106,34 @@
                                    ng-model="account.matureAmt" /> 
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <label>Autorenew</label>
+							<input type="checkbox" 
+							       ng-model="account.autoRenew"/>
+                        </td>
+                        <td>
+                            <label>Interest Rate</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.interestRate" /> 
+                        </td>
+                    </tr>
+                    <tr ng-if="account.baseAccount.accountType != null && 
+                               account.baseAccount.accountType == RECURRING_DEPOSIT">
+                        <td>
+                            <label>Recurring Amount</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.recurringAmt" /> 
+                        </td>
+                        <td>
+                            <label>Recurring Day of Month</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.recurringDom" /> 
+                        </td>
+                    </tr>
 	                <tr>
 	                    <td colspan="2">
 	                        <label>Notes</label>
