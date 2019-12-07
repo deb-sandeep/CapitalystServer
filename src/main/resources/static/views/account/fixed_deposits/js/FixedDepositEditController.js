@@ -1,4 +1,5 @@
-capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $http ) {
+capitalystNgApp.controller( 'FixedDepositEditController', 
+        function( $scope, $http, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
     
@@ -28,7 +29,22 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
     // --- [START] Scope functions -------------------------------------------
     $scope.saveAccount = function() {
         console.log( "Saving edit." ) ;
-        $( '#fixedDepositEditDialog' ).modal( 'hide' ) ;
+        if( isUserInputValid() ) {
+            saveAccount( function( savedAccount ) {
+                var accounts = $scope.$parent.$parent.accounts ; 
+                if( $scope.accountIndex == -1 ) {
+                    accounts.push( savedAccount ) ;
+                }
+                else {
+                    accounts[ $scope.accountIndex ] = savedAccount ;
+                }
+                resetEditControllerState() ;
+                $( '#fixedDepositEditDialog' ).modal( 'hide' ) ;
+            } ) ;
+        }
+        else {
+            $ngConfirm( 'Invalid input. Cant be saved.' ) ;
+        }
     }
     
     $scope.cancelEdit = function() {
@@ -76,9 +92,53 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
     }
     
     function prePopulateDatePicker( id, date ) {
-        
         var dp = $( '#' + id ) ;
         dp.data( "DateTimePicker" ).date( date ) ;
+    }
+    
+    function isUserInputValid() {
+        if( isBaseAccountDataValid() ) {
+            if( isFDAccountDataValid() ) {
+                return true ;
+            }
+        }
+        return false ;
+    }
+    
+    function isBaseAccountDataValid() {
+        var account = $scope.account ;
+        if( isNotEmptyOrNull( account.baseAccount.accountOwner ) ) {
+            if( isNotEmptyOrNull( account.baseAccount.accountType ) ) {
+                if( isNotEmptyOrNull( account.baseAccount.bankName ) ) {
+                    if( isNotEmptyOrNull( account.baseAccount.bankBranch ) ) {
+                        if( isNotEmptyOrNull( account.baseAccount.accountNumber ) ) {
+                            if( isNotEmptyOrNull( account.baseAccount.shortName ) ) {
+                                return true ;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false ;
+    }
+    
+    function isFDAccountDataValid() {
+        var account = $scope.account ;
+        if( account.baseAccount.balance != null && account.baseAccount.balance >= 0 ) {
+            if( account.openAmt != null && account.openAmt >=0 ) {
+                if( account.matureAmt != null && account.matureAmt >=0 ) {
+                    if( account.interestRate != null && account.matureAmt >=0 ) {
+                        return true ;
+                    }
+                }
+            }
+        }
+        return false ;
+    }
+    
+    function isNotEmptyOrNull( input ) {
+        return !( input == null || input.trim() == "" ) ;
     }
     
     // ------------------- Server comm functions -----------------------------
@@ -88,4 +148,22 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
             $scope.savingAccounts = response.data ;
         })
     }
+
+    function saveAccount( successCallback ) {
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/Account/FixedDeposit', $scope.account )
+        .then ( 
+            function( response ){
+                console.log( "Saved account data" ) ;
+                successCallback( response.data ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error fetch RefData." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+
 } ) ;

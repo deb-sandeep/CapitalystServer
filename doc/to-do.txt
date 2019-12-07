@@ -1,7 +1,7 @@
 X Ref data refactor to base controller
 X Get list of saving accounts as ref data (reuse?)
 X Tab active in sync with route displayed
-Add FD fields to edit dialog
-Link FD to edit dialog
+X Add FD fields to edit dialog
+X Link FD to edit dialog
 Save validation
 Save on server

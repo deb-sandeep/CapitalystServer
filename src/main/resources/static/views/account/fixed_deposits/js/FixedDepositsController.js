@@ -33,15 +33,15 @@ capitalystNgApp.controller( 'FixedDepositsController',
                 "bankName": null,
                 "bankBranch": null,
                 "description": null,
-                "balance" : 0
+                "balance" : null
             },
             "parentAccount": null,
             "openDate": null,
             "matureDate": null,
-            "openAmt": 0,
-            "matureAmt": 0,
+            "openAmt": null,
+            "matureAmt": null,
             "autoRenew": false,
-            "interestRate": 0,
+            "interestRate": null,
             "recurringAmt": null,
             "recurringDom": null
         }) ;

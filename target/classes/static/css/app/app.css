@@ -129,3 +129,7 @@ table.treetable {
    border: 1px solid #ddd;
    border-bottom-color: transparent
 }
+
+.input-group-addon {
+	padding: 0px 5px 0px 10px; 
+}

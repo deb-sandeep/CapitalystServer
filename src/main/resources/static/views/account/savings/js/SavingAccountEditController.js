@@ -1,4 +1,5 @@
-capitalystNgApp.controller( 'SavingAccountEditController', function( $scope, $http ) {
+capitalystNgApp.controller( 'SavingAccountEditController', 
+            function( $scope, $http, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
     
@@ -33,9 +34,12 @@ capitalystNgApp.controller( 'SavingAccountEditController', function( $scope, $ht
                     accounts[ $scope.accountIndex ] = savedAccount ;
                 }
                 resetEditControllerState() ;
+                $( '#savingAccountEditDialog' ).modal( 'hide' ) ;
             } ) ;
         }
-        $( '#savingAccountEditDialog' ).modal( 'hide' ) ;
+        else {
+            $ngConfirm( 'Invalid input. Cant be saved.' ) ;
+        }
     }
     
     $scope.cancelEdit = function() {
