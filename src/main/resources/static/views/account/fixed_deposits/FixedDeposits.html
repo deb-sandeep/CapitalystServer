@@ -21,6 +21,7 @@
                 <th>Mature Amt</th>
                 <th>%</th>
                 <th>Balance</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -35,11 +36,17 @@
                <td class="fixed-font amt">{{account.matureAmt | amt}}</td>
                <td class="fixed-font amt">{{account.interestRate}}%</td>
                <td class="fixed-font amt">{{account.baseAccount.balance | amt}}</td>
+               <td>
+                 <span class="glyphicon glyphicon-pencil"
+                       ng-click="editAccount( $index )">
+                 </span>&nbsp;
+               </td>
             </tr>
         </tbody>
             <tr class="success">
                 <th colspan="9"></th>
                 <th class="fixed-font amt">{{totalBalance | amt}}</th>
+                <th colspan="1"></th>
             </tr>
         <tfoot>
         </tfoot>

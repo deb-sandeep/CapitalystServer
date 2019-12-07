@@ -20,6 +20,9 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
         var editScope = $scope.$parent.$parent.editScope ;
         $scope.accountIndex = editScope.index ;
         $scope.account = editScope.account ;
+
+        prePopulateDatePicker( "opening_date", $scope.account.openDate ) ;
+        prePopulateDatePicker( "maturity_date", $scope.account.matureDate ) ;
     } ) ;
     
     // --- [START] Scope functions -------------------------------------------
@@ -51,25 +54,31 @@ capitalystNgApp.controller( 'FixedDepositEditController', function( $scope, $htt
         
         console.log( "Initializing date pickers." ) ;
         
-        var dpStart = $( '#opening_date' ) ;
-        var dpEnd   = $( '#maturity_date' ) ;
+        var openDtControl = $( '#opening_date' ) ;
+        var matureDtControl = $( '#maturity_date' ) ;
         
-        dpStart.datetimepicker({
+        openDtControl.datetimepicker({
             format: "MMM / DD / YYYY"
         }) ;
-        dpEnd.datetimepicker({
+        matureDtControl.datetimepicker({
             format: "MMM / DD / YYYY"
         }) ;
         
-        dpStart.off( "dp.change" ) ;
-        dpEnd.off( "dp.change" ) ;
+        openDtControl.off( "dp.change" ) ;
+        matureDtControl.off( "dp.change" ) ;
         
-        dpStart.on( "dp.change", function( e ){
-            account.openDate = e.date.toDate() ;
+        openDtControl.on( "dp.change", function( e ){
+            $scope.account.openDate = e.date.toDate() ;
         }) ;
-        dpEnd.on( "dp.change", function( e ){
-            account.matureDate = e.date.toDate() ;
+        matureDtControl.on( "dp.change", function( e ){
+            $scope.account.matureDate = e.date.toDate() ;
         }) ;
+    }
+    
+    function prePopulateDatePicker( id, date ) {
+        
+        var dp = $( '#' + id ) ;
+        dp.data( "DateTimePicker" ).date( date ) ;
     }
     
     // ------------------- Server comm functions -----------------------------

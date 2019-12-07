@@ -120,7 +120,7 @@
                         </td>
                     </tr>
                     <tr ng-if="account.baseAccount.accountType != null && 
-                               account.baseAccount.accountType == RECURRING_DEPOSIT">
+                               account.baseAccount.accountType == 'RECURRING_DEPOSIT'">
                         <td>
                             <label>Recurring Amount</label>
                             <input class='form-field' required
@@ -138,7 +138,7 @@
 	                    <td colspan="2">
 	                        <label>Notes</label>
 	                        <textarea class='form-field' 
-	                                  rows="5"
+	                                  rows="2"
 	                                  ng-model="account.baseAccount.description">
 	                        </textarea> 
 	                    </td>

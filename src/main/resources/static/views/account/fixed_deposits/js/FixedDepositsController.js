@@ -48,6 +48,12 @@ capitalystNgApp.controller( 'FixedDepositsController',
         $( '#fixedDepositEditDialog' ).modal( 'show' ) ;
     }
 
+    $scope.editAccount = function( index ) {
+        var clonedAccount = JSON.parse( JSON.stringify( $scope.accounts[index] ) ) ;
+        broadcastEditScopeChanged( index, clonedAccount ) ;
+        $( '#fixedDepositEditDialog' ).modal( 'show' ) ;
+    }
+    
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     
@@ -57,6 +63,10 @@ capitalystNgApp.controller( 'FixedDepositsController',
     }
     
     function broadcastEditScopeChanged( index, accountClone ) {
+        
+        accountClone.openDate = new Date( accountClone.openDate ) ;
+        accountClone.matureDate = new Date( accountClone.matureDate ) ;
+        
         $scope.editScope = {
             index : index,
             account : accountClone
@@ -74,6 +84,8 @@ capitalystNgApp.controller( 'FixedDepositsController',
                 $scope.accounts = response.data ;
                 angular.forEach( $scope.accounts, function( account, key ){
                     account.selected = false ;
+                    account.openDate = new Date( account.openDate ) ;
+                    account.matureDate = new Date( account.matureDate ) ;
                     $scope.totalBalance += account.baseAccount.balance ;
                 }) ;
             }, 
