@@ -6,7 +6,7 @@
     </button>
 </div>
 <div style="padding: 0px; margin: 10px" align="center">
-    <table class="ledger-table ledger-table-striped"
+    <table class="ledger-table"
            style="width: 100%;">
         <thead>
             <tr class="success">
@@ -33,11 +33,13 @@
                 <th>L2</th>
                 <th>Notes</th>
                 <th class="js-sort-number">Balance</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="entry in $parent.ledgerEntries"
-                ng-show="entry.visible">
+                ng-show="entry.visible"
+                ng-class="entry.selected ? 'row-selected' : ''">
                <td>
                  <span class="glyphicon glyphicon-plus-sign"
                        ng-click="selectAndCategorize( entry )"></span>
@@ -46,8 +48,8 @@
                  <input type="checkbox" 
                         ng-model="entry.selected"/>
                </td>
-               <td class="fixed-font">{{entry.valueDate}}</td>
-               <td class="remarks">{{entry.remarks | remark}}
+               <td class="fixed-font">{{entry.valueDate | date}}</td>
+               <td class="remarks" ng-click="entry.selected = !entry.selected">{{entry.remarks | remark}}
                <td ng-if="searchQuery.accountIds.length > 1">
                     {{entry.account.accountOwner}}
                </td>
@@ -59,6 +61,10 @@
                <td class="remarks">{{entry.l2Cat}}</td>
                <td class="remarks">{{entry.notes}}</td>
                <td class="fixed-font amt">{{entry.balance | amt}}</td>
+               <td>
+                 <span class="glyphicon glyphicon-trash"
+                       ng-click="deleteLedgerEntry( $index )"></span>
+               </td>
             </tr>
         </tbody>
     </table>

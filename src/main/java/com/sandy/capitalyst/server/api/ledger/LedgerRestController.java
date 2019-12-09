@@ -7,10 +7,13 @@ import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
+import org.springframework.web.bind.annotation.DeleteMapping ;
+import org.springframework.web.bind.annotation.PathVariable ;
 import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
@@ -103,5 +106,20 @@ public class LedgerRestController {
         }
         
         return entries ;
+    }
+
+    @DeleteMapping( "/Ledger/{id}" ) 
+    public ResponseEntity<APIResponse> deleteLedgerEntry( @PathVariable Integer id ) {
+        try {
+            log.debug( "Deleting ledger entry. " + id ) ;
+            alRepo.deleteById( id ) ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( new APIResponse( "Successfully deleted" ) ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
     }
 }

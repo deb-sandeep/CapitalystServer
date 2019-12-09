@@ -133,9 +133,13 @@ public class LEClassifier {
         for( String key : ruleSet.keySet() ) {
             RuleData ruleData = ruleSet.get( key ) ;
             if( ruleData.rule.isRuleMatched( entry ) ) {
+                
+                String existingNotes = entry.getNotes() == null ?
+                                       "" : entry.getNotes() + " " ;
+                
                 entry.setL1Cat( ruleData.ruleMeta.getL1Category() ) ;
                 entry.setL2Cat( ruleData.ruleMeta.getL2Category() ) ;
-                entry.setNotes( ruleData.ruleMeta.getRuleName() ) ;
+                entry.setNotes( existingNotes + ruleData.ruleMeta.getRuleName() ) ;
                 
                 if( entriesToSave != null ) {
                     entriesToSave.add( entry ) ;
@@ -151,8 +155,7 @@ public class LEClassifier {
     private boolean isUnclassifiedEntry( LedgerEntry entry ) {
         
         if( StringUtil.isEmptyOrNull( entry.getL1Cat() ) || 
-            StringUtil.isEmptyOrNull( entry.getL2Cat() ) ||
-            StringUtil.isEmptyOrNull( entry.getNotes() ) ) {
+            StringUtil.isEmptyOrNull( entry.getL2Cat() ) ) {
             return true ;
         }
         return false ;

@@ -1,5 +1,9 @@
 package com.sandy.capitalyst.server ;
 
+import java.io.File ;
+import java.text.SimpleDateFormat ;
+import java.util.List ;
+
 import org.apache.log4j.Logger ;
 import org.springframework.beans.BeansException ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -14,8 +18,11 @@ import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.AccountRepo ;
+import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
 import com.sandy.common.bus.EventBus ;
+import com.sandy.common.xlsutil.XLSRow ;
+import com.sandy.common.xlsutil.XLSWrapper ;
 
 @SpringBootApplication
 public class CapitalystServer 
@@ -90,5 +97,33 @@ public class CapitalystServer
         log.debug( "Starting Capitalyst Server.." ) ;
         CapitalystServer app = CapitalystServer.getAppContext().getBean( CapitalystServer.class ) ;
         app.initialize() ;
+    }
+    
+    public void importHistoricCCEntries() throws Exception {
+        
+        SimpleDateFormat DF = new SimpleDateFormat( "dd/MM/yy" ) ;
+        XLSWrapper wrapper = new XLSWrapper( new File( "/Users/sandeep/temp/CCLog.xls" ) ) ;
+        List<XLSRow> rows = wrapper.getRows( 0, 0, 5 ) ;
+        Account account = aiRepo.findById( 7671 ).get() ;
+        
+        int numRowsImported = 0 ;
+        
+        for( XLSRow row : rows ) {
+            LedgerEntry le = new LedgerEntry() ;
+            le.setAccount( account ) ;
+            le.setAmount( -1 * Float.parseFloat( row.getCellValue( 3 ) ) ) ;
+            le.setBalance( Float.parseFloat( row.getCellValue( 5 ) ) ) ;
+            le.setNotes( "CC X" + row.getCellValue( 0 ) ) ;
+            le.setRemarks( row.getCellValue( 2 ) ) ;
+            le.setValueDate( DF.parse( row.getCellValue( 1 ) ) ) ;
+            le.generateHash() ;
+            
+            ledgerRepo.save( le ) ;
+            
+            account.setBalance( le.getBalance() ) ;
+            aiRepo.save( account ) ;
+            
+            log.debug( "Num rows imported = " + ++numRowsImported ) ;
+        }
     }
 }

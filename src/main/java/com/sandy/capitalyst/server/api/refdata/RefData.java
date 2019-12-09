@@ -35,7 +35,7 @@ public class RefData {
         values.add( "FIXED_DEPOSIT" ) ;
         values.add( "RECURRING_DEPOSIT" ) ;
         values.add( "LINKED_FD" ) ;
-        values.add( "CREDIT CARD" ) ;
+        values.add( "CREDIT" ) ;
         values.add( "PPF" ) ;
         return values ;
     }

@@ -1,6 +1,8 @@
 package com.sandy.capitalyst.server.api.account;
 
+import java.util.LinkedHashSet ;
 import java.util.List ;
+import java.util.Set ;
 
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -37,7 +39,12 @@ public class SavingAccountRestController {
     public ResponseEntity<List<Account>> getAccounts() {
         try {
             List<Account> accounts = null ;
-            accounts = accountRepo.findByAccountType( AccountType.SAVING.name() ) ;
+            Set<String> accountTypes = new LinkedHashSet<>() ;
+            
+            accountTypes.add( AccountType.SAVING.name() ) ;
+            accountTypes.add( AccountType.CREDIT.name() ) ;
+            
+            accounts = accountRepo.findByAccountTypeIn( accountTypes ) ;
             
             List<FixedDeposit> fds = fdRepo.findAllActiveDeposits() ;
             for( Account account : accounts ) {

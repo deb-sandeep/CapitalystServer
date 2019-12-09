@@ -1,6 +1,6 @@
 package com.sandy.capitalyst.server.dao.ledger;
 
-import java.sql.Date ;
+import java.util.Date ;
 import java.text.SimpleDateFormat ;
 
 import javax.persistence.Column ;
@@ -159,6 +159,7 @@ public class LedgerEntry {
               .append( "  Value date = " + HASH_SDF.format( valueDate ) ).append( "\n" )
               .append( "  Remarks = " + remarks ).append( "\n" )
               .append( "  Amount = " + amount ).append( "\n" )
+              .append( "  balance = " + balance ).append( "\n" )
               .append( "  l1Cat = " + l1Cat ).append( "\n" )
               .append( "  l2Cat = " + l2Cat ).append( "\n" )
               .append( "  notes = " + notes ).append( "\n" )

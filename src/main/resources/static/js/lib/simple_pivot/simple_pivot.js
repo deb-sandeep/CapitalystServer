@@ -547,7 +547,12 @@ function PivotTable() {
                 if( cellData == null ) { cellData = "" ; } 
             }
             
-            renderString += "<td>" + cellData + "</td>" ;
+            var tdAttrs = "" ;
+            if( colIndex == gridRow.length-1 ) {
+                tdAttrs = " class='row-total'"
+            }
+            
+            renderString += "<td " + tdAttrs + ">" + cellData + "</td>" ;
         }
         renderString += "</tr>" ;
         return renderString ;

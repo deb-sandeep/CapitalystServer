@@ -170,13 +170,18 @@ capitalystNgApp.controller( 'LedgerHomeController',
             
         for( var i=0; i<selectedEntries.length; i++ ) {
             var entry = selectedEntries[i] ;
+            var note = entry.notes == null ? "" : entry.notes + " " ;
+            
+            input.notes = ( input.notes == null ) ? "" : input.notes ;
+            
             entry.l1Cat = l1Cat ;
             entry.l2Cat = l2Cat ;
-            entry.notes = ( input.saveRule ) ? input.ruleName : input.notes ;
+            
+            entry.notes = ( input.saveRule ) ? note + input.ruleName : 
+                                               note + input.notes ;
         }
         
         applyClassificationOnServer( l1Cat, l2Cat, newCategory ) ;
-        resetClassificationState() ;
         
         $( '#entryCategorizationDialog' ).modal( 'hide' ) ;
     }
@@ -205,6 +210,33 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     $scope.showOnlyUnclassifiedCriteriaChanged = function() {
         filterEntries( true ) ;
+    }
+    
+    $scope.deleteLedgerEntry = function( index ) {
+        console.log( "Deleting entry at index = " + index ) ;
+        var entry = $scope.ledgerEntries[ index ] ;
+        
+        $ngConfirm({
+            title: 'Confirm!',
+            content: 'Delete ledger entry ' + entry.remarks ,
+            scope: $scope,
+            buttons: {
+                close: function(scope, button){
+                    console.log( "User cancelled." ) ;
+                },
+                yes: {
+                    text: 'Yes',
+                    btnClass: 'btn-blue',
+                    action: function(scope, button){
+                        console.log( "Ok to delete account." ) ;
+                        deleteLedgerEntryOnServer( entry, function() {
+                            $scope.ledgerEntries.splice( index, 1 ) ;
+                        }) ;
+                        return true ;
+                    }
+                }
+            }
+        });
     }
 
     // --- [END] Scope functions
@@ -385,6 +417,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     function resetClassificationState() {
         
+        for( var i=0; i<selectedEntries.length; i++ ) {
+            var entry = selectedEntries[i] ;
+            entry.selected = false ;
+        }
+        
         selectedEntries.length = 0 ;
         $scope.relevantCategoriesForSelectedEntries = null ;
         
@@ -426,6 +463,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
                 console.log( "Classification applied successfully." ) ;
                 if( postData.saveRule ) {
                     fetchLedgerEntries() ;
+                }
+                else {
+                    resetClassificationState() ;                
                 }
             }, 
             function( error ){
@@ -472,8 +512,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
                 var type = entry.amount > 0 ? "Income" : "Expense" ;
                 pivotSrcData.push( [ 
                     type, 
-                    entry.l1Cat, 
-                    entry.l2Cat, 
+                    entry.l1Cat == null ? "": entry.l1Cat, 
+                    entry.l2Cat == null ? "": entry.l2Cat, 
                     entry.amount 
                 ] ) ;
             }
@@ -502,7 +542,16 @@ capitalystNgApp.controller( 'LedgerHomeController',
     function refreshPivotTable() {
         var pivotTable = new PivotTable() ;
         pivotSrcData.sort( function( tupule1, tupule2 ) {
-            return tupule1[0].localeCompare( tupule2[0] ) ;
+            var typeCompare = tupule1[0].localeCompare( tupule2[0] ) ;
+            if( typeCompare == 0 ) {
+                var l1Compare = tupule1[1].localeCompare( tupule2[1] ) ;
+                if( l1Compare == 0 ) {
+                    var l2Compare = tupule1[2].localeCompare( tupule2[2] ) ;
+                    return l2Compare ;
+                }
+                return l1Compare
+            }
+            return typeCompare ;
         } ) ;
         
         pivotTable.setPivotData( pivotSrcColNames, pivotSrcData ) ;
@@ -557,6 +606,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
             }
         }
         
+        console.log( catArray ) ;
+        
         filterEntries( false ) ;
         $scope.$apply() ;
     }
@@ -591,5 +642,22 @@ capitalystNgApp.controller( 'LedgerHomeController',
     function resetPivotCatSelection() {
         l1FilterSelections.length = 0 ;
         l2FilterSelections.length = 0 ;
+    }
+
+    function deleteLedgerEntryOnServer( entry, successCallback ) {
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.delete( '/Ledger/' + entry.id )
+        .then ( 
+            function( response ){
+                console.log( "Deleted ledger entry" ) ;
+                successCallback() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error deleting ledger entry." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
     }
 } ) ;
