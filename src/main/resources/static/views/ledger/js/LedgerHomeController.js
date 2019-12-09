@@ -253,6 +253,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }
         else {
             $scope.searchQuery.accountIds = accountIds.split( "," ) ;
+            if( $scope.searchQuery.accountIds.length > 0 ) {
+                $scope.$parent.navBarTitle = "Consolidated ledger" ; 
+            }
         }
         initializeDateRange() ;
         fetchLedgerEntries() ;
@@ -331,7 +334,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
                 $scope.ledgerEntries.length = 0 ;
                 for( var i=0; i<response.data.length; i++ ) {
                     var entry = response.data[i] ;
-                    if( i == 0 ) {
+                    if( i == 0 && $scope.searchQuery.accountIds.length == 1 ) {
                         $scope.$parent.navBarTitle = 
                             entry.account.accountOwner + " - " + 
                             entry.account.accountNumber + " - " + 
@@ -509,13 +512,16 @@ capitalystNgApp.controller( 'LedgerHomeController',
             }
             
             if( entry.visible ) {
-                var type = entry.amount > 0 ? "Income" : "Expense" ;
-                pivotSrcData.push( [ 
-                    type, 
-                    entry.l1Cat == null ? "": entry.l1Cat, 
-                    entry.l2Cat == null ? "": entry.l2Cat, 
-                    entry.amount 
-                ] ) ;
+                var type = entry.amount >= 0 ? "Income" : "Expense" ;
+                if( !( entry.l1Cat == "Inter Account" && 
+                       entry.l2Cat == "Inter Account" ) ) {
+                    pivotSrcData.push( [ 
+                        type, 
+                        entry.l1Cat == null ? "": entry.l1Cat, 
+                                entry.l2Cat == null ? "": entry.l2Cat, 
+                                        entry.amount 
+                                        ] ) ;
+                }
             }
         }
         

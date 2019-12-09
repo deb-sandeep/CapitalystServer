@@ -95,6 +95,17 @@ capitalystNgApp.controller( 'SavingAccountsController',
         $( '#uploadAccountStmtDialog' ).modal( 'show' ) ;
     }
     
+    $scope.showConsolidatedLedger = function() {
+        
+        var selAccIds = [] ;
+        angular.forEach( $scope.accounts, function( account, key ){
+            selAccIds.push( account.id ) ;
+        }) ;
+        
+        $window.location.href = "/views/ledger/ledger.html?accountIds=" + 
+                                selAccIds.join() ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
