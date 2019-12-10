@@ -6,13 +6,22 @@ le_classifier  :
 
 le_stmt : 
     ( neg_op )? 
-    ( le_group_stmt | remark_match | amt_match ) ;
+    ( le_group_stmt | remark_match | amt_match | l1cat_match | l2cat_match | note_match ) ;
       
 le_group_stmt :
     '(' le_classifier ')' ;
                           
 remark_match : 
     'remark' 'like' Value ;
+    
+l1cat_match :
+    'l1Cat' 'like' Value ;
+    
+l2cat_match :
+    'l2Cat' 'like' Value ;
+    
+note_match :
+    'note' 'like' Value ;
     
 amt_match :
     amt_gt_stmt | amt_lt_stmt | amt_eq_stmt | amt_bw_stmt ;

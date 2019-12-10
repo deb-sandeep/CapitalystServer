@@ -16,8 +16,11 @@ import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_gt_stmt
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_lt_stmtContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Binary_opContext ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.L1cat_matchContext ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.L2cat_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Le_group_stmtContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Neg_opContext ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Note_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Remark_matchContext ;
 
 public class LEClassifierRuleBuilder 
@@ -91,6 +94,15 @@ public class LEClassifierRuleBuilder
             else if( child instanceof Remark_matchContext ) {
                 rule = buildRemarkMatchRule( child ) ; 
             }
+            else if( child instanceof L1cat_matchContext ) {
+                rule = buildL1CatMatchRule( child ) ; 
+            }
+            else if( child instanceof L2cat_matchContext ) {
+                rule = buildL2CatMatchRule( child ) ; 
+            }
+            else if( child instanceof Note_matchContext ) {
+                rule = buildNoteMatchRule( child ) ; 
+            }
             else if( child instanceof Amt_matchContext ) {
                 rule = buildAmountMatchRule( child ) ;
             }
@@ -103,10 +115,27 @@ public class LEClassifierRuleBuilder
     }
     
     private LEClassifierRule buildRemarkMatchRule( ParseTree tree ) {
-        
         Remark_matchContext ctx = ( Remark_matchContext )tree ;
         String regex = ctx.Value().getText() ;
         return new LEClassifierRemarkMatchRule( regex.replace( "\"", "" ) ) ;
+    }
+    
+    private LEClassifierRule buildL1CatMatchRule( ParseTree tree ) {
+        L1cat_matchContext ctx = ( L1cat_matchContext )tree ;
+        String regex = ctx.Value().getText() ;
+        return new LEClassifierL1CatMatchRule( regex.replace( "\"", "" ) ) ;
+    }
+    
+    private LEClassifierRule buildL2CatMatchRule( ParseTree tree ) {
+        L2cat_matchContext ctx = ( L2cat_matchContext )tree ;
+        String regex = ctx.Value().getText() ;
+        return new LEClassifierL2CatMatchRule( regex.replace( "\"", "" ) ) ;
+    }
+    
+    private LEClassifierRule buildNoteMatchRule( ParseTree tree ) {
+        Note_matchContext ctx = ( Note_matchContext )tree ;
+        String regex = ctx.Value().getText() ;
+        return new LEClassifierNoteMatchRule( regex.replace( "\"", "" ) ) ;
     }
     
     private LEClassifierRule buildAmountMatchRule( ParseTree tree ) {
