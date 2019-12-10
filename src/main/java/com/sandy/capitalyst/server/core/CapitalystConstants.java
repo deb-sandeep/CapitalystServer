@@ -4,11 +4,13 @@ public class CapitalystConstants {
 
     public static enum Bank {
         ICICI,
-        SBI
+        SBI,
+        HOME
     } ;
     
     public static enum AccountType {
         SAVING,
+        CURRENT,
         CREDIT,
         FIXED_DEPOSIT,
         RECURRING_DEPOSIT,

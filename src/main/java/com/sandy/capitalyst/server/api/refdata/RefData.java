@@ -26,12 +26,14 @@ public class RefData {
         List<String> values = new ArrayList<>() ;
         values.add( "ICICI" ) ;
         values.add( "SBI" ) ;
+        values.add( "HOME" ) ;
         return values ;
     }
     
     private List<String> createAccountTypesList() {
         List<String> values = new ArrayList<>() ;
         values.add( "SAVING" ) ;
+        values.add( "CURRENT" ) ;
         values.add( "FIXED_DEPOSIT" ) ;
         values.add( "RECURRING_DEPOSIT" ) ;
         values.add( "LINKED_FD" ) ;

@@ -4,7 +4,7 @@ capitalystNgApp.controller( 'SavingAccountsController',
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
-    $scope.$parent.navBarTitle = "Saving Accounts" ;
+    $scope.$parent.navBarTitle = "Saving, Credit & Current Accounts" ;
     $scope.accounts = null ;
     $scope.totalBalance = 0 ;
     $scope.totalDepositBalance = 0 ;

@@ -43,6 +43,7 @@ public class SavingAccountRestController {
             
             accountTypes.add( AccountType.SAVING.name() ) ;
             accountTypes.add( AccountType.CREDIT.name() ) ;
+            accountTypes.add( AccountType.CURRENT.name() ) ;
             
             accounts = accountRepo.findByAccountTypeIn( accountTypes ) ;
             
