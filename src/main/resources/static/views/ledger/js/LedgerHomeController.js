@@ -238,6 +238,10 @@ capitalystNgApp.controller( 'LedgerHomeController',
             }
         });
     }
+    
+    $scope.isCreditCardEntry = function( entry ) {
+        return entry.account.accountType == "CREDIT" ;
+    }
 
     // --- [END] Scope functions
 

@@ -49,12 +49,15 @@
                         ng-model="entry.selected"/>
                </td>
                <td class="fixed-font">{{entry.valueDate | date}}</td>
-               <td class="remarks" ng-click="entry.selected = !entry.selected">{{entry.remarks | remark}}
+               <td class="remarks" ng-click="entry.selected = !entry.selected">
+	               {{entry.remarks | remark}}
+	               <span ng-if="entry.chequePayment"
+	                     class="glyphicon glyphicon-map-marker"></span>
+                   <span ng-if="isCreditCardEntry( entry )"
+                         class="glyphicon glyphicon-subtitles"></span>
+               </td>
                <td ng-if="searchQuery.accountIds.length > 1">
                     {{entry.account.accountOwner}}
-               </td>
-               <span ng-if="entry.chequePayment"
-                     class="glyphicon glyphicon-map-marker"></span>
                </td>
                <td class="fixed-font amt" ng-class="amtClass( entry.amount )">{{entry.amount | amt}}</td>
                <td class="remarks">{{entry.l1Cat}}</td>

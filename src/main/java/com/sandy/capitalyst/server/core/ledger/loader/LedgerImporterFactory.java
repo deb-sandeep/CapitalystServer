@@ -12,8 +12,12 @@ public class LedgerImporterFactory {
     public static LedgerImporter getLedgerImporter( Account account ) {
         
         LedgerImporter importer = null ;
-        if( account.getAccountType().equals( AccountType.SAVING.name() ) ) {
+        String accountType = account.getAccountType() ;
+        if( accountType.equals( AccountType.SAVING.name() ) ) {
             importer = getSavingBankLedgerImporter( account ) ;
+        }
+        else if( accountType.equals( AccountType.CREDIT.name() ) ) {
+            importer = new ICICICreditCardLedgerImporter() ;
         }
 
         if( importer == null ) {

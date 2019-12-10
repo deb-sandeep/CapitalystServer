@@ -4,4 +4,5 @@ encoding//src/main/resources=UTF-8
 encoding//src/main/resources/static/views/index.html=UTF-8
 encoding//src/test/java=8859_1
 encoding//src/test/resources=UTF-8
+encoding//target/generated-sources/antlr4=8859_1
 encoding/<project>=UTF-8
