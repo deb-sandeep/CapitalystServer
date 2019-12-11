@@ -26,7 +26,7 @@ capitalystNgApp.controller( 'SavingAccountsController',
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
     $scope.$on( 'refreshTotals', function( event, args ) {
-        refreshTotals() ;
+        fetchAccountsFromServer() ;
     } ) ;
     
     $scope.showNewAccountDialog = function() {

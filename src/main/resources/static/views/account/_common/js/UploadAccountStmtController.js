@@ -49,7 +49,7 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
     
     $scope.hideDialog = function() {
         resetState() ;
-        $scope.$broadcast( 'refreshTotals', null ) ;
+        $scope.$emit( 'refreshTotals', null ) ;
         $( '#uploadAccountStmtDialog' ).modal( 'hide' ) ;
     }
     

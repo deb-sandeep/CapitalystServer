@@ -35,7 +35,7 @@ capitalystNgApp.controller( 'SavingAccountEditController',
                 }
                 resetEditControllerState() ;
                 $( '#savingAccountEditDialog' ).modal( 'hide' ) ;
-                $scope.$broadcast( 'refreshTotals', null ) ;
+                $scope.$emit( 'refreshTotals', null ) ;
             } ) ;
         }
         else {

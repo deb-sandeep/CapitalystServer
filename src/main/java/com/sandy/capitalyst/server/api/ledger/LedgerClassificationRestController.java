@@ -1,7 +1,6 @@
 package com.sandy.capitalyst.server.api.ledger;
 
 import java.sql.Date ;
-import java.util.ArrayList ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
@@ -40,13 +39,8 @@ public class LedgerClassificationRestController {
     public ResponseEntity<List<LedgerEntryCategory>> getLedgerEntryCategories() {
         try {
             log.debug( "Getting ledger entry categories." ) ;
-            List<LedgerEntryCategory> categories = new ArrayList<>() ;
-            Iterable<LedgerEntryCategory> results = null ;
-            
-            results = lecRepo.findAll() ;
-            for( LedgerEntryCategory result : results ) {
-                categories.add( result ) ;
-            }
+            List<LedgerEntryCategory> categories = null ;
+            categories = lecRepo.findAllCategories() ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( categories ) ;
         }

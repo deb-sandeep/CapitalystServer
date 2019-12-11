@@ -24,25 +24,4 @@ capitalystNgApp.controller( 'CashEntryHomeController',
     }
     
     // ------------------- Server comm functions -----------------------------
-    /* Template server communication function
-    function <serverComm>() {
-        
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.post( '/<API endpoint>', {
-            'eventId'       : eventId,
-        } )
-        .then ( 
-            function( response ){
-                var data = response.data ;
-                // TODO: Server data processing logic
-            }, 
-            function( error ){
-                $scope.$parent.addErrorAlert( "<Error Message>" ) ;
-            }
-        )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
-    }
-    */
 } ) ;
