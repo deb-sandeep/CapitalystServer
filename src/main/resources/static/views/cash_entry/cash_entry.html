@@ -4,6 +4,8 @@
 <head>
     <meta charset="ISO-8859-1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#222" />
+    
     <title>CashEntry</title>
     <script src="/js/lib/jquery/jquery-2.1.1.min.js"></script>
     <script src="/js/lib/angular/angular.min.js"></script>
@@ -20,6 +22,7 @@
     
     <link rel="stylesheet" href="/css/app/app.css"/>
     <link rel="stylesheet" href="/css/app/form.css"/>
+    <link rel="stylesheet" href="/css/app/cash_entry.css"/>
     
     <script src="/js/app/app-ng.js"></script>
     <script src="/js/app/filter.js"></script>
@@ -32,17 +35,16 @@
 </head>
 
 <body ng-controller="CashEntryController"
-      style="background-color: #FFFFFF;">
+      style="background-color: #222;">
 
 <nav class="navbar navbar-inverse navbar-static-top"
      style="min-height:0px;margin-bottom:0px;">
     <div class="container" style="width:100%">
         <div class="row" >
             <div class="col-sm-7">
-                [ <a href="/views/landing/landing.html">Capitalyst</a> ] - {{navBarTitle}}
+                Cash expense entry
             </div>
             <div class="col-sm-5">
-                <!-- Space for controls common to module -->
             </div>
         </div>
     </div>

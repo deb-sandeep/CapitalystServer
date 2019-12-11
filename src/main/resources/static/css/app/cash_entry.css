@@ -1,0 +1,30 @@
+#cash_entry_ledger {
+	position:relative;
+	width:100%;
+	height:calc( 100vh - 100px) ;
+	background-color: #222;
+}
+
+#cash_entry_screen_footer {
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:50px;
+    background-color:#222;
+}
+
+#new_cash_entry_btn {
+	position:relative;
+	width:100%;
+	height:100%;
+	padding:0px;
+	background-color: #2A2A2A;
+	border-color: #2E2E2E;
+	font-size:20px;
+	color: #AAA;
+}
+
+.btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: black;
+}
