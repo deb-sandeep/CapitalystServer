@@ -14,7 +14,9 @@ public class LedgerEntryCategory {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id = null ;
+    
     private boolean creditClassification = false ;
+    private boolean validForCashEntry = false ;
     
     @Column( name = "l1_cat_name" )
     private String l1CatName = null ;
@@ -55,12 +57,21 @@ public class LedgerEntryCategory {
     public String getL2CatName() {
         return this.l2CatName ;
     }
+    
+    public boolean isValidForCashEntry() {
+        return validForCashEntry ;
+    }
+
+    public void setValidForCashEntry( boolean validForCashEntry ) {
+        this.validForCashEntry = validForCashEntry ;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "LedgerEntryCategory [\n" ) ; 
 
         builder.append( "   id = " + this.id + "\n" ) ;
         builder.append( "   isCreditClassification = " + this.creditClassification + "\n" ) ;
+        builder.append( "   validForCashEntry = " + this.validForCashEntry + "\n" ) ;
         builder.append( "   l1CatName = " + this.l1CatName + "\n" ) ;
         builder.append( "   l2CatName = " + this.l2CatName + "\n" ) ;
         builder.append( "]" ) ;

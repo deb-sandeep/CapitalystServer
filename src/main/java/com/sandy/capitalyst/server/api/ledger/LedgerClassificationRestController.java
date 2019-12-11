@@ -57,6 +57,24 @@ public class LedgerClassificationRestController {
         }
     }
     
+    @GetMapping( "/Ledger/CashEntryCategories" ) 
+    public ResponseEntity<List<LedgerEntryCategory>> 
+                                     getLedgerEntryCategoriesForCashEntry() {
+        
+        try {
+            log.debug( "Getting ledger entry categories for cash entry." ) ;
+            List<LedgerEntryCategory> categories = null ;
+            categories = lecRepo.findCategoriesForCashEntry() ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( categories ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
+    
     @PostMapping( "/Ledger/Classification" ) 
     public ResponseEntity<APIResponse> classifyLedgerEntries( 
                          @RequestBody LedgerClassificationInput input ) {
