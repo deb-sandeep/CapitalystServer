@@ -1,5 +1,5 @@
 capitalystNgApp.controller( 'CashEntryHomeController', 
-    function( $scope, $http, $rootScope, $location, $window ) {
+    function( $scope, $http, $location, editIntent ) {
     
     // ---------------- Local variables --------------------------------------
     var toDate = new Date() ;
@@ -17,6 +17,10 @@ capitalystNgApp.controller( 'CashEntryHomeController',
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
+    $scope.editEntry = function( entry ) {
+        editIntent.setEditIntent( entry ) ;
+        $location.path( "/editEntry" ) ;
+    }
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -36,8 +40,8 @@ capitalystNgApp.controller( 'CashEntryHomeController',
         .then ( 
             function( response ){
                 var data = response.data ;
-                console.log( "Response received " + data ) ; 
                 angular.forEach( data, function( entry, key ){
+                    entry.amount *= -1 ;
                     $scope.entries.push( entry ) ;
                 }) ;
             }, 

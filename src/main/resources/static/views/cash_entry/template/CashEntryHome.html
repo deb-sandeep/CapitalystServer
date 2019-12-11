@@ -1,11 +1,23 @@
-<div id="cash_entry_ledger">
+<div class="cash_entry_screen_body">
+	<div class="container" style="width:100%;" ng-repeat="entry in entries">
+	  <div class="row">
+        <div class="col-xs-2 dt-cell">{{entry.valueDate | date : 'dd MMM'}}</div>
+	    <div class="col-xs-8" style="padding:0px">
+	      <div class="short-div cat-cell">{{entry.l1Cat}} &gt; {{entry.l2Cat}}</div>
+	      <div class="short-div note-cell">{{entry.remarks}}</div>
+	    </div>
+	    <div class="col-xs-2 amt-cell"
+	         ng-click="editEntry( entry )">
+	       {{entry.amount | amt}}
+	    </div>
+	  </div>
+	</div>
 </div>
 
-<div id="cash_entry_screen_footer">
-	<button id="new_cash_entry_btn"
-	        class="btn btn-primary btn-md"
+<div class="cash_entry_screen_footer">
+	<button class="btn btn-primary btn-md cash_entry_footer_btn"
 	        ng-click="newCashEntry()">
-	  <span class="glyphicon glyphicon-plus-sign"></span>
+	  <span class="glyphicon glyphicon-plus-sign"></span>&nbsp;
 	  New cash entry
 	</button>
 </div>

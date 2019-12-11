@@ -41,9 +41,6 @@ public class LedgerRestController {
     public ResponseEntity<List<LedgerEntry>> findLedgerEntries( 
                          @RequestBody LedgerSearchCriteria searchCriteria ) {
         try {
-            log.debug( "Searching for ledger entries." ) ;
-            log.debug( "Search criteria = " + searchCriteria ) ;
-            
             List<LedgerEntry> entries = null ;
             entries = searchEntries( searchCriteria ) ;
             entries = filterResultsByCustomRule( searchCriteria, entries ) ;
@@ -68,8 +65,6 @@ public class LedgerRestController {
                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                 Date toDate ) {
         try {
-            log.debug( "Getting cash at home ledger entries." ) ;
-            
             Account account = accountRepo.findByAccountNumber( "CASH@HOME" ) ;
             
             List<LedgerEntry> entries = null ;
