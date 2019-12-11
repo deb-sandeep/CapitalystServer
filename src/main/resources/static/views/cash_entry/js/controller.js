@@ -7,7 +7,6 @@ capitalystNgApp.controller( 'CashEntryController',
 
     // Common framework variables. 
     $scope.alerts = [] ;
-    $scope.navBarTitle = "<Fill navbar title>" ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -46,27 +45,4 @@ capitalystNgApp.controller( 'CashEntryController',
     }
     
     // ------------------- Server comm functions -----------------------------
-    /* Template server communication function
-    function <serverComm>() {
-        
-        $scope.interactingWithServer = true ;
-        $http.post( '/<API endpoint>', {
-            'eventId'       : eventId,
-        } )
-        .then ( 
-            function( response ){
-                var data = response.data ;
-                // TODO: Server data processing logic
-            }, 
-            function( error ){
-                var errMsg = "<Error Message>" ;
-                console.log( errMsg ) ;
-                $scope.addErrorAlert( errMsg ) ;
-            }
-        )
-        .finally(function() {
-            $scope.interactingWithServer = false ;
-        }) ;
-    }
-    */
 } ) ;

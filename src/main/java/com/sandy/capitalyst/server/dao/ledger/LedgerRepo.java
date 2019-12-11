@@ -50,6 +50,22 @@ public interface LedgerRepo
                                     @Param( "lowerAmt"  ) Float lowerAmt,
                                     @Param( "upperAmt"  ) Float upperAmt ) ; 
 
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.account.id = :accountId AND "
+          + "    le.valueDate between :startDate AND :endDate "
+          + "ORDER BY "
+          + "    le.valueDate DESC "
+    )
+    public List<LedgerEntry> findEntries( 
+                                    @Param( "accountId" ) int accountId,
+                                    @Param( "startDate" ) Date startDate,
+                                    @Param( "endDate"   ) Date endDate ) ; 
+    
     @Modifying( clearAutomatically = true )
     @Transactional( propagation = Propagation.REQUIRES_NEW )    
     @Query( value =   
