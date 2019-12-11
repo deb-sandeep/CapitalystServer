@@ -7,7 +7,7 @@
 	      <div class="short-div note-cell">{{entry.remarks}}</div>
 	    </div>
 	    <div class="col-xs-2 amt-cell"
-	         ng-click="editEntry( entry )">
+	         ng-click="editEntry( $index )">
 	       {{entry.amount | amt}}
 	    </div>
 	  </div>

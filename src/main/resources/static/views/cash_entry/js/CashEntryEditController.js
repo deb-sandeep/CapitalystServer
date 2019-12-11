@@ -15,6 +15,8 @@ capitalystNgApp.controller( 'CashEntryEditController',
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
     $scope.cancelCashEntry = function() {
+        editIntent.editEntryIndex = null ;
+        editIntent.editEntry = null ;
         $location.path( "/" ) ;
     }
     // --- [END] Scope functions

@@ -60,9 +60,8 @@ public class CapitalystServer
     }
     
     private void updateAccountBalanceOnStartup() {
-        
+        log.debug( "Updating account balances" ) ;
         for( Account account : aiRepo.findAll() ) {
-            log.debug( "Updating balance for account = " + account.getShortName() ) ;
             Float balance = this.ledgerRepo.getAccountBalance( account.getId() ) ;
             if( balance != null ) {
                 account.setBalance( balance ) ;

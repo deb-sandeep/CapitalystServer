@@ -17,8 +17,23 @@ capitalystNgApp.controller( 'CashEntryHomeController',
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
-    $scope.editEntry = function( entry ) {
-        editIntent.setEditIntent( entry ) ;
+    $scope.editEntry = function( index ) {
+        var entry = $scope.entries[index] ;
+        var clone = JSON.parse( JSON.stringify( entry ) ) ;
+        editIntent.setEditIntent( clone, index ) ;
+        $location.path( "/editEntry" ) ;
+    }
+    
+    $scope.newCashEntry = function() {
+        var entry =     {
+            "id"        : -1,
+            "valueDate" : new Date(),
+            "remarks"   : null,
+            "amount"    : null,
+            "l1Cat"     : null,
+            "l2Cat"     : null
+        } ;
+        editIntent.setEditIntent( entry, -1 ) ;
         $location.path( "/editEntry" ) ;
     }
     // --- [END] Scope functions
@@ -27,7 +42,23 @@ capitalystNgApp.controller( 'CashEntryHomeController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
-        fetchLedgerEntries() ;
+        // Check the editIntent editEntryIndex
+        // If null => either this is being loaded fresh or the edit screen  
+        // was cancelled. We proceed normally.
+        //
+        // If the editEntryIndex is -1, it implies that a new entry was added
+        // A normal refresh will take care of loading the new entry
+        //
+        // If the editEntryIndex is >= 0, implies that an existing entry was
+        // edited. We replace the existing entry and the screen auto refreshes
+        // itself.
+        if( editIntent.editEntryIndex == null || 
+            editIntent.editEntryIndex == -1 ) {
+            fetchLedgerEntries() ;
+        }
+        else {
+            
+        }
     }
     
     // ------------------- Server comm functions -----------------------------
