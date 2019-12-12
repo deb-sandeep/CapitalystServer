@@ -20,6 +20,7 @@ capitalystNgApp.controller( 'CashEntryHomeController',
     $scope.editEntry = function( index ) {
         var entry = $scope.entries[index] ;
         var clone = JSON.parse( JSON.stringify( entry ) ) ;
+        clone.valueDate = new Date( clone.valueDate ) ;
         editIntent.setEditIntent( clone, index ) ;
         $location.path( "/editEntry" ) ;
     }

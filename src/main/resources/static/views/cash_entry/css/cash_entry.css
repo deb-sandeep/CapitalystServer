@@ -1,4 +1,4 @@
-.cash_entry_screen_body {
+.cash_entry_ledger_body {
 	position:relative;
 	width:100%;
 	height:calc( 100vh - 100px) ;
@@ -29,19 +29,19 @@
    box-shadow: black;
 }
 
-.cash_entry_screen_body .container {
+.cash_entry_ledger_body .container {
 	margin-bottom: 3px;
 }
 
-.cash_entry_screen_body div {
+.cash_entry_ledger_body .ledger_row {
   height:50px;
 }
 
-.cash_entry_screen_body .short-div {
+.cash_entry_ledger_body .short-div {
   height:25px;
 }
 
-.cash_entry_screen_body .dt-cell {
+.cash_entry_ledger_body .dt-cell {
     background-color: #5c5e5f;
     color:white;
 	font-size:16px;
@@ -50,7 +50,7 @@
 	padding:0px 0px 0px 5px;
 }
 
-.cash_entry_screen_body .cat-cell {
+.cash_entry_ledger_body .cat-cell {
     background-color: #868788;
     padding:0px 0px 0px 5px;
     color:white;
@@ -59,7 +59,7 @@
     font-size:13px;
 }
 
-.cash_entry_screen_body .note-cell {
+.cash_entry_ledger_body .note-cell {
     background-color: #424344;
     padding:0px 0px 0px 5px;
     line-height:25px;
@@ -67,7 +67,7 @@
     color:white;
 }
 
-.cash_entry_screen_body .amt-cell {
+.cash_entry_ledger_body .amt-cell {
     background-color: #5c5e5f;
     padding:0px 5px 0px 0px;
     text-align:right;
@@ -75,4 +75,19 @@
     line-height:50px;
     color:white;
     font-family:'Courier';
+}
+
+.cash_entry_edit_body {
+	padding:10px;
+}
+
+.cash_entry_edit_body label {
+	font-size:12px;
+	color:#cacbcd;
+}
+
+.cash_entry_edit_body .form-control {
+	background-color: #43454a;
+	color:white;
+	border-color: #686a71;
 }

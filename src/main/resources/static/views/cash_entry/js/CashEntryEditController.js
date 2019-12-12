@@ -4,6 +4,7 @@ capitalystNgApp.controller( 'CashEntryEditController',
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
+    $scope.editEntry = null ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -25,6 +26,32 @@ capitalystNgApp.controller( 'CashEntryEditController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
+        if( editIntent.editEntry == null ) {
+            $location.path( "/" ) ;
+        }
+        else {
+            $scope.editEntry = editIntent.editEntry ;
+            initDatePicker() ;
+        }
+    }
+    
+    function initDatePicker() {
+        
+        var ceDateCtl = $( '#ceDate' ) ;
+        
+        ceDateCtl.off( "dp.change" ) ;
+        ceDateCtl.datetimepicker({
+            format: "MMM / DD / YYYY",
+            focusOnShow:false
+        }) ;
+        
+        ceDateCtl.on( "dp.change", function( e ){
+            $scope.editEntry.valueDate = e.date.toDate() ;
+            $( '#ceAmt' ).focus() ;
+        }) ;
+        
+        ceDateCtl.data( "DateTimePicker" )
+                 .date( $scope.editEntry.valueDate ) ;
     }
     
     // ------------------- Server comm functions -----------------------------

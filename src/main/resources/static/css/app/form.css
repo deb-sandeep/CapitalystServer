@@ -39,3 +39,7 @@
 .ng-valid {
   background-color: #eafff1;
 }
+
+.input-group-addon {
+    padding: 0px 5px 0px 10px; 
+}

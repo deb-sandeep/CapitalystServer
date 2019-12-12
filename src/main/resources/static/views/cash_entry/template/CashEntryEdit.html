@@ -1,4 +1,22 @@
-<div class="cash_entry_screen_body">
+<div class="cash_entry_edit_body">
+	<form>
+	  <div class="form-group">
+	    <label for="ceDate">Date</label>
+        <div class='input-group date' id="ceDate">
+            <input type='text' class="form-control" required/>
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+	  </div>
+      <div class="form-group">
+        <label for="ceAmt">Amount</label>
+        <div>
+            <input id="ceAmt" type='number' class="form-control" required 
+                   ng-model="editEntry.amount"/>
+        </div>
+      </div>
+	</form>
 </div>
 
 <div class="cash_entry_screen_footer">
