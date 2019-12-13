@@ -5,6 +5,7 @@ capitalystNgApp.controller( 'CashEntryEditController',
     
     // ---------------- Scope variables --------------------------------------
     $scope.editEntry = null ;
+    $scope.relevantCategoriesForSelectedEntries = null ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -20,6 +21,15 @@ capitalystNgApp.controller( 'CashEntryEditController',
         editIntent.editEntry = null ;
         $location.path( "/" ) ;
     }
+    
+    $scope.$watch( 'editEntry.amount', function(){
+        if( $scope.editEntry != null ) {
+            $scope.relevantCategoriesForSelectedEntries = 
+                                    ( $scope.editEntry.amount < 0 ) ?
+                                    $scope.$parent.masterCategories.debit :
+                                    $scope.$parent.masterCategories.credit ;
+        }
+    }) ;
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

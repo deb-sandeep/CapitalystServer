@@ -16,6 +16,28 @@
                    ng-model="editEntry.amount"/>
         </div>
       </div>
+      <div class="form-group">
+        <label for="ceL1Cat">Category</label>
+        <div>
+           <select id="ceL1Cat"
+                   class="form-control" 
+                   ng-model="editEntry.l1Cat"
+                   ng-options="item for item in relevantCategoriesForSelectedEntries.l1Categories">
+               <option value=""></option>
+           </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="ceL2Cat">Subcategory</label>
+        <div>
+           <select id="ceL2Cat"
+                   class="form-control" 
+                   ng-model="editEntry.l2Cat"
+                   ng-options="item for item in relevantCategoriesForSelectedEntries.l2Categories.get(editEntry.l1Cat)">
+               <option value=""></option>
+           </select>
+        </div>
+      </div>
 	</form>
 </div>
 
