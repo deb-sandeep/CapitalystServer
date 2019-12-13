@@ -91,3 +91,19 @@
 	color:white;
 	border-color: #686a71;
 }
+
+.ng-confirm-box {
+	background-color: #f2dfba !important;
+}
+
+.btn-default {
+	background-color: #e2b88b !important;
+}
+
+.input-group-addon {
+	background-color: #a0a3a7 !important;
+}
+
+.bootstrap-datetimepicker-widget {
+    background-color: #bfc1c7 !important;	
+}

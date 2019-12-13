@@ -1,5 +1,5 @@
 capitalystNgApp.controller( 'CashEntryEditController', 
-    function( $scope, $http, $location, editIntent ) {
+    function( $scope, $http, $location, editIntent, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
     
@@ -30,6 +30,10 @@ capitalystNgApp.controller( 'CashEntryEditController',
                                     $scope.$parent.masterCategories.credit ;
         }
     }) ;
+    
+    $scope.saveCashEntry = function() {
+        $ngConfirm( 'Invalid input. Cant be saved.' ) ;
+    }
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
