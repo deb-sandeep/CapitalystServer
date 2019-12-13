@@ -32,12 +32,46 @@ capitalystNgApp.controller( 'CashEntryEditController',
     }) ;
     
     $scope.saveCashEntry = function() {
-        $ngConfirm( 'Invalid input. Cant be saved.' ) ;
+        var validationMsg = validateInputs() ;
+        if( validationMsg != null ) {
+            $ngConfirm( validationMsg ) ;
+        }
+        else {
+            console.log( "Input is valid. Saving cash entry." ) ;
+        }
     }
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
+    
+    function validateInputs() {
+        
+        var entry = $scope.editEntry ;
+        
+        if( entry.valueDate == null ) {
+            return "Transaction date must be specified." ;
+        }
+        
+        var tomorrow = moment().add( 1, 'days' ).startOf( 'day' ).toDate() ;
+        if( entry.valueDate >= tomorrow ) {
+            return "Transaction date can't be in the future." ;
+        }
+        
+        if( entry.amount == null || entry.amount == 0 ) {
+            return "Please enter a valid amount." ;
+        }
+        
+        if( entry.l1Cat == null ) {
+            return "Please provide valid categorization" ;
+        }
+        
+        if( entry.l2Cat == null ) {
+            return "Please provide valid subcategorization" ;
+        }
+        
+        return null ;
+    }
     
     function initializeController() {
         if( editIntent.editEntry == null ) {
