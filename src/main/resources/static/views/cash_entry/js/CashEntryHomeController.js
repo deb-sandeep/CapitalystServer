@@ -58,9 +58,12 @@ capitalystNgApp.controller( 'CashEntryHomeController',
         // If the editEntryIndex is >= 0, implies that an existing entry was
         // edited. We replace the existing entry and the screen auto refreshes
         // itself.
-        if( editIntent.editEntryIndex == null || 
-            editIntent.editEntryIndex == -1 ) {
+        if( editIntent.editEntryIndex == null ) {
             fetchLedgerEntries() ;
+        }
+        else if( editIntent.editEntryIndex == -1 ) {
+            fetchLedgerEntries() ;
+            $scope.$parent.cashBalance = editIntent.editEntry.account.balance ;
         }
         else {
             $scope.entries[ editIntent.editEntryIndex ] = editIntent.editEntry ;
@@ -77,10 +80,13 @@ capitalystNgApp.controller( 'CashEntryHomeController',
         .then ( 
             function( response ){
                 var data = response.data ;
-                angular.forEach( data, function( entry, key ){
-                    entry.amount *= -1 ;
-                    $scope.entries.push( entry ) ;
-                }) ;
+                if( data.length > 0 ) {
+                    $scope.$parent.cashBalance = data[0].account.balance ;
+                    angular.forEach( data, function( entry, key ){
+                        entry.amount *= -1 ;
+                        $scope.entries.push( entry ) ;
+                    }) ;
+                }
                 toDate = moment( fromDate ).toDate() ;
                 fromDate = moment( toDate ).subtract( 15, 'days' ).toDate() ;
             }, 

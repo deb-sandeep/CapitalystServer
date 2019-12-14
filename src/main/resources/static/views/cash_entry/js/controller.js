@@ -17,6 +17,7 @@ capitalystNgApp.controller( 'CashEntryController',
             l2Categories : new Map()
         }
      } ;
+    $scope.cashBalance = 0 ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------

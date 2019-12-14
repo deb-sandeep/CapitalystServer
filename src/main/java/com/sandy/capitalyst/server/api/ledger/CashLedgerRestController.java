@@ -46,10 +46,6 @@ public class CashLedgerRestController {
             List<LedgerEntry> entries = null ;
             
             entries = lRepo.findEntries( account.getId(), fromDate, toDate ) ;
-            for( LedgerEntry entry : entries ) {
-                entry.setAccount( null ) ;
-            }
-            
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( entries ) ;
         }
@@ -78,6 +74,9 @@ public class CashLedgerRestController {
             
             ledgerEntry.setHash( hash ) ;
             ledgerEntry = lRepo.save( ledgerEntry ) ;
+            
+            account.setBalance( ledgerEntry.getBalance() ) ;
+            accountRepo.save( account ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( ledgerEntry ) ;
