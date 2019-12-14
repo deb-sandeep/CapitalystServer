@@ -32,7 +32,8 @@
                 <th>L1</th>
                 <th>L2</th>
                 <th>Notes</th>
-                <th class="js-sort-number">Balance</th>
+                <th class="js-sort-number"
+                    ng-if="searchQuery.accountIds.length == 1">Balance</th>
                 <th></th>
             </tr>
         </thead>
@@ -51,10 +52,13 @@
                <td class="fixed-font">{{entry.valueDate | date}}</td>
                <td class="remarks" ng-click="entry.selected = !entry.selected">
 	               {{entry.remarks | remark}}
+	               &nbsp;
 	               <span ng-if="entry.chequePayment"
 	                     class="glyphicon glyphicon-map-marker"></span>
                    <span ng-if="isCreditCardEntry( entry )"
                          class="glyphicon glyphicon-subtitles"></span>
+                   <span ng-if="isCashEntry( entry )"
+                         class="glyphicon glyphicon-leaf"></span>
                </td>
                <td ng-if="searchQuery.accountIds.length > 1">
                     {{entry.account.accountOwner}}
@@ -63,7 +67,10 @@
                <td class="remarks">{{entry.l1Cat}}</td>
                <td class="remarks">{{entry.l2Cat}}</td>
                <td class="remarks">{{entry.notes}}</td>
-               <td class="fixed-font amt">{{entry.balance | amt}}</td>
+               <td ng-if="searchQuery.accountIds.length == 1"
+                   class="fixed-font amt">
+                    {{entry.balance | amt}}
+               </td>
                <td>
                  <span class="glyphicon glyphicon-trash"
                        ng-click="deleteLedgerEntry( $index )"></span>

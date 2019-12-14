@@ -242,6 +242,10 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.isCreditCardEntry = function( entry ) {
         return entry.account.accountType == "CREDIT" ;
     }
+    
+    $scope.isCashEntry = function( entry ) {
+        return entry.account.accountNumber == "CASH@HOME" ;
+    }
 
     // --- [END] Scope functions
 
