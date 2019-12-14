@@ -1,5 +1,15 @@
 <div class="cash_entry_edit_body">
 	<form>
+      <div class="form-group">
+        <label for="ceIndividual">Entry by</label>
+        <div>
+           <select id="ceIndividual"
+                   class="form-control" 
+                   ng-model="editEntry.notes"
+                   ng-options="item for item in individuals">
+           </select>
+        </div>
+      </div>
 	  <div class="form-group">
 	    <label for="ceDate">Date</label>
         <div class='input-group date' id="ceDate">

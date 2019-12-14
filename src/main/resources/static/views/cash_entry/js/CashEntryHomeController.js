@@ -58,7 +58,7 @@ capitalystNgApp.controller( 'CashEntryHomeController',
             fetchLedgerEntries() ;
         }
         else {
-            
+            $scope.entries[ editIntent.editEntryIndex ] = editIntent.editEntry ;
         }
     }
     

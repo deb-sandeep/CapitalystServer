@@ -19,7 +19,7 @@ import com.sandy.common.util.StringUtil ;
 @Table( name = "account_ledger" )
 public class LedgerEntry {
     
-    private static final SimpleDateFormat HASH_SDF = new SimpleDateFormat( "dd/MM/yyyy" ) ;
+    public static final SimpleDateFormat HASH_SDF = new SimpleDateFormat( "dd/MM/yyyy" ) ;
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
