@@ -25,20 +25,33 @@ capitalystNgApp.controller( 'CashEntryHomeController',
         $location.path( "/editEntry" ) ;
     }
     
+    $scope.duplicateEntry = function( index ) {
+        var entry = $scope.entries[index] ;
+        var clone = JSON.parse( JSON.stringify( entry ) ) ;
+        clone.valueDate = new Date() ;
+        clone.id = null ;
+        editIntent.setEditIntent( clone, -1 ) ;
+        $location.path( "/editEntry" ) ;
+    }
+    
     $scope.newCashEntry = function() {
         var entry =     {
             "id"        : -1,
+            "account"   : null,
             "valueDate" : new Date(),
             "remarks"   : null,
             "amount"    : null,
             "l1Cat"     : null,
-            "l2Cat"     : null
+            "l2Cat"     : null,
+            "notes"     : null
         } ;
         editIntent.setEditIntent( entry, -1 ) ;
         $location.path( "/editEntry" ) ;
     }
     
     $scope.loadMoreEntries = function() {
+        toDate = moment( fromDate ).toDate() ;
+        fromDate = moment( toDate ).subtract( 15, 'days' ).toDate() ;
         fetchLedgerEntries() ;
     }
     
@@ -48,26 +61,7 @@ capitalystNgApp.controller( 'CashEntryHomeController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
-        // Check the editIntent editEntryIndex
-        // If null => either this is being loaded fresh or the edit screen  
-        // was cancelled. We proceed normally.
-        //
-        // If the editEntryIndex is -1, it implies that a new entry was added
-        // A normal refresh will take care of loading the new entry
-        //
-        // If the editEntryIndex is >= 0, implies that an existing entry was
-        // edited. We replace the existing entry and the screen auto refreshes
-        // itself.
-        if( editIntent.editEntryIndex == null ) {
-            fetchLedgerEntries() ;
-        }
-        else if( editIntent.editEntryIndex == -1 ) {
-            fetchLedgerEntries() ;
-            $scope.$parent.cashBalance = editIntent.editEntry.account.balance ;
-        }
-        else {
-            $scope.entries[ editIntent.editEntryIndex ] = editIntent.editEntry ;
-        }
+        fetchLedgerEntries() ;
     }
     
     // ------------------- Server comm functions -----------------------------
@@ -87,8 +81,6 @@ capitalystNgApp.controller( 'CashEntryHomeController',
                         $scope.entries.push( entry ) ;
                     }) ;
                 }
-                toDate = moment( fromDate ).toDate() ;
-                fromDate = moment( toDate ).subtract( 15, 'days' ).toDate() ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Error fetching ledger entries." ) ;

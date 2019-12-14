@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
+import com.sandy.capitalyst.server.dao.account.Account ;
+import com.sandy.capitalyst.server.dao.account.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
 import com.sandy.common.util.StringUtil ;
@@ -27,6 +29,9 @@ public class LedgerRestController {
     
     @Autowired
     private LedgerRepo lRepo = null ;
+    
+    @Autowired
+    private AccountRepo aRepo = null ;
     
     @PostMapping( "/Ledger/Search" ) 
     public ResponseEntity<List<LedgerEntry>> findLedgerEntries( 
@@ -109,7 +114,17 @@ public class LedgerRestController {
     public ResponseEntity<APIResponse> deleteLedgerEntry( @PathVariable Integer id ) {
         try {
             log.debug( "Deleting ledger entry. " + id ) ;
+            LedgerEntry entry = lRepo.findById( id ).get() ;
+            
             lRepo.deleteById( id ) ;
+
+            Account account = entry.getAccount() ;
+            if( account.getAccountNumber().equals( "CASH@HOME" ) ) {
+                Float balance = lRepo.computeCashAccountBalance( account.getId() ) ;
+                account.setBalance( balance ) ;
+                aRepo.save( account ) ;
+            }
+            
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( new APIResponse( "Successfully deleted" ) ) ;
         }

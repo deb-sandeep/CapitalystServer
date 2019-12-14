@@ -63,11 +63,10 @@ public class CashLedgerRestController {
             Account account = accountRepo.findByAccountNumber( "CASH@HOME" ) ;
             ledgerEntry.setAccount( account ) ;
             ledgerEntry.setAmount( -1*ledgerEntry.getAmount() ) ;
-            ledgerEntry.setBalance( account.getBalance() + ledgerEntry.getAmount() ) ;
             
             String hash = generateCashEntryHash( ledgerEntry ) ;
             LedgerEntry dup = lRepo.findByHash( hash ) ;
-            if( dup != null ) {
+            if( dup != null && ledgerEntry.getId() == -1 ) {
                 return ResponseEntity.status( HttpStatus.CONFLICT )
                                      .body( null ) ;
             }
@@ -75,7 +74,11 @@ public class CashLedgerRestController {
             ledgerEntry.setHash( hash ) ;
             ledgerEntry = lRepo.save( ledgerEntry ) ;
             
-            account.setBalance( ledgerEntry.getBalance() ) ;
+            Float balance = lRepo.computeCashAccountBalance( account.getId() ) ;
+            ledgerEntry.setBalance( balance ) ;
+            account.setBalance( balance ) ;
+
+            ledgerEntry = lRepo.save( ledgerEntry ) ;
             accountRepo.save( account ) ;
             
             return ResponseEntity.status( HttpStatus.OK )

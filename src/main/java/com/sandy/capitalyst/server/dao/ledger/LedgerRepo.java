@@ -97,4 +97,15 @@ public interface LedgerRepo
           + "LIMIT 1"
     )
     public Float getAccountBalance( @Param( "accountId" ) Integer accountId ) ;
+
+    @Query( nativeQuery = true,
+            value =   
+            "SELECT "
+          + "    SUM( le.amount ) "
+          + "FROM "
+          + "    account_ledger le "
+          + "WHERE "
+          + "    le.account_id = :accountId "
+    )
+    public Float computeCashAccountBalance( @Param( "accountId" ) Integer accountId ) ;
 }

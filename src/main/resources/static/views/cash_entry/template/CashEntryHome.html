@@ -1,7 +1,10 @@
 <div class="cash_entry_ledger_body">
 	<div class="container" style="width:100%;" ng-repeat="entry in entries">
 	  <div class="row">
-        <div class="col-xs-2 dt-cell">{{entry.valueDate | date : 'dd MMM'}}</div>
+        <div class="col-xs-2 dt-cell"
+             ng-click="duplicateEntry( $index )">
+            {{entry.valueDate | date : 'dd MMM'}}
+        </div>
 	    <div class="col-xs-8" style="padding:0px">
 	      <div class="short-div cat-cell">{{entry.l1Cat}} &gt; {{entry.l2Cat}}</div>
 	      <div class="short-div note-cell">{{entry.remarks}}</div>
