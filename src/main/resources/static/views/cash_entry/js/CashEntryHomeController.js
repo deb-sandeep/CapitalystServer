@@ -3,7 +3,7 @@ capitalystNgApp.controller( 'CashEntryHomeController',
     
     // ---------------- Local variables --------------------------------------
     var toDate = new Date() ;
-    var fromDate = moment().subtract( 6, 'days' ).toDate() ;
+    var fromDate = moment().subtract( 15, 'days' ).toDate() ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.entries = [] ;
@@ -37,6 +37,11 @@ capitalystNgApp.controller( 'CashEntryHomeController',
         editIntent.setEditIntent( entry, -1 ) ;
         $location.path( "/editEntry" ) ;
     }
+    
+    $scope.loadMoreEntries = function() {
+        fetchLedgerEntries() ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -67,8 +72,8 @@ capitalystNgApp.controller( 'CashEntryHomeController',
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Ledger/CashAtHome?' + 
-                   'fromDate=' + fromDate.toISOString() + 
-                   "&toDate=" + toDate.toISOString() )
+                    'fromDate=' + fromDate.toISOString() + 
+                    "&toDate=" + toDate.toISOString() )
         .then ( 
             function( response ){
                 var data = response.data ;
@@ -76,9 +81,11 @@ capitalystNgApp.controller( 'CashEntryHomeController',
                     entry.amount *= -1 ;
                     $scope.entries.push( entry ) ;
                 }) ;
+                toDate = moment( fromDate ).toDate() ;
+                fromDate = moment( toDate ).subtract( 15, 'days' ).toDate() ;
             }, 
             function( error ){
-                $scope.$parent.addErrorAlert( "Error fetch accounts." ) ;
+                $scope.$parent.addErrorAlert( "Error fetching ledger entries." ) ;
             }
         )
         .finally(function() {

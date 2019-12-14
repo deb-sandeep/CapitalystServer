@@ -38,7 +38,6 @@ public class LedgerClassificationRestController {
     @GetMapping( "/Ledger/Categories" ) 
     public ResponseEntity<List<LedgerEntryCategory>> getLedgerEntryCategories() {
         try {
-            log.debug( "Getting ledger entry categories." ) ;
             List<LedgerEntryCategory> categories = null ;
             categories = lecRepo.findAllCategories() ;
             return ResponseEntity.status( HttpStatus.OK )
@@ -54,9 +53,7 @@ public class LedgerClassificationRestController {
     @GetMapping( "/Ledger/CashEntryCategories" ) 
     public ResponseEntity<List<LedgerEntryCategory>> 
                                      getLedgerEntryCategoriesForCashEntry() {
-        
         try {
-            log.debug( "Getting ledger entry categories for cash entry." ) ;
             List<LedgerEntryCategory> categories = null ;
             categories = lecRepo.findCategoriesForCashEntry() ;
             return ResponseEntity.status( HttpStatus.OK )
