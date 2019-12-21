@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
 import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
+import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
@@ -47,21 +48,28 @@ public class CapitalystServer
     
     @Autowired
     private LedgerRepo ledgerRepo = null ;
+    
+    @Autowired
+    private CapitalystJobScheduler scheduler = null ;
 
     public CapitalystServer() {
         APP = this ;
     }
     
     public void initialize() throws Exception {
+        
         if( CapitalystServer.getConfig().isRunClassificationOnStartup() ) {
             LEClassifier classifier = new LEClassifier() ;
             classifier.runClassification() ;
         }
+        log.debug( "Updating account balances" ) ;
         updateAccountBalanceOnStartup() ;
+
+        log.debug( "Initializing scheduler" ) ;
+        scheduler.initialize() ;
     }
     
     private void updateAccountBalanceOnStartup() {
-        log.debug( "Updating account balances" ) ;
         for( Account account : aiRepo.findAll() ) {
             Float balance = this.ledgerRepo.getAccountBalance( account.getId() ) ;
             if( balance != null ) {
