@@ -33,6 +33,7 @@ public class CapitalystServer
     }
 
     public static CapitalystConfig getConfig() {
+        if( APP_CTX == null ) return null ;
         return (CapitalystConfig) APP_CTX.getBean( "config" ) ;
     }
 
