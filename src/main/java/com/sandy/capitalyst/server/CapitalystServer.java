@@ -37,6 +37,10 @@ public class CapitalystServer
         if( APP_CTX == null ) return null ;
         return (CapitalystConfig) APP_CTX.getBean( "config" ) ;
     }
+    
+    public static <T> T getBean( Class<T> type ) {
+        return APP_CTX.getBean( type ) ;
+    }
 
     public static CapitalystServer getApp() {
         return APP ;
