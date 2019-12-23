@@ -31,16 +31,15 @@ public abstract class CapitalystJob implements Job {
     public final void execute( JobExecutionContext context )
             throws JobExecutionException {
         
-        long      startTime = System.currentTimeMillis() ;
-        int       duration  = 0 ;
-        String    remarks   = null ;
-        Date      startDate = new Date() ;
-        JobResult result    = JobResult.SUCCESS ;
-        String    jobIdentity = null ;
-        String    serializedJobState = null ;
+        long   startTime = System.currentTimeMillis() ;
+        int    duration  = 0 ;
+        String remarks   = null ;
+        Date   startDate = new Date() ;
+        String jobIdentity = null ;
+        String serializedJobState = null ;
         
-        JobEntry    jobEntry = null ;
-        JobRunEntry jobRunEntry = null ;
+        JobEntry  jobEntry = null ;
+        JobResult result   = JobResult.SUCCESS ;
         
         mapper = new ObjectMapper( new YAMLFactory() ) ;
         mapper.findAndRegisterModules() ;
@@ -54,7 +53,9 @@ public abstract class CapitalystJob implements Job {
         try {
             serializedJobState = jobEntry.getState() ;
             JobState jobState = getJobState( serializedJobState ) ;
+            preExecute( context, jobState ) ;
             executeJob( context, jobState ) ;
+            postExecute( context, jobState ) ;
             serializedJobState = mapper.writeValueAsString( jobState ) ;
         }
         catch( Exception e ) {
@@ -65,6 +66,16 @@ public abstract class CapitalystJob implements Job {
         finally {
             duration = (int)(( System.currentTimeMillis() - startTime )/1000) ;
         }
+        
+        saveJobState( duration, remarks, startDate, result, 
+                      serializedJobState, jobEntry ) ;
+    }
+
+    private void saveJobState( int duration, String remarks, Date startDate,
+                               JobResult result, String serializedJobState, 
+                               JobEntry jobEntry ) {
+        
+        JobRunEntry jobRunEntry = null ;
         
         log.debug( "Saving job run entry" ) ;
         jobRunEntry = new JobRunEntry() ;
@@ -113,7 +124,17 @@ public abstract class CapitalystJob implements Job {
         return jobState ;
     }
     
+    protected void preExecute( JobExecutionContext context, JobState state )
+        throws Exception {
+        // Default no-op
+    }
+    
     protected abstract void executeJob( JobExecutionContext context,
                                         JobState state ) 
         throws Exception ;
+
+    protected void postExecute( JobExecutionContext context, JobState state )
+        throws Exception {
+        // Default no-op
+    }
 }
