@@ -25,10 +25,10 @@ public class JSoupTest {
         
         log.debug( elements.size() ) ;
         
-//        for( Element element : elements ) {
-//            String text = element.text() ;
-//            log.debug( text ) ;
-//        }
+        for( Element element : elements ) {
+            String text = element.text() ;
+            log.debug( text ) ;
+        }
         
     }
 

@@ -5,7 +5,7 @@ jobConfigs:
    - identity : MFMasterRefresh
      className : ${basePackageName}.mf.masterrefresh.MFMasterRefreshJob
      description : Refreshes the fund, scheme and ISIN details
-     cronSchedule : 0/5 * * * * ?
+     cronSchedule : 0 * * * * ?
      jobData :
         key1 : value1
         key2 : value2
