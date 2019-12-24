@@ -1,6 +1,7 @@
 package com.sandy.capitalyst.server.job.mf.masterrefresh;
 
 import java.util.ArrayList ;
+import java.util.Date ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
@@ -65,9 +66,6 @@ public class MFMasterRefreshJob extends CapitalystJob {
         HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
         String contents = downloader.getResource( URL, "nsdl-mf.txt" ) ;
         return contents ;
-//        String filePath = "/Users/sandeep/temp/nsdl.txt" ;
-//        String contents = FileUtils.readFileToString( new File( filePath ) ) ;
-//        return contents ;
     }
     
     private List<String> parseNSDLContents( String contents ) throws Exception {
@@ -91,6 +89,7 @@ public class MFMasterRefreshJob extends CapitalystJob {
             fund.setIsin( isin ) ;
             fund.setFundName( fundName ) ;
             fund.setDescription( description ) ;
+            fund.setLastUpdate( new Date() ) ;
             log.debug( "Saving new = " + isin ) ;
             mfRepo.save( fund ) ;
         }
@@ -108,6 +107,7 @@ public class MFMasterRefreshJob extends CapitalystJob {
             
             if( dirty ) {
                 log.debug( "Updating = " + isin ) ;
+                fund.setLastUpdate( new Date() ) ;
                 mfRepo.save( fund ) ;
             }
         }

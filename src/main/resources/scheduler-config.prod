@@ -3,10 +3,7 @@ envVars:
 
 jobConfigs:
    - identity : MFMasterRefresh
-     active : false
+     active : true
      className : ${basePackageName}.mf.masterrefresh.MFMasterRefreshJob
      description : Refreshes the fund, scheme and ISIN details
-     cronSchedule : 0 * * * * ?
-     jobData :
-        key1 : value1
-        key2 : value2
+     cronSchedule : 0 0 0 ? * SUN,TUE,THU

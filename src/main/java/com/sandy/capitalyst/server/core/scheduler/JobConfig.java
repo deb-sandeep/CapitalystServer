@@ -12,6 +12,7 @@ public class JobConfig {
     private static final String CFG_VAR_PATTERN = "\\$\\{([^\\{]*)}+" ;
 
     private String identity = null ;
+    private boolean active = true ;
     private String className = null ;
     private String description = null ;
     private String cronSchedule = null ;
@@ -22,6 +23,13 @@ public class JobConfig {
     }
     public void setIdentity( String identity ) {
         this.identity = identity ;
+    }
+    
+    public boolean isActive() {
+        return active ;
+    }
+    public void setActive( boolean active ) {
+        this.active = active ;
     }
     
     public String getClassName() {
@@ -56,6 +64,7 @@ public class JobConfig {
         StringBuilder builder = new StringBuilder() ;
         builder.append( "JobConfig [\n" )
                .append( "   identity = " + this.identity + "\n" )
+               .append( "   active = " + this.active + "\n" )
                .append( "   className = " + this.className + "\n" )
                .append( "   description = " + this.description + "\n" ) 
                .append( "   cronSchedule = " + this.cronSchedule + "\n" )  ;

@@ -33,7 +33,13 @@ public class CapitalystJobScheduler {
             SchedulerConfig config = loadConfig() ;
             scheduler = StdSchedulerFactory.getDefaultScheduler() ;
             for( JobConfig jobConfig : config.getJobConfigs() ) {
-                registerJob( jobConfig ) ;
+                if( jobConfig.isActive() ) {
+                    log.debug( "Registering job : " + config ) ;
+                    registerJob( jobConfig ) ;
+                }
+                else {
+                    log.debug( "Job : " + jobConfig + " is not active." ) ;
+                }
             }
             scheduler.start() ;
         }
@@ -54,8 +60,6 @@ public class CapitalystJobScheduler {
     private void registerJob( JobConfig config ) 
         throws Exception {
 
-        log.debug( "Registering job : " + config ) ;
-        
         JobDetail jobDetail = createJobDetail( config ) ;
         CronTrigger trigger = createCronTrigger( config ) ;
         
