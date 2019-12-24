@@ -34,7 +34,7 @@ public class CapitalystJobScheduler {
             scheduler = StdSchedulerFactory.getDefaultScheduler() ;
             for( JobConfig jobConfig : config.getJobConfigs() ) {
                 if( jobConfig.isActive() ) {
-                    log.debug( "Registering job : " + config ) ;
+                    log.debug( "Registering job : " + jobConfig ) ;
                     registerJob( jobConfig ) ;
                 }
                 else {
