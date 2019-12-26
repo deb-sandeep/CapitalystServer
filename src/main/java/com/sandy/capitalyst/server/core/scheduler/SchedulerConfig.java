@@ -25,8 +25,10 @@ public class SchedulerConfig {
     }
     
     public void enrichValues() {
-        for( JobConfig jobCfg : jobConfigs ) {
-            jobCfg.enrichAttributes( envVars ) ;
+        if( jobConfigs != null ) {
+            for( JobConfig jobCfg : jobConfigs ) {
+                jobCfg.enrichAttributes( envVars ) ;
+            }
         }
     }
 }

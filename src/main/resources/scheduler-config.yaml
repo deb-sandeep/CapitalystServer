@@ -2,11 +2,3 @@ envVars:
    basePackageName : com.sandy.capitalyst.server.job
 
 jobConfigs:
-   - identity : MFMasterRefresh
-     active : false
-     className : ${basePackageName}.mf.masterrefresh.MFMasterRefreshJob
-     description : Refreshes the fund, scheme and ISIN details
-     cronSchedule : 0 * * * * ?
-     jobData :
-        key1 : value1
-        key2 : value2

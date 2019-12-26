@@ -32,16 +32,26 @@ public class CapitalystJobScheduler {
             
             SchedulerConfig config = loadConfig() ;
             scheduler = StdSchedulerFactory.getDefaultScheduler() ;
-            for( JobConfig jobConfig : config.getJobConfigs() ) {
-                if( jobConfig.isActive() ) {
-                    log.debug( "Registering job : " + jobConfig ) ;
-                    registerJob( jobConfig ) ;
-                }
-                else {
-                    log.debug( "Job : " + jobConfig + " is not active." ) ;
+            boolean jobsRegistered = false ;
+            if( config.getJobConfigs() != null ) {
+                for( JobConfig jobConfig : config.getJobConfigs() ) {
+                    if( jobConfig.isActive() ) {
+                        log.debug( "Registering job : " + jobConfig ) ;
+                        registerJob( jobConfig ) ;
+                        jobsRegistered = true ;
+                    }
+                    else {
+                        log.debug( "Job : " + jobConfig + " is not active." ) ;
+                    }
                 }
             }
-            scheduler.start() ;
+            
+            if( jobsRegistered ) {
+                scheduler.start() ;
+            }
+            else {
+                log.info( "Not starting scheduler. No jobs available." ) ;
+            }
         }
     }
     

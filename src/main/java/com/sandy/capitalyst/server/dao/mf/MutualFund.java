@@ -16,12 +16,12 @@ public class MutualFund {
     @GeneratedValue( strategy=GenerationType.AUTO )
     private Integer id = null ;
     
-    private String fundName = null ;
+    private String fundGroupId = null ;
+    private String fundMgmtCoName = null ;
     private String isin = null ;
-    private String description = null ;
+    private String fundName = null ;
     private String category = null ;
     private String distributionType = null ;
-    private String structure = null ;
     private float latestNav = 0.0f ;
     private Date lastUpdate = null ;
 
@@ -51,14 +51,6 @@ public class MutualFund {
         return this.isin ;
     }
 
-    public void setDescription( String val ) {
-        this.description = val ;
-    }
-        
-    public String getDescription() {
-        return this.description ;
-    }
-
     public void setCategory( String val ) {
         this.category = val ;
     }
@@ -73,14 +65,6 @@ public class MutualFund {
         
     public String getDistributionType() {
         return this.distributionType ;
-    }
-
-    public void setStructure( String val ) {
-        this.structure = val ;
-    }
-        
-    public String getStructure() {
-        return this.structure ;
     }
 
     public void setLatestNav( float val ) {
@@ -98,17 +82,33 @@ public class MutualFund {
     public Date getLastUpdate() {
         return this.lastUpdate ;
     }
+    
+    public String getFundGroupId() {
+        return fundGroupId ;
+    }
+
+    public void setFundGroupId( String fundGroupId ) {
+        this.fundGroupId = fundGroupId ;
+    }
+
+    public String getFundMgmtCoName() {
+        return fundMgmtCoName ;
+    }
+
+    public void setFundMgmtCoName( String fundMgmgCoName ) {
+        this.fundMgmtCoName = fundMgmgCoName ;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "MutualFund [\n" ) ; 
         
         builder.append( "   id = " + this.id + "\n" ) ;
+        builder.append( "   fundGroupId = " + this.fundGroupId + "\n" ) ;
+        builder.append( "   fundMgmtCoName = " + this.fundMgmtCoName + "\n" ) ;
         builder.append( "   fundName = " + this.fundName + "\n" ) ;
         builder.append( "   isin = " + this.isin + "\n" ) ;
-        builder.append( "   description = " + this.description + "\n" ) ;
         builder.append( "   category = " + this.category + "\n" ) ;
         builder.append( "   distributionType = " + this.distributionType + "\n" ) ;
-        builder.append( "   structure = " + this.structure + "\n" ) ;
         builder.append( "   latestNav = " + this.latestNav + "\n" ) ;
         builder.append( "   lastUpdate = " + this.lastUpdate + "\n" ) ;
         builder.append( "]" ) ;
