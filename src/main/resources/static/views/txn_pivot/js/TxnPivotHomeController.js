@@ -78,8 +78,8 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         
         if( $scope.catSelectionPaneHidden ) {
             palette.style.display = "block" ;
-            palette.style.width = "25%" ;
-            display.style.width = "75%" ;
+            palette.style.width = "15%" ;
+            display.style.width = "85%" ;
         }
         else {
             palette.style.display = "none" ;
