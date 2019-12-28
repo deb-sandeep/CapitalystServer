@@ -12,6 +12,18 @@
 </div>
 <div id="split-pane">
     <div id="category-selection-pane">
+	    <table id="catTreeTable">
+	       <tr ng-repeat="node in catLinearTree" 
+	           data-tt-id="{{node.linearIndex}}"
+	           ng-attr-data-tt-parent-id="{{ node.parent.linearIndex }}">
+	           <td>
+                 <input type="checkbox" 
+                        ng-model="node.selected"
+                        ng-change="node.toggleSelection()"/> &nbsp;
+	               {{node.displayName}}
+	           </td>
+	       </tr>
+	    </table>
     </div>
     <div id="txn-pivot-panel">
         <div id="pane-toggle-tab"
