@@ -169,7 +169,10 @@ public class LedgerRestController {
         List<String[]> pivotEntries = new ArrayList<>() ;
         
         for( LedgerEntry entry : lEntries ) {
-            String[] tupule = new String[5] ;
+            
+            if( entry.getAmount() == 0 ) continue ;
+            
+            String[] tupule = new String[6] ;
             
             String l1Cat = entry.getL1Cat() ;
             if( StringUtil.isEmptyOrNull( l1Cat ) ) {
@@ -181,11 +184,12 @@ public class LedgerRestController {
                 l2Cat = "--UNCATEGORIZED--" ;
             }
             
-            tupule[0] = l1Cat ;
-            tupule[1] = l2Cat ;
-            tupule[2] = PIVOT_SDF.format( entry.getValueDate() ) ;
-            tupule[3] = Float.toString( entry.getAmount() ) ;
-            tupule[4] = entry.getRemarks() ;
+            tupule[0] = entry.isCredit() ? "Income" : "Expense" ;
+            tupule[1] = l1Cat ;
+            tupule[2] = l2Cat ;
+            tupule[3] = PIVOT_SDF.format( entry.getValueDate() ) ;
+            tupule[4] = Float.toString( entry.getAmount() ) ;
+            tupule[5] = entry.getRemarks() ;
             
             pivotEntries.add( tupule ) ;
         }

@@ -19,7 +19,6 @@
     width: 100%;
     height: calc(100vh - 33px - 40px);
     display: flex;
-    background-color: red;
 }
 
 #category-selection-pane {
@@ -36,7 +35,6 @@
     position:relative;
     width: 85%;
     height: 100%;
-    background-color: green;
     overflow-y: auto;
 }
 
@@ -64,10 +62,34 @@ table.treetable tr.branch {
 }
 
 table.treetable tr.branch>td {
-	font-size:14px;
+	font-size:12px;
 }
 
 table.treetable tr.branch:not([data-tt-parent-id])>td {
-	font-size:16px;
+	font-size:14px;
 	background-color: #85d5f4;
+}
+
+#pivot_table_div {
+	padding:0px 10px 0px 10px;
+}
+
+#pivot_table_div tr>td:not(:first-child) {
+    font-family:'Courier';
+}
+
+#pivot_table_div tr>td:last-child {
+    color:black;
+}
+
+#pivot_table_div tr>td.debit {
+    color:red;
+}
+
+#pivot_table_div tr>td.credit {
+    color:#295f19;
+}
+
+#pivot_table_div tr>td.row-total {
+	background-color:#f5f8fb;
 }

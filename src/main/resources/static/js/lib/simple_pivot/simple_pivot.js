@@ -23,7 +23,10 @@
 //
 //          var pivotTable = new PivotTable() ;
 //          pivotTable.setPivotData( srcColNames, pivotData ) ;
-//          pivotTable.initializePivotTable( [ "Subject", "Lesson" ], "Date", "Time" ) ;
+//          pivotTable.initializePivotTable( 
+//                    [ "Subject", "Lesson" ], 
+//                    "Date", 
+//                    "Time" ) ;
 //          pivotTable.renderPivotTable( "pivot_table_div", "Time spent per subject" ) ;
 //      }
 //      </script>
@@ -388,10 +391,12 @@ function PivotTable() {
         }
     }
 
-    this.renderPivotTable = function( divName, caption, 
-                                     renderHelperCallback,
-                                     selectionCallback,
-                                     expandAll, showColumns ) {
+    this.renderPivotTable = function( divName, 
+                                      caption, 
+                                      renderHelperCallback,
+                                      selectionCallback,
+                                      expandAll, 
+                                      showColumns ) {
 
         caption = typeof caption !== 'undefined' ? caption : "" ;
         renderHelperCallback = typeof renderHelperCallback !== 'undefined' ? 
@@ -399,10 +404,14 @@ function PivotTable() {
 
         var tableId = divName + "_table" ;
         var renderString = "<table border='1' id='" + tableId + "'>" ;
-        renderString += "<caption>" + caption + "</caption>" ;
+        if( caption != null ) {
+            renderString += "<caption>" + caption + "</caption>" ;
+        }
+        
         renderString += getPivotTableHeaderRenderString( this.dataGrid, 
                                                          renderHelperCallback, 
                                                          showColumns ) ;
+        
         renderString += getPivotTableBodyRenderString( this.dataGrid, 
                                                        this.parentRowIds, 
                                                        renderHelperCallback, 
@@ -481,7 +490,12 @@ function PivotTable() {
 
             var cellData = gridRow[ colIndex ] ;
             if( renderHelperCallback != null ) {
-                cellData = renderHelperCallback( rowIndex, colIndex, cellData ) ;
+                var renderData = {
+                    content : cellData,
+                    classes : []
+                } ;
+                var enrichedRenderData = renderHelperCallback( rowIndex, colIndex, renderData ) ; 
+                cellData = renderData.content ; 
             }
             else {
                 if( cellData == null ) { cellData = "" ; } 
@@ -540,19 +554,35 @@ function PivotTable() {
             }
 
             var cellData = gridRow[ colIndex ] ;
+            var tdClasses = [] ;
             if( renderHelperCallback != null ) {
-                cellData = renderHelperCallback( rowIndex, colIndex, cellData ) ;
+                var renderData = {
+                    content : cellData,
+                    classes : tdClasses
+                } ;
+                renderHelperCallback( rowIndex, colIndex, renderData ) ; 
+                cellData = renderData.content ;
             }
             else {
                 if( cellData == null ) { cellData = "" ; } 
             }
             
-            var tdAttrs = "" ;
             if( colIndex == gridRow.length-1 ) {
-                tdAttrs = " class='row-total'"
+                tdClasses.push( 'row-total' ) ;
             }
             
-            renderString += "<td " + tdAttrs + ">" + cellData + "</td>" ;
+            var classAttr = "" ;
+            if( tdClasses.length > 0 ) {
+                classAttr = "class='" ;
+                for( var i=0; i<tdClasses.length; i++ ) {
+                    classAttr += tdClasses[i] ;
+                    if( i < tdClasses.length-1 ) {
+                        classAttr += ' ' ;
+                    }
+                }
+                classAttr += "'" ;
+            }
+            renderString += "<td " + classAttr + ">" + cellData + "</td>" ;
         }
         renderString += "</tr>" ;
         return renderString ;

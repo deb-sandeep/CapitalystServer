@@ -36,12 +36,14 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
     function( $scope, $http, $location ) {
     
     // ---------------- Local variables --------------------------------------
+    var pivotSrcColNames = [ "Type", "L1", "L2", "Month", "Amount", "Remarks" ] ;
+    var pivotSrcData = [] ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Pivot of Transactions" ;
     $scope.catSelectionPaneHidden = false ;
     $scope.pivotDuration = {
-        startDate : moment().subtract(1, 'month').startOf( 'month' ),
+        startDate : moment().subtract(5, 'month').startOf( 'month' ),
         endDate : moment().toDate(),
     } ;
 
@@ -134,6 +136,14 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
                     moment().subtract(5, 'month').startOf( 'month' ), 
                     moment()
                 ],
+                'Last 12 Months' : [ 
+                    moment().subtract(11, 'month').startOf( 'month' ), 
+                    moment()
+                ],
+                'YTD' : [ 
+                    moment().startOf( 'year' ), 
+                    moment()
+                ],
             },
             locale : {
                 applyLabel       : 'Submit',
@@ -152,6 +162,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
             $('#pivotDuration span').html( text ) ;
             $scope.pivotDuration.startDate = start.toDate() ;
             $scope.pivotDuration.endDate   = end.toDate() ;
+            fetchAndRenderPivotEntries() ;
         });
     }
     
@@ -176,6 +187,56 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         }
     }
 
+    function renderPivotTable() {
+        var pivotTable = new PivotTable() ;
+        pivotTable.setPivotData( pivotSrcColNames, pivotSrcData ) ;
+        pivotTable.initializePivotTable( 
+                [ "Type", "L1", "L2" ], 
+                "Month", 
+                "Amount" 
+        ) ;
+        pivotTable.renderPivotTable( 
+                "pivot_table_div",   // The id of the div 
+                null,                // Caption - no caption
+                pivotRenderCallback, // Formatting each cell
+                null,                // Selection call back
+                false,               // Expand all
+                true                 // Show columns 
+        ) ; 
+        pivotTable.expandFirstLevel() ;
+    }
+    
+    function pivotRenderCallback( rowIndex, colIndex, renderData ) {
+        
+        var fmt = "" ;
+        var cellData = renderData.content ;
+        if( cellData != null ) {
+            if( isNaN( cellData ) ) {
+                fmt = cellData ;
+            }
+            else {
+                var amt = parseFloat( cellData ) ;
+                var fmt = amt.toLocaleString( 'en-IN', {
+                    maximumFractionDigits: 2,
+                    style: 'currency',
+                    currency: 'INR'
+                } ) ;
+                
+                if( fmt.indexOf( '.' ) != -1 ) {
+                    fmt = fmt.substring( 0, fmt.indexOf( '.' ) ) ; 
+                }
+                
+                fmt = fmt.replace( "\u20B9", "" ) ;
+                fmt = fmt.replace( /\s/g, '' ) ;
+                
+                renderData.classes.push( amt > 0 ? 'credit' : 'debit' ) ;
+            }
+        }
+        
+        renderData.content = fmt ;
+        return renderData ;
+    }
+    
     // ------------------- Server comm functions -----------------------------
     function fetchClassificationCategories() {
         
@@ -188,7 +249,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
                                            $scope.categoryTreeForDisplay[0] ) ;
                 createCategoryTree( $scope.masterCategories.debit, 
                                            $scope.categoryTreeForDisplay[1] ) ;
-                fetchPivotEntries() ;
+                fetchAndRenderPivotEntries() ;
                 setTimeout( function(){
                     $( "#catTreeTable" ).treetable({ expandable: true }) ;
                     $( "#catTreeTable" ).treetable( 'expandNode', $scope.categoryTreeForDisplay[0].linearIndex ) ;
@@ -204,7 +265,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         }) ;
     }
     
-    function fetchPivotEntries() {
+    function fetchAndRenderPivotEntries() {
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         
@@ -213,7 +274,12 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
                    'endDate=' + $scope.pivotDuration.endDate.toISOString() ) 
         .then ( 
             function( response ){
-                console.log( response.data ) ;
+                pivotSrcData = response.data ;
+                for( var i=0; i<pivotSrcData.length; i++ ) {
+                    var tupule = pivotSrcData[i] ;
+                    tupule[4] = parseFloat( tupule[4] ) ;
+                }
+                renderPivotTable() ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not fetch pivot entries." ) ;

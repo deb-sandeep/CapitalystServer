@@ -578,8 +578,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
         resetPivotCatSelection() ;
     }
     
-    function ledgerPivotRenderHelperCallback( rowIndex, colIndex, cellData ) {
+    function ledgerPivotRenderHelperCallback( rowIndex, colIndex, renderData ) {
         var fmt = "" ;
+        var cellData = renderData.content ;
         if( cellData != null ) {
             if( isNaN( cellData ) ) {
                 fmt = cellData ;
@@ -600,7 +601,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
                 fmt = fmt.replace( /\s/g, '' ) ;
             }
         }
-        return fmt ;
+        renderData.content = fmt ;
+        return renderData ;
     }
     
     function ledgerPivotRowSelectionCallback( depth, selected, rowCellValues ) {
