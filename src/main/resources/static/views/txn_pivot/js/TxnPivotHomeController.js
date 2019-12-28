@@ -380,7 +380,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         }
         
         var l2List = l2CatMap.get( l1 ) ;
-        l2List.push( l2 ) ;
+        l2List.push( [ l2, category.selectedForTxnPivot == 1 ] ) ;
     }
     
     function createCategoryTree( masterCategoryCluster, rootDisplayCatNode ) {
@@ -397,15 +397,21 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
             
             rootDisplayCatNode.addChild( l1Node ) ;
             var l2Nodes = masterCategoryCluster.l2Categories.get( l1CatName ) ;
+            var anySelected = false ;
             
             for( var j=0; j<l2Nodes.length; j++ ) {
-                var l2NodeName = l2Nodes[j] ;
-                var l2Node = new CatNode( l2NodeName, l1Node ) ;
-                l1Node.addChild( l2Node ) ;
+                var l2NodeMeta = l2Nodes[j] ;
+                var l2Node = new CatNode( l2NodeMeta[0], l1Node ) ;
                 
+                l2Node.selected = l2NodeMeta[1] ;
                 l2Node.linearIndex = $scope.catLinearTree.length + 1 ;
+                
+                l1Node.addChild( l2Node ) ;
                 $scope.catLinearTree.push( l2Node ) ;
+                
+                anySelected |= l2Node.selected ;
             }
+            l1Node.selected = ( anySelected == 1 ) ;
         }
     }
     

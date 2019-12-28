@@ -17,6 +17,7 @@ public class LedgerEntryCategory {
     
     private boolean creditClassification = false ;
     private boolean validForCashEntry = false ;
+    private boolean selectedForTxnPivot = false ;
     
     @Column( name = "l1_cat_name" )
     private String l1CatName = null ;
@@ -66,11 +67,20 @@ public class LedgerEntryCategory {
         this.validForCashEntry = validForCashEntry ;
     }
 
+    public boolean isSelectedForTxnPivot() {
+        return selectedForTxnPivot;
+    }
+
+    public void setSelectedForTxnPivot( boolean selectedForTxnPivot ) {
+        this.selectedForTxnPivot = selectedForTxnPivot;
+    }
+    
     public String toString() {
         StringBuilder builder = new StringBuilder( "LedgerEntryCategory [\n" ) ; 
 
         builder.append( "   id = " + this.id + "\n" ) ;
         builder.append( "   isCreditClassification = " + this.creditClassification + "\n" ) ;
+        builder.append( "   isSelectedForTxnPivot = " + this.selectedForTxnPivot + "\n" ) ;
         builder.append( "   validForCashEntry = " + this.validForCashEntry + "\n" ) ;
         builder.append( "   l1CatName = " + this.l1CatName + "\n" ) ;
         builder.append( "   l2CatName = " + this.l2CatName + "\n" ) ;
