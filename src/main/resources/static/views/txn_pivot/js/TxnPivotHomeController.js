@@ -5,9 +5,15 @@ function CatNode( name, parentNode ) {
     this.childNodes = [] ;
     this.depth = 0 ;
     this.selected = true ;
+    this.childLookupMap = new Map() ;
     
     this.addChild = function( cat ) {
         this.childNodes.push( cat ) ;
+        this.childLookupMap.set( cat.displayName, cat ) ;
+    }
+    
+    this.getChild = function( displayName ) {
+        return this.childLookupMap.get( displayName ) ;
     }
     
     this.initialize = function() {
@@ -89,6 +95,11 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
             display.style.width = "100%" ;
         }
         $scope.catSelectionPaneHidden = !$scope.catSelectionPaneHidden ;
+    }
+    
+    $scope.toggleCategorySelection = function( node ) {
+        node.toggleSelection() ;
+        renderPivotTable() ;
     }
     
     // --- [END] Scope functions
@@ -188,8 +199,10 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
     }
 
     function renderPivotTable() {
+        console.log( "Rendering pivot table" ) ;
         var pivotTable = new PivotTable() ;
-        pivotTable.setPivotData( pivotSrcColNames, pivotSrcData ) ;
+        pivotTable.setPivotData( pivotSrcColNames, 
+                                 getFilteredPivotData() ) ;
         pivotTable.initializePivotTable( 
                 [ "Type", "L1", "L2" ], 
                 "Month", 
@@ -204,6 +217,42 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
                 true                 // Show columns 
         ) ; 
         pivotTable.expandFirstLevel() ;
+    }
+    
+    function getFilteredPivotData() {
+        var filteredPivotSrcData = [] ;
+        for( var i=0; i<pivotSrcData.length; i++ ) {
+            var tupule = pivotSrcData[i] ;
+            var catRoot = ( tupule[0] == 'Income' ) ?
+                                            $scope.categoryTreeForDisplay[0] :
+                                            $scope.categoryTreeForDisplay[1] ;
+            
+            var l1Node = catRoot.getChild( tupule[1] ) ;
+            if( typeof l1Node === 'undefined' ) {
+                filteredPivotSrcData.push( tupule ) ;
+            }
+            else {
+                var l2Node = l1Node.getChild( tupule[2] ) ;
+                if( l2Node.selected ) {
+                    filteredPivotSrcData.push( tupule ) ;
+                }
+            }
+        }
+        
+        filteredPivotSrcData.sort( function( tupule1, tupule2 ) {
+            var typeCompare = tupule1[0].localeCompare( tupule2[0] ) ;
+            if( typeCompare == 0 ) {
+                var l1Compare = tupule1[1].localeCompare( tupule2[1] ) ;
+                if( l1Compare == 0 ) {
+                    var l2Compare = tupule1[2].localeCompare( tupule2[2] ) ;
+                    return l2Compare ;
+                }
+                return l1Compare
+            }
+            return -typeCompare ;
+        } ) ;
+        
+        return filteredPivotSrcData ;
     }
     
     function pivotRenderCallback( rowIndex, colIndex, renderData ) {

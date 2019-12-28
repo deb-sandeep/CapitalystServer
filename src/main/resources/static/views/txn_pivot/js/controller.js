@@ -19,7 +19,6 @@ capitalystNgApp.controller( 'TxnPivotController',
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
     $scope.$on( 'interactingWithServer', function( event, args ) {
-        console.log( "Interacting with server = " + args.isStart ) ;
         if( args.isStart ) {
             $( '#serverInteractionLoader' ).modal( 'show' ) ;
         }
@@ -46,27 +45,4 @@ capitalystNgApp.controller( 'TxnPivotController',
     }
     
     // ------------------- Server comm functions -----------------------------
-    /* Template server communication function
-    function <serverComm>() {
-        
-        $scope.interactingWithServer = true ;
-        $http.post( '/<API endpoint>', {
-            'eventId'       : eventId,
-        } )
-        .then ( 
-            function( response ){
-                var data = response.data ;
-                // TODO: Server data processing logic
-            }, 
-            function( error ){
-                var errMsg = "<Error Message>" ;
-                console.log( errMsg ) ;
-                $scope.addErrorAlert( errMsg ) ;
-            }
-        )
-        .finally(function() {
-            $scope.interactingWithServer = false ;
-        }) ;
-    }
-    */
 } ) ;
