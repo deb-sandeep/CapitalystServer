@@ -1,0 +1,25 @@
+<div id="action-pane">
+	<div id="pivotDuration">
+	    <span></span> 
+	    <b class="caret"></b>
+	</div>
+    <button class="btn btn-default btn-sm"
+            style="vertical-align:unset;"
+            ng-click="applyCriteria()">
+      <span class="glyphicon glyphicon-flash"></span>
+      Apply
+    </button>
+</div>
+<div id="split-pane">
+    <div id="category-selection-pane">
+    </div>
+    <div id="txn-pivot-panel">
+        <div id="pane-toggle-tab"
+             ng-click="toggleCatSelectionPane()">
+            <span class="glyphicon glyphicon-menu-right"
+                  ng-show="catSelectionPaneHidden"></span>
+            <span class="glyphicon glyphicon-menu-left"
+                  ng-show="!catSelectionPaneHidden"></span>
+        </div>
+    </div>
+</div>

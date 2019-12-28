@@ -1,0 +1,53 @@
+#action-pane {
+    width:100%;
+    height:40px;
+    background-color:#a7a7a9;
+}
+
+#pivotDuration {
+	display:inline-block;
+    cursor:pointer; 
+    padding: 5px 5px; 
+    margin: 5px;
+    border: 1px solid #ccc;
+    font-size:14px;
+    line-height:18px;
+    background-color:#f6f7f9;
+}
+
+#split-pane {
+    width: 100%;
+    height: calc(100vh - 33px - 40px);
+    display: flex;
+    background-color: red;
+}
+
+#category-selection-pane {
+    position:relative;
+    width: 25%;
+    height: 100%;
+    border-style:hidden;
+    border-color:#f4f4f4;
+    background-color: blue;
+}
+
+#txn-pivot-panel {
+    position:relative;
+    width: 75%;
+    height: 100%;
+    background-color: green;
+}
+
+#pane-toggle-tab {
+    position: absolute;
+    left: 0px;
+    top: calc( 50% - 50px );
+    width: 15px;
+    height: 50px;
+    background-color: #b3c0f8;
+    
+    line-height: 50px;
+    text-align: center;
+    font-size:15px; 
+}
+
