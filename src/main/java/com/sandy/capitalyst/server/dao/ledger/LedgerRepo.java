@@ -21,6 +21,19 @@ public interface LedgerRepo
           + "FROM "
           + "    LedgerEntry le "
           + "WHERE "
+          + "    le.valueDate between :startDate AND :endDate "
+          + "ORDER BY "
+          + "    le.valueDate DESC "
+    )
+    public List<LedgerEntry> findEntries( 
+                                    @Param( "startDate" ) Date startDate,
+                                    @Param( "endDate"   ) Date endDate ) ; 
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
           + "    le.account.id IN :accountIds AND "
           + "    le.valueDate between :startDate AND :endDate "
           + "ORDER BY "

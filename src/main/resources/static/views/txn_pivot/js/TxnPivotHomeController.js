@@ -155,6 +155,27 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         });
     }
     
+    function printCatNode( catNode, indent ) {
+        
+        console.log( indent + '[' + catNode.depth + '] ' + catNode.displayName ) ;
+        for( var i=0; i<catNode.childNodes.length; i++ ) {
+            var node = catNode.childNodes[i] ;
+            printCatNode( node, indent + "    " ) ;
+        }
+    }
+    
+    function printLinearTree() {
+        
+        for( var i=0; i<$scope.catLinearTree.length; i++ ) {
+            var node = $scope.catLinearTree[i] ;
+            var indent = "" ;
+            for( var j=0; j<node.depth; j++ ) {
+                indent += "   " ;
+            }
+            console.log( indent + node.linearIndex + "  " + node.displayName ) ;
+        }
+    }
+
     // ------------------- Server comm functions -----------------------------
     function fetchClassificationCategories() {
         
@@ -167,6 +188,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
                                            $scope.categoryTreeForDisplay[0] ) ;
                 createCategoryTree( $scope.masterCategories.debit, 
                                            $scope.categoryTreeForDisplay[1] ) ;
+                fetchPivotEntries() ;
                 setTimeout( function(){
                     $( "#catTreeTable" ).treetable({ expandable: true }) ;
                     $( "#catTreeTable" ).treetable( 'expandNode', $scope.categoryTreeForDisplay[0].linearIndex ) ;
@@ -182,6 +204,27 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         }) ;
     }
     
+    function fetchPivotEntries() {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        
+        $http.get( '/Ledger/PivotData?' + 
+                   'startDate=' + $scope.pivotDuration.startDate.toISOString() + '&' +
+                   'endDate=' + $scope.pivotDuration.endDate.toISOString() ) 
+        .then ( 
+            function( response ){
+                console.log( response.data ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch pivot entries." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    // ------------------- Server response processors ------------------------
     function populateMasterCategories( categories ) {
         
         $scope.masterCategories.credit.l1Categories.length = 0 ;
@@ -251,24 +294,4 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         }
     }
     
-    function printCatNode( catNode, indent ) {
-        
-        console.log( indent + '[' + catNode.depth + '] ' + catNode.displayName ) ;
-        for( var i=0; i<catNode.childNodes.length; i++ ) {
-            var node = catNode.childNodes[i] ;
-            printCatNode( node, indent + "    " ) ;
-        }
-    }
-    
-    function printLinearTree() {
-        
-        for( var i=0; i<$scope.catLinearTree.length; i++ ) {
-            var node = $scope.catLinearTree[i] ;
-            var indent = "" ;
-            for( var j=0; j<node.depth; j++ ) {
-                indent += "   " ;
-            }
-            console.log( indent + node.linearIndex + "  " + node.displayName ) ;
-        }
-    }
 } ) ;

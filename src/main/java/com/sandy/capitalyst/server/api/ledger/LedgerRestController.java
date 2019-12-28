@@ -1,16 +1,22 @@
 package com.sandy.capitalyst.server.api.ledger;
 
+import java.text.SimpleDateFormat ;
+import java.util.ArrayList ;
+import java.util.Date ;
 import java.util.Iterator ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
+import org.springframework.format.annotation.DateTimeFormat ;
 import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
 import org.springframework.web.bind.annotation.DeleteMapping ;
+import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.PathVariable ;
 import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
+import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.core.api.APIResponse ;
@@ -26,12 +32,34 @@ import com.sandy.common.util.StringUtil ;
 public class LedgerRestController {
 
     private static final Logger log = Logger.getLogger( LedgerRestController.class ) ;
+    private static final SimpleDateFormat PIVOT_SDF = new SimpleDateFormat( "yyyy-MM" ) ;
     
     @Autowired
     private LedgerRepo lRepo = null ;
     
     @Autowired
     private AccountRepo aRepo = null ;
+    
+    @GetMapping( "/Ledger/PivotData" ) 
+    public ResponseEntity<List<String[]>> getPivotDataEntries( 
+                           @RequestParam( "startDate" ) 
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                           Date startDate,
+                           
+                           @RequestParam( "endDate" ) 
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                           Date endDate ) {
+        try {
+            List<String[]> entries = findPivotDataEntries( startDate, endDate ) ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( entries ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
     
     @PostMapping( "/Ledger/Search" ) 
     public ResponseEntity<List<LedgerEntry>> findLedgerEntries( 
@@ -133,5 +161,34 @@ public class LedgerRestController {
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( null ) ;
         }
+    }
+    
+    private List<String[]> findPivotDataEntries( Date startDate, Date endDate ) {
+        
+        List<LedgerEntry> lEntries = lRepo.findEntries( startDate, endDate ) ;
+        List<String[]> pivotEntries = new ArrayList<>() ;
+        
+        for( LedgerEntry entry : lEntries ) {
+            String[] tupule = new String[5] ;
+            
+            String l1Cat = entry.getL1Cat() ;
+            if( StringUtil.isEmptyOrNull( l1Cat ) ) {
+                l1Cat = "--UNCATEGORIZED--" ;
+            }
+            
+            String l2Cat = entry.getL2Cat() ;
+            if( StringUtil.isEmptyOrNull( l2Cat ) ) {
+                l2Cat = "--UNCATEGORIZED--" ;
+            }
+            
+            tupule[0] = l1Cat ;
+            tupule[1] = l2Cat ;
+            tupule[2] = PIVOT_SDF.format( entry.getValueDate() ) ;
+            tupule[3] = Float.toString( entry.getAmount() ) ;
+            tupule[4] = entry.getRemarks() ;
+            
+            pivotEntries.add( tupule ) ;
+        }
+        return pivotEntries ;
     }
 }
