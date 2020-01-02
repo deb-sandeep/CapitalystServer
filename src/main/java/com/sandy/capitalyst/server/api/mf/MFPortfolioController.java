@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAsset ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAssetRepo ;
+import com.sandy.capitalyst.server.dao.mf.MutualFundTxn ;
+import com.sandy.capitalyst.server.dao.mf.MutualFundTxnRepo ;
 
 @RestController
 public class MFPortfolioController {
@@ -22,6 +24,9 @@ public class MFPortfolioController {
     
     @Autowired
     private MutualFundAssetRepo mfAssetRepo = null ;
+    
+    @Autowired
+    private MutualFundTxnRepo mfTxnRepo = null ;
     
     @PostMapping( "/MutualFund/Portfolio" ) 
     public ResponseEntity<APIResponse> updateMutualFundPortfolio(
@@ -65,5 +70,55 @@ public class MFPortfolioController {
             existingAsset.setProfitLossPct( postedAsset.getProfitLossPct() ) ;
             mfAssetRepo.save( existingAsset ) ;
         }
+    }
+
+    @PostMapping( "/MutualFund/TxnList" ) 
+    public ResponseEntity<APIResponse> updateMutualFundTxns(
+                                @RequestBody List<MFTxn> txnList ) {
+        try {
+            log.debug( "Updating MF transactions" ) ;
+            int numTxnSaved = 0 ;
+            for( MFTxn txn : txnList ) {
+                if( saveTxn( txn ) ) {
+                    numTxnSaved++ ;
+                }
+            }
+            String msg = "Success. Num txn saved = " + numTxnSaved ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( new APIResponse( msg ) ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( new APIResponse( stackTrace ) ) ;
+        }
+    }
+    
+    private boolean saveTxn( MFTxn postedTxn )
+        throws Exception {
+        
+        MutualFundAsset mf = mfAssetRepo.findByOwnerNameAndScheme( 
+                                                    postedTxn.getOwnerName(), 
+                                                    postedTxn.getScheme() ) ;
+        MutualFundTxn existingTxn = mfTxnRepo.findByMfIdAndTxnDate( 
+                                                    mf.getId(), 
+                                                    postedTxn.getTxnDate() ) ;
+        
+        if( existingTxn == null ) {
+            
+            MutualFundTxn mfTxn = new MutualFundTxn() ;
+            mfTxn.setMfId( mf.getId() ) ;
+            mfTxn.setTxnDate( postedTxn.getTxnDate() ) ;
+            mfTxn.setTxnType( postedTxn.getTxnType() ) ;
+            mfTxn.setTxnChannel( postedTxn.getTxnChannel() ) ;
+            mfTxn.setNavPerUnit( postedTxn.getNavPerUnit() ) ;
+            mfTxn.setNumUnits( postedTxn.getNumUnits() ) ;
+            mfTxn.setAmount( postedTxn.getAmount() ) ;
+            
+            mfTxnRepo.save( mfTxn ) ;
+            return true ;
+        }
+        return false ;
     }
 }
