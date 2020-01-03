@@ -7,6 +7,7 @@ import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
+import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
@@ -28,6 +29,21 @@ public class MFPortfolioController {
     @Autowired
     private MutualFundTxnRepo mfTxnRepo = null ;
     
+    @GetMapping( "/MutualFund/Portfolio" ) 
+    public ResponseEntity<List<MFHolding>> getMutualFundPortfolio() {
+        try {
+            log.debug( "Getting MF holdings" ) ;
+            List<MFHolding> mfHoldings = null ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( mfHoldings ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Getting Mutual Fund portfolio.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
+    
     @PostMapping( "/MutualFund/Portfolio" ) 
     public ResponseEntity<APIResponse> updateMutualFundPortfolio(
                                 @RequestBody List<MutualFundAsset> mfAssets ) {
@@ -35,7 +51,7 @@ public class MFPortfolioController {
             log.debug( "Updating MF portfolio" ) ;
             for( MutualFundAsset asset : mfAssets ) {
                 log.debug( asset ) ;
-                updateAsset( asset ) ;
+                saveMFAsset( asset ) ;
             }
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( new APIResponse( "Success" ) ) ;
@@ -48,7 +64,30 @@ public class MFPortfolioController {
         }
     }
     
-    private void updateAsset( MutualFundAsset postedAsset )
+    @PostMapping( "/MutualFund/TxnList" ) 
+    public ResponseEntity<APIResponse> updateMutualFundTxns(
+                                @RequestBody List<MFTxn> txnList ) {
+        try {
+            log.debug( "Updating MF transactions" ) ;
+            int numTxnSaved = 0 ;
+            for( MFTxn txn : txnList ) {
+                if( saveMFTxn( txn ) ) {
+                    numTxnSaved++ ;
+                }
+            }
+            String msg = "Success. Num txn saved = " + numTxnSaved ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( new APIResponse( msg ) ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( new APIResponse( stackTrace ) ) ;
+        }
+    }
+    
+    private void saveMFAsset( MutualFundAsset postedAsset )
         throws Exception {
         
         MutualFundAsset existingAsset = mfAssetRepo.findByOwnerNameAndScheme( 
@@ -72,30 +111,7 @@ public class MFPortfolioController {
         }
     }
 
-    @PostMapping( "/MutualFund/TxnList" ) 
-    public ResponseEntity<APIResponse> updateMutualFundTxns(
-                                @RequestBody List<MFTxn> txnList ) {
-        try {
-            log.debug( "Updating MF transactions" ) ;
-            int numTxnSaved = 0 ;
-            for( MFTxn txn : txnList ) {
-                if( saveTxn( txn ) ) {
-                    numTxnSaved++ ;
-                }
-            }
-            String msg = "Success. Num txn saved = " + numTxnSaved ;
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( msg ) ) ;
-        }
-        catch( Exception e ) {
-            log.error( "Error :: Saving account data.", e ) ;
-            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( stackTrace ) ) ;
-        }
-    }
-    
-    private boolean saveTxn( MFTxn postedTxn )
+    private boolean saveMFTxn( MFTxn postedTxn )
         throws Exception {
         
         MutualFundAsset mf = mfAssetRepo.findByOwnerNameAndScheme( 

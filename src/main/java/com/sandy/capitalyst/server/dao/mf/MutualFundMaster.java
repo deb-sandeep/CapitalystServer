@@ -10,7 +10,7 @@ import javax.persistence.Table ;
 
 @Entity
 @Table( name = "mf_master" )
-public class MutualFund {
+public class MutualFundMaster {
 
     @Id
     @GeneratedValue( strategy=GenerationType.AUTO )
@@ -25,7 +25,7 @@ public class MutualFund {
     private float latestNav = 0.0f ;
     private Date lastUpdate = null ;
 
-    public MutualFund() {}
+    public MutualFundMaster() {}
     
     public void setId( Integer val ) {
         this.id = val ;

@@ -3,7 +3,7 @@ package com.sandy.capitalyst.server.dao.mf;
 import org.springframework.data.repository.CrudRepository ;
 
 public interface MutualFundRepo 
-    extends CrudRepository<MutualFund, Integer> {
+    extends CrudRepository<MutualFundMaster, Integer> {
  
-    public MutualFund findByIsin( String isin ) ;
+    public MutualFundMaster findByIsin( String isin ) ;
 }

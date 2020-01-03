@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.core.api.APIResponse ;
-import com.sandy.capitalyst.server.dao.mf.MutualFund ;
+import com.sandy.capitalyst.server.dao.mf.MutualFundMaster ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundRepo ;
 
 @RestController
@@ -53,11 +53,11 @@ public class EnrichMFMetaController {
                     navDate = SDF.parse( record[7].trim() ) ;
                 }
                 
-                MutualFund mf = mfRepo.findByIsin( isin ) ;
+                MutualFundMaster mf = mfRepo.findByIsin( isin ) ;
                 boolean recordDirty = false ;
                 
                 if( mf == null ) {
-                    mf = new MutualFund() ;
+                    mf = new MutualFundMaster() ;
                     mf.setFundGroupId( groupId ) ;
                     mf.setFundMgmtCoName( coName ) ;
                     mf.setIsin( isin ) ;
