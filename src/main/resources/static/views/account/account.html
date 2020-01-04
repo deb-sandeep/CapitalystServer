@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/js/lib/angular/confirm/angular-confirm.min.css"/>
     <link rel="stylesheet" href="/css/app/app.css"/>
     <link rel="stylesheet" href="/css/app/form.css"/>
+    <link rel="stylesheet" href="/views/account/mf/css/mf.css"/>
     
     <script src="/js/app/app-ng.js"></script>
     <script src="/js/app/filter.js"></script>
@@ -36,6 +37,8 @@
     
     <script src="/views/account/fixed_deposits/js/FixedDepositsController.js"></script>
     <script src="/views/account/fixed_deposits/js/FixedDepositEditController.js"></script>
+
+    <script src="/views/account/mf/js/MutualFundsController.js"></script>
 </head>
 
 <body ng-controller="AccountController"
@@ -66,6 +69,9 @@
   </li>
   <li ng-class="getTabActiveClass( 'FD' )">
     <a data-toggle="tab" ng-click="showRoute( '/fixedDeposits' )">Fixed Deposits</a>
+  </li>
+  <li ng-class="getTabActiveClass( 'MF' )">
+    <a data-toggle="tab" ng-click="showRoute( '/mutualFunds' )">Mutual Funds</a>
   </li>
 </ul>
 

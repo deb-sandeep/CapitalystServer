@@ -10,6 +10,8 @@ public class MFHolding {
     private String category = null ;
     private String subCategory = null ;
     
+    private int averageHoldingDays = 0 ;
+    
     private float unitsHeld = 0 ;
     private float avgCostPrice = 0 ;
     private float valueAtCost = 0 ;
@@ -151,6 +153,13 @@ public class MFHolding {
         this.avgCostPrice = roundOff( value ) ;
     }
     
+    public int getAverageHoldingDays() {
+        return averageHoldingDays ;
+    }
+    public void setAverageHoldingDays( int value ) {
+        this.averageHoldingDays = value ;
+    }
+    
     private float roundOff( float value ) {
         return (float)( Math.round( value * 100.0 ) / 100.0 ) ;
     }
@@ -165,6 +174,7 @@ public class MFHolding {
                 + "\n  category=" + category
                 + "\n  subCategory=" + subCategory 
                 + "\n  unitsHeld=" + unitsHeld
+                + "\n  averageHoldingDays=" + averageHoldingDays
                 + "\n  avgCostPrice=" + avgCostPrice
                 + "\n  currentNav=" + currentNav
                 + "\n  valueAtCost=" + valueAtCost 

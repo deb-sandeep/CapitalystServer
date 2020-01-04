@@ -41,6 +41,11 @@ class MFLot {
         return unRedeemedUnits ;
     }
     
+    public int getTenureInDays() {
+        long numMillis = new Date().getTime() - txnDate.getTime() ;
+        return (int)( numMillis / (1000*60*60*24) ) ;
+    }
+    
     public boolean qualifiesForLTCG() {
         Date oneYearPastDate = DateUtils.addYears( new Date(), -1 ) ;
         return txnDate.before( oneYearPastDate ) ;
@@ -125,9 +130,11 @@ public class MFPortfolioBuilder {
         float numUnits = 0 ;
         float numUnitsQualifiedForLTCG = 0 ;
         float numUnitsQualifiedForSTCG = 0 ;
+        float weightedDays = 0 ;
         
         for( MFLot lot : allLots ) {
             if( lot.numUnitsLeft > 0 ) {
+                weightedDays += ( lot.numUnitsLeft * lot.getTenureInDays() ) ;
                 if( lot.qualifiesForLTCG() ) {
                     numUnitsQualifiedForLTCG += lot.numUnitsLeft ;
                 }
@@ -139,6 +146,7 @@ public class MFPortfolioBuilder {
         
         numUnits = numUnitsQualifiedForLTCG + numUnitsQualifiedForSTCG ;
         
+        holding.setAverageHoldingDays( (int)(weightedDays / numUnits) ) ;
         holding.setNumUnitsQualifiedForLTCG( numUnitsQualifiedForLTCG ) ;
         
         float valueAtCostForLTCGQty = holding.getAvgCostPrice() * numUnitsQualifiedForLTCG ;
@@ -168,4 +176,5 @@ public class MFPortfolioBuilder {
         holding.setProfitLossAmtAfterTax( holding.getValueAtNavAfterTax() - holding.getValueAtCost() ) ;
         holding.setProfitLossAmtPctAfterTax( ( holding.getProfitLossAmtAfterTax() * 100 )/holding.getValueAtCost() ) ;
     }
+    
 }

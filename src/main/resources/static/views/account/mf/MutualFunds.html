@@ -1,0 +1,83 @@
+<div class="page-menu-bar">
+</div>
+
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="table table-bordered table-compact js-sort-table"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th></th>
+                <th>Owner</th>
+                <th>Scheme</th>
+                <th>Category</th>
+                <th>Cost price</th>
+                <th>Value</th>
+                <th>P/L</th>
+                <th>P/L%</th>
+                <th>LTCG%</th>
+                <th>Mths</th>
+                <th>YoY%</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="holding in mfHoldings"
+                ng-class="getRowClass( holding )">
+               <td>
+                 <input type="checkbox" 
+                        ng-model="holding.selected"
+                        ng-change="mfSelectionChanged( holding )"/>
+               </td>
+               <td>{{holding.ownerName}}</td>
+               <td>{{holding.scheme}}</td>
+               <td>{{holding.category | uppercase}}</td>
+               <td class="fixed-font amt">{{holding.valueAtCost | amt}}</td>
+               <td class="fixed-font amt">{{holding.valueAtNavAfterTax | amt}}</td>
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass(holding.profitLossAmtAfterTax)">
+                   {{holding.profitLossAmtAfterTax | amt}}
+               </td>
+               <td class="fixed-font amt" 
+                   ng-class="getAmtClass(holding.profitLossAmtPctAfterTax)">
+                   {{holding.profitLossAmtPctAfterTax | amt}}%
+               </td>
+               <td class="fixed-font amt">
+                   {{holding.ltcgQualPct | amt}}%
+               </td>
+               <td class="fixed-font amt">{{holding.avgHoldingMonths | amt}}</td>
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass(holding.yearlyGrowthPct)">
+                   {{holding.yearlyGrowthPct | amt}}%
+               </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="success">
+                <th colspan="4"></th>
+                <th class="fixed-font amt">{{totalValueAtCost | amt}}</th>
+                <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
+                <th class="fixed-font amt">{{totalProfitLossAfterTax | amt}}</th>
+                <th colspan="4"></th>
+            </tr>
+            <tr class="success">
+                <th colspan="4"></th>
+                <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
+                <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
+                <th colspan="5"></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div id="savingAccountEditDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'savings/edit_saving_account_dialog.html'">
+</div>
+
+<div id="uploadAccountStmtDialog"
+     class="modal"
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'_common/upload_account_stmt_dialog.html'">
+</div>

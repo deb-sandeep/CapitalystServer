@@ -68,7 +68,7 @@ public class LedgerEntry {
     }
 
     public String getRemarks() {
-        return remarks ;
+        return remarks == null ? "" : remarks ;
     }
 
     public void setRemarks( String remarks ) {
