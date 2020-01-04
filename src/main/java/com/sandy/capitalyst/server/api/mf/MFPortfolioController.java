@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.api.mf;
 
+import java.text.DecimalFormat ;
+import java.text.SimpleDateFormat ;
 import java.util.List ;
 
 import org.apache.commons.lang.exception.ExceptionUtils ;
@@ -12,16 +14,24 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.mf.helper.MFHolding ;
+import com.sandy.capitalyst.server.api.mf.helper.MFPortfolioBuilder ;
+import com.sandy.capitalyst.server.api.mf.helper.MFTxn ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAsset ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAssetRepo ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundTxn ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundTxnRepo ;
+import com.sandy.capitalyst.server.util.StringUtil ;
 
 @RestController
 public class MFPortfolioController {
 
     private static final Logger log = Logger.getLogger( MFPortfolioController.class ) ;
+    
+    private static final DecimalFormat DF = new DecimalFormat( "#.00" ) ;
+    private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yy" ) ;
+    
     
     @Autowired
     private MutualFundAssetRepo mfAssetRepo = null ;
@@ -33,7 +43,10 @@ public class MFPortfolioController {
     public ResponseEntity<List<MFHolding>> getMutualFundPortfolio() {
         try {
             log.debug( "Getting MF holdings" ) ;
-            List<MFHolding> mfHoldings = null ;
+            
+            MFPortfolioBuilder builder = new MFPortfolioBuilder() ;
+            List<MFHolding> mfHoldings = builder.getMFPortfolio() ;
+            
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( mfHoldings ) ;
         }
@@ -117,9 +130,9 @@ public class MFPortfolioController {
         MutualFundAsset mf = mfAssetRepo.findByOwnerNameAndScheme( 
                                                     postedTxn.getOwnerName(), 
                                                     postedTxn.getScheme() ) ;
-        MutualFundTxn existingTxn = mfTxnRepo.findByMfIdAndTxnDate( 
-                                                    mf.getId(), 
-                                                    postedTxn.getTxnDate() ) ;
+        
+        String txnHash = generateHash( postedTxn.getOwnerName(), postedTxn ) ;
+        MutualFundTxn existingTxn = mfTxnRepo.findByHash( txnHash ) ;
         
         if( existingTxn == null ) {
             
@@ -131,10 +144,23 @@ public class MFPortfolioController {
             mfTxn.setNavPerUnit( postedTxn.getNavPerUnit() ) ;
             mfTxn.setNumUnits( postedTxn.getNumUnits() ) ;
             mfTxn.setAmount( postedTxn.getAmount() ) ;
+            mfTxn.setHash( txnHash ) ;
             
             mfTxnRepo.save( mfTxn ) ;
             return true ;
         }
         return false ;
+    }
+    
+    private String generateHash( String ownerName, MFTxn txn ) {
+        
+        StringBuilder builder = new StringBuilder() ;
+        builder.append( ownerName )
+               .append( SDF.format( txn.getTxnDate() ) )
+               .append( txn.getTxnType() )
+               .append( DF.format( txn.getNavPerUnit() ) )
+               .append( DF.format( txn.getNumUnits() ) )
+               .append( DF.format( txn.getAmount() ) ) ;
+        return StringUtil.getHash( builder.toString() ) ;
     }
 }

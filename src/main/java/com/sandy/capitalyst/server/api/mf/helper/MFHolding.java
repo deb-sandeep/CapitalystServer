@@ -1,7 +1,9 @@
-package com.sandy.capitalyst.server.api.mf;
+package com.sandy.capitalyst.server.api.mf.helper;
 
 public class MFHolding {
 
+    private int assetId = -1 ;
+    
     private String ownerName = null ;
     private String isin = null ;
     private String scheme = null ;
@@ -9,9 +11,12 @@ public class MFHolding {
     private String subCategory = null ;
     
     private float unitsHeld = 0 ;
+    private float avgCostPrice = 0 ;
     private float valueAtCost = 0 ;
+    private float currentNav = 0 ;
     private float valueAtNav = 0 ;
     
+    private float numUnitsQualifiedForLTCG = 0 ;
     private float ltcgValueAtNavAfterTax = 0 ;
     private float ltcgProfitLossAmtAfterTax = 0 ;
     private float ltcgProfitLossPctAfterTax = 0 ;
@@ -19,6 +24,13 @@ public class MFHolding {
     private float valueAtNavAfterTax = 0 ;
     private float profitLossAmtAfterTax = 0 ;
     private float profitLossAmtPctAfterTax = 0 ;
+    
+    public int getAssetId() {
+        return assetId ;
+    }
+    public void setAssetId( int assetId ) {
+        this.assetId = assetId ;
+    }
     
     public String getOwnerName() {
         return ownerName ;
@@ -58,77 +70,106 @@ public class MFHolding {
     public float getUnitsHeld() {
         return unitsHeld ;
     }
-    public void setUnitsHeld( float unitsHeld ) {
-        this.unitsHeld = unitsHeld ;
+    public void setUnitsHeld( float value ) {
+        this.unitsHeld = roundOff( value ) ;
     }
     
     public float getValueAtCost() {
         return valueAtCost ;
     }
-    public void setValueAtCost( float valueAtCost ) {
-        this.valueAtCost = valueAtCost ;
+    public void setValueAtCost( float value ) {
+        this.valueAtCost = roundOff( value ) ;
     }
     
     public float getValueAtNav() {
         return valueAtNav ;
     }
-    public void setValueAtNav( float valueAtNav ) {
-        this.valueAtNav = valueAtNav ;
+    public void setValueAtNav( float value ) {
+        this.valueAtNav = roundOff( value ) ;
     }
     
     public float getLtcgValueAtNavAfterTax() {
         return ltcgValueAtNavAfterTax ;
     }
     public void setLtcgValueAtNavAfterTax( float value ) {
-        this.ltcgValueAtNavAfterTax = value ;
+        this.ltcgValueAtNavAfterTax = roundOff( value ) ;
     }
     
     public float getLtcgProfitLossAmtAfterTax() {
         return ltcgProfitLossAmtAfterTax ;
     }
     public void setLtcgProfitLossAmtAfterTax( float value ) {
-        this.ltcgProfitLossAmtAfterTax = value ;
+        this.ltcgProfitLossAmtAfterTax = roundOff( value ) ;
     }
     
     public float getLtcgProfitLossPctAfterTax() {
         return ltcgProfitLossPctAfterTax ;
     }
     public void setLtcgProfitLossPctAfterTax( float value ) {
-        this.ltcgProfitLossPctAfterTax = value ;
+        this.ltcgProfitLossPctAfterTax = roundOff( value ) ;
     }
     
     public float getValueAtNavAfterTax() {
         return valueAtNavAfterTax ;
     }
     public void setValueAtNavAfterTax( float value ) {
-        this.valueAtNavAfterTax = value ;
+        this.valueAtNavAfterTax = roundOff( value ) ;
     }
     
     public float getProfitLossAmtAfterTax() {
         return profitLossAmtAfterTax ;
     }
     public void setProfitLossAmtAfterTax( float value ) {
-        this.profitLossAmtAfterTax = value ;
+        this.profitLossAmtAfterTax = roundOff( value ) ;
     }
     
     public float getProfitLossAmtPctAfterTax() {
         return profitLossAmtPctAfterTax ;
     }
     public void setProfitLossAmtPctAfterTax( float value ) {
-        this.profitLossAmtPctAfterTax = value ;
+        this.profitLossAmtPctAfterTax = roundOff( value ) ;
+    }
+    
+    public float getNumUnitsQualifiedForLTCG() {
+        return numUnitsQualifiedForLTCG ;
+    }
+    public void setNumUnitsQualifiedForLTCG( float value ) {
+        this.numUnitsQualifiedForLTCG = roundOff( value ) ;
+    }
+    
+    public float getCurrentNav() {
+        return currentNav ;
+    }
+    public void setCurrentNav( float value ) {
+        this.currentNav = roundOff( value ) ;
+    }
+    
+    public float getAvgCostPrice() {
+        return avgCostPrice ;
+    }
+    public void setAvgCostPrice( float value ) {
+        this.avgCostPrice = roundOff( value ) ;
+    }
+    
+    private float roundOff( float value ) {
+        return (float)( Math.round( value * 100.0 ) / 100.0 ) ;
     }
     
     @Override
     public String toString() {
         return "MFHolding ["
+                + "\n  assetId=" + assetId
                 + "\n  ownerName=" + ownerName 
                 + "\n  isin=" + isin
                 + "\n  scheme=" + scheme 
                 + "\n  category=" + category
                 + "\n  subCategory=" + subCategory 
                 + "\n  unitsHeld=" + unitsHeld
+                + "\n  avgCostPrice=" + avgCostPrice
+                + "\n  currentNav=" + currentNav
                 + "\n  valueAtCost=" + valueAtCost 
                 + "\n  valueAtNav=" + valueAtNav
+                + "\n  numUnitsQualifiedForLTCG=" + numUnitsQualifiedForLTCG
                 + "\n  ltcgValueAtNavAfterTax=" + ltcgValueAtNavAfterTax
                 + "\n  ltcgProfitLossAmtAfterTax=" + ltcgProfitLossAmtAfterTax
                 + "\n  ltcgProfitLossPctAfterTax=" + ltcgProfitLossPctAfterTax

@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.dao.mf;
 
 import java.util.Date ;
 
+import javax.persistence.Column ;
 import javax.persistence.Entity ;
 import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
@@ -20,9 +21,17 @@ public class MutualFundTxn {
     private String txnType = null ;
     private String txnChannel = null ;
     private Date txnDate = null ;
+    
+    @Column( precision=16, scale=2 )
     private float navPerUnit = 0.0f ;
+    
+    @Column( precision=16, scale=2 )
     private float numUnits = 0.0f ;
+    
+    @Column( precision=16, scale=2 )
     private float amount = 0.0f ;
+    
+    private String hash = null ;
 
     public MutualFundTxn() {}
     
@@ -89,6 +98,14 @@ public class MutualFundTxn {
     public float getAmount() {
         return this.amount ;
     }
+    
+    public String getHash() {
+        return hash ;
+    }
+
+    public void setHash( String hash ) {
+        this.hash = hash ;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "MutualFundTxn [\n" ) ; 
@@ -101,6 +118,7 @@ public class MutualFundTxn {
         builder.append( "   navPerUnit = " + this.navPerUnit + "\n" ) ;
         builder.append( "   numUnits = " + this.numUnits + "\n" ) ;
         builder.append( "   amount = " + this.amount + "\n" ) ;
+        builder.append( "   hash = " + this.hash + "\n" ) ;
         builder.append( "]" ) ;
         
         return builder.toString() ;

@@ -65,10 +65,13 @@ public class CashLedgerRestController {
             ledgerEntry.setAmount( -1*ledgerEntry.getAmount() ) ;
             
             String hash = generateCashEntryHash( ledgerEntry ) ;
-            LedgerEntry dup = lRepo.findByHash( hash ) ;
-            if( dup != null && ledgerEntry.getId() == -1 ) {
-                return ResponseEntity.status( HttpStatus.CONFLICT )
-                                     .body( null ) ;
+            
+            if( ledgerEntry.getId() == -1 ) {
+                LedgerEntry dup = lRepo.findByHash( hash ) ;
+                if( dup != null ) {
+                    return ResponseEntity.status( HttpStatus.CONFLICT )
+                                         .body( null ) ;
+                }
             }
             
             ledgerEntry.setHash( hash ) ;

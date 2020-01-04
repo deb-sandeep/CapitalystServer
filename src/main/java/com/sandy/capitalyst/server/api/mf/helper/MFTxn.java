@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.api.mf ;
+package com.sandy.capitalyst.server.api.mf.helper ;
 
 import java.text.SimpleDateFormat ;
 import java.util.Date ;
