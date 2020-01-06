@@ -6,12 +6,15 @@ import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
+import org.springframework.web.bind.annotation.DeleteMapping ;
 import org.springframework.web.bind.annotation.GetMapping ;
+import org.springframework.web.bind.annotation.PathVariable ;
 import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RequestMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDeposit ;
 import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDepositRepo ;
 
@@ -48,6 +51,21 @@ public class FixedDepositRestController {
             input = fdRepo.save( input ) ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( input ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
+    
+    @DeleteMapping( "/FixedDeposit/{id}" ) 
+    public ResponseEntity<APIResponse> deleteAccount( @PathVariable Integer id ) {
+        try {
+            log.debug( "Deleting account. " + id ) ;
+            fdRepo.deleteById( id ) ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( new APIResponse( "Successfully deleted" ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;

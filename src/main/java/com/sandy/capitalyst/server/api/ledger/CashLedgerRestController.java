@@ -66,7 +66,8 @@ public class CashLedgerRestController {
             
             String hash = generateCashEntryHash( ledgerEntry ) ;
             
-            if( ledgerEntry.getId() == -1 ) {
+            if( ledgerEntry.getId() == null || 
+                ledgerEntry.getId() == -1 ) {
                 LedgerEntry dup = lRepo.findByHash( hash ) ;
                 if( dup != null ) {
                     return ResponseEntity.status( HttpStatus.CONFLICT )

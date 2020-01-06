@@ -67,6 +67,38 @@ capitalystNgApp.controller( 'FixedDepositsController',
         }) ;
     }
     
+    $scope.deleteAccount = function( index ) {
+        console.log( "Deleting fixed deposit at index = " + index ) ;
+        var account = $scope.accounts[ index ] ;
+        
+        $ngConfirm({
+            title: 'Confirm!',
+            content: 'Delete fixed deposit ' + account.baseAccount.accountNumber + 
+                     ' for ' + account.baseAccount.accountOwner,
+            scope: $scope,
+            buttons: {
+                close: function(scope, button){
+                    console.log( "User cancelled." ) ;
+                },
+                yes: {
+                    text: 'Yes',
+                    btnClass: 'btn-blue',
+                    action: function(scope, button){
+                        console.log( "Ok to delete account." ) ;
+                        deleteAccount( account, function() {
+                            $scope.accounts.splice( index, 1 ) ;
+                            $scope.totalBalance = 0 ;
+                            angular.forEach( $scope.accounts, function( account, key ){
+                                $scope.totalBalance += account.baseAccount.balance ;
+                            }) ;
+                        }) ;
+                        return true ;
+                    }
+                }
+            }
+        });
+    }
+    
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     
@@ -111,4 +143,20 @@ capitalystNgApp.controller( 'FixedDepositsController',
         }) ;
     }
 
+    function deleteAccount( account, successCallback ) {
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.delete( '/Account/FixedDeposit/' + account.id )
+        .then ( 
+            function( response ){
+                console.log( "Deleted fixed deposit data" ) ;
+                successCallback() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error deleting fixed deposit." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
 } ) ;
