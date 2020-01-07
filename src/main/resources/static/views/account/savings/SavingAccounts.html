@@ -50,8 +50,8 @@
 	             </span>&nbsp;
                </td>
                <td>
-                 <span class="glyphicon glyphicon-trash"
-                       ng-click="deleteAccount( $index )">
+                 <span class="glyphicon glyphicon-cloud-upload"
+                       ng-click="showAccountStmtUploadDialog( account )">
                  </span>&nbsp;
                </td>
                <td>
@@ -60,8 +60,9 @@
                  </span>&nbsp;
                </td>
                <td>
-                 <span class="glyphicon glyphicon-cloud-upload"
-                       ng-click="showAccountStmtUploadDialog( account )">
+                 <span class="glyphicon glyphicon-trash"
+                       style="color:red;"
+                       ng-click="deleteAccount( $index )">
                  </span>&nbsp;
                </td>
             </tr>
