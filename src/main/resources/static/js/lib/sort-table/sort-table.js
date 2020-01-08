@@ -140,10 +140,10 @@ sortTable.date = function(Cell) {
     }
 };
 
-sortTable.valueDate = function(Cell) {
+sortTable.acdt = function(Cell) {
     
-    var content = sortTable.stripTags(Cell.innerHTML) ;
-    var dateMoment = moment( content, "YYYY-MM-DD" ) ;
+    var content = Cell.innerHTML ;
+    var dateMoment = moment( content, "MMM D, YYYY" ) ;
     return dateMoment.toDate() ;
 }
 
