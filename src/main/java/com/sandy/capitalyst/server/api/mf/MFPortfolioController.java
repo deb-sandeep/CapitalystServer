@@ -112,6 +112,7 @@ public class MFPortfolioController {
                                                  .get() ;
             mfAsset.setIsin( updateInfo.getIsin() ) ;
             mfAsset.setUrl( updateInfo.getUrl() ) ;
+            mfAsset.setPurpose( updateInfo.getPurpose() ) ;
             
             mfAssetRepo.save( mfAsset ) ;
             

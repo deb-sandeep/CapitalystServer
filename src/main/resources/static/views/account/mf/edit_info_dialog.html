@@ -24,9 +24,16 @@
                                    type="text" 
                                    ng-model="holding.isin" /> 
 	                    </td>
+                        <td width="50%">
+                            <label>Purpose</label>
+                            <select class="form-field" required
+                                    ng-model="holding.purpose"
+                                    ng-options="item for item in investmentPurposes">
+                            </select>
+                        </td>
 	                </tr>
 	                <tr>
-	                    <td>
+	                    <td colspan="2">
 	                        <label>URL</label>
                             <input class='form-field' required
                                    type="text" 

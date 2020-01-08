@@ -10,7 +10,7 @@
                 <th></th>
                 <th>Owner</th>
                 <th>Scheme</th>
-                <th>ISIN</th>
+                <th>Purpose</th>
                 <th>Category</th>
                 <th>Cost price</th>
                 <th>Value</th>
@@ -46,7 +46,7 @@
                    </a>
                </td>
                <td>
-                     {{holding.isin}}
+                     {{holding.purpose}}
                </td>
                <td>{{holding.category | uppercase}}</td>
                <td class="fixed-font amt">{{holding.valueAtCost | amt}}</td>
@@ -71,17 +71,17 @@
         </tbody>
         <tfoot>
             <tr class="success">
-                <th colspan="4"></th>
+                <th colspan="6"></th>
                 <th class="fixed-font amt">{{totalValueAtCost | amt}}</th>
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
                 <th class="fixed-font amt">{{totalProfitLossAfterTax | amt}}</th>
-                <th colspan="6"></th>
+                <th colspan="4"></th>
             </tr>
             <tr class="success">
-                <th colspan="4"></th>
+                <th colspan="6"></th>
                 <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
-                <th colspan="7"></th>
+                <th colspan="5"></th>
             </tr>
         </tfoot>
     </table>

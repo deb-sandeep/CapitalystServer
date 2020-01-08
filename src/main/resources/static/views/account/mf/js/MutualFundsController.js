@@ -104,7 +104,15 @@ capitalystNgApp.controller( 'MutualFundsController',
     function getYearlyGrowthPct( holding ) {
         
         var currentToCostRatio = holding.valueAtNavAfterTax / holding.valueAtCost ;
-        var nthRoot = Math.pow( currentToCostRatio, 12/holding.avgHoldingMonths ) ;
-        return ( nthRoot - 1 ) * 100 ;
+        var yoyGrowthPct = 0 ;
+        if( holding.avgHoldingMonths > 12 ) {
+            var nthRoot = Math.pow( currentToCostRatio, 12/holding.avgHoldingMonths ) ;
+            yoyGrowthPct = ( nthRoot - 1 ) * 100 ;
+        }
+        else {
+            yoyGrowthPct = ( currentToCostRatio - 1 )*100 ;
+        }
+        
+        return yoyGrowthPct ;
     }
 } ) ;

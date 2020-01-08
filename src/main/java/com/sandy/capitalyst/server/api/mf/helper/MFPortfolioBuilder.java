@@ -86,6 +86,7 @@ public class MFPortfolioBuilder {
         holding.setScheme( asset.getScheme() ) ;
         holding.setCategory( asset.getCategory() ) ;
         holding.setSubCategory( asset.getSubCategory() ) ;
+        holding.setPurpose( asset.getPurpose() ) ;
         holding.setUnitsHeld( asset.getUnitsHeld() ) ;
         holding.setCurrentNav( asset.getLastRecordedNav() ) ;
         holding.setAvgCostPrice( asset.getAvgCostPrice() ) ;

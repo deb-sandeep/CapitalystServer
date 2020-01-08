@@ -7,6 +7,13 @@ capitalystNgApp.controller( 'InfoEditController',
     $scope.holdingIndex = -1 ;
     $scope.holding = null ;
     
+    $scope.investmentPurposes = [
+       "Deba Education",
+       "Munni Education",
+       "Monthly Income",
+       "Capital Growth"
+    ] ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading MF InfoEditController" ) ;
@@ -32,6 +39,7 @@ capitalystNgApp.controller( 'InfoEditController',
                 
                 holding.isin = $scope.holding.isin ;
                 holding.url = $scope.holding.url ;
+                holding.purpose = $scope.holding.purpose ;
                 
                 resetEditControllerState() ;
                 
@@ -79,7 +87,8 @@ capitalystNgApp.controller( 'InfoEditController',
         $http.post( '/MutualFund/InfoUpdate', {
            id : $scope.holding.assetId,
            isin : $scope.holding.isin,
-           url : $scope.holding.url
+           url : $scope.holding.url,
+           purpose : $scope.holding.purpose
         } )
         .then ( 
             function( response ){

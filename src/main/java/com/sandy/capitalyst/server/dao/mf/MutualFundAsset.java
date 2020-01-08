@@ -19,6 +19,7 @@ public class MutualFundAsset {
     private String isin = null ;
     private String category = null ;
     private String subCategory = null ;
+    private String purpose = null ;
     private float unitsHeld = 0.0f ;
     private float avgCostPrice = 0.0f ;
     private float valueAtCost = 0.0f ;
@@ -141,6 +142,14 @@ public class MutualFundAsset {
     public void setUrl( String url ) {
         this.url = url ;
     }
+    
+    public String getPurpose() {
+        return purpose ;
+    }
+
+    public void setPurpose( String purpose ) {
+        this.purpose = purpose ;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "MutualFundAsset [\n" ) ; 
@@ -151,6 +160,7 @@ public class MutualFundAsset {
         builder.append( "   isin = " + this.isin + "\n" ) ;
         builder.append( "   category = " + this.category + "\n" ) ;
         builder.append( "   subCategory = " + this.subCategory + "\n" ) ;
+        builder.append( "   purpose = " + this.purpose + "\n" ) ;
         builder.append( "   unitsHeld = " + this.unitsHeld + "\n" ) ;
         builder.append( "   avgCostPrice = " + this.avgCostPrice + "\n" ) ;
         builder.append( "   valueAtCost = " + this.valueAtCost + "\n" ) ;

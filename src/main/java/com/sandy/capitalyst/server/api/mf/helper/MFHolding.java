@@ -10,6 +10,7 @@ public class MFHolding {
     private String scheme = null ;
     private String category = null ;
     private String subCategory = null ;
+    private String purpose = null ;
     
     private int averageHoldingDays = 0 ;
     
@@ -168,6 +169,13 @@ public class MFHolding {
         this.url = url ;
     }
     
+    public String getPurpose() {
+        return purpose ;
+    }
+    public void setPurpose( String purpose ) {
+        this.purpose = purpose ;
+    }
+
     private float roundOff( float value ) {
         return (float)( Math.round( value * 100.0 ) / 100.0 ) ;
     }
@@ -181,6 +189,7 @@ public class MFHolding {
                 + "\n  scheme=" + scheme 
                 + "\n  category=" + category
                 + "\n  subCategory=" + subCategory 
+                + "\n  purpose=" + purpose
                 + "\n  unitsHeld=" + unitsHeld
                 + "\n  averageHoldingDays=" + averageHoldingDays
                 + "\n  avgCostPrice=" + avgCostPrice
