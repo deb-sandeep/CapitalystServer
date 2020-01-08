@@ -82,6 +82,7 @@ public class MFPortfolioBuilder {
         holding.setAssetId( asset.getId() ) ;
         holding.setOwnerName( asset.getOwnerName() ) ;
         holding.setIsin( asset.getIsin() ) ;
+        holding.setUrl( asset.getUrl() ) ;
         holding.setScheme( asset.getScheme() ) ;
         holding.setCategory( asset.getCategory() ) ;
         holding.setSubCategory( asset.getSubCategory() ) ;

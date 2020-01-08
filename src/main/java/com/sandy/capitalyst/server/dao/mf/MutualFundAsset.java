@@ -26,6 +26,7 @@ public class MutualFundAsset {
     private float valueAtNav = 0.0f ;
     private float profitLossAmt = 0.0f ;
     private float profitLossPct = 0.0f ;
+    private String url = null ;
 
     public MutualFundAsset() {}
     
@@ -132,6 +133,14 @@ public class MutualFundAsset {
     public float getProfitLossPct() {
         return this.profitLossPct ;
     }
+    
+    public String getUrl() {
+        return url ;
+    }
+
+    public void setUrl( String url ) {
+        this.url = url ;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "MutualFundAsset [\n" ) ; 
@@ -149,6 +158,7 @@ public class MutualFundAsset {
         builder.append( "   valueAtNav = " + this.valueAtNav + "\n" ) ;
         builder.append( "   profitLossAmt = " + this.profitLossAmt + "\n" ) ;
         builder.append( "   profitLossPct = " + this.profitLossPct + "\n" ) ;
+        builder.append( "   url = " + this.url + "\n" ) ;
         builder.append( "]" ) ;
         
         return builder.toString() ;

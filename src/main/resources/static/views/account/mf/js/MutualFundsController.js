@@ -48,6 +48,12 @@ capitalystNgApp.controller( 'MutualFundsController',
         }
     }
     
+    $scope.showEditInfoDialog = function( index ) {
+        var clonedHolding = JSON.parse( JSON.stringify( $scope.mfHoldings[index] ) ) ;
+        broadcastEditScopeChanged( index, clonedHolding ) ;
+        $( '#mfEditInfoDialog' ).modal( 'show' ) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -56,6 +62,14 @@ capitalystNgApp.controller( 'MutualFundsController',
     function initializeController() {
         $scope.$parent.activeTabKey = "MF" ;
         fetchMutualFundsPortfolioFromServer() ;
+    }
+    
+    function broadcastEditScopeChanged( index, holdingClone ) {
+        $scope.editScope = {
+            index : index,
+            holding : holdingClone
+        } ;
+        $scope.$broadcast( 'mfHoldingEditScopeChanged', null ) ;
     }
     
     // ------------------- Server comm functions -----------------------------

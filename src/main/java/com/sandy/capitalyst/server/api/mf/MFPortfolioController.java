@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.api.mf.helper.MFHolding ;
 import com.sandy.capitalyst.server.api.mf.helper.MFPortfolioBuilder ;
 import com.sandy.capitalyst.server.api.mf.helper.MFTxn ;
+import com.sandy.capitalyst.server.api.mf.helper.MFUpdateInfo ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAsset ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAssetRepo ;
@@ -99,6 +100,32 @@ public class MFPortfolioController {
                                  .body( new APIResponse( stackTrace ) ) ;
         }
     }
+    
+    @PostMapping( "/MutualFund/InfoUpdate" ) 
+    public ResponseEntity<APIResponse> updateAsset( 
+                                    @RequestBody MFUpdateInfo updateInfo ) {
+        
+        try {
+            log.debug( "Updating MF information" ) ;
+            
+            MutualFundAsset mfAsset = mfAssetRepo.findById( updateInfo.getId() )
+                                                 .get() ;
+            mfAsset.setIsin( updateInfo.getIsin() ) ;
+            mfAsset.setUrl( updateInfo.getUrl() ) ;
+            
+            mfAssetRepo.save( mfAsset ) ;
+            
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( new APIResponse( "Success" ) ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( new APIResponse( stackTrace ) ) ;
+        }
+    }
+    
     
     private void saveMFAsset( MutualFundAsset postedAsset )
         throws Exception {

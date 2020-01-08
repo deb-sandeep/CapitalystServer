@@ -6,6 +6,7 @@ public class MFHolding {
     
     private String ownerName = null ;
     private String isin = null ;
+    private String url = null ;
     private String scheme = null ;
     private String category = null ;
     private String subCategory = null ;
@@ -160,6 +161,13 @@ public class MFHolding {
         this.averageHoldingDays = value ;
     }
     
+    public String getUrl() {
+        return url ;
+    }
+    public void setUrl( String url ) {
+        this.url = url ;
+    }
+    
     private float roundOff( float value ) {
         return (float)( Math.round( value * 100.0 ) / 100.0 ) ;
     }
@@ -186,6 +194,7 @@ public class MFHolding {
                 + "\n  valueAtNavAfterTax=" + valueAtNavAfterTax
                 + "\n  profitLossAmtAfterTax=" + profitLossAmtAfterTax
                 + "\n  profitLossAmtPctAfterTax=" + profitLossAmtPctAfterTax
+                + "\n  url=" + url
                 + "]" ;
     }
 }

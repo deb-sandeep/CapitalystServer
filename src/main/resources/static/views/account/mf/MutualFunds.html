@@ -7,8 +7,10 @@
         <thead>
             <tr class="success">
                 <th></th>
+                <th></th>
                 <th>Owner</th>
                 <th>Scheme</th>
+                <th>ISIN</th>
                 <th>Category</th>
                 <th>Cost price</th>
                 <th>Value</th>
@@ -23,12 +25,29 @@
             <tr ng-repeat="holding in mfHoldings"
                 ng-class="getRowClass( holding )">
                <td>
+                 <span class="glyphicon glyphicon-pencil"
+                       ng-click="showEditInfoDialog( $index )">
+                 </span>&nbsp;
+               </td>
+               <td>
                  <input type="checkbox" 
                         ng-model="holding.selected"
                         ng-change="mfSelectionChanged( holding )"/>
                </td>
                <td>{{holding.ownerName}}</td>
-               <td>{{holding.scheme}}</td>
+               <td style="font-size:11px;">
+                   <span ng-if="holding.url == null">
+                       {{holding.scheme}}
+                   </span>
+                   <a ng-if="holding.url != null"
+                      href="{{holding.url}}"
+                      target="_blank">
+                       {{holding.scheme}}
+                   </a>
+               </td>
+               <td>
+                     {{holding.isin}}
+               </td>
                <td>{{holding.category | uppercase}}</td>
                <td class="fixed-font amt">{{holding.valueAtCost | amt}}</td>
                <td class="fixed-font amt">{{holding.valueAtNavAfterTax | amt}}</td>
@@ -56,28 +75,23 @@
                 <th class="fixed-font amt">{{totalValueAtCost | amt}}</th>
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
                 <th class="fixed-font amt">{{totalProfitLossAfterTax | amt}}</th>
-                <th colspan="4"></th>
+                <th colspan="6"></th>
             </tr>
             <tr class="success">
                 <th colspan="4"></th>
                 <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
-                <th colspan="5"></th>
+                <th colspan="7"></th>
             </tr>
         </tfoot>
     </table>
 </div>
 
-<div id="savingAccountEditDialog" 
+<div id="mfEditInfoDialog" 
      class="modal" 
      role="dialog"
      data-backdrop="static"
-     ng-include="'savings/edit_saving_account_dialog.html'">
+     ng-include="'mf/edit_info_dialog.html'">
 </div>
 
-<div id="uploadAccountStmtDialog"
-     class="modal"
-     role="dialog"
-     data-backdrop="static"
-     ng-include="'_common/upload_account_stmt_dialog.html'">
-</div>
+
