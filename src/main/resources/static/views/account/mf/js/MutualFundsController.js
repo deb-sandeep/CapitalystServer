@@ -37,6 +37,29 @@ capitalystNgApp.controller( 'MutualFundsController',
     }
     
     $scope.mfSelectionChanged = function( holding ) {
+        reCalculateSelectionTotals() ;
+    }
+    
+    $scope.showEditInfoDialog = function( index ) {
+        var clonedHolding = JSON.parse( JSON.stringify( $scope.mfHoldings[index] ) ) ;
+        broadcastEditScopeChanged( index, clonedHolding ) ;
+        $( '#mfEditInfoDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.selectAllHoldingsForPurpose = function( purpose ) {
+        for( var i=0; i<$scope.mfHoldings.length; i++ ) {
+            var holding = $scope.mfHoldings[i] ;
+            holding.selected = ( holding.purpose == purpose ) ;
+        }
+        reCalculateSelectionTotals() ;
+    }
+    
+    // --- [END] Scope functions
+
+    // -----------------------------------------------------------------------
+    // --- [START] Local functions -------------------------------------------
+    
+    function reCalculateSelectionTotals() {
         $scope.valueAtCostOfSelectedHoldings = 0 ;
         $scope.redemptionValueOfSelectedHoldings = 0 ;
         for( var i=0; i<$scope.mfHoldings.length; i++ ) {
@@ -47,17 +70,6 @@ capitalystNgApp.controller( 'MutualFundsController',
             }
         }
     }
-    
-    $scope.showEditInfoDialog = function( index ) {
-        var clonedHolding = JSON.parse( JSON.stringify( $scope.mfHoldings[index] ) ) ;
-        broadcastEditScopeChanged( index, clonedHolding ) ;
-        $( '#mfEditInfoDialog' ).modal( 'show' ) ;
-    }
-    
-    // --- [END] Scope functions
-
-    // -----------------------------------------------------------------------
-    // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
         $scope.$parent.activeTabKey = "MF" ;
