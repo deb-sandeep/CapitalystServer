@@ -23,7 +23,8 @@ public interface LedgerRepo
           + "WHERE "
           + "    le.valueDate between :startDate AND :endDate "
           + "ORDER BY "
-          + "    le.valueDate DESC "
+          + "    le.valueDate DESC, "
+          + "    le.id DESC"
     )
     public List<LedgerEntry> findEntries( 
                                     @Param( "startDate" ) Date startDate,
@@ -37,7 +38,8 @@ public interface LedgerRepo
           + "    le.account.id IN :accountIds AND "
           + "    le.valueDate between :startDate AND :endDate "
           + "ORDER BY "
-          + "    le.valueDate DESC "
+          + "    le.valueDate DESC, "
+          + "    le.id DESC"
     )
     public List<LedgerEntry> findEntries( 
                                     @Param( "accountIds" ) int[] accountIds,
@@ -54,7 +56,8 @@ public interface LedgerRepo
           + "    le.amount >= :lowerAmt AND "
           + "    le.amount <= :upperAmt "
           + "ORDER BY "
-          + "    le.valueDate DESC "
+          + "    le.valueDate DESC, "
+          + "    le.id DESC"
     )
     public List<LedgerEntry> findEntries( 
                                     @Param( "accountIds" ) int[] accountIds,
@@ -72,7 +75,8 @@ public interface LedgerRepo
           + "    le.account.id = :accountId AND "
           + "    le.valueDate between :startDate AND :endDate "
           + "ORDER BY "
-          + "    le.valueDate DESC "
+          + "    le.valueDate DESC, "
+          + "    le.id DESC"
     )
     public List<LedgerEntry> findEntries( 
                                     @Param( "accountId" ) int accountId,
