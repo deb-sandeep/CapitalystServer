@@ -8,8 +8,7 @@ capitalystNgApp.controller( 'InfoEditController',
     $scope.holding = null ;
     
     $scope.investmentPurposes = [
-       "Deba Education",
-       "Munni Education",
+       "Kids Education",
        "Monthly Income",
        "Capital Growth"
     ] ;
