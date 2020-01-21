@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.api.ledger;
+package com.sandy.capitalyst.server.api.ledger.helpers;
 
 import java.util.Arrays ;
 

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.ledger.helpers.LedgerSearchCriteria ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;

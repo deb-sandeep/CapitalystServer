@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.ledger.helpers.LedgerClassificationInput ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;

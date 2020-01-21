@@ -1,6 +1,8 @@
 package com.sandy.capitalyst.server.core.api;
 
 public class APIResponse {
+    
+    public static APIResponse SUCCESS = new APIResponse( "Success" ) ;
 
     private String message = null ;
     

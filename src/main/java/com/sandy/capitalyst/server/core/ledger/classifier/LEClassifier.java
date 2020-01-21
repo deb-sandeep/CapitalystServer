@@ -126,7 +126,7 @@ public class LEClassifier {
     }
     
     public void classifyEntry( LedgerEntry entry, 
-                                List<LedgerEntry> entriesToSave ) {
+                               List<LedgerEntry> entriesToSave ) {
         
         Map<String, RuleData> ruleSet = null ;
         ruleSet = ( entry.getAmount() < 0 ) ? debitRules : creditRules ;
