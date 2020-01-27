@@ -16,4 +16,8 @@ capitalystNgApp.config( function( $routeProvider ) {
         templateUrl : "/views/account/mf/MutualFunds.html",
         controller : "MutualFundsController"
     })
+    .when( "/equityHoldings", {
+        templateUrl : "/views/account/equity/Equity.html",
+        controller : "EquityController"
+    })
 });

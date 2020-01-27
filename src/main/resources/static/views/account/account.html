@@ -40,6 +40,8 @@
 
     <script src="/views/account/mf/js/MutualFundsController.js"></script>
     <script src="/views/account/mf/js/InfoEditController.js"></script>
+
+    <script src="/views/account/equity/js/EquityController.js"></script>
 </head>
 
 <body ng-controller="AccountController"
@@ -73,6 +75,9 @@
   </li>
   <li ng-class="getTabActiveClass( 'MF' )">
     <a data-toggle="tab" ng-click="showRoute( '/mutualFunds' )">Mutual Funds</a>
+  </li>
+  <li ng-class="getTabActiveClass( 'EQ' )">
+    <a data-toggle="tab" ng-click="showRoute( '/equityHoldings' )">Equity</a>
   </li>
 </ul>
 
