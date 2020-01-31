@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVO ;
+import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVOBuilder ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityHoldingRepo ;
+import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
+import com.sandy.capitalyst.server.dao.equity.EquityTxnRepo ;
 
 @RestController
 public class EquityHoldingsController {
@@ -26,14 +29,23 @@ public class EquityHoldingsController {
     @Autowired
     private EquityHoldingRepo ehRepo = null ;
     
+    @Autowired
+    private EquityTxnRepo etRepo = null ;
+    
     @GetMapping( "/Equity/Holding" ) 
     public ResponseEntity<List<EquityHoldingVO>> getEquityHoldings() {
+        
+        log.debug( "Getting equity portfolio" ) ;
+        List<EquityHoldingVO> voHoldings = new ArrayList<>() ;
+        EquityHoldingVOBuilder voBuilder = new EquityHoldingVOBuilder() ;
+        
         try {
-            log.debug( "Getting equity portfolio" ) ;
-            // NOTE: This will get refactored after txn list is posted.
-            List<EquityHoldingVO> voHoldings = new ArrayList<>() ;
             for( EquityHolding dbHolding : ehRepo.findAll() ) {
-                voHoldings.add( new EquityHoldingVO( dbHolding ) ) ;
+                List<EquityTxn> txns = null ;
+                if( dbHolding.getQuantity() > 0 ) {
+                    txns = etRepo.findByHoldingIdOrderByTxnDateAsc( dbHolding.getId() ) ;
+                }
+                voHoldings.add( voBuilder.buildVO( dbHolding, txns ) ) ;
             }
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( voHoldings ) ;

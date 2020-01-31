@@ -9,8 +9,12 @@
                 <th></th>
                 <th>Owner</th>
                 <th>Company</th>
+                <th>Qty</th>
+                <th class="js-sort-number">LTCG%</th>
                 <th class="js-sort-number">Cost price</th>
                 <th class="js-sort-number">Value</th>
+                <th class="js-sort-number">Profit</th>
+                <th class="js-sort-number">Profit %</th>
             </tr>
         </thead>
         <tbody>
@@ -30,20 +34,28 @@
                    style="font-size:11px;">
                    [{{holding.symbolIcici}}] {{holding.companyName}}
                </td>
+               <td class="fixed-font amt">{{holding.quantity}}</td>
+               <td class="fixed-font amt">{{(holding.ltcgQty/holding.quantity)*100 | number:1.0-1}}%</td>
                <td class="fixed-font amt">{{holding.valueAtCost | amt}}</td>
                <td class="fixed-font amt">{{holding.valueAtMktPrice | amt}}</td>
+               <td class="fixed-font amt">{{holding.profitPostTax | amt}}</td>
+               <td class="fixed-font amt">{{holding.profitPctPostTax | amt}}%</td>
             </tr>
         </tbody>
         <tfoot>
             <tr class="success">
-                <th colspan="3"></th>
+                <th colspan="5"></th>
                 <th class="fixed-font amt">{{totalValueAtCost | amt}}</th>
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
+                <th class="fixed-font amt">{{totalProfit | amt}}</th>
+                <th class="fixed-font amt">{{totalProfitPct | amt}}%</th>
             </tr>
             <tr class="success">
-                <th colspan="3"></th>
+                <th colspan="5"></th>
                 <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
+                <th class="fixed-font amt">{{profitValueOfSelectedHoldings | amt}}</th>
+                <th></th>
             </tr>
         </tfoot>
     </table>

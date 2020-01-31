@@ -8,9 +8,12 @@ capitalystNgApp.controller( 'EquityController',
     $scope.equityHoldings = [] ;
     $scope.totalValueAtCost = 0 ;
     $scope.totalValueAtNav = 0 ;
+    $scope.totalProfit = 0 ;
+    $scope.totalProfitPct = 0 ;
     
     $scope.valueAtCostOfSelectedHoldings = 0 ;
     $scope.redemptionValueOfSelectedHoldings = 0 ;
+    $scope.profitValueOfSelectedHoldings = 0 ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -62,12 +65,14 @@ capitalystNgApp.controller( 'EquityController',
     function reCalculateSelectionTotals() {
         $scope.valueAtCostOfSelectedHoldings = 0 ;
         $scope.redemptionValueOfSelectedHoldings = 0 ;
+        $scope.profitValueOfSelectedHoldings = 0 ;
         
         for( var i=0; i<$scope.equityHoldings.length; i++ ) {
             var holding = $scope.equityHoldings[i] ;
             if( holding.selected ) {
                 $scope.valueAtCostOfSelectedHoldings += holding.valueAtCost ;
                 $scope.redemptionValueOfSelectedHoldings += holding.valueAtMktPrice ;
+                $scope.profitValueOfSelectedHoldings += holding.profitPostTax ;
             }
         }
     }
@@ -82,11 +87,13 @@ capitalystNgApp.controller( 'EquityController',
                 angular.forEach( $scope.equityHoldings, function( holding, key ){
                     $scope.totalValueAtCost += holding.valueAtCost ;
                     $scope.totalValueAtNav += holding.valueAtMktPrice ;
+                    $scope.totalProfit += holding.profitPostTax ;
                     
                     // These are the extra attributes we are adding to the holding
                     holding.selected = false ;
                     holding.visible = holding.quantity > 0 ;
                 }) ;
+                $scope.totalProfitPct = Math.ceil( ( $scope.totalProfit / $scope.totalValueAtCost ) * 100 ) ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Error fetching MF portfolio." ) ;
