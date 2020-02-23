@@ -72,6 +72,8 @@ public class CCLedgerRestController {
         LedgerEntry possibleDup = null ;
         int numSaved = 0 ;
         
+        updateCCDues( entries.get( 0 ) ) ;
+        
         for( CCTxnEntry txnEntry : entries ) {
             ledgerEntry = createLedgerEntry( txnEntry ) ;
             possibleDup = ledgerRepo.findByHash( ledgerEntry.getHash() ) ;
@@ -109,5 +111,12 @@ public class CCLedgerRestController {
         
         ledgerEntry.setBalance( txnEntry.getBalance() ) ;
         return ledgerEntry ;
+    }
+    
+    private void updateCCDues( CCTxnEntry txnEntry ) {
+        
+        Account account = accountRepo.findByAccountNumber( txnEntry.getCreditCardNumber() ) ;
+        account.setBalance( txnEntry.getBalance() ) ;
+        accountRepo.save( account ) ;
     }
 }
