@@ -158,7 +158,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
         
         if( input.saveRule ) {
             if( $scope.searchQuery.customRule == null ) {
-                $ngConfigm( "There is no custom rule to save." ) ;
+                $ngConfirm( "There is no custom rule to save." ) ;
                 return ;
             }
             
