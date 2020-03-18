@@ -6,7 +6,7 @@ jobConfigs:
      active : true
      className : ${basePackageName}.equity.eodrefresh.NSEBhavcopyImportJob
      description : Refreshes latest price for equity
-     cronSchedule : 0 0/15 * * * ?
+     cronSchedule : 0 0 */4 * * ?
      jobData :
         key1 : value1
         key2 : value2
