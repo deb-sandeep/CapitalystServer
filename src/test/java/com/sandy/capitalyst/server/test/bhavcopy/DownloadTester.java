@@ -1,6 +1,6 @@
 package com.sandy.capitalyst.server.test.bhavcopy;
 
-import java.text.SimpleDateFormat ;
+import java.math.BigInteger ;
 
 import org.apache.log4j.Logger ;
 
@@ -23,7 +23,6 @@ public class DownloadTester {
     }
 
     public static void main( String[] args ) throws Exception {
-        SimpleDateFormat df = new SimpleDateFormat( "ddMMMyyyy" ) ;
-        log.debug( df.parse( "17Mar2020" ) );
+        log.debug( new BigInteger( "1465110000" ) );
     }
 }

@@ -18,8 +18,8 @@ public class EquityCandle {
     private Integer id = null ;
     
     private String symbol = null ;
-    private int    totalTradeQty = 0 ;
-    private int    totalTrades = 0 ;
+    private long   totalTradeQty = 0 ;
+    private long   totalTrades = 0 ;
     private Date   date = null ;
     
     @Column( precision=16, scale=2 )
@@ -81,10 +81,10 @@ public class EquityCandle {
         this.close = close ;
     }
 
-    public int getTotalTradeQty() {
+    public long getTotalTradeQty() {
         return totalTradeQty ;
     }
-    public void setTotalTradeQty( int totalTradeQty ) {
+    public void setTotalTradeQty( long totalTradeQty ) {
         this.totalTradeQty = totalTradeQty ;
     }
 
@@ -95,10 +95,10 @@ public class EquityCandle {
         this.totalTradeVal = totalTradeVal ;
     }
 
-    public int getTotalTrades() {
+    public long getTotalTrades() {
         return totalTrades ;
     }
-    public void setTotalTrades( int totalTrades ) {
+    public void setTotalTrades( long totalTrades ) {
         this.totalTrades = totalTrades ;
     }
 

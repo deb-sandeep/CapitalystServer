@@ -87,7 +87,7 @@ public class NSEBhavcopyImporter {
             String series = record[1] ;
             String isin = record[12] ;
             
-            int totalTradeQty = Integer.parseInt( record[8] ) ;
+            long totalTradeQty = Long.parseLong( record[8] ) ;
             
             if( series.equals( "EQ" ) && totalTradeQty > 50000 ) {
                 EquityCandle candle = transformRecord( record, date ) ;
@@ -118,9 +118,9 @@ public class NSEBhavcopyImporter {
         candle.setHigh( Float.parseFloat( record[3] ) ) ;
         candle.setLow( Float.parseFloat( record[4] ) ) ;
         candle.setClose( Float.parseFloat( record[5] ) ) ;
-        candle.setTotalTradeQty( Integer.parseInt( record[8] ) ) ;
+        candle.setTotalTradeQty( Long.parseLong( record[8] ) ) ;
         candle.setTotalTradeVal( Float.parseFloat( record[9] ) ) ;
-        candle.setTotalTrades( Integer.parseInt( record[11] ) ) ;
+        candle.setTotalTrades( Long.parseLong( record[11] ) ) ;
         candle.setDate( date ) ;
         return candle ;
     }
