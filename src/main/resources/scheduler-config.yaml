@@ -2,3 +2,11 @@ envVars:
    basePackageName : com.sandy.capitalyst.server.job
 
 jobConfigs:
+   - identity : NSEBhavcopyRefreshJob
+     active : true
+     className : ${basePackageName}.equity.eodrefresh.NSEBhavcopyRefreshJob
+     description : Refreshes latest price for equity
+     cronSchedule : 0/2 * * * * ?
+     jobData :
+        key1 : value1
+        key2 : value2
