@@ -12,8 +12,8 @@ import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryClassificationRule ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryClassificationRuleRepo ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryClassificationRuleRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 import com.sandy.capitalyst.server.util.StringUtil ;
 
 public class LEClassifier {

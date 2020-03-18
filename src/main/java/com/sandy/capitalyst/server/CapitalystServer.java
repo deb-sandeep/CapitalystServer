@@ -14,8 +14,8 @@ import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
 import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.account.AccountRepo ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
+import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 import com.sandy.common.bus.EventBus ;
 
 @SpringBootApplication

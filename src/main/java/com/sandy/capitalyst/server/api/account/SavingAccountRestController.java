@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.core.CapitalystConstants.AccountType ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.account.AccountRepo ;
+import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDeposit ;
-import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDepositRepo ;
+import com.sandy.capitalyst.server.dao.fixed_deposit.repo.FixedDepositRepo ;
 
 @RestController
 @RequestMapping( "/Account" )

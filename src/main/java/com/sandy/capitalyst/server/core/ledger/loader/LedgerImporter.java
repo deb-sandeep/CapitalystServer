@@ -10,9 +10,9 @@ import org.springframework.context.ApplicationContext ;
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.account.AccountRepo ;
+import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 
 public abstract class LedgerImporter {
     

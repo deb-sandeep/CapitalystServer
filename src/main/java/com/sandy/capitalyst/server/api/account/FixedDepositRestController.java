@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDeposit ;
-import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDepositRepo ;
+import com.sandy.capitalyst.server.dao.fixed_deposit.repo.FixedDepositRepo ;
 
 // Note that a FixedDeposit represents, recurring fixed deposit,
 // linked fixed deposit and a normal fixed deposit.

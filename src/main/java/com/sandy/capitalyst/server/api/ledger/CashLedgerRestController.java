@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.account.AccountRepo ;
+import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 import com.sandy.common.util.StringUtil ;
 
 @RestController

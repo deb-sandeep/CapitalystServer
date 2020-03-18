@@ -20,9 +20,9 @@ import com.sandy.capitalyst.server.api.mf.helper.MFTxn ;
 import com.sandy.capitalyst.server.api.mf.helper.MFUpdateInfo ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAsset ;
-import com.sandy.capitalyst.server.dao.mf.MutualFundAssetRepo ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundTxn ;
-import com.sandy.capitalyst.server.dao.mf.MutualFundTxnRepo ;
+import com.sandy.capitalyst.server.dao.mf.repo.MutualFundAssetRepo ;
+import com.sandy.capitalyst.server.dao.mf.repo.MutualFundTxnRepo ;
 import com.sandy.capitalyst.server.util.StringUtil ;
 
 @RestController

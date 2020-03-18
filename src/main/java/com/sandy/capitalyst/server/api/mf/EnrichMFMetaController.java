@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundMaster ;
-import com.sandy.capitalyst.server.dao.mf.MutualFundRepo ;
+import com.sandy.capitalyst.server.dao.mf.repo.MutualFundRepo ;
 
 @RestController
 public class EnrichMFMetaController {

@@ -15,9 +15,9 @@ import com.sandy.capitalyst.server.api.ledger.helpers.CCTxnEntry ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.account.AccountRepo ;
+import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 
 @RestController
 public class CCLedgerRestController {

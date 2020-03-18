@@ -1,9 +1,11 @@
-package com.sandy.capitalyst.server.dao.ledger;
+package com.sandy.capitalyst.server.dao.ledger.repo;
 
 import java.util.List ;
 
 import org.springframework.data.jpa.repository.Query ;
 import org.springframework.data.repository.CrudRepository ;
+
+import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 
 public interface LedgerEntryCategoryRepo 
     extends CrudRepository<LedgerEntryCategory, Integer> {

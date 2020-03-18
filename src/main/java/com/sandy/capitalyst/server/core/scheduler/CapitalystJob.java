@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory ;
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.dao.job.JobEntry ;
-import com.sandy.capitalyst.server.dao.job.JobEntryRepo ;
 import com.sandy.capitalyst.server.dao.job.JobRunEntry ;
-import com.sandy.capitalyst.server.dao.job.JobRunEntryRepo ;
+import com.sandy.capitalyst.server.dao.job.repo.JobEntryRepo ;
+import com.sandy.capitalyst.server.dao.job.repo.JobRunEntryRepo ;
 import com.sandy.capitalyst.server.util.StringUtil ;
 
 public abstract class CapitalystJob implements Job {

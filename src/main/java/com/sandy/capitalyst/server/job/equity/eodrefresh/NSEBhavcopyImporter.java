@@ -11,11 +11,11 @@ import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.dao.equity.EquityCandle ;
-import com.sandy.capitalyst.server.dao.equity.EquityCandleRepo ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
-import com.sandy.capitalyst.server.dao.equity.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.EquityISIN ;
-import com.sandy.capitalyst.server.dao.equity.EquityISINRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityCandleRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityISINRepo ;
 import com.sandy.common.util.StringUtil ;
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;

@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.dao.ledger;
+package com.sandy.capitalyst.server.dao.ledger.repo;
 
 import java.util.Date ;
 import java.util.List ;
@@ -9,6 +9,8 @@ import org.springframework.data.repository.CrudRepository ;
 import org.springframework.data.repository.query.Param ;
 import org.springframework.transaction.annotation.Propagation ;
 import org.springframework.transaction.annotation.Transactional ;
+
+import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 
 public interface LedgerRepo 
     extends CrudRepository<LedgerEntry, Integer> {

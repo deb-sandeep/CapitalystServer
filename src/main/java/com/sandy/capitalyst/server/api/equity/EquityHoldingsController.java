@@ -17,9 +17,9 @@ import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVOBuilder ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
-import com.sandy.capitalyst.server.dao.equity.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
-import com.sandy.capitalyst.server.dao.equity.EquityTxnRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
 
 @RestController
 public class EquityHoldingsController {

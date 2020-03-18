@@ -22,7 +22,7 @@ import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImportResult ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporter ;
 import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.account.AccountRepo ;
+import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 
 @RestController
 public class AccountStmtUploadRestController {

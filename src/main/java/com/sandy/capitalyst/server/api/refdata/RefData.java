@@ -6,7 +6,7 @@ import java.util.ArrayList ;
 import java.util.List ;
 
 import com.sandy.capitalyst.server.dao.individual.Individual ;
-import com.sandy.capitalyst.server.dao.individual.IndividualRepo ;
+import com.sandy.capitalyst.server.dao.individual.repo.IndividualRepo ;
 
 public class RefData {
 

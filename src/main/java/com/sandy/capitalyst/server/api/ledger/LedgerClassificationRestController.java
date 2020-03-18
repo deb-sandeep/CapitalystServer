@@ -16,10 +16,10 @@ import com.sandy.capitalyst.server.api.ledger.helpers.LedgerClassificationInput 
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryClassificationRule ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryClassificationRuleRepo ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryClassificationRuleRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 import com.sandy.common.util.StringUtil ;
 
 @RestController

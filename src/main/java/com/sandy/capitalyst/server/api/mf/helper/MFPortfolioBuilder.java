@@ -10,9 +10,9 @@ import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAsset ;
-import com.sandy.capitalyst.server.dao.mf.MutualFundAssetRepo ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundTxn ;
-import com.sandy.capitalyst.server.dao.mf.MutualFundTxnRepo ;
+import com.sandy.capitalyst.server.dao.mf.repo.MutualFundAssetRepo ;
+import com.sandy.capitalyst.server.dao.mf.repo.MutualFundTxnRepo ;
 
 class MFLot {
     
