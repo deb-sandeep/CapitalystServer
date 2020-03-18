@@ -83,6 +83,7 @@ capitalystNgApp.controller( 'EquityController',
         $http.get( '/Equity/Holding' )
         .then ( 
             function( response ){
+                console.log( response.data ) ;
                 $scope.equityHoldings = response.data ;
                 angular.forEach( $scope.equityHoldings, function( holding, key ){
                     $scope.totalValueAtCost += holding.valueAtCost ;

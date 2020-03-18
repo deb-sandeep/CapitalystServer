@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.dao.equity;
 
+import java.util.Date ;
+
 import javax.persistence.Column ;
 import javax.persistence.Entity ;
 import javax.persistence.GeneratedValue ;
@@ -31,6 +33,8 @@ public class EquityHolding {
     @Column( precision=16, scale=2 )
     private float realizedProfitLoss = 0.0f ;
     
+    private Date lastUpdate = null ;
+    
     public EquityHolding() {}
     
     protected EquityHolding( EquityHolding blueprint ) {
@@ -44,6 +48,7 @@ public class EquityHolding {
         this.avgCostPrice       = blueprint.avgCostPrice ;
         this.currentMktPrice    = blueprint.currentMktPrice ;
         this.realizedProfitLoss = blueprint.realizedProfitLoss ;
+        this.lastUpdate         = blueprint.lastUpdate ;
     }
     
     public void setId( Integer val ) {
@@ -125,6 +130,14 @@ public class EquityHolding {
     public float getRealizedProfitLoss() {
         return this.realizedProfitLoss ;
     }
+    
+    public Date getLastUpdate() {
+        return lastUpdate ;
+    }
+
+    public void setLastUpdate( Date lastUpdate ) {
+        this.lastUpdate = lastUpdate ;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "EquityHolding [\n" ) ; 
@@ -139,6 +152,7 @@ public class EquityHolding {
         builder.append( "   avgCostPrice = " + this.avgCostPrice + "\n" ) ;
         builder.append( "   currentMktPrice = " + this.currentMktPrice + "\n" ) ;
         builder.append( "   realizedProfitLoss = " + this.realizedProfitLoss + "\n" ) ;
+        builder.append( "   lastUpdate = " + this.lastUpdate + "\n" ) ;
         builder.append( "]" ) ;
         
         return builder.toString() ;

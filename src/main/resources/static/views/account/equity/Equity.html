@@ -15,6 +15,7 @@
                 <th class="js-sort-number">Value</th>
                 <th class="js-sort-number">Profit</th>
                 <th class="js-sort-number">Profit %</th>
+                <th>Last update</th>
             </tr>
         </thead>
         <tbody>
@@ -40,6 +41,7 @@
                <td class="fixed-font amt">{{holding.valueAtMktPrice | amt}}</td>
                <td class="fixed-font amt">{{holding.profitPostTax | amt}}</td>
                <td class="fixed-font amt">{{holding.profitPctPostTax | amt}}%</td>
+               <td>{{holding.lastUpdate | date : "dd MMM" }}</td>
             </tr>
         </tbody>
         <tfoot>
@@ -49,12 +51,14 @@
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
                 <th class="fixed-font amt">{{totalProfit | amt}}</th>
                 <th class="fixed-font amt">{{totalProfitPct | amt}}%</th>
+                <th></th>
             </tr>
             <tr class="success">
                 <th colspan="5"></th>
                 <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{profitValueOfSelectedHoldings | amt}}</th>
+                <th></th>
                 <th></th>
             </tr>
         </tfoot>

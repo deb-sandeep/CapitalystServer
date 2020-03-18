@@ -96,6 +96,7 @@ public class NSEBhavcopyImporter {
                 if( holdingsMap.containsKey( symbol ) ) {
                     for( EquityHolding holding : holdingsMap.get( symbol ) ) {
                         holding.setCurrentMktPrice( candle.getClose() ) ;
+                        holding.setLastUpdate( date ) ;
                         ehRepo.save( holding ) ;
                     }
                 }

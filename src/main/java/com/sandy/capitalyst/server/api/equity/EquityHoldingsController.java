@@ -97,6 +97,7 @@ public class EquityHoldingsController {
             existingHolding.setQuantity( postedHolding.getQuantity() ) ;
             existingHolding.setSymbolIcici( postedHolding.getSymbolIcici() ) ;
             existingHolding.setSymbolNse( postedHolding.getSymbolNse() ) ;
+            existingHolding.setLastUpdate( postedHolding.getLastUpdate() ) ;
             ehRepo.save( existingHolding ) ;
         }
     }
