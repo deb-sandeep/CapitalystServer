@@ -62,6 +62,9 @@ public abstract class CapitalystJob implements Job {
             log.error( "Job " + jobIdentity + " failed.", e ) ;
             result = JobResult.FAILURE ;
             remarks = ExceptionUtils.getStackTrace( e ) ;
+            if( remarks.length() > 5012 ) {
+                remarks = remarks.substring( 0, 5000 ) ;
+            }
         }
         finally {
             duration = (int)(( System.currentTimeMillis() - startTime )/1000) ;
