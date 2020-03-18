@@ -4,9 +4,9 @@ envVars:
 jobConfigs:
    - identity : NSEBhavcopyRefreshJob
      active : true
-     className : ${basePackageName}.equity.eodrefresh.NSEBhavcopyRefreshJob
+     className : ${basePackageName}.equity.eodrefresh.NSEBhavcopyImportJob
      description : Refreshes latest price for equity
-     cronSchedule : 0/2 * * * * ?
+     cronSchedule : 0/30 * * * * ?
      jobData :
         key1 : value1
         key2 : value2

@@ -3,6 +3,7 @@ package com.sandy.capitalyst.server.job.equity.eodrefresh;
 import java.io.ByteArrayInputStream ;
 import java.io.File ;
 import java.io.FileOutputStream ;
+import java.util.Date ;
 import java.util.zip.ZipEntry ;
 import java.util.zip.ZipInputStream ;
 
@@ -14,6 +15,7 @@ import org.jsoup.select.Elements ;
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
+import com.sandy.common.util.StringUtil ;
 
 public class NSEBhavcopyDownloader {
 
@@ -24,14 +26,25 @@ public class NSEBhavcopyDownloader {
     
     private HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
     
+    private String bhavcopyUrl = null ;
+    
+    public Date getLatestBhavcopyDate() throws Exception {
+        bhavcopyUrl = findBhavcopyDownloadLink() ;
+        String subStr = bhavcopyUrl.substring( bhavcopyUrl.indexOf( "/cm" ) ) ;
+        String dtStr  = subStr.substring( 3, subStr.length()-12 ) ;
+        return NSEBhavcopyImportJob.SDF.parse( dtStr ) ;
+    }
+    
     public File downloadBhavcopy() throws Exception {
         
         log.debug( "Downloading latest bhavcopy..." ) ;
         
-        String bhavcopyDownloadUrl = findBhavcopyDownloadLink() ;
-        log.debug( "\tDownload url : " + bhavcopyDownloadUrl ) ;
+        if( StringUtil.isEmptyOrNull( bhavcopyUrl ) ) {
+            bhavcopyUrl = findBhavcopyDownloadLink() ;
+        }
+        log.debug( "\tDownload url : " + bhavcopyUrl ) ;
         
-        byte[] zipContents = downloader.getResourceAsBytes( bhavcopyDownloadUrl, "nse-bhav.txt" ) ;
+        byte[] zipContents = downloader.getResourceAsBytes( bhavcopyUrl, "nse-bhav.txt" ) ;
         log.debug( "\tZip contents downloaded." ) ;
         
         File file = unzipAndStoreContents( zipContents ) ;
@@ -90,10 +103,5 @@ public class NSEBhavcopyDownloader {
         }
         baseDir.mkdirs() ;
         return new File( baseDir, name ) ;
-    }
-    
-    public static void main( String[] args ) throws Exception {
-        NSEBhavcopyDownloader app = new NSEBhavcopyDownloader() ;
-        app.downloadBhavcopy() ;
     }
 }
