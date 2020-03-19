@@ -17,8 +17,10 @@ import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVOBuilder ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
+import com.sandy.capitalyst.server.dao.equity.EquityISIN ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityISINRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
 
 @RestController
@@ -31,6 +33,9 @@ public class EquityHoldingsController {
     
     @Autowired
     private EquityTxnRepo etRepo = null ;
+    
+    @Autowired
+    private EquityISINRepo eiRepo = null ;
     
     @GetMapping( "/Equity/Holding" ) 
     public ResponseEntity<List<EquityHoldingVO>> getEquityHoldings() {
@@ -83,9 +88,12 @@ public class EquityHoldingsController {
         EquityHolding existingHolding = ehRepo.findByOwnerNameAndSymbolIcici( 
                                             postedHolding.getOwnerName(), 
                                             postedHolding.getSymbolIcici() ) ;
+        
+        EquityHolding holding = null ;
+        
         if( existingHolding == null ) {
             log.debug( "No existing asset found. Creating New." ) ;
-            ehRepo.save( postedHolding ) ;
+            holding = postedHolding ;
         }
         else {
             log.debug( "Updating asset with posted values." ) ;
@@ -96,9 +104,17 @@ public class EquityHoldingsController {
             existingHolding.setOwnerName( postedHolding.getOwnerName() ) ;
             existingHolding.setQuantity( postedHolding.getQuantity() ) ;
             existingHolding.setSymbolIcici( postedHolding.getSymbolIcici() ) ;
-            existingHolding.setSymbolNse( postedHolding.getSymbolNse() ) ;
             existingHolding.setLastUpdate( postedHolding.getLastUpdate() ) ;
-            ehRepo.save( existingHolding ) ;
+            holding = existingHolding ;
         }
+        
+        // Update the NSE symbol by looking up the ISIN Symbol map
+        EquityISIN eqIsin = eiRepo.findByIsin( postedHolding.getIsin() ) ;
+        if( eqIsin != null ) {
+            log.debug( "Updating NSE symbol." ) ;
+            holding.setSymbolNse( eqIsin.getSymbol() ) ;
+        }
+        
+        ehRepo.save( holding ) ;
     }
 }
