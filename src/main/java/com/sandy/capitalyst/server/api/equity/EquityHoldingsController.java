@@ -115,6 +115,7 @@ public class EquityHoldingsController {
             holding.setSymbolNse( eqIsin.getSymbol() ) ;
         }
         
+        log.debug( "Updating equity holding" ) ;
         ehRepo.save( holding ) ;
     }
 }
