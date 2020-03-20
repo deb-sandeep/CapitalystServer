@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.api.mf.helper;
 
+import java.util.Date ;
+
 public class MFHolding {
 
     private int assetId = -1 ;
@@ -28,6 +30,8 @@ public class MFHolding {
     private float valueAtNavAfterTax = 0 ;
     private float profitLossAmtAfterTax = 0 ;
     private float profitLossAmtPctAfterTax = 0 ;
+    
+    private Date lastUpdate = null ;
     
     public int getAssetId() {
         return assetId ;
@@ -178,6 +182,14 @@ public class MFHolding {
 
     private float roundOff( float value ) {
         return (float)( Math.round( value * 100.0 ) / 100.0 ) ;
+    }
+    
+    public void setLastUpdate( Date lastUpdate ) {
+        this.lastUpdate = lastUpdate ;
+    }
+    
+    public Date getLastUpdate() {
+        return this.lastUpdate ;
     }
     
     @Override

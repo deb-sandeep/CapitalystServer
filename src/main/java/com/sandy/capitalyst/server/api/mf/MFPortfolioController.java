@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.api.mf;
 
 import java.text.DecimalFormat ;
 import java.text.SimpleDateFormat ;
+import java.util.Date ;
 import java.util.List ;
 
 import org.apache.commons.lang.exception.ExceptionUtils ;
@@ -134,9 +135,11 @@ public class MFPortfolioController {
                                                 postedAsset.getOwnerName(), 
                                                 postedAsset.getScheme() ) ;
         
+        MutualFundAsset holding = null ;
+        
         if( existingAsset == null ) {
             log.debug( "No existing asset found. Creating New." ) ;
-            mfAssetRepo.save( postedAsset ) ;
+            holding = postedAsset ;
         }
         else {
             log.debug( "Updating asset with posted values." ) ;
@@ -147,8 +150,11 @@ public class MFPortfolioController {
             existingAsset.setValueAtNav( postedAsset.getValueAtNav() ) ;
             existingAsset.setProfitLossAmt( postedAsset.getProfitLossAmt() ) ;
             existingAsset.setProfitLossPct( postedAsset.getProfitLossPct() ) ;
-            mfAssetRepo.save( existingAsset ) ;
+            holding = existingAsset ;
         }
+        
+        holding.setLastUpdate( new Date() );
+        mfAssetRepo.save( holding ) ;
     }
 
     private boolean saveMFTxn( MFTxn postedTxn )

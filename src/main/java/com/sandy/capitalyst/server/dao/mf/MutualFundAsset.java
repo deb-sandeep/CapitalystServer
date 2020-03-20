@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.dao.mf;
 
+import java.util.Date ;
+
 import javax.persistence.Entity ;
 import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
@@ -28,6 +30,7 @@ public class MutualFundAsset {
     private float profitLossAmt = 0.0f ;
     private float profitLossPct = 0.0f ;
     private String url = null ;
+    private Date lastUpdate = null ;
 
     public MutualFundAsset() {}
     
@@ -150,6 +153,14 @@ public class MutualFundAsset {
     public void setPurpose( String purpose ) {
         this.purpose = purpose ;
     }
+    
+    public Date getLastUpdate() {
+        return lastUpdate ;
+    }
+
+    public void setLastUpdate( Date lastUpdate ) {
+        this.lastUpdate = lastUpdate ;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "MutualFundAsset [\n" ) ; 
@@ -169,6 +180,7 @@ public class MutualFundAsset {
         builder.append( "   profitLossAmt = " + this.profitLossAmt + "\n" ) ;
         builder.append( "   profitLossPct = " + this.profitLossPct + "\n" ) ;
         builder.append( "   url = " + this.url + "\n" ) ;
+        builder.append( "   lastUpdate = " + this.lastUpdate + "\n" ) ;
         builder.append( "]" ) ;
         
         return builder.toString() ;

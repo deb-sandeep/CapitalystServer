@@ -92,6 +92,7 @@ public class MFPortfolioBuilder {
         holding.setAvgCostPrice( asset.getAvgCostPrice() ) ;
         holding.setValueAtCost( asset.getValueAtCost() ) ;
         holding.setValueAtNav( asset.getValueAtNav() ) ;
+        holding.setLastUpdate( asset.getLastUpdate() ) ;
         
         computeDerivativeValues( asset.getId(), holding ) ;
         

@@ -19,6 +19,7 @@
                 <th class="js-sort-number">LTCG%</th>
                 <th class="js-sort-number">Mths</th>
                 <th class="js-sort-number">YoY%</th>
+                <th>Last update</th>
             </tr>
         </thead>
         <tbody>
@@ -67,6 +68,9 @@
                    ng-class="getAmtClass(holding.yearlyGrowthPct)">
                    {{holding.yearlyGrowthPct | amt}}%
                </td>
+               <td>
+                {{holding.lastUpdate | date : "dd MMM"}}
+               </td>
             </tr>
         </tbody>
         <tfoot>
@@ -76,12 +80,14 @@
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
                 <th class="fixed-font amt">{{totalProfitLossAfterTax | amt}}</th>
                 <th colspan="4"></th>
+                <th></th>
             </tr>
             <tr class="success">
                 <th colspan="6"></th>
                 <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
                 <th colspan="5"></th>
+                <th></th>
             </tr>
         </tfoot>
     </table>
