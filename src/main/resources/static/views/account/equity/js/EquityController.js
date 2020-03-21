@@ -23,6 +23,10 @@ capitalystNgApp.controller( 'EquityController',
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
+    $scope.getAmtClass = function(value) {
+        return ( value < 0 ) ? "neg_amt" : "pos_amt" ;
+    }
+
     $scope.getRowClass = function( holding ) {
         if( holding.selected ) {
             return "selected_holding" ;

@@ -10,6 +10,7 @@
                 <th>Owner</th>
                 <th>Company</th>
                 <th>Qty</th>
+                <th>Price</th>
                 <th class="js-sort-number">LTCG%</th>
                 <th class="js-sort-number">Cost price</th>
                 <th class="js-sort-number">Value</th>
@@ -36,17 +37,23 @@
                    [{{holding.symbolIcici}}] {{holding.companyName}}
                </td>
                <td class="fixed-font amt">{{holding.quantity}}</td>
+               <td class="fixed-font amt">{{holding.currentMktPrice}}</td>
                <td class="fixed-font amt">{{(holding.ltcgQty/holding.quantity)*100 | number:1.0-1}}%</td>
                <td class="fixed-font amt">{{holding.valueAtCost | amt}}</td>
                <td class="fixed-font amt">{{holding.valueAtMktPrice | amt}}</td>
-               <td class="fixed-font amt">{{holding.profitPostTax | amt}}</td>
-               <td class="fixed-font amt">{{holding.profitPctPostTax | amt}}%</td>
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass(holding.profitPostTax)">
+                   {{holding.profitPostTax | amt}}
+               </td>
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass(holding.profitPctPostTax)">
+                   {{holding.profitPctPostTax | amt}}%</td>
                <td>{{holding.lastUpdate | date : "dd MMM" }}</td>
             </tr>
         </tbody>
         <tfoot>
             <tr class="success">
-                <th colspan="5"></th>
+                <th colspan="6"></th>
                 <th class="fixed-font amt">{{totalValueAtCost | amt}}</th>
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
                 <th class="fixed-font amt">{{totalProfit | amt}}</th>
@@ -54,7 +61,7 @@
                 <th></th>
             </tr>
             <tr class="success">
-                <th colspan="5"></th>
+                <th colspan="6"></th>
                 <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{profitValueOfSelectedHoldings | amt}}</th>

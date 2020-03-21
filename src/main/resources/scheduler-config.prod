@@ -9,7 +9,7 @@ jobConfigs:
      cronSchedule : 0 0 */6 * * ?
 
    - identity : MFNavRefreshJob
-     active : false
+     active : true
      className : ${basePackageName}.mf.eodrefresh.MFEODNAVRefreshJob
      description : Refreshes latest NAV for MF
      cronSchedule : 0 0 */6 * * ?
