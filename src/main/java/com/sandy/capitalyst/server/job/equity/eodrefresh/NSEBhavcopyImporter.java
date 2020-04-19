@@ -137,6 +137,7 @@ public class NSEBhavcopyImporter {
             log.error( "Could not update equity ISIN mapping.", e ) ; 
             log.error( "\tSymbol = " + symbol ) ;
             log.error( "\tISIN = " + isin ) ;
+            throw e ;
         }
     }
 
