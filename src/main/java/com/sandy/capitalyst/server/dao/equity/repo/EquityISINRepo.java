@@ -8,4 +8,6 @@ public interface EquityISINRepo
     extends CrudRepository<EquityISIN, Integer> {
     
     public EquityISIN findByIsin( String isin ) ;
+    
+    public EquityISIN findBySymbol( String symbol ) ;
 }

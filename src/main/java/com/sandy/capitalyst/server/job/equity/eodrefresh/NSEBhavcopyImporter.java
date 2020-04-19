@@ -100,15 +100,43 @@ public class NSEBhavcopyImporter {
                         ehRepo.save( holding ) ;
                     }
                 }
-                
-                EquityISIN eqIsin = eiRepo.findByIsin( isin ) ;
-                if( eqIsin == null ) {
+                updateEquityISINMapping( symbol, isin ) ;
+            }
+        }
+    }
+    
+    private void updateEquityISINMapping( String symbol, String isin ) {
+        
+        try {
+            EquityISIN eqIsin = eiRepo.findByIsin( isin ) ;
+            if( eqIsin == null ) {
+                // If we can't find a mapping via ISIN, it can also mean than
+                // the ISIN has changed. In this case, we see if the we can 
+                // find a mapping via the symbol before trying to create a 
+                // new mapping.
+                //
+                // Case observed - IRCON ISIN changed on 7th May 2020
+                eqIsin = eiRepo.findBySymbol( symbol ) ;
+                if( eqIsin != null ) {
+                    eqIsin.setIsin( isin ) ;
+                    
+                    // In case we have updated an existing mapping, we have to
+                    // check if this ISIN was being used by any of our
+                    // existing holdings. If so, we update those too.
+                    ehRepo.updateIsin( isin, symbol ) ;
+                }
+                else {
                     eqIsin = new EquityISIN() ;
                     eqIsin.setSymbol( symbol ) ;
                     eqIsin.setIsin( isin ) ;
-                    eiRepo.save( eqIsin ) ;
                 }
+                eiRepo.save( eqIsin ) ;
             }
+        }
+        catch( Exception e ) {
+            log.error( "Could not update equity ISIN mapping.", e ) ; 
+            log.error( "\tSymbol = " + symbol ) ;
+            log.error( "\tISIN = " + isin ) ;
         }
     }
 
