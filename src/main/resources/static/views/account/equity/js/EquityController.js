@@ -57,6 +57,11 @@ capitalystNgApp.controller( 'EquityController',
         reCalculateSelectionTotals() ;
     }
     
+    $scope.triggerJob = function() {
+        console.log( "Triggering job" ) ; 
+        triggerJob( 'NSEBhavcopyRefreshJob' ) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -102,6 +107,23 @@ capitalystNgApp.controller( 'EquityController',
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Error fetching MF portfolio." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function triggerJob( jobName ) {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/Job/TriggerNow/' + jobName )
+        .then ( 
+            function( response ){
+                alert( "Job triggered. Refresh after some time." ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error triggering job." ) ;
             }
         )
         .finally(function() {

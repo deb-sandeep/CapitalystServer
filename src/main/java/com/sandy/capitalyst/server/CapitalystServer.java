@@ -60,6 +60,10 @@ public class CapitalystServer
         APP = this ;
     }
     
+    public CapitalystJobScheduler getScheduler() {
+        return this.scheduler ;
+    }
+    
     public void initialize() throws Exception {
         
         if( CapitalystServer.getConfig().isRunClassificationOnStartup() ) {

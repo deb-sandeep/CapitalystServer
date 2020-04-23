@@ -3,7 +3,7 @@ envVars:
 
 jobConfigs:
    - identity : NSEBhavcopyRefreshJob
-     active : true
+     active : false
      className : ${basePackageName}.equity.eodrefresh.NSEBhavcopyImportJob
      description : Refreshes latest price for equity
      cronSchedule : 0/30 * * * * ?
@@ -12,7 +12,7 @@ jobConfigs:
         key2 : value2
         
    - identity : MFNavRefreshJob
-     active : false
+     active : true
      className : ${basePackageName}.mf.eodrefresh.MFEODNAVRefreshJob
      description : Refreshes latest NAV for MF
-     cronSchedule : 0/30 * * * * ?
+     cronSchedule : 0 */10 * * * ?

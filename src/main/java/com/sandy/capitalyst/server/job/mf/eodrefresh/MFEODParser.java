@@ -87,6 +87,7 @@ public class MFEODParser {
         
         if( navDate == null ) {
             navDate = SDF.parse( parts[5] ) ;
+            log.debug( "Latest MF Nav date = " + navDate ) ;
         }
         
         if( !isinGrowth.equals( "-" ) ) {

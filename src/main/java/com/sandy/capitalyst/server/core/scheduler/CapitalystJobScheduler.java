@@ -1,6 +1,8 @@
 package com.sandy.capitalyst.server.core.scheduler;
 
 import java.io.InputStream ;
+import java.util.HashMap ;
+import java.util.Map ;
 
 import org.apache.log4j.Logger ;
 import org.quartz.CronScheduleBuilder ;
@@ -8,6 +10,7 @@ import org.quartz.CronTrigger ;
 import org.quartz.Job ;
 import org.quartz.JobBuilder ;
 import org.quartz.JobDetail ;
+import org.quartz.JobKey ;
 import org.quartz.Scheduler ;
 import org.quartz.TriggerBuilder ;
 import org.quartz.impl.StdSchedulerFactory ;
@@ -23,6 +26,8 @@ public class CapitalystJobScheduler {
     
     private ObjectMapper mapper = null ; 
     private Scheduler scheduler = null ;
+    
+    private Map<String, JobKey> jobKeyMap = new HashMap<String, JobKey>() ;
     
     public void initialize() throws Exception {
         if( scheduler == null ) {
@@ -59,6 +64,18 @@ public class CapitalystJobScheduler {
         scheduler.shutdown() ;
     }
     
+    public void triggerJob( String jobName ) throws Exception {
+        JobKey key = this.jobKeyMap.get( jobName ) ;
+        if( key != null ) {
+            this.scheduler.triggerJob( key ) ;
+        }
+        else {
+            throw new IllegalArgumentException( "Job with the name " + 
+                                                jobName + 
+                                                " is not registered." ) ;
+        }
+    }
+    
     private SchedulerConfig loadConfig() throws Exception {
         SchedulerConfig config =  null ;
         InputStream is = getClass().getResourceAsStream( "/scheduler-config.yaml" ) ;
@@ -71,9 +88,11 @@ public class CapitalystJobScheduler {
         throws Exception {
 
         JobDetail jobDetail = createJobDetail( config ) ;
+        JobKey jobKey = jobDetail.getKey() ;
         CronTrigger trigger = createCronTrigger( config ) ;
         
         this.scheduler.scheduleJob( jobDetail, trigger ) ;
+        this.jobKeyMap.put( jobKey.getName(), jobKey ) ;
     }
     
     @SuppressWarnings( "unchecked" )
@@ -83,11 +102,13 @@ public class CapitalystJobScheduler {
         Class<? extends Job> jobClass = null ;
         JobBuilder jobBuilder = null ;
         JobDetail job = null ;
+        JobKey jobKey = null ;
         
+        jobKey = JobKey.jobKey( config.getIdentity() ) ;
         jobClass = ( Class<? extends Job> )Class.forName( config.getClassName() ) ;
         
         jobBuilder = JobBuilder.newJob( jobClass ) 
-                               .withIdentity( config.getIdentity() )
+                               .withIdentity( jobKey )
                                .withDescription( config.getDescription() ) ;
         
         for( String key : config.getJobData().keySet() ) {

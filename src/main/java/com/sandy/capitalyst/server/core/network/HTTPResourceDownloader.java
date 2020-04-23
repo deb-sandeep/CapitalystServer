@@ -1,7 +1,6 @@
 package com.sandy.capitalyst.server.core.network;
 
 import java.io.BufferedReader ;
-import java.io.File ;
 import java.io.InputStream ;
 import java.io.InputStreamReader ;
 import java.util.HashMap ;
@@ -13,7 +12,6 @@ import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.config.CapitalystConfig ;
 import com.sandy.capitalyst.server.util.StringUtil ;
 
-import okhttp3.Cache ;
 import okhttp3.OkHttpClient ;
 import okhttp3.Request ;
 import okhttp3.Response ;
@@ -42,16 +40,16 @@ public class HTTPResourceDownloader {
         okhttp3.OkHttpClient.Builder builder = new OkHttpClient.Builder() ;
         
         if( config != null ) {
-            File workspaceDir = config.getWorkspaceDir() ;
-            File httpCacheDir = new File( workspaceDir, "http_cache" ) ;
+//            File workspaceDir = config.getWorkspaceDir() ;
+//            File httpCacheDir = new File( workspaceDir, "http_cache" ) ;
             
-            if( !httpCacheDir.exists() ) {
-                httpCacheDir.mkdirs() ;
-            }
-            builder.cache( new Cache( httpCacheDir, 5*1025*1024 ) ) ;
+//            if( !httpCacheDir.exists() ) {
+//                httpCacheDir.mkdirs() ;
+//            }
+//            builder.cache( null ) ;
         }
         
-        client = builder.build() ;
+        client = builder.cache(null).build() ;
     }
     
     public String getResource( String url ) 
