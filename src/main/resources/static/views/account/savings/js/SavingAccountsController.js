@@ -98,12 +98,20 @@ capitalystNgApp.controller( 'SavingAccountsController',
     $scope.showConsolidatedLedger = function() {
         
         var selAccIds = [] ;
+        var allAccIds = [] ;
         angular.forEach( $scope.accounts, function( account, key ){
-            selAccIds.push( account.id ) ;
+            if( account.selected ) {
+                selAccIds.push( account.id ) ;
+            }
+            allAccIds.push( account.id ) ;
         }) ;
         
+        var csAccIds = null ;
+        csAccIds = ( selAccIds.length == 0 ) ? allAccIds.join() : 
+                                               selAccIds.join() ;
+        
         $window.location.href = "/views/ledger/ledger.html?accountIds=" + 
-                                selAccIds.join() ;
+                                csAccIds ;
     }
     
     // --- [END] Scope functions
