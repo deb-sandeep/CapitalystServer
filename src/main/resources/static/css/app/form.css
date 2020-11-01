@@ -25,6 +25,9 @@
 	padding-right:10px;
 	font-size:1.1em;
 	line-height:150%;
+	border-style:solid;
+	border-width:1px;
+	border-color:#d2d1d3;
 }
 
 .modal-footer {
@@ -37,7 +40,7 @@
 }
 
 .ng-valid {
-  background-color: #eafff1;
+  background-color: #ffffff;
 }
 
 .input-group-addon {

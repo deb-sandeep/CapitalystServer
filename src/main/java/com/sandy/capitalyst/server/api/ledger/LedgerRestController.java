@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.ledger.helpers.LedgerSearchCriteria ;
+import com.sandy.capitalyst.server.api.ledger.helpers.SplitDetails ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
@@ -196,4 +197,21 @@ public class LedgerRestController {
         }
         return pivotEntries ;
     }
+    
+    @PostMapping( "/LedgerEntry/Split" ) 
+    public ResponseEntity<APIResponse> splitLedgerEntries( 
+                         @RequestBody SplitDetails splitDetails ) {
+        try {
+            log.debug( "Splitting ledger entry. Details = " + splitDetails );
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( APIResponse.SUCCESS ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
+    
+    
 }

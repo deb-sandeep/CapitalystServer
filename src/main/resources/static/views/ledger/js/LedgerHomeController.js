@@ -49,6 +49,16 @@ capitalystNgApp.controller( 'LedgerHomeController',
     } ;
     
     $scope.entryFilterText = null ;
+    $scope.entryBeingSplit = null ;
+    $scope.splitEntryDetails = {
+       amount : 0,
+       l1Cat : null,
+       l1CatNew : null,
+       l2Cat : null,
+       l2CatNew : null,
+       notes : null,
+       errMsgs : [],
+    } ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -187,12 +197,29 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.newL1CategoryEntered = function() {
-        $scope.userSel.l1Cat = null ;
-        $scope.userSel.l2Cat = null ;
+        
+        if( $scope.userSel != null ) {
+            $scope.userSel.l1Cat = null ;
+            $scope.userSel.l2Cat = null ;
+        }
+        
+        if( $scope.entryBeingSplit != null ) {
+            $scope.splitEntryDetails.l1Cat = null ;
+            $scope.splitEntryDetails.l2Cat = null ;
+            $scope.validateSplitEntry() ;
+        }
     }
     
     $scope.newL2CategoryEntered = function() {
-        $scope.userSel.l2Cat = null ;
+        
+        if( $scope.userSel != null ) {
+            $scope.userSel.l2Cat = null ;
+        }
+        
+        if( $scope.entryBeingSplit != null ) {
+            $scope.splitEntryDetails.l2Cat = null ;
+            $scope.validateSplitEntry() ;
+        }
     }
     
     $scope.entryFilterTextChanged = function() {
@@ -247,10 +274,104 @@ capitalystNgApp.controller( 'LedgerHomeController',
         return entry.account.accountNumber == "CASH@HOME" ;
     }
 
+    $scope.showSplitLedgerEntryDialog = function( index ) {
+        console.log( "Splitting ledger entry at index = " + index ) ;
+        $scope.entryBeingSplit = $scope.ledgerEntries[ index ] ;
+        $scope.validateSplitEntry() ;
+        
+        $scope.relevantCategoriesForSelectedEntries = 
+                                        ( $scope.entryBeingSplit.amount < 0 ) ?
+                                        $scope.masterCategories.debit :
+                                        $scope.masterCategories.credit ;
+
+        $( '#entrySplitDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.cancelSplit = function() {
+        resetSplitEntryState() ;
+        $( '#entrySplitDialog' ).modal( 'hide' ) ;
+    }
+    
+    $scope.saveSplitLedgerEntry = function() {
+        
+        console.log( "Applying entry split." ) ;
+        
+        var input = $scope.splitEntryDetails ;
+        
+        $scope.validateSplitEntry() ;
+        if( input.errMsgs.length > 0 ) {
+            $ngConfirm( "Please fix the errors first." ) ;
+            return ;
+        }
+        
+        var newCategory = false ;
+        var l1Cat = input.l1Cat ;
+        var l2Cat = input.l2Cat ;
+
+        if( l1Cat == null || l2Cat == null ) {
+            newCategory = true ;
+            l1Cat = ( l1Cat == null ) ? input.l1CatNew : l1Cat ;
+            l2Cat = ( l2Cat == null ) ? input.l2CatNew : l2Cat ;
+        }
+        
+        var postData = {
+            entryId          : $scope.entryBeingSplit.id, 
+            amount           : input.amount,
+            l1Cat            : l1Cat,
+            l2Cat            : l2Cat,
+            newClassifier    : newCategory,
+            notes            : input.notes
+        } ;
+        
+        console.log( postData ) ;
+        applySplitOnServer( postData ) ;
+    }
+    
+    $scope.validateSplitEntry = function() {
+        
+        console.log( "Validating split entry amount." ) ;
+        
+        var splitDetails = $scope.splitEntryDetails ;
+        var parentEntry = $scope.entryBeingSplit ;
+        
+        splitDetails.errMsgs.length = 0 ;
+        
+        if( splitDetails.amount <= 0 ) {
+            splitDetails.errMsgs.push( "Amount can't be less than or equal to zero" ) ;
+        }
+        else if( splitDetails.amount >= -1*parentEntry.amount ) {
+            splitDetails.errMsgs.push( "Amount can't be greater than or equal to max value." ) ;
+        }
+        
+        if( splitDetails.l1Cat == null && splitDetails.l1CatNew == null ) {
+            splitDetails.errMsgs.push( "L1 category needs to be specified." ) ;
+        }
+
+        if( splitDetails.l2Cat == null && splitDetails.l2CatNew == null ) {
+            splitDetails.errMsgs.push( "L2 category needs to be specified." ) ;
+        }
+        
+        if( splitDetails.notes == null ) {
+            splitDetails.errMsgs.push( "Notes needs to be specified." ) ;
+        }
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
+    
+    function resetSplitEntryState() {
+        
+        $scope.entryBeingSplit = null ;
+        $scope.splitEntryDetails.amount = 0 ;
+        $scope.splitEntryDetails.l1Cat = null ;
+        $scope.splitEntryDetails.l1CatNew = null ;
+        $scope.splitEntryDetails.l2Cat = null ;
+        $scope.splitEntryDetails.l2CatNew = null ;
+        $scope.splitEntryDetails.notes = null ;
+        $scope.splitEntryDetails.errMsgs.length = 0 ;
+    }
     
     function initializeController() {
         var parameters = new URLSearchParams( window.location.search ) ;
@@ -675,5 +796,25 @@ capitalystNgApp.controller( 'LedgerHomeController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function applySplitOnServer( postData ) {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/LedgerEntry/Split', postData )
+        .then ( 
+            function( response ){
+                console.log( "Split ledger entry ledger entry" ) ;
+                $( '#entrySplitDialog' ).modal( 'hide' ) ;
+                fetchLedgerEntries() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error deleting ledger entry." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+
     }
 } ) ;
