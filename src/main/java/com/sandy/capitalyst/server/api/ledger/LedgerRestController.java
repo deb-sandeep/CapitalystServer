@@ -27,6 +27,8 @@ import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilde
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
+import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 import com.sandy.common.util.StringUtil ;
 
@@ -41,6 +43,9 @@ public class LedgerRestController {
     
     @Autowired
     private AccountRepo aRepo = null ;
+    
+    @Autowired
+    private LedgerEntryCategoryRepo lecRepo = null ;
     
     @GetMapping( "/Ledger/PivotData" ) 
     public ResponseEntity<List<String[]>> getPivotDataEntries( 
@@ -203,6 +208,20 @@ public class LedgerRestController {
                          @RequestBody SplitDetails splitDetails ) {
         try {
             log.debug( "Splitting ledger entry. Details = " + splitDetails );
+            
+            LedgerEntry entryBeingSplit = null ;
+            LedgerEntry newEntry = null ;
+            
+            if( splitDetails.isNewClassifier() ) {
+                saveNewClassifier( splitDetails.getL1Cat(), splitDetails.getL2Cat() ) ;
+            }
+            
+            entryBeingSplit = lRepo.findById( splitDetails.getEntryId() ).get() ;
+            newEntry = entryBeingSplit.split( splitDetails ) ;
+            
+            lRepo.save( entryBeingSplit ) ;
+            lRepo.save( newEntry ) ;
+            
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( APIResponse.SUCCESS ) ;
         }
@@ -214,4 +233,13 @@ public class LedgerRestController {
     }
     
     
+    private void saveNewClassifier( String l1Cat, String l2Cat ) {
+        log.debug( "Saving new classification category." ) ;
+        LedgerEntryCategory newCat = null ;
+        newCat = new LedgerEntryCategory() ;
+        newCat.setCreditClassification( false ) ;
+        newCat.setL1CatName( l1Cat ) ;
+        newCat.setL2CatName( l2Cat ) ;
+        lecRepo.save( newCat ) ;
+    }
 }

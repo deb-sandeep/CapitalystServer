@@ -18,7 +18,6 @@ import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
-import com.sandy.common.util.StringUtil ;
 
 @RestController
 public class CashLedgerRestController {
@@ -64,7 +63,7 @@ public class CashLedgerRestController {
             ledgerEntry.setAccount( account ) ;
             ledgerEntry.setAmount( -1*ledgerEntry.getAmount() ) ;
             
-            String hash = generateCashEntryHash( ledgerEntry ) ;
+            String hash = ledgerEntry.generateHash() ;
             
             if( ledgerEntry.getId() == null || 
                 ledgerEntry.getId() == -1 ) {
@@ -93,15 +92,5 @@ public class CashLedgerRestController {
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( null ) ;
         }
-    }
-
-    private String generateCashEntryHash( LedgerEntry entry ) throws Exception {
-        
-        StringBuffer buffer = new StringBuffer() ;
-        buffer.append( LedgerEntry.HASH_SDF.format( entry.getValueDate() ) )
-              .append( entry.getL1Cat() )
-              .append( entry.getL2Cat() )
-              .append( entry.getAmount() ) ;
-        return StringUtil.getHash( buffer.toString() ) ;
     }
 }

@@ -276,14 +276,17 @@ capitalystNgApp.controller( 'LedgerHomeController',
 
     $scope.showSplitLedgerEntryDialog = function( index ) {
         console.log( "Splitting ledger entry at index = " + index ) ;
+        
+        resetSplitEntryState() ;
+        
         $scope.entryBeingSplit = $scope.ledgerEntries[ index ] ;
+        $scope.relevantCategoriesForSelectedEntries = 
+                            ( $scope.entryBeingSplit.amount < 0 ) ?
+                                    $scope.masterCategories.debit :
+                                    $scope.masterCategories.credit ;
+        
         $scope.validateSplitEntry() ;
         
-        $scope.relevantCategoriesForSelectedEntries = 
-                                        ( $scope.entryBeingSplit.amount < 0 ) ?
-                                        $scope.masterCategories.debit :
-                                        $scope.masterCategories.credit ;
-
         $( '#entrySplitDialog' ).modal( 'show' ) ;
     }
     
@@ -807,14 +810,14 @@ capitalystNgApp.controller( 'LedgerHomeController',
                 console.log( "Split ledger entry ledger entry" ) ;
                 $( '#entrySplitDialog' ).modal( 'hide' ) ;
                 fetchLedgerEntries() ;
+                resetSplitEntryState() ;
             }, 
             function( error ){
-                $scope.$parent.addErrorAlert( "Error deleting ledger entry." ) ;
+                $scope.$parent.addErrorAlert( "Error splitting ledger entry." ) ;
             }
         )
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
-
     }
 } ) ;
