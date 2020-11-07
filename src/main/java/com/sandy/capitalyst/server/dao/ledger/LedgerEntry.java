@@ -147,7 +147,12 @@ public class LedgerEntry implements Cloneable {
         
         setAmount( getAmount() + splitDetails.getAmount() ) ;
         setBalance( getBalance() + splitDetails.getAmount() ) ;
-        setHash( generateHash() ) ;
+        // Do not generate a new hash. Why? 
+        // Because by generating a new hash, we are essentially making a 
+        // new payment. This will break the traceability from the payment
+        // source. Implying if we upload the original payment file, it will
+        // end up creating a new 'before-split' payment.
+        //setHash( generateHash() ) ;
         
         newEntry.setAmount( -1*splitDetails.getAmount() ) ;
         newEntry.setL1Cat( splitDetails.getL1Cat() ) ;
