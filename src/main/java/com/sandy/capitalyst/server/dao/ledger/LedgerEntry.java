@@ -154,6 +154,7 @@ public class LedgerEntry implements Cloneable {
         // end up creating a new 'before-split' payment.
         //setHash( generateHash() ) ;
         
+        newEntry.setRemarks( getRemarks() + " [s]" ) ;
         newEntry.setAmount( -1*splitDetails.getAmount() ) ;
         newEntry.setL1Cat( splitDetails.getL1Cat() ) ;
         newEntry.setL2Cat( splitDetails.getL2Cat() ) ;
