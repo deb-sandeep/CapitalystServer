@@ -75,7 +75,7 @@ public class SavingAccountRestController {
     @PostMapping( "/SavingAccount" ) 
     public ResponseEntity<Account> saveAccount( @RequestBody Account input ) {
         try {
-            log.debug( "Saving account data" ) ;
+            log.debug( "Saving account data." ) ;
             Account result = accountRepo.save( input ) ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( result ) ;
