@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.api.account;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet ;
 import java.util.List ;
 import java.util.Set ;
@@ -38,27 +39,31 @@ public class SavingAccountRestController {
     @GetMapping( "/SavingAccount" ) 
     public ResponseEntity<List<Account>> getAccounts() {
         try {
-            List<Account> accounts = null ;
+            List<Account> allAccounts = null ;
+            List<Account> validAccounts = new ArrayList<>() ;
             Set<String> accountTypes = new LinkedHashSet<>() ;
             
             accountTypes.add( AccountType.SAVING.name() ) ;
             accountTypes.add( AccountType.CREDIT.name() ) ;
             accountTypes.add( AccountType.CURRENT.name() ) ;
             
-            accounts = accountRepo.findByAccountTypeIn( accountTypes ) ;
+            allAccounts = accountRepo.findByAccountTypeIn( accountTypes ) ;
             
             List<FixedDeposit> fds = fdRepo.findAllActiveDeposits() ;
-            for( Account account : accounts ) {
-                for( FixedDeposit fd : fds ) {
-                    if( account.getId() == fd.getParentAccount().getId() ) {
-                        account.setDepositBalance( account.getDepositBalance() + 
-                                                   fd.getBaseAccount().getBalance() ) ;
+            for( Account account : allAccounts ) {
+            	if( !account.isDeleted() ) {
+            		validAccounts.add( account ) ;
+                    for( FixedDeposit fd : fds ) {
+                        if( account.getId() == fd.getParentAccount().getId() ) {
+                            account.setDepositBalance( account.getDepositBalance() + 
+                                                       fd.getBaseAccount().getBalance() ) ;
+                        }
                     }
-                }
+            	}
             }
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( accounts ) ;
+                                 .body( validAccounts ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Getting account summaries.", e ) ;
@@ -86,9 +91,15 @@ public class SavingAccountRestController {
     public ResponseEntity<APIResponse> deleteAccount( @PathVariable Integer id ) {
         try {
             log.debug( "Deleting account. " + id ) ;
-            accountRepo.deleteById( id ) ;
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( "Successfully deleted" ) ) ;
+            Account account = accountRepo.findById( id ).get() ;
+            if( account != null ) {
+            	account.setDeleted( true ) ;
+            	accountRepo.save( account ) ;
+            	return ResponseEntity.status( HttpStatus.OK )
+            			             .body( new APIResponse( "Successfully deleted" ) ) ;
+            }
+        	return ResponseEntity.status( HttpStatus.NOT_FOUND )
+        		                 .body( new APIResponse( "Account " + id + " not found." ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;

@@ -15,6 +15,7 @@ public class Account {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id ;
     
+    private boolean deleted = false ;
     private String accountOwner = null ;
     private String accountType = null ;
     private String accountNumber = null ;
@@ -33,6 +34,14 @@ public class Account {
     
     public void setId( Integer id ) {
         this.id = id ;
+    }
+    
+    public boolean isDeleted() {
+    	return deleted ;
+    }
+    
+    public void setDeleted( boolean deleted ) {
+    	this.deleted = deleted ;
     }
     
     public String getAccountOwner() {
