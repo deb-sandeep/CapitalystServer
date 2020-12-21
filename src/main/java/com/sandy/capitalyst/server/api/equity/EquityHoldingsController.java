@@ -49,8 +49,11 @@ public class EquityHoldingsController {
                 List<EquityTxn> txns = null ;
                 if( dbHolding.getQuantity() > 0 ) {
                     txns = etRepo.findByHoldingIdOrderByTxnDateAsc( dbHolding.getId() ) ;
+                    EquityHoldingVO vo = voBuilder.buildVO( dbHolding, txns ) ;
+                    if( vo.getQuantity() > 0 ) {
+                    	voHoldings.add( vo ) ;
+                    }
                 }
-                voHoldings.add( voBuilder.buildVO( dbHolding, txns ) ) ;
             }
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( voHoldings ) ;
