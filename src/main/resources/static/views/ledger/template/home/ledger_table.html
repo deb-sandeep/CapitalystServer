@@ -10,15 +10,15 @@
            style="width: 100%;">
         <thead>
             <tr class="success">
-                <th class="js-sort-none">
+                <th></th>
                 <th class="js-sort-none">
                  <input type="checkbox" 
                         ng-model="bulkSelState.value"
                         ng-change="toggleSelectionForAllEntries()"/>
                 </th>
-                </th>
-                <th class="js-sort-valueDate">Date</th>
-                <th><div style="display:inline-block;">Remarks</div>
+                <th style="width:125px;" class="js-sort-valueDate">Date</th>
+                <th style="width:300px;">
+                    <div style="display:inline-block;">Remarks</div>
                     <div style="display:inline-block;padding-left:10px;">
 	                    <input type="text"
 	                           ng-model="$parent.entryFilterText"
@@ -30,9 +30,9 @@
                 </th>
                 <th></th>
                 <th class="js-sort-number">Amount</th>
-                <th>L1</th>
-                <th>L2</th>
                 <th>Notes</th>
+                <th style="width:130px;">L1</th>
+                <th style="width:130px;">L2</th>
                 <th class="js-sort-number"
                     ng-if="searchQuery.accountIds.length == 1">Balance</th>
                 <th></th>
@@ -51,7 +51,7 @@
                         ng-model="entry.selected"/>
                </td>
                <td class="fixed-font">{{entry.valueDate | date}}</td>
-               <td class="remarks" ng-click="entry.selected = !entry.selected">
+               <td class="remarks" ng-click="selectEntry(entry)">
 	               {{entry.remarks | remark}}
 	               &nbsp;
 	               <span ng-if="entry.chequePayment"
@@ -70,9 +70,42 @@
                       ng-click="showSplitLedgerEntryDialog( $index )"></span>
                </td>
                <td class="fixed-font amt" ng-class="amtClass( entry.amount )">{{entry.amount | amt}}</td>
-               <td class="remarks">{{entry.l1Cat}}</td>
-               <td class="remarks">{{entry.l2Cat}}</td>
-               <td class="remarks">{{entry.notes}}</td>
+               <td class="remarks">
+                    <div ng-show="!entry.editing" ng-click="editEntry(entry)">
+                        {{entry.notes == null ? "---" : entry.notes}}
+                    </div>
+                    <div ng-show="entry.editing">
+                        <input class='form-field' 
+                               type="text" 
+                               ng-model="userSel.notes" 
+                               ng-enter="saveEditedEntry(entry)"/> 
+                    </div>
+               </td>
+               <td class="remarks">
+                    <div ng-show="!entry.editing" ng-click="editEntry(entry)">
+                        {{entry.l1Cat == null ? "---" : entry.l1Cat}}
+                    </div>
+                    <div ng-show="entry.editing">
+                        <select class="form-field" 
+                                ng-model="userSel.l1Cat"
+                                ng-options="item for item in relevantCategoriesForSelectedEntries.l1Categories">
+                            <option value=""></option>
+                        </select>
+                    </div>
+               </td>
+               <td class="remarks">
+                    <div ng-show="!entry.editing" ng-click="editEntry(entry)">
+                        {{entry.l2Cat == null ? "---" : entry.l2Cat}}
+                    </div>
+                    <div ng-show="entry.editing">
+                        <select class="form-field" 
+                                ng-model="userSel.l2Cat"
+                                ng-change="saveEditedEntry(entry)"
+                                ng-options="item for item in relevantCategoriesForSelectedEntries.l2Categories.get(userSel.l1Cat)">
+                            <option value=""></option>
+                        </select>
+                    </div>
+               </td>
                <td ng-if="searchQuery.accountIds.length == 1"
                    class="fixed-font amt">
                     {{entry.balance | amt}}

@@ -101,12 +101,9 @@ public class LEClassifier {
     }
     
     public void runClassification() {
-        log.debug( "Running Ledger Classifier" ) ;
         List<LedgerEntry> entriesToSave = new ArrayList<>() ;
         
-        log.debug( "Loading ledger entries" ) ;
         Iterable<LedgerEntry> entries = lRepo.findAll() ;
-        log.debug( "Ledger entries loaded." );
         
         for( LedgerEntry entry : entries ) {
             if( config.isClassifyOnlyUnclassifiedEntries() ) {

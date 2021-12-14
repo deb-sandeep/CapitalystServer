@@ -59,7 +59,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
        notes : null,
        errMsgs : [],
     } ;
-    
+
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     initializeController() ;
@@ -101,44 +101,33 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.selectAndCategorize = function( entry ) {
+        
         entry.selected = true ;
         $scope.showCategorizationDialog() ;
     }
     
-    $scope.showCategorizationDialog = function() {
-        var numEntriesSelected = 0 ;
-        var entryTypeCount = 0 ;
+    $scope.selectEntry = function( entry ) {
         
-        resetClassificationState() ;
-        
+        entry.selected = !entry.selected ;
         for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
             var entry = $scope.ledgerEntries[i] ;
-            if( entry.selected ) {
-                selectedEntries.push( entry ) ;
-                numEntriesSelected++ ;
-                if( entry.amount < 0 ) {
-                    entryTypeCount-- ;
-                }
-                else {
-                    entryTypeCount++ ;
-                }
-            }
+            entry.editing = false ;
         }
+    }
+    
+    $scope.showCategorizationDialog = function() {
         
-        if( numEntriesSelected > 0 ) {
-            if( Math.abs( entryTypeCount ) != numEntriesSelected ) {
-                $ngConfirm( 'Selected entries contain both credit and debit entries.' ) ;
-            }
-            else {
-                $scope.relevantCategoriesForSelectedEntries = 
-                                        ( selectedEntries[0].amount < 0 ) ?
-                                        $scope.masterCategories.debit :
-                                        $scope.masterCategories.credit ;
-                $( '#entryCategorizationDialog' ).modal( 'show' ) ;
-            }
+        var errMsg = validateSelectedEntriesForClassification() ;
+        
+        if( errMsg == null ) {
+            $scope.relevantCategoriesForSelectedEntries = 
+                                    ( selectedEntries[0].amount < 0 ) ?
+                                    $scope.masterCategories.debit :
+                                    $scope.masterCategories.credit ;
+            $( '#entryCategorizationDialog' ).modal( 'show' ) ;
         }
         else {
-            $ngConfirm( 'Please select some ledger entries to categorize.' ) ;
+            $ngConfirm( errMsg ) ;
         }
     }
     
@@ -359,10 +348,83 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }
     }
     
+    $scope.editEntry = function( entry ) {
+        // Disable editing of all other entries except this one
+        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
+            var anEntry = $scope.ledgerEntries[i] ;
+            anEntry.editing = false ;
+        }
+                
+        entry.editing = true ;
+        entry.selected = true ;
+        
+        // Copy the editable attributes to the clipboard
+        $scope.userSel.l1Cat = entry.l1Cat ;
+        $scope.userSel.l2Cat = entry.l2Cat ;
+        $scope.userSel.notes = entry.notes ;
+        
+        $scope.relevantCategoriesForSelectedEntries = ( entry.amount < 0 ) ?
+                                $scope.masterCategories.debit :
+                                $scope.masterCategories.credit ;
+    }
+    
+    $scope.saveEditedEntry = function( entryBeingEdited ) {
+        
+        console.log( "Saving edited entry" ) ;
+        
+        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
+            var entry = $scope.ledgerEntries[i] ;
+            if( entry.selected ) {
+                entry.l1Cat = $scope.userSel.l1Cat ;
+                entry.l2Cat = $scope.userSel.l2Cat ;
+                entry.notes = $scope.userSel.notes ;
+            }
+        }
+        
+        var errMsg = validateSelectedEntriesForClassification() ;
+        if( errMsg == null ) {
+            applyClassificationOnServer( $scope.userSel.l1Cat, 
+                                         $scope.userSel.l2Cat,
+                                         null ) ;
+        }
+        else {
+            $ngConfirm( errMsg ) ;
+        }
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
+    
+    function validateSelectedEntriesForClassification() {
+        var numEntriesSelected = 0 ;
+        var entryTypeCount = 0 ;
+        
+        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
+            var entry = $scope.ledgerEntries[i] ;
+            if( entry.selected ) {
+                selectedEntries.push( entry ) ;
+                numEntriesSelected++ ;
+                if( entry.amount < 0 ) {
+                    entryTypeCount-- ;
+                }
+                else {
+                    entryTypeCount++ ;
+                }
+            }
+        }
+        
+        if( numEntriesSelected > 0 ) {
+            if( Math.abs( entryTypeCount ) != numEntriesSelected ) {
+                return "Selected entries contain both credit and debit entries." ;
+            }
+        }
+        else {
+            return "Please select some ledger entries to categorize." ;
+        }
+        return null ;
+    }
     
     function resetSplitEntryState() {
         
@@ -475,8 +537,10 @@ capitalystNgApp.controller( 'LedgerHomeController',
                     // Additional attribute to track user selection in view
                     entry.selected = false ;
                     entry.visible = true ;
+                    entry.editing = false ;
                     $scope.ledgerEntries.push( entry ) ;
                 }
+                resetClassificationState() ;
                 resetPivotCatSelection() ;
                 filterEntries( true ) ;
                 fetchClassificationCategories() ;
@@ -550,25 +614,6 @@ capitalystNgApp.controller( 'LedgerHomeController',
         l2List.push( l2 ) ;
     }
     
-    function resetClassificationState() {
-        
-        for( var i=0; i<selectedEntries.length; i++ ) {
-            var entry = selectedEntries[i] ;
-            entry.selected = false ;
-        }
-        
-        selectedEntries.length = 0 ;
-        $scope.relevantCategoriesForSelectedEntries = null ;
-        
-        $scope.userSel.l1Cat    = null ;
-        $scope.userSel.l1CatNew = null ;
-        $scope.userSel.l2Cat    = null ;
-        $scope.userSel.l2CatNew = null ;
-        $scope.userSel.saveRule = false ;
-        $scope.userSel.ruleName = null ;
-        $scope.userSel.notes    = null ;
-    }
-    
     function applyClassificationOnServer( l1Cat, l2Cat, newCategory )  {
 
         var postData = {
@@ -590,7 +635,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
             }
             postData.entryIdList.push( entry.id ) ;
         }
-        
+
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.post( '/Ledger/Classification', postData )
         .then ( 
@@ -610,6 +655,26 @@ capitalystNgApp.controller( 'LedgerHomeController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function resetClassificationState() {
+        
+        for( var i=0; i<selectedEntries.length; i++ ) {
+            var entry = selectedEntries[i] ;
+            entry.selected = false ;
+            entry.editing = false ;
+        }
+        
+        selectedEntries.length = 0 ;
+        $scope.relevantCategoriesForSelectedEntries = null ;
+        
+        $scope.userSel.l1Cat    = null ;
+        $scope.userSel.l1CatNew = null ;
+        $scope.userSel.l2Cat    = null ;
+        $scope.userSel.l2CatNew = null ;
+        $scope.userSel.saveRule = false ;
+        $scope.userSel.ruleName = null ;
+        $scope.userSel.notes    = null ;
     }
     
     function filterEntries( refreshPivot ) {

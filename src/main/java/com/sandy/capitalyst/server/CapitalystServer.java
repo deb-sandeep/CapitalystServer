@@ -66,15 +66,27 @@ public class CapitalystServer
     
     public void initialize() throws Exception {
         
-        if( CapitalystServer.getConfig().isRunClassificationOnStartup() ) {
+        CapitalystConfig cfg = CapitalystServer.getConfig() ;
+        
+        if( cfg.isRunClassificationOnStartup() ) {
+            log.debug( "Running Ledger Classifier" ) ;
             LEClassifier classifier = new LEClassifier() ;
             classifier.runClassification() ;
         }
+        else {
+            log.debug( "Skipping Ledger Classifier" ) ;
+        }
+        
         log.debug( "Updating account balances" ) ;
         updateAccountBalanceOnStartup() ;
 
-        log.debug( "Initializing scheduler" ) ;
-        scheduler.initialize() ;
+        if( cfg.isBatchDaemonEnabled() ) {
+            log.debug( "Initializing scheduler" ) ;
+            scheduler.initialize() ;
+        }
+        else {
+            log.debug( "Skipping scheduler initialization" ) ;
+        }
     }
     
     private void updateAccountBalanceOnStartup() {
