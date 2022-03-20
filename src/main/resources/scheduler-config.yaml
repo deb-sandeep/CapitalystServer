@@ -12,7 +12,7 @@ jobConfigs:
         key2 : value2
         
    - identity : MFNavRefreshJob
-     active : true
+     active : false
      className : ${basePackageName}.mf.eodrefresh.MFEODNAVRefreshJob
      description : Refreshes latest NAV for MF
      cronSchedule : 0 */10 * * * ?
