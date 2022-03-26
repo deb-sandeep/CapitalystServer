@@ -1,0 +1,36 @@
+#split-pane {
+    width: 100%;
+    height: calc(100vh - 33px );
+    display: flex;
+}
+
+#menu-pane {
+    position:relative;
+    width: 15%;
+    height: 100%;
+    border-style:hidden;
+    border-color:#f4f4f4;
+    background-color: #e2efff;
+    overflow-y: auto;    
+}
+
+#admin-fn-panel {
+    position:relative;
+    width: 85%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+#pane-toggle-tab {
+    position: absolute;
+    left: 0px;
+    top: calc( 50% - 50px );
+    width: 15px;
+    height: 50px;
+    background-color: #b3c0f8;
+    
+    line-height: 50px;
+    text-align: center;
+    font-size:15px; 
+}
+

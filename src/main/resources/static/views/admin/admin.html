@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html ng-app="capitalystNgApp">
+<head>
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TxnPivot</title>
+    <script src="/js/lib/jquery/jquery-2.1.1.min.js"></script>
+    <script src="/js/lib/angular/angular.min.js"></script>
+    <script src="/js/lib/angular/angular-route.min.js"></script>
+    <script src="/js/lib/angular/confirm/angular-confirm.min.js"></script>
+    <script src="/js/lib/moment/moment.min.js"></script>
+    <script src="/js/lib/bootstrap/bootstrap.min.js"></script>
+    <script src="/js/lib/daterangepicker/daterangepicker.js"></script>
+    <script src="/js/lib/treetable/jquery.treetable.js"></script>
+    <script src="/js/lib/simple_pivot/simple_pivot.js"></script>
+
+    <link rel="stylesheet" href="/js/lib/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/js/lib/angular/confirm/angular-confirm.min.css"/>
+    <link rel="stylesheet" href="/js/lib/daterangepicker/daterangepicker-bs3.css"/>
+    <link rel="stylesheet" href="/js/lib/treetable/jquery.treetable.css"/>
+    <link rel="stylesheet" href="/js/lib/treetable/jquery.treetable.theme.css"/>
+    
+    <link rel="stylesheet" href="/css/app/app.css"/>
+    <link rel="stylesheet" href="/css/app/form.css"/>
+    <link rel="stylesheet" href="/views/admin/css/admin.css"/>
+    
+    <script src="/js/app/app-ng-non-fu.js"></script>
+    <script src="/js/app/filter.js"></script>
+    
+    <script src="/views/admin/js/controller.js"></script>
+    <script src="/views/admin/js/directive.js"></script>
+    <script src="/views/admin/js/route.js"></script>
+    <script src="/views/admin/js/filter.js"></script>
+    <script src="/views/admin/js/AdminHomeController.js"></script>
+</head>
+
+<body ng-controller="AdminLandingController"
+      style="background-color: #FFFFFF;">
+
+<nav class="navbar navbar-inverse navbar-static-top"
+     style="min-height:0px;margin-bottom:0px;">
+    <div class="container" style="width:100%">
+        <div class="row" >
+            <div class="col-sm-7">
+                [ <a href="/views/landing/landing.html">Capitalyst</a> ] - {{navBarTitle}}
+            </div>
+            <div class="col-sm-5">
+                <!-- Space for controls common to module -->
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="alert alert-danger alert-dismissible" ng-repeat="alert in alerts">
+<a ng-click="dismissAlert( $index )" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+{{alert.msg}}
+</div>
+
+<div ng-view></div>
+
+<div id="serverInteractionLoader" 
+     class="modal loader" 
+     role="dialog"
+     data-backdrop="static">
+</div>
+
+</body>
+</html>
