@@ -10,7 +10,7 @@
     height: 100%;
     border-style:hidden;
     border-color:#f4f4f4;
-    background-color: #e2efff;
+    background-color: rgb(232, 255, 242);
     overflow-y: auto;    
 }
 

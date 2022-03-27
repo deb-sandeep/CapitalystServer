@@ -32,7 +32,7 @@
     <script src="/views/admin/js/directive.js"></script>
     <script src="/views/admin/js/route.js"></script>
     <script src="/views/admin/js/filter.js"></script>
-    <script src="/views/admin/js/AdminHomeController.js"></script>
+    <script src="/views/admin/js/manage_ledger_categories_controller.js"></script>
 </head>
 
 <body ng-controller="AdminLandingController"
@@ -57,7 +57,21 @@
 {{alert.msg}}
 </div>
 
-<div ng-view></div>
+<div id="split-pane">
+    <div id="menu-pane">
+    </div>
+    <div id="admin-fn-panel">
+        <div id="pane-toggle-tab"
+             ng-click="toggleMenuPane()">
+            <span class="glyphicon glyphicon-menu-right"
+                  ng-show="menuPanelHidden"></span>
+            <span class="glyphicon glyphicon-menu-left"
+                  ng-show="!menuPanelHidden"></span>
+        </div>
+        <div ng-view></div>
+    </div>
+</div>
+
 
 <div id="serverInteractionLoader" 
      class="modal loader" 

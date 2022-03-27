@@ -1,40 +1,21 @@
-capitalystNgApp.controller( 'AdminHomeController', function( $scope ) {
+capitalystNgApp.controller( 'ManageLedgerCategoriesController', 
+    function( $scope ) {
     
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
-    $scope.$parent.navBarTitle = "Administrative functions" ;
-    $scope.menuPanelHidden = false ;
+    $scope.$parent.navBarTitle = "Manage L1 and L2 ledger categories" ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
-    console.log( "Loading AdminHomeController" ) ;
+    console.log( "Loading ManageLedgerCategoriesController" ) ;
     initializeController() ;
     // --- [END] Controller initialization -----------------------------------
     
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
-    $scope.toggleMenuPane = function() {
-        var menu = document.getElementById( "menu-pane" ) ;
-        var fnPanel = document.getElementById( "admin-fn-panel" ) ;
-        
-        if( $scope.menuPanelHidden ) {
-            menu.style.display = "block" ;
-            menu.style.width = "15%" ;
-            fnPanel.style.width = "85%" ;
-        }
-        else {
-            menu.style.display = "none" ;
-            menu.style.width = "0%" ;
-            fnPanel.style.width = "100%" ;
-        }
-        $scope.menuPanelHidden = !$scope.menuPanelHidden ;
-    }
-    
-    $scope.toggleCategorySelection = function( node ) {
-        node.toggleSelection() ;
-    }
+
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

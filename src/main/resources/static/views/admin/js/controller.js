@@ -7,7 +7,8 @@ capitalystNgApp.controller( 'AdminLandingController',
 
     // Common framework variables. 
     $scope.alerts = [] ;
-    $scope.navBarTitle = "<Fill navbar title>" ;
+    $scope.navBarTitle = "Administrative functions" ;
+    $scope.menuPanelHidden = false ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -36,6 +37,24 @@ capitalystNgApp.controller( 'AdminLandingController',
     $scope.dismissAlert = function( index ) {
         $scope.alerts.splice( index, 1 ) ;
     }
+    
+    $scope.toggleMenuPane = function() {
+        var menu = document.getElementById( "menu-pane" ) ;
+        var fnPanel = document.getElementById( "admin-fn-panel" ) ;
+        
+        if( $scope.menuPanelHidden ) {
+            menu.style.display = "block" ;
+            menu.style.width = "15%" ;
+            fnPanel.style.width = "85%" ;
+        }
+        else {
+            menu.style.display = "none" ;
+            menu.style.width = "0%" ;
+            fnPanel.style.width = "100%" ;
+        }
+        $scope.menuPanelHidden = !$scope.menuPanelHidden ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
