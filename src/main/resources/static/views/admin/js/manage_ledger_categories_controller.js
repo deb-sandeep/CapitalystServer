@@ -5,6 +5,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Manage L1 and L2 ledger categories" ;
+    $scope.$parent.activeModuleId = "cat_management" ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
