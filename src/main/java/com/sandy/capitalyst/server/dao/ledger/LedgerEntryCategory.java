@@ -7,9 +7,12 @@ import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
 
+import lombok.Data ;
+
+@Data
 @Entity
 @Table( name = "ledger_entry_categories" )
-public class LedgerEntryCategory {
+public class LedgerEntryCategory implements Comparable<LedgerEntryCategory> {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -27,54 +30,6 @@ public class LedgerEntryCategory {
 
     public LedgerEntryCategory() {}
 
-    public void setId( Integer val ) {
-        this.id = val ;
-    }
-        
-    public Integer getId() {
-        return this.id ;
-    }
-
-    public void setCreditClassification( boolean val ) {
-        this.creditClassification = val ;
-    }
-        
-    public boolean isCreditClassification() {
-        return this.creditClassification ;
-    }
-
-    public void setL1CatName( String val ) {
-        this.l1CatName = val ;
-    }
-        
-    public String getL1CatName() {
-        return this.l1CatName ;
-    }
-
-    public void setL2CatName( String val ) {
-        this.l2CatName = val ;
-    }
-        
-    public String getL2CatName() {
-        return this.l2CatName ;
-    }
-    
-    public boolean isValidForCashEntry() {
-        return validForCashEntry ;
-    }
-
-    public void setValidForCashEntry( boolean validForCashEntry ) {
-        this.validForCashEntry = validForCashEntry ;
-    }
-
-    public boolean isSelectedForTxnPivot() {
-        return selectedForTxnPivot;
-    }
-
-    public void setSelectedForTxnPivot( boolean selectedForTxnPivot ) {
-        this.selectedForTxnPivot = selectedForTxnPivot;
-    }
-    
     public String toString() {
         StringBuilder builder = new StringBuilder( "LedgerEntryCategory [\n" ) ; 
 
@@ -87,5 +42,21 @@ public class LedgerEntryCategory {
         builder.append( "]" ) ;
         
         return builder.toString() ;
+    }
+
+    @Override
+    public int compareTo( LedgerEntryCategory o ) {
+        if( this.creditClassification != o.creditClassification ) {
+            if( this.creditClassification ) {
+                return -1 ;
+            }
+            return 1 ;
+        }
+        
+        if( !this.l1CatName.equals( o.l1CatName ) ) {
+            return this.l1CatName.compareTo( o.l1CatName ) ;
+        }
+        
+        return this.l2CatName.compareTo( o.l2CatName ) ;
     }
 }
