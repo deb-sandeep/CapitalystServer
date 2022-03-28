@@ -29,10 +29,22 @@
 	       </tr>
 	   </thead>
 	   <tbody ng-repeat="catName in ledgerCategories.credit.l1Categories">
-	       <tr class='cat-name'>
-               <td colspan="5"><b>{{catName.displayName}}</b></td>
-	       </tr>
-           <tr ng-repeat="cat in ledgerCategories.credit.l2Categories.get( catName )">
+           <tr class='cat-name'>
+               <td colspan="5">
+                    <div ng-show="!catName.beingEdited" 
+                         ng-click="startEditingL1CategoryName( catName )">
+                        <b>{{catName.displayName}}</b>
+                    </div>
+                    <div ng-show="catName.beingEdited">
+                        <input class='form-field' 
+                               type="text" 
+                               ng-model="$parent.l1CatNameBeingEdited" 
+                               ng-enter="saveL1CategoryName( catName )"
+                               ng-escape="revertL1CategoryEditChanges( catName )"/> 
+                    </div>
+                </td>
+           </tr>
+           <tr ng-repeat="cat in ledgerCategories.credit.l2Categories.get( catName.displayName )">
                 <td></td>
                 <td>{{cat.l2CatName}}</td>
                 <td class="centered-cell">
@@ -77,15 +89,15 @@
            <tr class='cat-name'>
                <td colspan="5">
                     <div ng-show="!catName.beingEdited" 
-                         ng-click="editL1CategoryName( catName )">
+                         ng-click="startEditingL1CategoryName( catName )">
                         <b>{{catName.displayName}}</b>
                     </div>
                     <div ng-show="catName.beingEdited">
                         <input class='form-field' 
                                type="text" 
                                ng-model="$parent.l1CatNameBeingEdited" 
-                               ng-enter="saveDebitL1CategoryName( catName )"
-                               ng-escape="revertEditChanges( catName )"/> 
+                               ng-enter="saveL1CategoryName( catName )"
+                               ng-escape="revertL1CategoryEditChanges( catName )"/> 
                     </div>
                 </td>
            </tr>

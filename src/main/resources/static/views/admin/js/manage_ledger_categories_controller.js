@@ -1,6 +1,7 @@
-function CatName( name ) {
+function CatName( name, categoryData ) {
     
     this.displayName = name ;
+    this.categoryData = categoryData ;
     this.beingEdited = false ;
 }
 
@@ -10,12 +11,21 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     // ---------------- Local variables --------------------------------------
     
     // ---------------- Scope variables --------------------------------------
-    $scope.$parent.navBarTitle = "Manage L1 and L2 ledger categories" ;
+    $scope.$parent.navBarTitle = "Manage ledger categories" ;
     $scope.$parent.activeModuleId = "cat_management" ;
     
+    // This is used to highlight the Credit or Debit button on the page
+    // This is updated when either of the buttons are clicked.
     $scope.activeCategory = "Debit" ;
+    
+    // Stores the CatName instance being edited currently or null if none
+    // are being edited.
     $scope.l1CatNameBeingEdited = null ;
     
+    // Classification of the raw categories data into an usable data structure
+    // Note that l1Categories store instances of CatName while l2Category
+    // key is the display name of CatName and the value is the category
+    // instance returned by the server.
     $scope.ledgerCategories = {
        credit : {
            l1Categories : [],
@@ -52,15 +62,25 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.activeCategory = "Debit" ;
     }
     
+    // --- [START] Scope functions dealilng with non UI logic ----------------
+    
+    // Invoked when any of the checkbox attributes of a category is updated
     $scope.saveCategoryAttributes = function( cat ) {
-        console.log( "TODO: Updating category " + cat ) ;
+        console.log( "Updating category " + cat.id ) ;
+        
+        var categoryList = [] ;
+        categoryList.push( cat ) ;
+        
+        saveCategoryEditChangesOnServer( categoryList,
+            function() { // Called on success
+            },
+            function() { // Called on failure
+            } 
+        ) ;        
     }
     
-    $scope.editCategory = function( cat ) {
-        console.log( "Editing category " + cat ) ;
-    }
-    
-    $scope.editL1CategoryName = function( catName ) {
+    // Starts the edit of a L1 category name.
+    $scope.startEditingL1CategoryName = function( catName ) {
         
         resetEditedStatus( $scope.ledgerCategories.credit ) ;
         resetEditedStatus( $scope.ledgerCategories.debit ) ;
@@ -69,13 +89,18 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.l1CatNameBeingEdited = catName.displayName ;
     }
     
-    $scope.revertEditChanges = function( catName ) {
+    // Reverts/Escapes the editing mode of L1 category name. Since no
+    // changes are made to the core data structures this is a simple rollback
+    $scope.revertL1CategoryEditChanges = function( catName ) {
         console.log( "Reverting edit changes" ) ;
         catName.beingEdited = false ;
         $scope.l1CatNameBeingEdited = null ;
     }
     
-    $scope.saveDebitL1CategoryName = function( catName ) {
+    // Saves the edit changes to a L1 category name. Note that when a L1
+    // category name changes, the changes are cascaded to all the child 
+    // category entries.
+    $scope.saveL1CategoryName = function( catName ) {
         
         var oldCatName = catName.displayName ;
         var newCatName = $scope.l1CatNameBeingEdited ;
@@ -84,13 +109,14 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         console.log( "   Old cat name = " + oldCatName ) ;
         console.log( "   New cat name - " + newCatName ) ;
         
-        if( oldCatName == newCatName || newCatName == "" ) {
-            catName.beingEdited = false ;
-        }
-        else {
-            catName.beingEdited = false ;
+        catName.beingEdited = false ;
+        
+        if( oldCatName != newCatName && newCatName != "" ) {
             
-            var l2CatMap = $scope.ledgerCategories.debit.l2Categories ;
+            console.log( "L1 cat name change detected." ) ;
+            
+            var catData  = catName.categoryData ;
+            var l2CatMap = catData.l2Categories ;
             var l2List   = l2CatMap.get( oldCatName ) ;
             
             for( var i=0; i<l2List.length; i++ ) {
@@ -107,10 +133,19 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                     $scope.l1CatNameBeingEdited = null ;
                 },
                 function() {
-                    $scope.l1CatNameBeingEdited = null ;
+                    // We have polluted the internal data structure by now
+                    // Easy is to reload the data.
+                    fetchClassificationCategories() ;
                 } 
             ) ;
         }
+        else {
+            console.log( "No change detected. Skipping update." ) ;
+        }
+    }
+    
+    $scope.editCategory = function( cat ) {
+        console.log( "TODO: Editing category " + cat ) ;
     }
     
     // --- [END] Scope functions
@@ -122,6 +157,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         fetchClassificationCategories() ;
     }
     
+    // Goes through the internal ledger category classification data structure
+    // and resets the beingEdited flag for all objects.
     function resetEditedStatus( catObj ) {
         for( var i=0; i<catObj.l1Categories.length; i++ ) {
             var catName = catObj.l1Categories[i] ;
@@ -138,6 +175,14 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     // ------------------- Server comm functions -----------------------------
     function fetchClassificationCategories() {
         
+        // Reset the internal data structures since this can be called both
+        // during initialization and runtime.
+        $scope.l1CatNameBeingEdited = null ;
+        $scope.ledgerCategories.credit.l1Categories.length = 0 ;
+        $scope.ledgerCategories.credit.l2Categories.clear() ;
+        $scope.ledgerCategories.debit.l1Categories.length = 0 ;  
+        $scope.ledgerCategories.debit.l2Categories.clear() ;
+        
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Ledger/Categories' )
         .then ( 
@@ -146,7 +191,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                 console.log( $scope.ledgerCategories ) ;
             }, 
             function( error ){
-                $scope.$parent.addErrorAlert( "Could not fetch classification categories." ) ;
+                $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
+                                              error.data.message ) ;
             }
         )
         .finally(function() {
@@ -187,27 +233,26 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.ledgerCategories.debit.l2Categories.clear() ;
         
         for( var i=0; i<categories.length; i++ ) {
+            
             var category = categories[i] ;
             category.beingEdited = false ;
             
             if( category.creditClassification ) {
-                classifyCategoryInMasterList( 
-                        $scope.ledgerCategories.credit.l1Categories, 
-                        $scope.ledgerCategories.credit.l2Categories,
-                        category ) ; 
+                classifyCategoryInMasterList( $scope.ledgerCategories.credit,
+                                              category ) ; 
             }
             else {
-                classifyCategoryInMasterList( 
-                        $scope.ledgerCategories.debit.l1Categories, 
-                        $scope.ledgerCategories.debit.l2Categories,
-                        category ) ; 
+                classifyCategoryInMasterList( $scope.ledgerCategories.debit,
+                                              category ) ; 
             }
         }
     }
     
-    function classifyCategoryInMasterList( l1CatList, l2CatMap, category ) {
+    function classifyCategoryInMasterList( categoryData, category ) {
         
-        var catName = new CatName( category.l1CatName ) ;
+        var l1CatList = categoryData.l1Categories ;
+        var l2CatMap  = categoryData.l2Categories ;
+        var catName = new CatName( category.l1CatName, categoryData ) ;
         
         if( l1CatList.filter( e => e.displayName == catName.displayName ).length <= 0 ) {
             l1CatList.push( catName ) ;
