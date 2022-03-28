@@ -61,6 +61,10 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     }
     
     $scope.editL1CategoryName = function( catName ) {
+        
+        resetEditedStatus( $scope.ledgerCategories.credit ) ;
+        resetEditedStatus( $scope.ledgerCategories.debit ) ;
+        
         catName.beingEdited = true ;
         $scope.l1CatNameBeingEdited = catName.displayName ;
     }
@@ -116,6 +120,19 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     function initializeController() {
         fetchClassificationCategories() ;
+    }
+    
+    function resetEditedStatus( catObj ) {
+        for( var i=0; i<catObj.l1Categories.length; i++ ) {
+            var catName = catObj.l1Categories[i] ;
+            catName.beingEdited = false ;
+            
+            var categories = catObj.l2Categories.get( catName.displayName ) ;
+            for( var j=0; j<categories.length; j++ ) {
+                var cat = categories[j] ;
+                cat.beingEdited = false ;
+            }
+        }
     }
     
     // ------------------- Server comm functions -----------------------------
@@ -203,5 +220,4 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         var l2List = l2CatMap.get( catName.displayName ) ;
         l2List.push( category ) ;
     }
-        
 } ) ;

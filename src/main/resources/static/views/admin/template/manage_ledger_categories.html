@@ -87,7 +87,6 @@
                                ng-enter="saveDebitL1CategoryName( catName )"
                                ng-escape="revertEditChanges( catName )"/> 
                     </div>
-                    {{l1CatNameBeingEdited}}
                 </td>
            </tr>
            <tr ng-repeat="cat in ledgerCategories.debit.l2Categories.get( catName.displayName )">
