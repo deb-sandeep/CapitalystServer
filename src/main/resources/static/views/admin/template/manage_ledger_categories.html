@@ -1,1 +1,19 @@
-Manage ledger categories screen.
+<h2>Credit Entries</h2>
+<div ng-repeat="catName in ledgerCategories.credit.l1Categories">
+    <h3>{{catName}}</h3>
+    <ul>
+    <div ng-repeat="cat in ledgerCategories.credit.l2Categories.get( catName )">
+         <li>{{cat.l2CatName}}</li>
+    </div>
+    </ul>
+</div>
+
+<h2>Debit Entries</h2>
+<div ng-repeat="catName in ledgerCategories.debit.l1Categories">
+    <h3>{{catName}}</h3>
+    <ul>
+    <div ng-repeat="cat in ledgerCategories.debit.l2Categories.get( catName )">
+         <li>{{cat.l2CatName}}</li>
+    </div>
+    </ul>
+</div>

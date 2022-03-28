@@ -7,7 +7,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     $scope.$parent.navBarTitle = "Manage L1 and L2 ledger categories" ;
     $scope.$parent.activeModuleId = "cat_management" ;
     
-    $scope.masterCategories = {
+    $scope.ledgerCategories = {
        credit : {
            l1Categories : [],
            l2Categories : new Map()
@@ -45,7 +45,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         .then ( 
             function( response ){
                 populateMasterCategories( response.data ) ;
-                console.log( $scope.masterCategories ) ;
+                console.log( $scope.ledgerCategories ) ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not fetch classification categories." ) ;
@@ -59,24 +59,24 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     // ------------------- Server response processors ------------------------
     function populateMasterCategories( categories ) {
         
-        $scope.masterCategories.credit.l1Categories.length = 0 ;
-        $scope.masterCategories.credit.l2Categories.clear() ;
+        $scope.ledgerCategories.credit.l1Categories.length = 0 ;
+        $scope.ledgerCategories.credit.l2Categories.clear() ;
         
-        $scope.masterCategories.debit.l1Categories.length = 0 ;
-        $scope.masterCategories.debit.l2Categories.clear() ;
+        $scope.ledgerCategories.debit.l1Categories.length = 0 ;
+        $scope.ledgerCategories.debit.l2Categories.clear() ;
         
         for( var i=0; i<categories.length; i++ ) {
             var category = categories[i] ;
             if( category.creditClassification ) {
                 classifyCategoryInMasterList( 
-                        $scope.masterCategories.credit.l1Categories, 
-                        $scope.masterCategories.credit.l2Categories,
+                        $scope.ledgerCategories.credit.l1Categories, 
+                        $scope.ledgerCategories.credit.l2Categories,
                         category ) ; 
             }
             else {
                 classifyCategoryInMasterList( 
-                        $scope.masterCategories.debit.l1Categories, 
-                        $scope.masterCategories.debit.l2Categories,
+                        $scope.ledgerCategories.debit.l1Categories, 
+                        $scope.ledgerCategories.debit.l2Categories,
                         category ) ; 
             }
         }
