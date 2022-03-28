@@ -20,7 +20,8 @@
     height: 100%;
     margin-left: 20px;
     margin-top: 10px;
-    overflow-y: scroll;    
+    overflow-y: scroll;
+    font-size: 14px;
 }
 
 #icon-bar a {
@@ -36,6 +37,6 @@
   background-color: #000; /* Add a hover color */
 }
 
-.active {
+#icon-bar .active {
   background-color: #04AA6D; /* Add an active/current color */
 }

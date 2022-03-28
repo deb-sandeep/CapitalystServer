@@ -93,39 +93,4 @@ table.treetable {
     text-align:right;
 }
 
-/* ------------- Nav ------------------------ */
-.nav {
-   padding-left: 0;
-   margin-bottom: 0;
-   list-style: none;
-   background-color: #565556;
-   color:red;
-}
 
-.nav-tabs {
-   border-bottom: 1px solid #8c8c8e;
-}
-
-.nav-tabs>li>a,
-.nav-tabs>li>a:focus,
-.nav-tabs>li>a:hover {
-   line-height: 1.0;
-   border-radius: 4px 4px 0 0;
-   color:#bec2c6;
-   font-size:12px;
-   cursor: default;
-   background-color: #565556;
-   border: 1px solid #868586;
-   border-bottom-color: transparent
-}
-
-.nav-tabs>li.active>a,
-.nav-tabs>li.active>a:focus,
-.nav-tabs>li.active>a:hover {
-   color: #FFFFFF;
-   font-size:14px;
-   cursor: default;
-   background-color: #8c8c8e;
-   border: 1px solid #ddd;
-   border-bottom-color: transparent
-}

@@ -7,6 +7,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     $scope.$parent.navBarTitle = "Manage L1 and L2 ledger categories" ;
     $scope.$parent.activeModuleId = "cat_management" ;
     
+    $scope.activeCategory = "Credit" ;
+    
     $scope.ledgerCategories = {
        credit : {
            l1Categories : [],
@@ -27,7 +29,22 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
-
+    
+    $scope.getTabActivationClass = function( id ) {
+        if( id == $scope.activeCategory ) {
+            return "btn-primary" ;
+        }
+        return "btn-secondary" ;
+    }
+    
+    $scope.showCreditEntries = function() {
+        $scope.activeCategory = "Credit" ;
+    }
+    
+    $scope.showDebitEntries = function() {
+        $scope.activeCategory = "Debit" ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
