@@ -1,14 +1,11 @@
 package com.sandy.capitalyst.server.api.ledger;
 
 import java.sql.Date ;
-import java.util.Collections ;
-import java.util.List ;
 
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
-import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
@@ -36,39 +33,6 @@ public class LedgerClassificationRestController {
     
     @Autowired
     private LedgerEntryClassificationRuleRepo leClassificationRuleRepo = null ;
-    
-    @GetMapping( "/Ledger/Categories" ) 
-    public ResponseEntity<List<LedgerEntryCategory>> getLedgerEntryCategories() {
-        try {
-            List<LedgerEntryCategory> categories = null ;
-            categories = lecRepo.findAllCategories() ;
-            Collections.sort( categories ) ;
-            
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( categories ) ;
-        }
-        catch( Exception e ) {
-            log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
-        }
-    }
-    
-    @GetMapping( "/Ledger/CashEntryCategories" ) 
-    public ResponseEntity<List<LedgerEntryCategory>> 
-                                     getLedgerEntryCategoriesForCashEntry() {
-        try {
-            List<LedgerEntryCategory> categories = null ;
-            categories = lecRepo.findCategoriesForCashEntry() ;
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( categories ) ;
-        }
-        catch( Exception e ) {
-            log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
-        }
-    }
     
     @PostMapping( "/Ledger/Classification" ) 
     public ResponseEntity<APIResponse> classifyLedgerEntries( 
