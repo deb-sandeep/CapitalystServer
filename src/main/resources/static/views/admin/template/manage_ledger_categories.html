@@ -18,14 +18,43 @@
 	    <li class="breadcrumb-item" style="color:#444;">Credit Entries</li>
 	  </ol>
 	</nav>
-	<div ng-repeat="catName in ledgerCategories.credit.l1Categories">
-	    <h3>{{catName}}</h3>
-	    <ul>
-	    <div ng-repeat="cat in ledgerCategories.credit.l2Categories.get( catName )">
-	         <li>{{cat.l2CatName}}</li>
-	    </div>
-	    </ul>
-	</div>
+	<table class="pure-table pure-table-bordered">
+	   <thead>
+	       <tr>
+	           <th>Category</th>
+               <th>Sub-category</th>
+               <th>Txn Pivot</th>
+               <th>Cash Entry</th>
+               <th>Edit</th>
+	       </tr>
+	   </thead>
+	   <tbody ng-repeat="catName in ledgerCategories.credit.l1Categories">
+	       <tr class='cat-name'>
+               <td colspan="5"><b>{{catName.displayName}}</b></td>
+	       </tr>
+           <tr ng-repeat="cat in ledgerCategories.credit.l2Categories.get( catName )">
+                <td></td>
+                <td>{{cat.l2CatName}}</td>
+                <td class="centered-cell">
+                    <input type="checkbox" 
+                           ng-model="cat.selectedForTxnPivot"
+                           ng-change="saveCategoryAttributes( cat )"/>
+                    
+                </td>
+                <td class="centered-cell">
+                    <input type="checkbox" 
+                           ng-model="cat.validForCashEntry"
+                           ng-change="saveCategoryAttributes( cat )"/>
+                    
+                </td>
+                <td class="centered-cell">
+                    <a ng-click="editCategory( cat )">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </a>
+                </td>
+           </tr>
+	   </tbody>
+	</table>
 </div>
 
 <div id="debit-entries" ng-show="activeCategory == 'Debit'">
@@ -34,12 +63,54 @@
         <li class="breadcrumb-item" style="color:#444;">Debit Entries</li>
       </ol>
     </nav>
-	<div ng-repeat="catName in ledgerCategories.debit.l1Categories">
-	    <h3>{{catName}}</h3>
-	    <ul>
-	    <div ng-repeat="cat in ledgerCategories.debit.l2Categories.get( catName )">
-	         <li>{{cat.l2CatName}}</li>
-	    </div>
-	    </ul>
-	</div>
+    <table class="pure-table pure-table-bordered">
+       <thead>
+           <tr>
+               <th>Category</th>
+               <th>Sub-category</th>
+               <th>Txn Pivot</th>
+               <th>Cash Entry</th>
+               <th>Edit</th>
+           </tr>
+       </thead>
+       <tbody ng-repeat="catName in ledgerCategories.debit.l1Categories">
+           <tr class='cat-name'>
+               <td colspan="5">
+                    <div ng-show="!catName.beingEdited" 
+                         ng-click="editL1CategoryName( catName )">
+                        <b>{{catName.displayName}}</b>
+                    </div>
+                    <div ng-show="catName.beingEdited">
+                        <input class='form-field' 
+                               type="text" 
+                               ng-model="$parent.l1CatNameBeingEdited" 
+                               ng-enter="saveDebitL1CategoryName( catName )"
+                               ng-escape="revertEditChanges( catName )"/> 
+                    </div>
+                    {{l1CatNameBeingEdited}}
+                </td>
+           </tr>
+           <tr ng-repeat="cat in ledgerCategories.debit.l2Categories.get( catName.displayName )">
+                <td></td>
+                <td>{{cat.l2CatName}}</td>
+                <td class="centered-cell">
+                    <input type="checkbox" 
+                           ng-model="cat.selectedForTxnPivot"
+                           ng-change="saveCategoryAttributes( cat )"/>
+                    
+                </td>
+                <td class="centered-cell">
+                    <input type="checkbox" 
+                           ng-model="cat.validForCashEntry"
+                           ng-change="saveCategoryAttributes( cat )"/>
+                    
+                </td>
+                <td class="centered-cell">
+                    <a ng-click="editCategory( cat )">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </a>
+                </td>
+           </tr>
+       </tbody>
+    </table>
 </div>

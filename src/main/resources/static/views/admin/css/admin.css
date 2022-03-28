@@ -40,3 +40,15 @@
 #icon-bar .active {
   background-color: #04AA6D; /* Add an active/current color */
 }
+
+.pure-table .cat-name {
+    background-color: #eef4fa;
+}
+
+.pure-table td {
+	padding: 3px ;
+}
+
+.centered-cell {
+	text-align: center;
+}
