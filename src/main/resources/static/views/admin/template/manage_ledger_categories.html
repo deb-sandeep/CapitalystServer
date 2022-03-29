@@ -46,7 +46,19 @@
            </tr>
            <tr ng-repeat="cat in ledgerCategories.credit.l2Categories.get( catName.displayName )">
                 <td></td>
-                <td>{{cat.l2CatName}}</td>
+                <td>
+                    <div ng-show="!cat.beingEdited" 
+                         ng-click="startEditingL2CategoryName( cat )">
+                        {{cat.l2CatName}}
+                    </div>
+                    <div ng-show="cat.beingEdited">
+                        <input class='form-field' 
+                               type="text" 
+                               ng-model="$parent.$parent.l2CatNameBeingEdited" 
+                               ng-enter="saveL2CategoryName( cat )"
+                               ng-escape="revertL1CategoryEditChanges( cat )"/> 
+                    </div>
+                </td>
                 <td class="centered-cell">
                     <input type="checkbox" 
                            ng-model="cat.selectedForTxnPivot"
@@ -103,7 +115,19 @@
            </tr>
            <tr ng-repeat="cat in ledgerCategories.debit.l2Categories.get( catName.displayName )">
                 <td></td>
-                <td>{{cat.l2CatName}}</td>
+                <td>
+                    <div ng-show="!cat.beingEdited" 
+                         ng-click="startEditingL2CategoryName( cat )">
+                        {{cat.l2CatName}}
+                    </div>
+                    <div ng-show="cat.beingEdited">
+                        <input class='form-field' 
+                               type="text" 
+                               ng-model="$parent.$parent.l2CatNameBeingEdited" 
+                               ng-enter="saveL2CategoryName( cat )"
+                               ng-escape="revertL1CategoryEditChanges( cat )"/> 
+                    </div>
+                </td>
                 <td class="centered-cell">
                     <input type="checkbox" 
                            ng-model="cat.selectedForTxnPivot"

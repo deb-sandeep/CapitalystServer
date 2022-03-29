@@ -18,9 +18,13 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     // This is updated when either of the buttons are clicked.
     $scope.activeCategory = "Debit" ;
     
-    // Stores the CatName instance being edited currently or null if none
-    // are being edited.
+    // Stores the display name of the CatName instance being edited currently 
+    // or null if none are being edited.
     $scope.l1CatNameBeingEdited = null ;
+    
+    // Stores the l1 name of the category instance being edited currently 
+    // or null if none are being edited.
+    $scope.l2CatNameBeingEdited = null ;
     
     // Classification of the raw categories data into an usable data structure
     // Note that l1Categories store instances of CatName while l2Category
@@ -42,7 +46,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     console.log( "Loading ManageLedgerCategoriesController" ) ;
     initializeController() ;
     // --- [END] Controller initialization -----------------------------------
-    
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
@@ -144,6 +147,60 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         }
     }
     
+    // Starts the edit of a L2 category name.
+    $scope.startEditingL2CategoryName = function( category ) {
+        
+        resetEditedStatus( $scope.ledgerCategories.credit ) ;
+        resetEditedStatus( $scope.ledgerCategories.debit ) ;
+        
+        category.beingEdited = true ;
+        $scope.l2CatNameBeingEdited = category.l2CatName ;
+    }
+    
+    // Reverts/Escapes the editing mode of L2 category name. Since no
+    // changes are made to the core data structures this is a simple rollback
+    $scope.revertL1CategoryEditChanges = function( category ) {
+        console.log( "Reverting edit changes" ) ;
+        category.beingEdited = false ;
+        $scope.l2CatNameBeingEdited = null ;
+    }
+    
+    // Saves the edit changes to a L2 category name. This is simple since
+    // only one category is changing.
+    $scope.saveL2CategoryName = function( cat ) {
+        
+        var oldCatName = cat.l2CatName ;
+        var newCatName = $scope.l2CatNameBeingEdited ;
+        
+        console.log( "Saving change in L2 category name" ) ;
+        console.log( "   Old cat name = " + oldCatName ) ;
+        console.log( "   New cat name - " + newCatName ) ;
+        
+        cat.beingEdited = false ;
+        $scope.l2CatNameBeingEdited = null ;
+        
+        if( oldCatName != newCatName && newCatName != "" ) {
+            
+            console.log( "L2 cat name change detected." ) ;
+
+            cat.l2CatName = newCatName ;
+            
+            var catList = [] ;
+            catList.push( cat ) ;
+                        
+            saveCategoryEditChangesOnServer( catList,
+                function() {
+                },
+                function() {
+                    cat.l2CatName = oldCatName ;
+                } 
+            ) ;
+        }
+        else {
+            console.log( "No change detected. Skipping update." ) ;
+        }
+    }
+    
     $scope.editCategory = function( cat ) {
         console.log( "TODO: Editing category " + cat ) ;
     }
@@ -178,6 +235,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         // Reset the internal data structures since this can be called both
         // during initialization and runtime.
         $scope.l1CatNameBeingEdited = null ;
+        $scope.l2CatNameBeingEdited = null ;
+
         $scope.ledgerCategories.credit.l1Categories.length = 0 ;
         $scope.ledgerCategories.credit.l2Categories.clear() ;
         $scope.ledgerCategories.debit.l1Categories.length = 0 ;  
