@@ -1,151 +1,23 @@
 <div id="nav-panel">
-	<button class="btn"
-	        ng-class="getTabActivationClass( 'Credit' )"
-	        ng-click="showCreditEntries()">
-	  Edit Credit Entries
-	</button>
-	
     <button class="btn"
             ng-class="getTabActivationClass( 'Debit' )"
             ng-click="showDebitEntries()">
       Edit Debit Entries
     </button>
+    
+	<button class="btn"
+	        ng-class="getTabActivationClass( 'Credit' )"
+	        ng-click="showCreditEntries()">
+	  Edit Credit Entries
+	</button>
 </div>
 
-<div id="credit-entries" ng-show="activeCategory == 'Credit'">
-	<nav>
-	  <ol class="breadcrumb" style="background-color:#eef4fa;">
-	    <li class="breadcrumb-item" style="color:#444;">Credit Entries</li>
-	  </ol>
-	</nav>
-	<table class="pure-table pure-table-bordered">
-	   <thead>
-	       <tr>
-	           <th>Category</th>
-               <th>Sub-category</th>
-               <th>Txn Pivot</th>
-               <th>Cash Entry</th>
-               <th>Edit</th>
-	       </tr>
-	   </thead>
-	   <tbody ng-repeat="catName in ledgerCategories.credit.l1Categories">
-           <tr class='cat-name'>
-               <td colspan="5">
-                    <div ng-show="!catName.beingEdited" 
-                         ng-click="startEditingL1CategoryName( catName )">
-                        <b>{{catName.displayName}}</b>
-                    </div>
-                    <div ng-show="catName.beingEdited">
-                        <input class='form-field' 
-                               type="text" 
-                               ng-model="$parent.l1CatNameBeingEdited" 
-                               ng-enter="saveL1CategoryName( catName )"
-                               ng-escape="revertL1CategoryEditChanges( catName )"/> 
-                    </div>
-                </td>
-           </tr>
-           <tr ng-repeat="cat in ledgerCategories.credit.l2Categories.get( catName.displayName )">
-                <td></td>
-                <td>
-                    <div ng-show="!cat.beingEdited" 
-                         ng-click="startEditingL2CategoryName( cat )">
-                        {{cat.l2CatName}}
-                    </div>
-                    <div ng-show="cat.beingEdited">
-                        <input class='form-field' 
-                               type="text" 
-                               ng-model="$parent.$parent.l2CatNameBeingEdited" 
-                               ng-enter="saveL2CategoryName( cat )"
-                               ng-escape="revertL1CategoryEditChanges( cat )"/> 
-                    </div>
-                </td>
-                <td class="centered-cell">
-                    <input type="checkbox" 
-                           ng-model="cat.selectedForTxnPivot"
-                           ng-change="saveCategoryAttributes( cat )"/>
-                    
-                </td>
-                <td class="centered-cell">
-                    <input type="checkbox" 
-                           ng-model="cat.validForCashEntry"
-                           ng-change="saveCategoryAttributes( cat )"/>
-                    
-                </td>
-                <td class="centered-cell">
-                    <a ng-click="editCategory( cat )">
-                        <span class="glyphicon glyphicon-edit"></span>
-                    </a>
-                </td>
-           </tr>
-	   </tbody>
-	</table>
+<div ng-init="catName='Debit';catData=ledgerCategories.debit;"
+     ng-if="activeCategory == 'Debit'"
+     ng-include="'template/ledger_cat_editor.html'">
 </div>
 
-<div id="debit-entries" ng-show="activeCategory == 'Debit'">
-    <nav>
-      <ol class="breadcrumb" style="background-color:#eef4fa;">
-        <li class="breadcrumb-item" style="color:#444;">Debit Entries</li>
-      </ol>
-    </nav>
-    <table class="pure-table pure-table-bordered">
-       <thead>
-           <tr>
-               <th>Category</th>
-               <th>Sub-category</th>
-               <th>Txn Pivot</th>
-               <th>Cash Entry</th>
-               <th>Edit</th>
-           </tr>
-       </thead>
-       <tbody ng-repeat="catName in ledgerCategories.debit.l1Categories">
-           <tr class='cat-name'>
-               <td colspan="5">
-                    <div ng-show="!catName.beingEdited" 
-                         ng-click="startEditingL1CategoryName( catName )">
-                        <b>{{catName.displayName}}</b>
-                    </div>
-                    <div ng-show="catName.beingEdited">
-                        <input class='form-field' 
-                               type="text" 
-                               ng-model="$parent.l1CatNameBeingEdited" 
-                               ng-enter="saveL1CategoryName( catName )"
-                               ng-escape="revertL1CategoryEditChanges( catName )"/> 
-                    </div>
-                </td>
-           </tr>
-           <tr ng-repeat="cat in ledgerCategories.debit.l2Categories.get( catName.displayName )">
-                <td></td>
-                <td>
-                    <div ng-show="!cat.beingEdited" 
-                         ng-click="startEditingL2CategoryName( cat )">
-                        {{cat.l2CatName}}
-                    </div>
-                    <div ng-show="cat.beingEdited">
-                        <input class='form-field' 
-                               type="text" 
-                               ng-model="$parent.$parent.l2CatNameBeingEdited" 
-                               ng-enter="saveL2CategoryName( cat )"
-                               ng-escape="revertL1CategoryEditChanges( cat )"/> 
-                    </div>
-                </td>
-                <td class="centered-cell">
-                    <input type="checkbox" 
-                           ng-model="cat.selectedForTxnPivot"
-                           ng-change="saveCategoryAttributes( cat )"/>
-                    
-                </td>
-                <td class="centered-cell">
-                    <input type="checkbox" 
-                           ng-model="cat.validForCashEntry"
-                           ng-change="saveCategoryAttributes( cat )"/>
-                    
-                </td>
-                <td class="centered-cell">
-                    <a ng-click="editCategory( cat )">
-                        <span class="glyphicon glyphicon-edit"></span>
-                    </a>
-                </td>
-           </tr>
-       </tbody>
-    </table>
+<div ng-init="catName='Credit';catData=ledgerCategories.credit;"
+     ng-if="activeCategory == 'Credit'"
+     ng-include="'template/ledger_cat_editor.html'">
 </div>
