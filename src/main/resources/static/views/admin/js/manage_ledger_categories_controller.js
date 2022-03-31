@@ -43,6 +43,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
 
     $scope.catEditCtx = {
         catData : null,
+        cat : null,
         selectedL1CatName : null,
         newL1CatName : null
     }
@@ -209,6 +210,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     $scope.showParentCategoryDialog = function( cat ) {
         
+        $scope.catEditCtx.cat = cat ;
         if( cat.creditClassification ) {
             $scope.catEditCtx.catData = $scope.ledgerCategories.credit ;
         }
@@ -221,6 +223,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     $scope.hideParentCategoryDialog = function() {
         
+        $scope.catEditCtx.cat = null ;
         $scope.catEditCtx.catData = null ;
         $scope.catEditCtx.selectedL1CatName = null ;
         $scope.catEditCtx.newL1CatName = null ;
@@ -235,15 +238,42 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     $scope.applyNewParentCategory = function() {
         console.log( "Applying new parent category." ) ;
         
+        var newL1CatName = validateNewL1CatName() ;
+        if( newL1CatName != null ) {
+            console.log( "New L1 cat name = " + newL1CatName ) ;
+            applyNewL1CatName( newL1CatName, $scope.catEditCtx ) ;
+        }
+        $scope.hideParentCategoryDialog() ;
+    }
+    
+    function validateNewL1CatName() {
+        
+        
+        if( $scope.catEditCtx.selectedL1CatName == null && 
+            $scope.catEditCtx.newL1CatName == null ) {
+            console.log( "No new parent category selected." ) ;
+            return null ;
+        }
+        
+        var newL1CatName = ( $scope.catEditCtx.selectedL1CatName == null ) ? 
+                             $scope.catEditCtx.newL1CatName : 
+                             $scope.catEditCtx.selectedL1CatName ;
+                             
+        if( newL1CatName == $scope.catEditCtx.cat.l1CatName ) {
+            console.log( "New L1 cat name same as existing L1 cat name." ) ;
+            newL1CatName = null ;
+        }
+        
+        return newL1CatName ;
+    }
+    
+    function applyNewL1CatName( newL1CatName, editCtx ) {
+        
         // TODO: From here
-        // - Identify new category name
-        // - Check if the new same is different than existing name
         // - Extract the existing cat from the l2 list
         // - If we have a new cat, enter an entry fresh in the map
         // -  else enter this category in the existing l2
         // Save on the server
-        
-        $scope.hideParentCategoryDialog() ;
     }
     
     // --- [END] Scope functions
