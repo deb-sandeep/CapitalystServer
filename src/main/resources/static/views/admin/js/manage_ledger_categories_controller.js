@@ -41,6 +41,12 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
        }
     } ;    
 
+    $scope.catEditCtx = {
+        catData : null,
+        selectedL1CatName : null,
+        newL1CatName : null
+    }
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading ManageLedgerCategoriesController" ) ;
@@ -201,8 +207,43 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         }
     }
     
-    $scope.editCategory = function( cat ) {
-        console.log( "TODO: Editing category " + cat ) ;
+    $scope.showParentCategoryDialog = function( cat ) {
+        
+        if( cat.creditClassification ) {
+            $scope.catEditCtx.catData = $scope.ledgerCategories.credit ;
+        }
+        else {
+            $scope.catEditCtx.catData = $scope.ledgerCategories.debit ;
+        }
+        
+        $( '#changeParentCategoryDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.hideParentCategoryDialog = function() {
+        
+        $scope.catEditCtx.catData = null ;
+        $scope.catEditCtx.selectedL1CatName = null ;
+        $scope.catEditCtx.newL1CatName = null ;
+        
+        $( '#changeParentCategoryDialog' ).modal( 'hide' ) ;
+    }
+    
+    $scope.newL1CatNameEntered = function() {
+        $scope.catEditCtx.selectedL1CatName = null ;
+    }
+    
+    $scope.applyNewParentCategory = function() {
+        console.log( "Applying new parent category." ) ;
+        
+        // TODO: From here
+        // - Identify new category name
+        // - Check if the new same is different than existing name
+        // - Extract the existing cat from the l2 list
+        // - If we have a new cat, enter an entry fresh in the map
+        // -  else enter this category in the existing l2
+        // Save on the server
+        
+        $scope.hideParentCategoryDialog() ;
     }
     
     // --- [END] Scope functions
