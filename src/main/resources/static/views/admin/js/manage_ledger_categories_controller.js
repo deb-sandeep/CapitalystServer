@@ -269,11 +269,22 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     function applyNewL1CatName( newL1CatName, editCtx ) {
         
-        // TODO: From here
-        // - Extract the existing cat from the l2 list
-        // - If we have a new cat, enter an entry fresh in the map
-        // -  else enter this category in the existing l2
-        // Save on the server
+        var categoryList = [] ;
+        var cat = editCtx.cat ;
+        
+        cat.l1CatName = newL1CatName ;
+        categoryList.push( cat ) ;
+        
+        // Much easier to rearrange the tree by fetching new data rather
+        // than trying to manipulate the client side data structure
+        saveCategoryEditChangesOnServer( categoryList,
+            function() { // Called on success
+                fetchClassificationCategories() ;
+            },
+            function() { // Called on failure
+                fetchClassificationCategories() ;
+            } 
+        ) ;        
     }
     
     // --- [END] Scope functions
@@ -312,6 +323,11 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.ledgerCategories.credit.l2Categories.clear() ;
         $scope.ledgerCategories.debit.l1Categories.length = 0 ;  
         $scope.ledgerCategories.debit.l2Categories.clear() ;
+        
+        $scope.catEditCtx.cat = null ;
+        $scope.catEditCtx.catData = null ;
+        $scope.catEditCtx.selectedL1CatName = null ;
+        $scope.catEditCtx.newL1CatName = null ;
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Ledger/Categories' )
