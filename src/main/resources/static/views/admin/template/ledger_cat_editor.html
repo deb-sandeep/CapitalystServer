@@ -11,12 +11,13 @@
            <th>#</th>
            <th>Txn Pivot</th>
            <th>Cash Entry</th>
-           <th>Edit</th>
+           <th>Change L1</th>
+           <th>Merge</th>
        </tr>
    </thead>
    <tbody ng-repeat="catName in catData.l1Categories">
        <tr class='cat-name'>
-           <td colspan="6">
+           <td colspan="7">
                 <div ng-show="!catName.beingEdited" 
                      ng-click="startEditingL1CategoryName( catName )">
                     <b>{{catName.displayName}}</b>
@@ -65,6 +66,11 @@
             <td class="centered-cell">
                 <a ng-click="showParentCategoryDialog( cat )">
                     <span class="glyphicon glyphicon-indent-left"></span>
+                </a>
+            </td>
+            <td class="centered-cell">
+                <a ng-click="showMergeCategoryDialog( cat )">
+                    <span class="glyphicon glyphicon-log-in"></span>
                 </a>
             </td>
        </tr>

@@ -48,6 +48,8 @@ public class ChangedCategorySaveHelper {
         String oldL1CatName = oldCat.getL1CatName() ;
         String oldL2CatName = oldCat.getL2CatName() ;
         
+        boolean isCreditClass = oldCat.isCreditClassification() ;
+        
         log.debug( "Old category = " + oldCat ) ;
         log.debug( "New category = " + newCat ) ;
         
@@ -58,8 +60,16 @@ public class ChangedCategorySaveHelper {
             log.debug( "Category name change detected." ) ;
             
             log.debug( "Updating classification for ledger entries." ) ;
-            lRepo.updateClassificationCategory( newL1CatName, newL2CatName, 
+            if( isCreditClass ) {
+                lRepo.updateCreditClassificationCategory( 
+                                                newL1CatName, newL2CatName, 
                                                 oldL1CatName, oldL2CatName ) ;
+            }
+            else {
+                lRepo.updateDebitClassificationCategory( 
+                                                newL1CatName, newL2CatName, 
+                                                oldL1CatName, oldL2CatName ) ;
+            }
             
             log.debug( "Updating classification for leger classification rules." ) ;
             lecrRepo.updateClassificationCategory( newL1CatName, newL2CatName, 

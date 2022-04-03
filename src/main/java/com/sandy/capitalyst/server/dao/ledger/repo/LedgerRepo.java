@@ -146,9 +146,29 @@ public interface LedgerRepo
           + "    le.l2Cat = :newL2Cat "
           + "WHERE "
           + "    le.l1Cat = :oldL1Cat AND "
-          + "    le.l2Cat = :oldL2Cat "
+          + "    le.l2Cat = :oldL2Cat AND "
+          + "    le.amount > 0 "
     )
-    public void updateClassificationCategory(  
+    public void updateCreditClassificationCategory(  
+                                      @Param( "newL1Cat" ) String newL1Cat,
+                                      @Param( "newL2Cat" ) String newL2Cat,
+                                      @Param( "oldL1Cat" ) String oldL1Cat,
+                                      @Param( "oldL2Cat" ) String oldL2Cat ) ;
+
+    @Modifying( clearAutomatically = true )
+    @Transactional( propagation = Propagation.REQUIRES_NEW )    
+    @Query( value =   
+            "UPDATE "
+          + "    LedgerEntry le "
+          + "SET "
+          + "    le.l1Cat = :newL1Cat, "
+          + "    le.l2Cat = :newL2Cat "
+          + "WHERE "
+          + "    le.l1Cat = :oldL1Cat AND "
+          + "    le.l2Cat = :oldL2Cat AND "
+          + "    le.amount < 0 "
+    )
+    public void updateDebitClassificationCategory(  
                                       @Param( "newL1Cat" ) String newL1Cat,
                                       @Param( "newL2Cat" ) String newL2Cat,
                                       @Param( "oldL1Cat" ) String oldL1Cat,

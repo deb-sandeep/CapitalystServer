@@ -45,7 +45,9 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         catData : null,
         cat : null,
         selectedL1CatName : null,
-        newL1CatName : null
+        selectedL2CatName : null,
+        newL1CatName : null,
+        newL2CatName : null,
     }
     
     $scope.ledgerEntriesForSelectedCategory = [] ;
@@ -225,16 +227,16 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     $scope.hideParentCategoryDialog = function() {
         
-        $scope.catEditCtx.cat = null ;
-        $scope.catEditCtx.catData = null ;
-        $scope.catEditCtx.selectedL1CatName = null ;
-        $scope.catEditCtx.newL1CatName = null ;
-        
+        clearCatEditCtx() ;
         $( '#changeParentCategoryDialog' ).modal( 'hide' ) ;
     }
     
     $scope.newL1CatNameEntered = function() {
         $scope.catEditCtx.selectedL1CatName = null ;
+    }
+    
+    $scope.newL2CatNameEntered = function() {
+        $scope.catEditCtx.selectedL2CatName = null ;
     }
     
     $scope.applyNewParentCategory = function() {
@@ -255,6 +257,47 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     $scope.hideLedgerEntriesDialog = function() {
         $scope.ledgerEntriesForSelectedCategory.length = 0 ;
         $( '#viewLedgerEntriesDialog' ).modal( 'hide' ) ;
+    }
+    
+    $scope.showMergeCategoryDialog = function( cat ) {
+        
+        clearCatEditCtx() ;
+        $scope.catEditCtx.cat = cat ;
+        if( cat.creditClassification ) {
+            $scope.catEditCtx.catData = $scope.ledgerCategories.credit ;
+        }
+        else {
+            $scope.catEditCtx.catData = $scope.ledgerCategories.debit ;
+        }
+        
+        $( '#mergeLedgerCategoryDialog' ).modal( 'show' ) ;
+    }
+
+    $scope.hideMergeCategoryDialog = function() {
+        clearCatEditCtx() ;
+        $( '#mergeLedgerCategoryDialog' ).modal( 'hide' ) ;
+    }
+    
+    $scope.mergeCategory = function() {
+        
+        var newL1CatName = validateNewL1CatName() ;
+        if( newL1CatName != null ) {
+            console.log( "New L1 cat name = " + newL1CatName ) ;
+            
+            var newL2CatName = validateNewL2CatName() ;
+            if( newL2CatName != null ) {
+                console.log( "New L2 cat name = " + newL2CatName ) ;
+                
+                var cat = $scope.catEditCtx.cat ;
+                
+                var oldL1CatName = cat.l1CatName ;
+                var oldL2CatName = cat.l2CatName ;
+                var isCreditClassification = cat.creditClassification ;
+                
+                 
+            }
+        }
+        $scope.hideMergeCategoryDialog() ;
     }
 
     // --- [END] Scope functions
@@ -294,10 +337,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.ledgerCategories.debit.l1Categories.length = 0 ;  
         $scope.ledgerCategories.debit.l2Categories.clear() ;
         
-        $scope.catEditCtx.cat = null ;
-        $scope.catEditCtx.catData = null ;
-        $scope.catEditCtx.selectedL1CatName = null ;
-        $scope.catEditCtx.newL1CatName = null ;
+        clearCatEditCtx() ;
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Ledger/Categories' )
@@ -324,7 +364,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $http.get( '/Ledger/Categories/ClassificationCount' )
         .then ( 
             function( response ){
-                console.log( response.data ) ;
                 populateNumLedgerEntries( response.data ) ;
             }, 
             function( error ){
@@ -349,7 +388,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                    '&l2CatName=' + cat.l2CatName )
         .then ( 
             function( response ){
-                console.log( response.data ) ;
                 $scope.ledgerEntriesForSelectedCategory = response.data ;
                 $( '#viewLedgerEntriesDialog' ).modal( 'show' ) ; 
             }, 
@@ -387,6 +425,17 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     }
     
     // ------------------- Server response processors ------------------------
+    
+    function clearCatEditCtx() {
+        
+        $scope.catEditCtx.cat = null ;
+        $scope.catEditCtx.catData = null ;
+        $scope.catEditCtx.selectedL1CatName = null ;
+        $scope.catEditCtx.selectedL2CatName = null ;
+        $scope.catEditCtx.newL1CatName = null ;
+        $scope.catEditCtx.newL2CatName = null ;
+    }
+
     function populateMasterCategories( categories ) {
         
         $scope.ledgerCategories.credit.l1Categories.length = 0 ;
@@ -473,6 +522,26 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         }
         
         return newL1CatName ;
+    }
+    
+    function validateNewL2CatName() {
+        
+        if( $scope.catEditCtx.selectedL2CatName == null && 
+            $scope.catEditCtx.newL2CatName == null ) {
+            console.log( "No new L2 category selected." ) ;
+            return null ;
+        }
+        
+        var newL2CatName = ( $scope.catEditCtx.selectedL2CatName == null ) ? 
+                             $scope.catEditCtx.newL2CatName : 
+                             $scope.catEditCtx.selectedL2CatName ;
+                             
+        if( newL2CatName == $scope.catEditCtx.cat.l2CatName ) {
+            console.log( "New L2 cat name same as existing L2 cat name." ) ;
+            newL2CatName = null ;
+        }
+        
+        return newL2CatName ;
     }
     
     function applyNewL1CatName( newL1CatName, editCtx ) {
