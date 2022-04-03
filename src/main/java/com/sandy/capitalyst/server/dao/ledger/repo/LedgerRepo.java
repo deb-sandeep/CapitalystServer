@@ -24,12 +24,30 @@ public interface LedgerRepo
           + "    LedgerEntry le "
           + "WHERE "
           + "    le.l1Cat = :l1CatName AND "
-          + "    le.l2Cat = :l2CatName "
+          + "    le.l2Cat = :l2CatName AND "
+          + "    le.amount > 0 "
           + "ORDER BY "
           + "    le.valueDate DESC, "
           + "    le.id DESC"
     )
-    public List<LedgerEntry> findEntries( 
+    public List<LedgerEntry> findCreditEntries( 
+                                    @Param( "l1CatName" ) String l1CatName,
+                                    @Param( "l2CatName" ) String l2CatName ) ; 
+
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.l1Cat = :l1CatName AND "
+          + "    le.l2Cat = :l2CatName AND "
+          + "    le.amount < 0 "
+          + "ORDER BY "
+          + "    le.valueDate DESC, "
+          + "    le.id DESC"
+    )
+    public List<LedgerEntry> findDebitEntries( 
                                     @Param( "l1CatName" ) String l1CatName,
                                     @Param( "l2CatName" ) String l2CatName ) ; 
 
@@ -171,9 +189,26 @@ public interface LedgerRepo
             + "    count(id) as numEntries "
             + "FROM  "
             + "    account_ledger "
+            + "WHERE "
+            + "    amount > 0 "
             + "GROUP BY "
             + "    l1_cat, l2_cat "
     )
-    public List<ClassifiedLedgerEntriesCounter> countClassifiedEntries() ;
+    public List<ClassifiedLedgerEntriesCounter> countClassifiedCreditEntries() ;
     
+    @Query( nativeQuery = true,
+            value =   
+              "SELECT "
+            + "    if( amount < 0, 0, 1 ) as isCreditEntry, "
+            + "    l1_cat as l1CatName, "
+            + "    l2_cat as l2CatName, "
+            + "    count(id) as numEntries "
+            + "FROM  "
+            + "    account_ledger "
+            + "WHERE "
+            + "    amount < 0 "
+            + "GROUP BY "
+            + "    l1_cat, l2_cat "
+    )
+    public List<ClassifiedLedgerEntriesCounter> countClassifiedDebitEntries() ;
 }

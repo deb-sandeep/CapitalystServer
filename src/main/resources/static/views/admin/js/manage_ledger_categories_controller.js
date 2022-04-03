@@ -249,7 +249,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     }
     
     $scope.showLedgerEntriesDialog = function( cat ) {
-        fetchLedgerEntries( cat.l1CatName, cat.l2CatName ) ;
+        fetchLedgerEntries( cat ) ;
     }
     
     $scope.hideLedgerEntriesDialog = function() {
@@ -337,13 +337,16 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         }) ;
     }
     
-    function fetchLedgerEntries( l1CatName, l2CatName ) {
+    function fetchLedgerEntries( cat ) {
         
         $scope.ledgerEntriesForSelectedCategory.length = 0 ;
         
+        
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.get( '/Ledger/Entries?l1CatName=' + l1CatName + 
-                   '&l2CatName=' + l2CatName )
+        $http.get( '/Ledger/Entries?' +
+                   'selectCreditEntries=' + cat.creditClassification + 
+                   '&l1CatName=' + cat.l1CatName + 
+                   '&l2CatName=' + cat.l2CatName )
         .then ( 
             function( response ){
                 console.log( response.data ) ;

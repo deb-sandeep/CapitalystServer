@@ -70,12 +70,18 @@ public class LedgerRestController {
     
     @GetMapping( "/Ledger/Entries" )
     public ResponseEntity<List<LedgerEntry>> getLedgerEntries( 
+                @RequestParam( "selectCreditEntries" ) Boolean selectCreditEntries,
                 @RequestParam( "l1CatName" ) String l1CatName,
                 @RequestParam( "l2CatName" ) String l2CatName ) {
         
         try {
             List<LedgerEntry> entries = null ;
-            entries = lRepo.findEntries( l1CatName, l2CatName ) ; 
+            if( selectCreditEntries ) {
+                entries = lRepo.findCreditEntries( l1CatName, l2CatName ) ; 
+            }
+            else {
+                entries = lRepo.findDebitEntries( l1CatName, l2CatName ) ; 
+            }
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( entries ) ;

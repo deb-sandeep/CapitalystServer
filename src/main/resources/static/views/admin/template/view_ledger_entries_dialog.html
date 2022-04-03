@@ -24,8 +24,12 @@
 		   </thead>
 		   <tbody>
 		      <tr ng-repeat="entry in $parent.ledgerEntriesForSelectedCategory">
-		          <td>{{entry.valueDate | date : "dd/MMM/yyyy"}}</td>
-                  <td class="numeric">{{entry.amount | number : 0}}</td>
+		          <td class="numeric">
+		              {{entry.valueDate | date : "dd/MMM/yyyy"}}
+		          </td>
+                  <td class="numeric">
+                    {{entry.amount | number : 0}}
+                  </td>
                   <td style="padding-left:5px;font-size:11px;">
                     {{entry.remarks | remark}}
                   </td>

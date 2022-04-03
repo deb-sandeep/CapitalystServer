@@ -16,6 +16,9 @@ import com.sandy.capitalyst.server.api.ledger.helpers.SplitDetails ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.common.util.StringUtil ;
 
+import lombok.Data ;
+
+@Data
 @Entity
 @Table( name = "account_ledger" )
 public class LedgerEntry implements Cloneable {
@@ -44,68 +47,8 @@ public class LedgerEntry implements Cloneable {
     @Column( name = "l2_cat" )
     private String l2Cat = null ;
     
-    public Integer getId() {
-        return id ;
-    }
-    
-    public void setId( Integer id ) {
-        this.id = id ;
-    }
-
-    public Account getAccount() {
-        return account ;
-    }
-
-    public void setAccount( Account account ) {
-        this.account = account ;
-    }
-
-    public Date getValueDate() {
-        return valueDate ;
-    }
-
-    public void setValueDate( Date valueDate ) {
-        this.valueDate = valueDate ;
-    }
-
     public String getRemarks() {
         return remarks == null ? "" : remarks ;
-    }
-
-    public void setRemarks( String remarks ) {
-        this.remarks = remarks ;
-    }
-
-    public float getAmount() {
-        return amount ;
-    }
-
-    public void setAmount( float amount ) {
-        this.amount = amount ;
-    }
-
-    public float getBalance() {
-        return balance ;
-    }
-
-    public void setBalance( float balance ) {
-        this.balance = balance ;
-    }
-    
-    public String getChequeNumber() {
-        return chequeNumber ;
-    }
-
-    public void setChequeNumber( String chequeNumber ) {
-        this.chequeNumber = chequeNumber ;
-    }
-    
-    public String getHash() {
-        return hash ;
-    }
-
-    public void setHash( String hash ) {
-        this.hash = hash ;
     }
 
     public boolean isCredit() {
@@ -114,30 +57,6 @@ public class LedgerEntry implements Cloneable {
     
     public boolean isChequePayment() {
         return StringUtil.isNotEmptyOrNull( chequeNumber ) ;
-    }
-    
-    public String getL1Cat() {
-        return l1Cat ;
-    }
-
-    public void setL1Cat( String l1Cat ) {
-        this.l1Cat = l1Cat ;
-    }
-
-    public String getL2Cat() {
-        return l2Cat ;
-    }
-
-    public void setL2Cat( String l2Cat ) {
-        this.l2Cat = l2Cat ;
-    }
-
-    public String getNotes() {
-        return notes ;
-    }
-    
-    public void setNotes( String notes ) {
-        this.notes = notes ;
     }
     
     public LedgerEntry split( SplitDetails splitDetails ) 

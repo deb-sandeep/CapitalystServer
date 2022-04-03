@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.api.ledger;
 
+import java.util.ArrayList ;
 import java.util.Collections ;
 import java.util.List ;
 
@@ -55,11 +56,15 @@ public class LedgerCategoriesController {
     public ResponseEntity<List<ClassifiedLedgerEntriesCounter>> 
                                          getLedgerEntryClassificationCounter() {
         try {
-            List<ClassifiedLedgerEntriesCounter> counters = null ;
-            counters = lRepo.countClassifiedEntries() ;
+            List<ClassifiedLedgerEntriesCounter> allCounters = null ;
+            
+            allCounters = new ArrayList<>() ;
+            
+            allCounters.addAll( lRepo.countClassifiedCreditEntries() ) ;
+            allCounters.addAll( lRepo.countClassifiedDebitEntries() ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( counters ) ;
+                                 .body( allCounters ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
