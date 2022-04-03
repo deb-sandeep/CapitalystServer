@@ -217,8 +217,8 @@ public class LedgerRestController {
             sc.getMaxAmt() == null ) {
             
             results = lRepo.findEntries( sc.getAccountIds(),
-                                          sc.getStartDate(),
-                                          sc.getEndDate() ) ;
+                                         sc.getStartDate(),
+                                         sc.getEndDate() ) ;
         }
         else if( sc.getMinAmt() != null || 
                  sc.getMaxAmt() != null ) {
@@ -232,16 +232,57 @@ public class LedgerRestController {
             log.debug( "Upper limit = " + upperLim ) ;
             
             results = lRepo.findEntries( sc.getAccountIds(),
-                                          sc.getStartDate(),
-                                          sc.getEndDate(),
-                                          lowerLim, upperLim ) ;
+                                         sc.getStartDate(),
+                                         sc.getEndDate(),
+                                         lowerLim, upperLim ) ;
         }
         
-        if( results != null && sc.isShowOnlyUnclassified() ) {
-            for( Iterator<LedgerEntry> entries = results.iterator(); entries.hasNext(); ) {
-                LedgerEntry entry = entries.next() ;
-                if( StringUtil.isNotEmptyOrNull( entry.getL1Cat() ) ) {
-                    entries.remove() ;
+        if( results != null ) {
+            
+            Iterator<LedgerEntry> entries = null ;
+            
+            if( sc.isShowOnlyUnclassified() ) {
+                for( entries = results.iterator(); entries.hasNext(); ) {
+                    LedgerEntry entry = entries.next() ;
+                    if( StringUtil.isNotEmptyOrNull( entry.getL1Cat() ) ) {
+                        entries.remove() ;
+                    }
+                }
+            }
+            
+            if( StringUtil.isNotEmptyOrNull( sc.getL1CatName() ) || 
+                StringUtil.isNotEmptyOrNull( sc.getL2CatName() ) ) {
+                
+                for( entries = results.iterator(); entries.hasNext(); ) {
+                    LedgerEntry entry = entries.next() ;
+                    
+                    if( StringUtil.isEmptyOrNull( entry.getL1Cat() ) ) {
+                        entries.remove() ;
+                        continue ;
+                    }
+
+                    if( !entry.isCredit() == sc.isCreditClassifier() ) {
+                        entries.remove() ;
+                        continue ;
+                    }
+                    
+                    if( StringUtil.isNotEmptyOrNull( sc.getL1CatName() ) ) {
+                        if( StringUtil.isNotEmptyOrNull( entry.getL1Cat() ) ) {
+                            if( !sc.getL1CatName().equals( entry.getL1Cat() ) ) {
+                                entries.remove() ;
+                                continue ;
+                            }
+                        }
+                    }
+                    
+                    if( StringUtil.isNotEmptyOrNull( sc.getL2CatName() ) ) {
+                        if( StringUtil.isNotEmptyOrNull( entry.getL2Cat() ) ) {
+                            if( !sc.getL2CatName().equals( entry.getL2Cat() ) ) {
+                                entries.remove() ;
+                                continue ;
+                            }
+                        }
+                    }
                 }
             }
         }

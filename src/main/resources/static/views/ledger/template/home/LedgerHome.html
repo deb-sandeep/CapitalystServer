@@ -61,16 +61,30 @@
 	      <h4 class="panel-title">
 	        <a data-toggle="collapse" 
 	           data-parent="#accordion" 
-	           data-target="#customRuleDiv">
-	        Custom Rule
+	           data-target="#catSelectionDiv">
+	        Category selection
 	        </a>
 	      </h4>
 	    </div>
-	    <div id="customRuleDiv" class="panel-collapse collapse">
-          <textarea class='form-field' 
-                    rows="5"
-                    ng-model="searchQuery.customRule">
-          </textarea> 
+	    <div id="catSelectionDiv"
+	         style="padding:10px;">
+	         
+	        <input type="checkbox" 
+                   ng-model="searchQuery.isCreditClassifier"
+                   ng-change="creditClassifierChanged()"/> Credit classifiers
+	        <p>
+            <label>L1 category</label>
+            <select class="form-field" 
+                    ng-model="searchQuery.l1CatName"
+                    ng-options="item for item in filterCategories.l1Categories">
+                <option value=""></option>
+            </select>
+            <label>L2 category</label>
+            <select class="form-field" 
+                    ng-model="searchQuery.l2CatName"
+                    ng-options="item for item in filterCategories.l2Categories.get( searchQuery.l1CatName )">
+                <option value=""></option>
+            </select>
 	    </div>
 	  </div>	  
 
@@ -84,8 +98,7 @@
             </a>
           </h4>
         </div>
-        <div id="sundryOptionsDiv" class="panel-collapse collapse"
-             style="padding:5px;">
+        <div id="sundryOptionsDiv" style="padding:5px;">
             <input type="checkbox" 
                    ng-model="searchQuery.showOnlyUnclassified"
                    ng-change="showOnlyUnclassifiedCriteriaChanged()"/> Show only unclassified

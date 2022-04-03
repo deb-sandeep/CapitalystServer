@@ -18,7 +18,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
         endDate : moment().toDate(),
         minAmt : null,
         maxAmt : null,
-        customRule : null,
+        isCreditClassifier : false,
+        l1CatName : null,
+        l2CatName : null,
         showOnlyUnclassified : false
     } ;
     $scope.bulkSelState = {
@@ -36,6 +38,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
            l2Categories : new Map()
        }
     } ;
+    
+    $scope.filterCategories = null ;
     
     $scope.relevantCategoriesForSelectedEntries = null ;
     $scope.userSel = {
@@ -85,6 +89,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $scope.searchQuery.maxAmt = null ;
         $scope.searchQuery.customRule = null ;
         $scope.searchQuery.showOnlyUnclassified = false ;
+        $scope.searchQuery.isCreditClassifier = false ;
+        $scope.searchQuery.l1CatName = null ;
+        $scope.searchQuery.l2CatName = null ;
         $scope.entryFilterText = null ;
         
         fetchLedgerEntries() ;
@@ -398,6 +405,15 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $scope.controlPanelVisible = !$scope.controlPanelVisible ;
     }
     
+    $scope.creditClassifierChanged = function() {
+        if( $scope.searchQuery.isCreditClassifier ) {
+            $scope.filterCategories = $scope.masterCategories.credit ;
+        }
+        else {
+            $scope.filterCategories = $scope.masterCategories.debit ;
+        }
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -601,6 +617,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
                         category ) ; 
             }
         }
+        
+        $scope.creditClassifierChanged() ;
     }
     
     function classifyCategoryInMasterList( l1CatList, l2CatMap, category ) {
