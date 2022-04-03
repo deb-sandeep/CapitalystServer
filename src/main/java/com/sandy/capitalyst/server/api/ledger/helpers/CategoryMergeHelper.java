@@ -3,7 +3,6 @@ package com.sandy.capitalyst.server.api.ledger.helpers;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryClassificationRule ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryClassificationRuleRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
@@ -94,22 +93,9 @@ public class CategoryMergeHelper {
         
         log.debug( "Updating classification for leger classification rules." ) ;
         
-        LedgerEntryClassificationRule lecr = null ;
-        lecr = lecrRepo.findRule( oldCat.isCreditClassification(), 
-                                  newL1CatName, newL2CatName ) ;
-        
-        if( lecr != null ) {
-            // Implying a rule to classify into this category already 
-            // exists, then delete the old rule
-            lecrRepo.delete( oldCat.isCreditClassification(), 
-                             oldL1CatName, oldL2CatName ) ;
-        }
-        else {
-            // If no rules to classify to new category exists, update the
-            // old rule to reflect the new category
-            lecrRepo.updateClassificationCategory( 
-                                            newL1CatName, newL2CatName, 
-                                            oldL1CatName, oldL2CatName ) ;
-        }
+        // Update all the old rules to classify for the new category
+        lecrRepo.updateClassificationCategory( 
+                                        newL1CatName, newL2CatName, 
+                                        oldL1CatName, oldL2CatName ) ;
     }    
 }
