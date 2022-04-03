@@ -335,6 +335,27 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
             function( response ){
                 populateMasterCategories( response.data ) ;
                 console.log( $scope.ledgerCategories ) ;
+                console.log( "Fetching ledger enties classification counter." ) ;
+                fetchClassifiedLedgerEntriesCounter() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function fetchClassifiedLedgerEntriesCounter() {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.get( '/Ledger/Categories/ClassificationCount' )
+        .then ( 
+            function( response ){
+                console.log( response.data ) ;
+                populateNumLedgerEntries( response.data ) ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
@@ -381,7 +402,10 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         for( var i=0; i<categories.length; i++ ) {
             
             var category = categories[i] ;
+            
+            // Extention attributes added to the server returned obj
             category.beingEdited = false ;
+            category.numLedgerEntries = 0 ;
             
             if( category.creditClassification ) {
                 classifyCategoryInMasterList( $scope.ledgerCategories.credit,
@@ -410,5 +434,27 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         
         var l2List = l2CatMap.get( catName.displayName ) ;
         l2List.push( category ) ;
+    }
+    
+    function populateNumLedgerEntries( counters ) {
+        for( var i=0; i<counters.length; i++ ) {
+            
+            var counter = counters[i] ;
+            var catData = counter.isCreditEntry ? 
+                            $scope.ledgerCategories.credit : 
+                            $scope.ledgerCategories.debit ;
+                            
+            if( catData.l2Categories.has( counter.l1CatName ) ) {
+                var l2Array = catData.l2Categories.get( counter.l1CatName ) ;
+                
+                for( var j=0; j<l2Array.length; j++ ) {
+                    var cat = l2Array[j] ;
+                    if( cat.l2CatName == counter.l2CatName ) {
+                        cat.numLedgerEntries = counter.numEntries ;
+                        break ;
+                    }
+                }
+            }
+        }
     }
 } ) ;

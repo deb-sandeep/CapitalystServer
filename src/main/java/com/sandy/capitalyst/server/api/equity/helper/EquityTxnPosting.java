@@ -2,6 +2,9 @@ package com.sandy.capitalyst.server.api.equity.helper;
 
 import java.util.Date ;
 
+import lombok.Data ;
+
+@Data
 public class EquityTxnPosting {
 
     private String ownerName = null ;
@@ -16,78 +19,6 @@ public class EquityTxnPosting {
     
     public EquityTxnPosting() {}
     
-    public String getOwnerName() {
-        return ownerName ;
-    }
-
-    public void setOwnerName( String ownerName ) {
-        this.ownerName = ownerName ;
-    }
-    
-    public String getSymbolICICI() {
-        return symbolICICI ;
-    }
-
-    public void setSymbolICICI( String symbolICICI ) {
-        this.symbolICICI = symbolICICI ;
-    }
-
-    public void setAction( String val ) {
-        this.action = val ;
-    }
-        
-    public String getAction() {
-        return this.action ;
-    }
-
-    public void setQuantity( int val ) {
-        this.quantity = val ;
-    }
-        
-    public int getQuantity() {
-        return this.quantity ;
-    }
-
-    public void setTxnPrice( float val ) {
-        this.txnPrice = val ;
-    }
-        
-    public float getTxnPrice() {
-        return this.txnPrice ;
-    }
-
-    public void setBrokerage( float val ) {
-        this.brokerage = val ;
-    }
-        
-    public float getBrokerage() {
-        return this.brokerage ;
-    }
-
-    public void setTxnCharges( float val ) {
-        this.txnCharges = val ;
-    }
-        
-    public float getTxnCharges() {
-        return this.txnCharges ;
-    }
-
-    public void setStampDuty( float val ) {
-        this.stampDuty = val ;
-    }
-        
-    public float getStampDuty() {
-        return this.stampDuty ;
-    }
-
-    public void setTxnDate( Date val ) {
-        this.txnDate = val ;
-    }
-        
-    public Date getTxnDate() {
-        return this.txnDate ;
-    }
-
     public String toString() {
         StringBuilder builder = new StringBuilder( "EquityTxn [\n" ) ; 
         

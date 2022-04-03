@@ -102,6 +102,24 @@ public interface LedgerRepo
                                       @Param( "l2Cat" ) String l2Cat,
                                       @Param( "notes" ) String notes ) ;
     
+    @Modifying( clearAutomatically = true )
+    @Transactional( propagation = Propagation.REQUIRES_NEW )    
+    @Query( value =   
+            "UPDATE "
+          + "    LedgerEntry le "
+          + "SET "
+          + "    le.l1Cat = :newL1Cat, "
+          + "    le.l2Cat = :newL2Cat "
+          + "WHERE "
+          + "    le.l1Cat = :oldL1Cat AND "
+          + "    le.l2Cat = :oldL2Cat "
+    )
+    public void updateClassificationCategory(  
+                                      @Param( "newL1Cat" ) String newL1Cat,
+                                      @Param( "newL2Cat" ) String newL2Cat,
+                                      @Param( "oldL1Cat" ) String oldL1Cat,
+                                      @Param( "oldL2Cat" ) String oldL2Cat ) ;
+    
     @Query( nativeQuery = true,
             value =   
             "SELECT "
@@ -127,4 +145,19 @@ public interface LedgerRepo
           + "    le.account_id = :accountId "
     )
     public Float computeCashAccountBalance( @Param( "accountId" ) Integer accountId ) ;
+    
+    @Query( nativeQuery = true,
+            value =   
+              "SELECT "
+            + "    if( amount < 0, 0, 1 ) as isCreditEntry, "
+            + "    l1_cat as l1CatName, "
+            + "    l2_cat as l2CatName, "
+            + "    count(id) as numEntries "
+            + "FROM  "
+            + "    account_ledger "
+            + "GROUP BY "
+            + "    l1_cat, l2_cat "
+    )
+    public List<ClassifiedLedgerEntriesCounter> countClassifiedEntries() ;
+    
 }

@@ -1,0 +1,36 @@
+<div class="modal-dialog" 
+     style="width:600px;">
+     
+  <div class="modal-content" >
+    <div class="modal-header" style="background-color:#C5C5C5;padding:5px">
+      <h3 class="modal-title">Ledger Entries</h3>
+    </div>
+    
+    <div class="modal-body" style="background-color:#FEFEFE;padding:5px">
+		<table class="pure-table pure-table-bordered">
+		   <thead>
+		       <tr>
+		           <th>Category</th>
+		           <th>Sub-category</th>
+		           <th>#</th>
+		           <th>Txn Pivot</th>
+		           <th>Cash Entry</th>
+		           <th>Edit</th>
+		       </tr>
+		   </thead>
+		   <tbody ng-repeat="catName in catData.l1Categories">
+		   </tbody>
+		</table>        
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-default btn-sm" 
+              ng-click="hideViewLedgerEntriesDialog()">
+            Ok
+      </button>
+    </div>
+    
+    <p>
+  </div>
+</div>

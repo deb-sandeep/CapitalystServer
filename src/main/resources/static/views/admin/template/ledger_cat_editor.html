@@ -8,6 +8,7 @@
        <tr>
            <th>Category</th>
            <th>Sub-category</th>
+           <th>#</th>
            <th>Txn Pivot</th>
            <th>Cash Entry</th>
            <th>Edit</th>
@@ -15,7 +16,7 @@
    </thead>
    <tbody ng-repeat="catName in catData.l1Categories">
        <tr class='cat-name'>
-           <td colspan="5">
+           <td colspan="6">
                 <div ng-show="!catName.beingEdited" 
                      ng-click="startEditingL1CategoryName( catName )">
                     <b>{{catName.displayName}}</b>
@@ -44,6 +45,7 @@
                            ng-escape="revertL1CategoryEditChanges( cat )"/> 
                 </div>
             </td>
+            <td class="numeric">{{cat.numLedgerEntries}}</td>
             <td class="centered-cell">
                 <input type="checkbox" 
                        ng-model="cat.selectedForTxnPivot"

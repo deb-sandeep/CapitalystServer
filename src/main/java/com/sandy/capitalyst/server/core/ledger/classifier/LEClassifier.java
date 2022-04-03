@@ -49,7 +49,7 @@ public class LEClassifier {
         for( LedgerEntryClassificationRule lecr : lecrRepo.findAll() ) {
             LEClassifierRule rule = ruleBuilder.buildClassifier( lecr.getRuleText() ) ;
             RuleData data = new RuleData( rule, lecr ) ;
-            if( lecr.isICreditClassifier() ) {
+            if( lecr.isCreditClassifier() ) {
                 creditRules.put( lecr.getRuleName(), data ) ;
             }
             else {
@@ -81,8 +81,8 @@ public class LEClassifier {
             }
             
             if( classifyEntry ) {
-                if( ( lecr.isICreditClassifier() && entry.isCredit() ) || 
-                    ( !lecr.isICreditClassifier() && !entry.isCredit() ) ) {
+                if( ( lecr.isCreditClassifier() && entry.isCredit() ) || 
+                    ( !lecr.isCreditClassifier() && !entry.isCredit() ) ) {
                     
                     if( rule.isRuleMatched( entry ) ) {
                         entry.setL1Cat( lecr.getL1Category() ) ;

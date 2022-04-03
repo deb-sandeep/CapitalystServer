@@ -12,23 +12,27 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.ledger.helpers.ChangedCategorySaveHelper ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
+import com.sandy.capitalyst.server.dao.ledger.repo.ClassifiedLedgerEntriesCounter ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryClassificationRuleRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 
 @RestController
 public class LedgerCategoriesController {
 
     private static final Logger log = Logger.getLogger( LedgerCategoriesController.class ) ;
     
-    //@Autowired
-    //private LedgerRepo lRepo = null ;
+    @Autowired
+    private LedgerRepo lRepo = null ;
     
     @Autowired
     private LedgerEntryCategoryRepo lecRepo = null ;
     
-    //@Autowired
-    //private LedgerEntryClassificationRuleRepo leClassificationRuleRepo = null ;
+    @Autowired
+    private LedgerEntryClassificationRuleRepo lecrRepo = null ;
     
     @GetMapping( "/Ledger/Categories" ) 
     public ResponseEntity<List<LedgerEntryCategory>> getLedgerEntryCategories() {
@@ -47,13 +51,33 @@ public class LedgerCategoriesController {
         }
     }
     
+    @GetMapping( "/Ledger/Categories/ClassificationCount" ) 
+    public ResponseEntity<List<ClassifiedLedgerEntriesCounter>> 
+                                         getLedgerEntryClassificationCounter() {
+        try {
+            List<ClassifiedLedgerEntriesCounter> counters = null ;
+            counters = lRepo.countClassifiedEntries() ;
+            
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( counters ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
+    
     @PostMapping( "/Ledger/Categories" ) 
     public ResponseEntity<APIResponse> saveLedgerEntryCategories(
                             @RequestBody List<LedgerEntryCategory> categories ) {
         try {
-            for( LedgerEntryCategory cat : categories ) {
-                log.debug( cat ) ;
-            }
+            ChangedCategorySaveHelper helper = null ;
+            
+            helper = new ChangedCategorySaveHelper( categories, lRepo, 
+                                                    lecRepo, lecrRepo ) ;
+            helper.save() ;
+            
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( null ) ;
         }

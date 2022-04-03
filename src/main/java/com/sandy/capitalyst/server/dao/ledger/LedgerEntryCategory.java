@@ -43,6 +43,15 @@ public class LedgerEntryCategory implements Comparable<LedgerEntryCategory> {
         
         return builder.toString() ;
     }
+    
+    public void copyAttributes( LedgerEntryCategory refCat ) {
+        
+        this.creditClassification = refCat.creditClassification ;
+        this.validForCashEntry    = refCat.validForCashEntry ;
+        this.selectedForTxnPivot  = refCat.selectedForTxnPivot ;
+        this.l1CatName            = refCat.l1CatName ;
+        this.l2CatName            = refCat.l2CatName ;
+    }
 
     @Override
     public int compareTo( LedgerEntryCategory o ) {

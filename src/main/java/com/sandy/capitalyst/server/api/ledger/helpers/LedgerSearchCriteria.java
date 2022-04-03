@@ -5,6 +5,9 @@ import java.util.Date ;
 import org.apache.commons.lang.ArrayUtils ;
 import org.apache.commons.lang.StringUtils ;
 
+import lombok.Data ;
+
+@Data
 public class LedgerSearchCriteria {
 
     private int[] accountIds = null ;
@@ -15,64 +18,6 @@ public class LedgerSearchCriteria {
     private String customRule = null ;
     private boolean showOnlyUnclassified = false ;
     
-    public LedgerSearchCriteria() {}
-
-    public void setAccountIds( int[] val ) {
-        this.accountIds = val ;
-    }
-        
-    public int[] getAccountIds() {
-        return this.accountIds ;
-    }
-
-    public void setStartDate( Date val ) {
-        this.startDate = val ;
-    }
-        
-    public Date getStartDate() {
-        return this.startDate ;
-    }
-
-    public void setEndDate( Date val ) {
-        this.endDate = val ;
-    }
-        
-    public Date getEndDate() {
-        return this.endDate ;
-    }
-
-    public Float getMinAmt() {
-        return minAmt ;
-    }
-
-    public void setMinAmt( Float minAmt ) {
-        this.minAmt = minAmt ;
-    }
-
-    public Float getMaxAmt() {
-        return maxAmt ;
-    }
-
-    public void setMaxAmt( Float maxAmt ) {
-        this.maxAmt = maxAmt ;
-    }
-
-    public String getCustomRule() {
-        return customRule ;
-    }
-
-    public void setCustomRule( String customRule ) {
-        this.customRule = customRule ;
-    }
-
-    public boolean isShowOnlyUnclassified() {
-        return showOnlyUnclassified ;
-    }
-
-    public void setShowOnlyUnclassified( boolean bool ) {
-        this.showOnlyUnclassified = bool ;
-    }
-
     public String toString() {
         StringBuilder builder = new StringBuilder( "LedgerSearchCriteria [\n" ) ; 
 

@@ -52,3 +52,10 @@
 .centered-cell {
 	text-align: center;
 }
+
+.numeric {
+	width: 50px;
+	font-family: "Courier New" ;
+	text-align: right ;
+	
+}
