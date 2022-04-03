@@ -48,6 +48,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         newL1CatName : null
     }
     
+    $scope.ledgerEntriesForSelectedCategory = [] ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading ManageLedgerCategoriesController" ) ;
@@ -246,11 +248,12 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.hideParentCategoryDialog() ;
     }
     
-    $scope.showLedgerEntriesDialog = function() {
-        $( '#viewLedgerEntriesDialog' ).modal( 'show' ) ;
+    $scope.showLedgerEntriesDialog = function( cat ) {
+        fetchLedgerEntries( cat.l1CatName, cat.l2CatName ) ;
     }
     
     $scope.hideLedgerEntriesDialog = function() {
+        $scope.ledgerEntriesForSelectedCategory.length = 0 ;
         $( '#viewLedgerEntriesDialog' ).modal( 'hide' ) ;
     }
 
@@ -332,6 +335,29 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function fetchLedgerEntries( l1CatName, l2CatName ) {
+        
+        $scope.ledgerEntriesForSelectedCategory.length = 0 ;
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.get( '/Ledger/Entries?l1CatName=' + l1CatName + 
+                   '&l2CatName=' + l2CatName )
+        .then ( 
+            function( response ){
+                console.log( response.data ) ;
+                $scope.ledgerEntriesForSelectedCategory = response.data ;
+                $( '#viewLedgerEntriesDialog' ).modal( 'show' ) ; 
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch ledger entries.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;        
     }
     
     function saveCategoryEditChangesOnServer( l2List, 

@@ -1,7 +1,5 @@
 package com.sandy.capitalyst.server.dao.ledger.repo;
 
-import lombok.Data ;
-
 public interface ClassifiedLedgerEntriesCounter {
 
     public byte    getIsCreditEntry() ;

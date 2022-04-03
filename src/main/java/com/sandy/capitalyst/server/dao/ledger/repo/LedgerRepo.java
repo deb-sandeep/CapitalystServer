@@ -23,6 +23,22 @@ public interface LedgerRepo
           + "FROM "
           + "    LedgerEntry le "
           + "WHERE "
+          + "    le.l1Cat = :l1CatName AND "
+          + "    le.l2Cat = :l2CatName "
+          + "ORDER BY "
+          + "    le.valueDate DESC, "
+          + "    le.id DESC"
+    )
+    public List<LedgerEntry> findEntries( 
+                                    @Param( "l1CatName" ) String l1CatName,
+                                    @Param( "l2CatName" ) String l2CatName ) ; 
+
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
           + "    le.valueDate between :startDate AND :endDate "
           + "ORDER BY "
           + "    le.valueDate DESC, "

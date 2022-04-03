@@ -47,6 +47,7 @@
 
 .pure-table td {
 	padding: 3px ;
+	font-size: 12px;
 }
 
 .centered-cell {
@@ -54,8 +55,14 @@
 }
 
 .numeric {
-	width: 50px;
+	width: 70px;
 	font-family: "Courier New" ;
 	text-align: right ;
-	
+}
+
+.ledger-entry-div {
+    background-color:#FEFEFE;
+    padding:5px;
+    height: 500px;	
+    overflow-y: scroll;
 }

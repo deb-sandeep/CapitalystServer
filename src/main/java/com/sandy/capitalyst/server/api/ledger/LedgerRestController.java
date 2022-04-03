@@ -68,6 +68,25 @@ public class LedgerRestController {
         }
     }
     
+    @GetMapping( "/Ledger/Entries" )
+    public ResponseEntity<List<LedgerEntry>> getLedgerEntries( 
+                @RequestParam( "l1CatName" ) String l1CatName,
+                @RequestParam( "l2CatName" ) String l2CatName ) {
+        
+        try {
+            List<LedgerEntry> entries = null ;
+            entries = lRepo.findEntries( l1CatName, l2CatName ) ; 
+            
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( entries ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                .body( null ) ;
+        }
+    }
+    
     @PostMapping( "/Ledger/Search" ) 
     public ResponseEntity<List<LedgerEntry>> findLedgerEntries( 
                          @RequestBody LedgerSearchCriteria searchCriteria ) {
@@ -86,65 +105,6 @@ public class LedgerRestController {
         }
     }
     
-    private List<LedgerEntry> searchEntries( LedgerSearchCriteria sc ) {
-        
-        List<LedgerEntry> results = null ;
-        
-        if( sc.getMinAmt() == null && 
-            sc.getMaxAmt() == null ) {
-            
-            results = lRepo.findEntries( sc.getAccountIds(),
-                                          sc.getStartDate(),
-                                          sc.getEndDate() ) ;
-        }
-        else if( sc.getMinAmt() != null || 
-                 sc.getMaxAmt() != null ) {
-            
-            Float lowerLim = sc.getMinAmt() == null ? 
-                             -Float.MAX_VALUE : sc.getMinAmt() ;
-            Float upperLim = sc.getMaxAmt() == null ?
-                             Float.MAX_VALUE : sc.getMaxAmt() ;
-            
-            log.debug( "Lower limit = " + lowerLim ) ;
-            log.debug( "Upper limit = " + upperLim ) ;
-            
-            results = lRepo.findEntries( sc.getAccountIds(),
-                                          sc.getStartDate(),
-                                          sc.getEndDate(),
-                                          lowerLim, upperLim ) ;
-        }
-        
-        if( results != null && sc.isShowOnlyUnclassified() ) {
-            for( Iterator<LedgerEntry> entries = results.iterator(); entries.hasNext(); ) {
-                LedgerEntry entry = entries.next() ;
-                if( StringUtil.isNotEmptyOrNull( entry.getL1Cat() ) ) {
-                    entries.remove() ;
-                }
-            }
-        }
-        
-        return results ;
-    }
-    
-    private List<LedgerEntry> filterResultsByCustomRule( 
-                LedgerSearchCriteria sc, List<LedgerEntry> entries ) {
-        
-        String customRule = sc.getCustomRule() ;
-        if( StringUtil.isNotEmptyOrNull( customRule ) ) {
-            LEClassifierRuleBuilder ruleBuilder = new LEClassifierRuleBuilder() ;
-            LEClassifierRule rule = ruleBuilder.buildClassifier( customRule ) ;
-            
-            for( Iterator<LedgerEntry> iter = entries.iterator(); iter.hasNext(); ) {
-                LedgerEntry entry = iter.next() ;
-                if( !rule.isRuleMatched( entry ) ) {
-                    iter.remove() ;
-                }
-            }
-        }
-        
-        return entries ;
-    }
-
     @DeleteMapping( "/Ledger/{id}" ) 
     public ResponseEntity<APIResponse> deleteLedgerEntry( @PathVariable Integer id ) {
         try {
@@ -241,5 +201,64 @@ public class LedgerRestController {
         newCat.setL1CatName( l1Cat ) ;
         newCat.setL2CatName( l2Cat ) ;
         lecRepo.save( newCat ) ;
+    }
+
+    private List<LedgerEntry> searchEntries( LedgerSearchCriteria sc ) {
+        
+        List<LedgerEntry> results = null ;
+        
+        if( sc.getMinAmt() == null && 
+            sc.getMaxAmt() == null ) {
+            
+            results = lRepo.findEntries( sc.getAccountIds(),
+                                          sc.getStartDate(),
+                                          sc.getEndDate() ) ;
+        }
+        else if( sc.getMinAmt() != null || 
+                 sc.getMaxAmt() != null ) {
+            
+            Float lowerLim = sc.getMinAmt() == null ? 
+                             -Float.MAX_VALUE : sc.getMinAmt() ;
+            Float upperLim = sc.getMaxAmt() == null ?
+                             Float.MAX_VALUE : sc.getMaxAmt() ;
+            
+            log.debug( "Lower limit = " + lowerLim ) ;
+            log.debug( "Upper limit = " + upperLim ) ;
+            
+            results = lRepo.findEntries( sc.getAccountIds(),
+                                          sc.getStartDate(),
+                                          sc.getEndDate(),
+                                          lowerLim, upperLim ) ;
+        }
+        
+        if( results != null && sc.isShowOnlyUnclassified() ) {
+            for( Iterator<LedgerEntry> entries = results.iterator(); entries.hasNext(); ) {
+                LedgerEntry entry = entries.next() ;
+                if( StringUtil.isNotEmptyOrNull( entry.getL1Cat() ) ) {
+                    entries.remove() ;
+                }
+            }
+        }
+        
+        return results ;
+    }
+    
+    private List<LedgerEntry> filterResultsByCustomRule( 
+                LedgerSearchCriteria sc, List<LedgerEntry> entries ) {
+        
+        String customRule = sc.getCustomRule() ;
+        if( StringUtil.isNotEmptyOrNull( customRule ) ) {
+            LEClassifierRuleBuilder ruleBuilder = new LEClassifierRuleBuilder() ;
+            LEClassifierRule rule = ruleBuilder.buildClassifier( customRule ) ;
+            
+            for( Iterator<LedgerEntry> iter = entries.iterator(); iter.hasNext(); ) {
+                LedgerEntry entry = iter.next() ;
+                if( !rule.isRuleMatched( entry ) ) {
+                    iter.remove() ;
+                }
+            }
+        }
+        
+        return entries ;
     }
 }

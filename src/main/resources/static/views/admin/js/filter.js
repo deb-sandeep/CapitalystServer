@@ -1,8 +1,12 @@
-/*
-capitalystNgApp.filter( "<filter name>", function() {
-    return function( <param> ) {
-        var fmt = "" ;
-        return fmt ;
+capitalystNgApp.filter( "remark", function() {
+    return function( remark ) {
+        
+        if( remark == null || remark.trim() == "" ) {
+            return "" ;
+        }
+        else if( remark.length > 60 ) {
+            return remark.substring( 0, 50 ) + " ..." ;
+        }
+        return remark ;
     }
 }) ;
-*/
