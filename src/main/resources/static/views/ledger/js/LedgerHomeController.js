@@ -59,6 +59,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
        notes : null,
        errMsgs : [],
     } ;
+    
+    $scope.controlPanelVisible = true ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -390,6 +392,10 @@ capitalystNgApp.controller( 'LedgerHomeController',
         else {
             $ngConfirm( errMsg ) ;
         }
+    }
+    
+    $scope.toggleControlPanel = function() {
+        $scope.controlPanelVisible = !$scope.controlPanelVisible ;
     }
     
     // --- [END] Scope functions
