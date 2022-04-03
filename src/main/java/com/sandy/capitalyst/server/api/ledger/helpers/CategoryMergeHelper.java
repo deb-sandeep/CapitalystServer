@@ -1,7 +1,5 @@
 package com.sandy.capitalyst.server.api.ledger.helpers;
 
-import java.util.List ;
-
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
@@ -10,67 +8,65 @@ import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryClassificationRuleRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 
-public class ChangedCategorySaveHelper {
+public class CategoryMergeHelper {
     
-    private static final Logger log = Logger.getLogger( ChangedCategorySaveHelper.class ) ;
+    private static final Logger log = Logger.getLogger( CategoryMergeHelper.class ) ;
 
-    private List<LedgerEntryCategory> categories = null ;
+    private MergeLedgeEntryCategoriesInput input = null ;
     
     private LedgerRepo                        lRepo    = null ;
     private LedgerEntryCategoryRepo           lecRepo  = null ;
     private LedgerEntryClassificationRuleRepo lecrRepo = null ;
     
-    public ChangedCategorySaveHelper( 
-                                List<LedgerEntryCategory> categories,
+    public CategoryMergeHelper( MergeLedgeEntryCategoriesInput input,
                                 LedgerRepo lRepo,
                                 LedgerEntryCategoryRepo lecRepo,
                                 LedgerEntryClassificationRuleRepo lecrRepo ) {
         
-        this.categories = categories ;
+        this.input = input ;
         this.lRepo = lRepo ;
         this.lecRepo = lecRepo ;
         this.lecrRepo = lecrRepo ;
     }
     
-    public void save() throws Exception {
-        for( LedgerEntryCategory cat : categories ) {
-            saveCategory( cat ) ;
-        }
-    }
-    
-    private void saveCategory( LedgerEntryCategory newCat )
-        throws Exception {
+    public void merge() throws Exception {
         
-        log.debug( "Saving changes to category " + newCat.getId() ) ;
-        LedgerEntryCategory oldCat = lecRepo.findById( newCat.getId() ).get() ;
+        // The category which will be merged into the new category.
+        LedgerEntryCategory oldCat = null ;
+        LedgerEntryCategory newCat = null ;
+        boolean isCreditClass = false ;
         
-        String newL1CatName = newCat.getL1CatName() ;
-        String newL2CatName = newCat.getL2CatName() ;
-        String oldL1CatName = oldCat.getL1CatName() ;
-        String oldL2CatName = oldCat.getL2CatName() ;
+        oldCat = lecRepo.findById( input.getOldCatId() ).get() ;
+        isCreditClass = oldCat.isCreditClassification() ;
         
-        boolean isCreditClass = oldCat.isCreditClassification() ;
+        newCat = lecRepo.findCategory( isCreditClass, 
+                                       input.getNewL1CatName(), 
+                                       input.getNewL2CatName() ) ; 
         
-        log.debug( "Old category = " + oldCat ) ;
-        log.debug( "New category = " + newCat ) ;
-        
-        if( hasCatNamesChanged( newCat, oldCat ) ) {
-            // If either of the category names have changed, we have to 
-            // update the ledger and the ledger classification rules
+        if( newCat == null ) {
+            // Create a new category in case it doesn't exist
+            newCat = new LedgerEntryCategory() ;
+            newCat.setCreditClassification( isCreditClass ) ;
+            newCat.setL1CatName( input.getNewL1CatName() ) ;
+            newCat.setL2CatName( input.getNewL2CatName() ) ;
+            newCat.setSelectedForTxnPivot( oldCat.isSelectedForTxnPivot() ) ;
+            newCat.setValidForCashEntry( oldCat.isValidForCashEntry() ) ;
             
-            log.debug( "Category name change detected." ) ;
-            
-            updateLedgerEntries( newL1CatName, newL2CatName, 
-                                 oldL1CatName, oldL2CatName, 
-                                 isCreditClass ) ;
-            
-            updateClassificationRules( oldCat, newL1CatName, newL2CatName,
-                                               oldL1CatName, oldL2CatName ) ;
+            lecRepo.save( newCat ) ;
         }
         
-        log.debug( "Updating attributes of existing category" ) ;
-        oldCat.copyAttributes( newCat ) ;
-        lecRepo.save( oldCat ) ;
+        // If the new category already exists, just update the ledger
+        // entries
+        updateLedgerEntries( newCat.getL1CatName(), newCat.getL2CatName(),
+                             oldCat.getL1CatName(), oldCat.getL2CatName(),
+                             isCreditClass ) ;
+        
+        updateClassificationRules( oldCat,
+                            newCat.getL1CatName(), newCat.getL2CatName(),
+                            oldCat.getL1CatName(), oldCat.getL2CatName() ) ;
+        
+        // Delete the old category
+        lecRepo.delete( oldCat ) ;
     }
 
     private void updateLedgerEntries( String newL1CatName, String newL2CatName,
@@ -89,6 +85,7 @@ public class ChangedCategorySaveHelper {
                                             oldL1CatName, oldL2CatName ) ;
         }
     }
+    
 
     private void updateClassificationRules( 
                                 LedgerEntryCategory oldCat,
@@ -104,7 +101,6 @@ public class ChangedCategorySaveHelper {
         if( lecr != null ) {
             // Implying a rule to classify into this category already 
             // exists, then delete the old rule
-            
             lecrRepo.delete( oldCat.isCreditClassification(), 
                              oldL1CatName, oldL2CatName ) ;
         }
@@ -115,19 +111,5 @@ public class ChangedCategorySaveHelper {
                                             newL1CatName, newL2CatName, 
                                             oldL1CatName, oldL2CatName ) ;
         }
-    }
-    
-    private boolean hasCatNamesChanged( LedgerEntryCategory newCat, 
-                                        LedgerEntryCategory oldCat ) {
-        
-        if( !newCat.getL1CatName().equals( oldCat.getL1CatName() ) ) {
-            return true ;
-        }
-        
-        if( !newCat.getL2CatName().equals( oldCat.getL2CatName() ) ) {
-            return true ;
-        }
-        
-        return false ;
-    }
+    }    
 }

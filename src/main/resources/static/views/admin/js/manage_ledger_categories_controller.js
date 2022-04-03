@@ -243,7 +243,9 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         console.log( "Applying new parent category." ) ;
         
         var newL1CatName = validateNewL1CatName() ;
-        if( newL1CatName != null ) {
+        if( newL1CatName != null && 
+            newL1CatName != $scope.catEditCtx.cat.l1CatName ) {
+                
             console.log( "New L1 cat name = " + newL1CatName ) ;
             applyNewL1CatName( newL1CatName, $scope.catEditCtx ) ;
         }
@@ -290,11 +292,11 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                 
                 var cat = $scope.catEditCtx.cat ;
                 
-                var oldL1CatName = cat.l1CatName ;
-                var oldL2CatName = cat.l2CatName ;
-                var isCreditClassification = cat.creditClassification ;
-                
-                 
+                if( !( newL1CatName == cat.l1CatName && 
+                       newL2CatName == cat.l2CatName ) ) {
+                        
+                    mergeCategoriesOnServer( cat.id, newL1CatName, newL2CatName ) ; 
+                }
             }
         }
         $scope.hideMergeCategoryDialog() ;
@@ -424,6 +426,30 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         }) ;
     }
     
+    function mergeCategoriesOnServer( oldCatId, newL1CatName, newL2CatName ) {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/Ledger/Categories/Merge', {
+            oldCatId : oldCatId,
+            newL1CatName : newL1CatName,
+            newL2CatName : newL2CatName
+        } )
+        .then ( 
+            function( response ){
+                console.log( "Changes successfully saved on server" ) ;
+                fetchClassificationCategories() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error saving changes on server.\n" + 
+                                              error.data.message ) ;
+                console.log( error ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
     // ------------------- Server response processors ------------------------
     
     function clearCatEditCtx() {
@@ -516,11 +542,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                              $scope.catEditCtx.newL1CatName : 
                              $scope.catEditCtx.selectedL1CatName ;
                              
-        if( newL1CatName == $scope.catEditCtx.cat.l1CatName ) {
-            console.log( "New L1 cat name same as existing L1 cat name." ) ;
-            newL1CatName = null ;
-        }
-        
         return newL1CatName ;
     }
     
@@ -536,11 +557,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                              $scope.catEditCtx.newL2CatName : 
                              $scope.catEditCtx.selectedL2CatName ;
                              
-        if( newL2CatName == $scope.catEditCtx.cat.l2CatName ) {
-            console.log( "New L2 cat name same as existing L2 cat name." ) ;
-            newL2CatName = null ;
-        }
-        
         return newL2CatName ;
     }
     

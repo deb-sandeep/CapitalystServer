@@ -4,6 +4,7 @@ import java.util.List ;
 
 import org.springframework.data.jpa.repository.Query ;
 import org.springframework.data.repository.CrudRepository ;
+import org.springframework.data.repository.query.Param ;
 
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 
@@ -22,6 +23,21 @@ public interface LedgerEntryCategoryRepo
     )
     public List<LedgerEntryCategory> findAllCategories() ;
     
+    @Query( value =   
+            "SELECT "
+          + "    lec "
+          + "FROM "
+          + "    LedgerEntryCategory lec "
+          + "WHERE "
+          + "    lec.creditClassification = :creditClass AND "
+          + "    lec.l1CatName = :l1CatName AND "
+          + "    lec.l2CatName = :l2CatName "
+    )
+    public LedgerEntryCategory findCategory( 
+            @Param( "creditClass" ) boolean creditClass,
+            @Param( "l1CatName"   ) String l1CatName,
+            @Param( "l2CatName"   ) String l2CatName ) ;
+               
     @Query( value =   
             "SELECT "
           + "    lec "
