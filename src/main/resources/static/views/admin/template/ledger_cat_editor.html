@@ -45,7 +45,11 @@
                            ng-escape="revertL1CategoryEditChanges( cat )"/> 
                 </div>
             </td>
-            <td class="numeric">{{cat.numLedgerEntries}}</td>
+            <td class="numeric">
+                <a ng-click="showLedgerEntriesDialog()">
+	                {{cat.numLedgerEntries}}
+                </a>
+            </td>
             <td class="centered-cell">
                 <input type="checkbox" 
                        ng-model="cat.selectedForTxnPivot"

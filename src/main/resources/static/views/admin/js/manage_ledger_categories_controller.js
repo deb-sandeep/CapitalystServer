@@ -246,47 +246,14 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.hideParentCategoryDialog() ;
     }
     
-    function validateNewL1CatName() {
-        
-        
-        if( $scope.catEditCtx.selectedL1CatName == null && 
-            $scope.catEditCtx.newL1CatName == null ) {
-            console.log( "No new parent category selected." ) ;
-            return null ;
-        }
-        
-        var newL1CatName = ( $scope.catEditCtx.selectedL1CatName == null ) ? 
-                             $scope.catEditCtx.newL1CatName : 
-                             $scope.catEditCtx.selectedL1CatName ;
-                             
-        if( newL1CatName == $scope.catEditCtx.cat.l1CatName ) {
-            console.log( "New L1 cat name same as existing L1 cat name." ) ;
-            newL1CatName = null ;
-        }
-        
-        return newL1CatName ;
+    $scope.showLedgerEntriesDialog = function() {
+        $( '#viewLedgerEntriesDialog' ).modal( 'show' ) ;
     }
     
-    function applyNewL1CatName( newL1CatName, editCtx ) {
-        
-        var categoryList = [] ;
-        var cat = editCtx.cat ;
-        
-        cat.l1CatName = newL1CatName ;
-        categoryList.push( cat ) ;
-        
-        // Much easier to rearrange the tree by fetching new data rather
-        // than trying to manipulate the client side data structure
-        saveCategoryEditChangesOnServer( categoryList,
-            function() { // Called on success
-                fetchClassificationCategories() ;
-            },
-            function() { // Called on failure
-                fetchClassificationCategories() ;
-            } 
-        ) ;        
+    $scope.hideLedgerEntriesDialog = function() {
+        $( '#viewLedgerEntriesDialog' ).modal( 'hide' ) ;
     }
-    
+
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -457,4 +424,47 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
             }
         }
     }
+    
+    function validateNewL1CatName() {
+        
+        
+        if( $scope.catEditCtx.selectedL1CatName == null && 
+            $scope.catEditCtx.newL1CatName == null ) {
+            console.log( "No new parent category selected." ) ;
+            return null ;
+        }
+        
+        var newL1CatName = ( $scope.catEditCtx.selectedL1CatName == null ) ? 
+                             $scope.catEditCtx.newL1CatName : 
+                             $scope.catEditCtx.selectedL1CatName ;
+                             
+        if( newL1CatName == $scope.catEditCtx.cat.l1CatName ) {
+            console.log( "New L1 cat name same as existing L1 cat name." ) ;
+            newL1CatName = null ;
+        }
+        
+        return newL1CatName ;
+    }
+    
+    function applyNewL1CatName( newL1CatName, editCtx ) {
+        
+        var categoryList = [] ;
+        var cat = editCtx.cat ;
+        
+        cat.l1CatName = newL1CatName ;
+        categoryList.push( cat ) ;
+        
+        // Much easier to rearrange the tree by fetching new data rather
+        // than trying to manipulate the client side data structure
+        saveCategoryEditChangesOnServer( categoryList,
+            function() { // Called on success
+                fetchClassificationCategories() ;
+            },
+            function() { // Called on failure
+                fetchClassificationCategories() ;
+            } 
+        ) ;        
+    }
+    
+    
 } ) ;
