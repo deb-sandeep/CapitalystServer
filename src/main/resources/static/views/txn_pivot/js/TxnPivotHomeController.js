@@ -47,9 +47,9 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Pivot of Transactions" ;
-    $scope.catSelectionPaneHidden = false ;
+    $scope.catSelectionPaneHidden = true ;
     $scope.pivotDuration = {
-        startDate : moment().subtract(5, 'month').startOf( 'month' ),
+        startDate : moment().subtract(11, 'month').startOf( 'month' ),
         endDate : moment().toDate(),
     } ;
 

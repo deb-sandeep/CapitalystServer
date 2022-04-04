@@ -17,7 +17,7 @@ public class LedgerSearchCriteria {
     private Float maxAmt = null ;
     private String customRule = null ;
     private boolean showOnlyUnclassified = false ;
-    private boolean isCreditClassifier = false ;
+    private boolean creditClassifier = false ;
     private String l1CatName = null ;
     private String l2CatName = null ;
     
@@ -30,7 +30,7 @@ public class LedgerSearchCriteria {
         builder.append( "   minAmt = " + this.minAmt + "\n" ) ;
         builder.append( "   maxAmt = " + this.maxAmt + "\n" ) ;
         builder.append( "   customRule = " + this.customRule + "\n" ) ;
-        builder.append( "   isCreditClassifier = " + this.isCreditClassifier + "\n" ) ;
+        builder.append( "   isCreditClassifier = " + this.creditClassifier + "\n" ) ;
         builder.append( "   l1CatName = " + this.l1CatName + "\n" ) ;
         builder.append( "   l2CatName = " + this.l2CatName + "\n" ) ;
         builder.append( "   showOnlyUnclassified = " + this.showOnlyUnclassified + "\n" ) ;

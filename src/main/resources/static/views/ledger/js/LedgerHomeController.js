@@ -18,7 +18,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
         endDate : moment().toDate(),
         minAmt : null,
         maxAmt : null,
-        isCreditClassifier : false,
+        creditClassifier : false,
         l1CatName : null,
         l2CatName : null,
         showOnlyUnclassified : false
@@ -89,7 +89,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $scope.searchQuery.maxAmt = null ;
         $scope.searchQuery.customRule = null ;
         $scope.searchQuery.showOnlyUnclassified = false ;
-        $scope.searchQuery.isCreditClassifier = false ;
+        $scope.searchQuery.creditClassifier = false ;
         $scope.searchQuery.l1CatName = null ;
         $scope.searchQuery.l2CatName = null ;
         $scope.entryFilterText = null ;
@@ -412,7 +412,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.creditClassifierChanged = function() {
-        if( $scope.searchQuery.isCreditClassifier ) {
+        if( $scope.searchQuery.creditClassifier ) {
             $scope.filterCategories = $scope.masterCategories.credit ;
         }
         else {
