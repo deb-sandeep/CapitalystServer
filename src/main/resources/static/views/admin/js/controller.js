@@ -8,7 +8,7 @@ capitalystNgApp.controller( 'AdminLandingController',
     // Common framework variables. 
     $scope.alerts = [] ;
     $scope.navBarTitle = "Administrative functions" ;
-    $scope.activeModuleId = "" ;
+    $scope.activeModuleId = "cat_management" ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
