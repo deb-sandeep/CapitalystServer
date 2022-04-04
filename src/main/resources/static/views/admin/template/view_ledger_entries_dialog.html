@@ -1,5 +1,5 @@
 <div class="modal-dialog" 
-     style="width:600px;">
+     style="width:750px;">
      
   <div class="modal-content" >
     <div class="modal-header" style="background-color:#C5C5C5;padding:5px">
@@ -19,6 +19,7 @@
 		       <tr>
 		           <th width="100px;">Date</th>
 		           <th>Amount</th>
+		           <th>Notes</th>
 		           <th>Remarks</th>
 		       </tr>
 		   </thead>
@@ -29,6 +30,9 @@
 		          </td>
                   <td class="numeric">
                     {{entry.amount | number : 0}}
+                  </td>
+                  <td style="padding-left:5px;font-size:11px;">
+                    {{entry.notes}}
                   </td>
                   <td style="padding-left:5px;font-size:11px;">
                     {{entry.remarks | remark}}
