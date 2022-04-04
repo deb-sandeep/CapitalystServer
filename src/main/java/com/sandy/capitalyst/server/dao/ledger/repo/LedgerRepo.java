@@ -131,10 +131,26 @@ public interface LedgerRepo
           + "WHERE "
           + "    le.id in :idList "
     )
-    public void updateClassification( @Param( "idList" ) Integer[] idList, 
+    public void updateClassificationAndNotes( 
+                                      @Param( "idList" ) Integer[] idList, 
                                       @Param( "l1Cat" ) String l1Cat,
                                       @Param( "l2Cat" ) String l2Cat,
                                       @Param( "notes" ) String notes ) ;
+    
+    @Modifying( clearAutomatically = true )
+    @Transactional( propagation = Propagation.REQUIRES_NEW )    
+    @Query( value =   
+            "UPDATE "
+          + "    LedgerEntry le "
+          + "SET "
+          + "    le.l1Cat = :l1Cat, "
+          + "    le.l2Cat = :l2Cat "
+          + "WHERE "
+          + "    le.id in :idList "
+    )
+    public void updateClassification( @Param( "idList" ) Integer[] idList, 
+                                      @Param( "l1Cat" ) String l1Cat,
+                                      @Param( "l2Cat" ) String l2Cat ) ;
     
     @Modifying( clearAutomatically = true )
     @Transactional( propagation = Propagation.REQUIRES_NEW )    

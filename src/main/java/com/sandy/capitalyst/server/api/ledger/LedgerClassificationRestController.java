@@ -61,22 +61,26 @@ public class LedgerClassificationRestController {
         
         if( input.isSaveRule() && 
             StringUtil.isNotEmptyOrNull( input.getRule() ) ) {
-            LedgerEntryClassificationRule rule = null ;
-            rule = saveNewClassificationRule( input ) ;
             
+            LedgerEntryClassificationRule rule = null ;
+            
+            rule = saveNewClassificationRule( input ) ;
             new LEClassifier().runClassification( rule ) ;
         }
         
         String notes = input.getNotes() ;
-        if( StringUtil.isEmptyOrNull( notes ) && 
-            input.isSaveRule() ) {
-            notes = input.getRuleName() ;
+
+        if( StringUtil.isNotEmptyOrNull( notes ) ) {
+            lRepo.updateClassificationAndNotes( input.getEntryIdList(), 
+                                                input.getL1Cat(), 
+                                                input.getL2Cat(),
+                                                notes ) ;
         }
-        
-        lRepo.updateClassification( input.getEntryIdList(), 
-                                    input.getL1Cat(), 
-                                    input.getL2Cat(),
-                                    notes ) ;
+        else {
+            lRepo.updateClassification( input.getEntryIdList(), 
+                                        input.getL1Cat(), 
+                                        input.getL2Cat() ) ;
+        }
     }
 
     private LedgerEntryClassificationRule saveNewClassificationRule( 

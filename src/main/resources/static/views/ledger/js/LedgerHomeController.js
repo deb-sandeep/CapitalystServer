@@ -177,16 +177,22 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }
             
         for( var i=0; i<selectedEntries.length; i++ ) {
-            var entry = selectedEntries[i] ;
-            var note = entry.notes == null ? "" : entry.notes + " " ;
             
-            input.notes = ( input.notes == null ) ? "" : input.notes ;
+            var entry = selectedEntries[i] ;
             
             entry.l1Cat = l1Cat ;
             entry.l2Cat = l2Cat ;
             
-            entry.notes = ( input.saveRule ) ? note + input.ruleName : 
-                                               note + input.notes ;
+            // Note that if a note is entered in the classification dialog
+            // it overrides the existing notes of all the impacted entries.
+            // If the note is kept blank, the entries retain their existing
+            // notes.
+            if( input.notes == null || input.notes == "" ) {
+                input.notes = "" ;
+            }
+            else {
+                entry.notes = input.notes ;
+            }
         }
         
         applyClassificationOnServer( l1Cat, l2Cat, newCategory ) ;
