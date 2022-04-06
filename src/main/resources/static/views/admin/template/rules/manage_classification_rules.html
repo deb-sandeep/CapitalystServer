@@ -12,3 +12,37 @@
 	</button>
 </div>
 
+<table class="pure-table pure-table-bordered">
+   <thead>
+       <tr>
+           <td></td>
+           <th width="175px">L1 category</th>
+           <th width="175px">L2 category</th>
+           <th width="175px">Rule name</th>
+           <th>Rule</th>
+           <td></td>
+       </tr>
+   </thead>
+   <tbody>
+       <tr ng-repeat="rule in rules"
+           ng-show="showRule( rule )">
+            <td style="vertical-align:middle;">
+               <span class="glyphicon glyphicon-pencil"
+                     ng-click="initiateEdit( rule )">
+               </span>&nbsp;
+            </td>
+            <td>{{rule.l1Category}}</td>
+            <td>{{rule.l2Category}}</td>
+            <td>{{rule.ruleName}}</td>
+            <td>
+                <pre style="font-family:Courier New;word-wrap:normal;">{{rule.ruleText}}</pre>
+            </td>
+            <td style="vertical-align:middle;">
+               <span class="glyphicon glyphicon-trash"
+                     ng-click="delete( rule )"
+                     style="color:red;">
+               </span>&nbsp;
+            </td>
+       </tr>
+   </tbody>
+</table>

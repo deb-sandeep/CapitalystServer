@@ -25,6 +25,8 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
            l2Categories : new Map()
        }
     } ;    
+    
+    $scope.rules = [] ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -45,6 +47,15 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
     
     $scope.showDebitEntries = function() {
         $scope.activeCategory = "Debit" ;
+    }
+    
+    $scope.showRule = function( rule ) {
+        if( rule.creditClassifier ) {
+            return $scope.activeCategory == 'Credit' ;
+        }
+        else {
+            return $scope.activeCategory == 'Debit' ;
+        }
     }
     
     // --- [START] Scope functions dealilng with non UI logic ----------------
@@ -87,11 +98,17 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
     
     function fetchClassificationRules() {
         
+        $scope.rules.length = 0 ;
+        
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Ledger/ClassificationRule' )
         .then ( 
             function( response ){
                 console.log( response.data ) ;
+                for( var i=0; i<response.data.length; i++ ) {
+                    var rule = response.data[i] ;
+                    $scope.rules.push( rule ) ;
+                }
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +

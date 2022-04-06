@@ -66,3 +66,16 @@
     height: 500px;	
     overflow-y: scroll;
 }
+
+pre {
+	border:none;
+	background-color:white;
+	padding:2px;
+	font-family: "Courier New" ;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;	
+}

@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.dao.ledger.repo;
 
+import java.util.List ;
+
 import org.springframework.data.jpa.repository.Modifying ;
 import org.springframework.data.jpa.repository.Query ;
 import org.springframework.data.repository.CrudRepository ;
@@ -14,6 +16,19 @@ public interface LedgerEntryClassificationRuleRepo
     extends CrudRepository<LedgerEntryClassificationRule, Integer> {
     
     public LedgerEntry findByRuleName( String ruleName ) ;
+    
+    @Query( value =   
+            "SELECT "
+          + "    l "
+          + "FROM "
+          + "    LedgerEntryClassificationRule l "
+          + "ORDER BY "
+          + "    l.creditClassifier ASC, "
+          + "    l.l1Category ASC, "
+          + "    l.l2Category ASC, "
+          + "    l.ruleName ASC"
+    )
+    public List<LedgerEntryClassificationRule> findAllRules() ;
     
     @Query( value =   
             "SELECT "

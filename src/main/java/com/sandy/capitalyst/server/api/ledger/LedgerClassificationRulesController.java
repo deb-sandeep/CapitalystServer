@@ -1,6 +1,5 @@
 package com.sandy.capitalyst.server.api.ledger;
 
-import java.util.ArrayList ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
@@ -27,11 +26,8 @@ public class LedgerClassificationRulesController {
     @GetMapping( "/Ledger/ClassificationRule" ) 
     public ResponseEntity<List<LedgerEntryClassificationRule>> getRules() {
         try {
-            List<LedgerEntryClassificationRule> rules = new ArrayList<>() ;
-            Iterable<LedgerEntryClassificationRule> rulesIter = lecrRepo.findAll() ;
-
-            rulesIter.forEach( rules::add ) ;
-            
+            List<LedgerEntryClassificationRule> rules = null ;
+            rules = lecrRepo.findAllRules() ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( rules ) ;
         }
