@@ -73,7 +73,25 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
         .then ( 
             function( response ){
                 populateMasterCategories( response.data ) ;
-                console.log( $scope.ledgerCategories ) ;
+                fetchClassificationRules() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function fetchClassificationRules() {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.get( '/Ledger/ClassificationRule' )
+        .then ( 
+            function( response ){
+                console.log( response.data ) ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
@@ -88,12 +106,6 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
     // ------------------- Server response processors ------------------------
     
     function populateMasterCategories( categories ) {
-        
-        $scope.ledgerCategories.credit.l1Categories.length = 0 ;
-        $scope.ledgerCategories.credit.l2Categories.clear() ;
-        
-        $scope.ledgerCategories.debit.l1Categories.length = 0 ;
-        $scope.ledgerCategories.debit.l2Categories.clear() ;
         
         for( var i=0; i<categories.length; i++ ) {
             
