@@ -278,7 +278,6 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
     
     function validateRuleOnServer( successCallback, errorCallback ) {
         
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.post( '/Ledger/ClassificationRule/Validate', 
                    $scope.ruleUnderEdit.ruleText )
         .then ( 
@@ -289,9 +288,6 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
                 errorCallback() ;
             }
         )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
     }
     
     function saveRuleOnServer() {

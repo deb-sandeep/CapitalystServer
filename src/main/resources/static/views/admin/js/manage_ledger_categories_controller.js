@@ -407,7 +407,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                                               successCallback, 
                                               errorCallback ) {
         
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.post( '/Ledger/Categories', l2List )
         .then ( 
             function( response ){
@@ -421,9 +420,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                 errorCallback() ;
             }
         )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
     }
     
     function mergeCategoriesOnServer( oldCatId, newL1CatName, newL2CatName ) {
