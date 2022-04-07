@@ -1,5 +1,5 @@
 capitalystNgApp.controller( 'ManageClassificationRulesController', 
-    function( $scope, $http ) {
+    function( $scope, $http, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
     
@@ -126,6 +126,14 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
     $scope.hideLedgerEntriesDialog = function() {
         $scope.ledgerEntriesForDisplay.length = 0 ;
         $( "#viewLedgerEntriesDialog" ).modal( 'hide' ) ;
+    }
+    
+    $scope.executeRule = function( rule ) {
+        executeRuleOnServer( rule ) ;
+    }
+
+    $scope.executeAllRules = function() {
+        executeAllRulesOnServer() ;
     }
 
     // --- [END] Scope functions
@@ -274,10 +282,10 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
         $http.post( '/Ledger/ClassificationRule/Validate', 
                    $scope.ruleUnderEdit.ruleText )
         .then ( 
-            function( response ){
+            function(){
                 successCallback() ;
             }, 
-            function( error ){
+            function(){
                 errorCallback() ;
             }
         )
@@ -300,7 +308,7 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
             ruleText         : editedAttribs.ruleText
         } )
         .then ( 
-            function( response ){
+            function(){
                 $scope.hideRuleEditor() ;
                 fetchClassificationRules() ;
             }, 
@@ -314,12 +322,48 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
         }) ;
     }
     
+    function executeRuleOnServer( rule ) {
+
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/Ledger/ClassificationRule/Execute/' + rule.id )
+        .then ( 
+            function( response ){
+                $ngConfirm( response.data.message ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not execute rule.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function executeAllRulesOnServer() {
+
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/Ledger/ClassificationRule/ExecuteAll' )
+        .then ( 
+            function( response ){
+                $ngConfirm( response.data.message ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not execute rule.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
     function deleteRuleOnServer( rule ) {
 
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.delete( '/Ledger/ClassificationRule/' + rule.id )
         .then ( 
-            function( response ){
+            function(){
                 fetchClassificationRules() ;
             }, 
             function( error ){

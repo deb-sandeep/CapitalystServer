@@ -20,6 +20,11 @@
                      ng-click="addNewRule()">
                </span>
            </td>
+            <td style="vertical-align:middle;">
+               <span class="glyphicon glyphicon-flash"
+                     ng-click="executeAllRules()">
+               </span>&nbsp;
+            </td>
            <th width="175px">Rule name</th>
            <th width="50px">#Match</th>
            <th>Rule</th>
@@ -35,6 +40,11 @@
             <td style="vertical-align:middle;">
                <span class="glyphicon glyphicon-pencil"
                      ng-click="showRuleEditor( rule )">
+               </span>&nbsp;
+            </td>
+            <td style="vertical-align:middle;">
+               <span class="glyphicon glyphicon-flash"
+                     ng-click="executeRule( rule )">
                </span>&nbsp;
             </td>
             <td>{{rule.ruleName}}</td>

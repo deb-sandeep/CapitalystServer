@@ -65,6 +65,22 @@ public interface LedgerRepo
     public List<LedgerEntry> findEntries( 
                                     @Param( "startDate" ) Date startDate,
                                     @Param( "endDate"   ) Date endDate ) ; 
+    
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.valueDate between :startDate AND :endDate AND "
+          + "    ( le.l1Cat IS NULL AND le.l2Cat IS NULL ) "
+          + "ORDER BY "
+          + "    le.valueDate DESC, "
+          + "    le.id DESC"
+    )
+    public List<LedgerEntry> findUnclassifiedEntries( 
+                                    @Param( "startDate" ) Date startDate,
+                                    @Param( "endDate"   ) Date endDate ) ; 
     @Query( value =   
             "SELECT "
           + "    le "

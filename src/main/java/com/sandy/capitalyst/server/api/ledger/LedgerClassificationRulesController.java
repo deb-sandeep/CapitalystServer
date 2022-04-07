@@ -97,6 +97,94 @@ public class LedgerClassificationRulesController {
         }
     }
 
+    @PostMapping( "/Ledger/ClassificationRule/Execute/{id}" ) 
+    public ResponseEntity<APIResponse> executeRule( @PathVariable Integer id ) {
+        try {
+            
+            List<LedgerEntry> entries = null ;
+            LEClassifierRuleBuilder builder = null ;
+            LEClassifierRule classifier = null ;
+            LedgerEntryClassificationRule rule = null ;
+            
+            Date today = new Date() ;
+            Date oneYrPastDate = new Date( today.getTime() - 31536000000L ) ;
+            
+            int numClassifiedEntries = 0 ;
+            
+            rule = lecrRepo.findById( id ).get() ;
+            entries = lRepo.findUnclassifiedEntries( oneYrPastDate, today ) ;
+            builder = new LEClassifierRuleBuilder() ;
+            
+            classifier = builder.buildClassifier( rule.getRuleText() ) ;
+            
+            for( LedgerEntry entry : entries ) {
+                if( classifier.isRuleMatched( entry ) ) {
+                    entry.setL1Cat( rule.getL1Category() ) ;
+                    entry.setL2Cat( rule.getL2Category() ) ;
+                    
+                    lRepo.save( entry ) ;
+                    
+                    numClassifiedEntries++ ;
+                }
+            }
+            
+            String msg = numClassifiedEntries + " entries classified." ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( new APIResponse( msg ) ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( new APIResponse( e.getMessage() ) ) ;
+        }
+    }
+
+    @PostMapping( "/Ledger/ClassificationRule/ExecuteAll" ) 
+    public ResponseEntity<APIResponse> executeAllRules() {
+        try {
+            
+            List<LedgerEntry> entries = null ;
+            List<LedgerEntryClassificationRule> rules = null ;
+            LEClassifierRuleBuilder builder = null ;
+            LEClassifierRule classifier = null ;
+            
+            Date today = new Date() ;
+            Date oneYrPastDate = new Date( today.getTime() - 31536000000L ) ;
+            
+            int numClassifiedEntries = 0 ;
+            
+            entries = lRepo.findUnclassifiedEntries( oneYrPastDate, today ) ;
+            rules = lecrRepo.findAllRules() ;
+            
+            builder = new LEClassifierRuleBuilder() ;
+            
+            for( LedgerEntryClassificationRule rule : rules ) {
+                
+                classifier = builder.buildClassifier( rule.getRuleText() ) ;
+                
+                for( LedgerEntry entry : entries ) {
+                    if( classifier.isRuleMatched( entry ) ) {
+                        entry.setL1Cat( rule.getL1Category() ) ;
+                        entry.setL2Cat( rule.getL2Category() ) ;
+                        
+                        lRepo.save( entry ) ;
+                        
+                        numClassifiedEntries++ ;
+                    }
+                }
+            }
+            
+            String msg = numClassifiedEntries + " entries classified." ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( new APIResponse( msg ) ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( new APIResponse( e.getMessage() ) ) ;
+        }
+    }
+
     @GetMapping( "/Ledger/ClassificationRule/MatchingEntries/{id}" ) 
     public ResponseEntity<List<LedgerEntry>> getMatchingEntries(  
                 @PathVariable Integer id ) {
