@@ -20,11 +20,11 @@
                      ng-click="addNewRule()">
                </span>
            </td>
-           <td></td>
+           <th width="175px">Rule name</th>
+           <th width="50px">#Match</th>
+           <th>Rule</th>
            <th width="175px">L1 category</th>
            <th width="175px">L2 category</th>
-           <th width="175px">Rule name</th>
-           <th>Rule</th>
            <td></td>
        </tr>
    </thead>
@@ -37,14 +37,13 @@
                      ng-click="showRuleEditor( rule )">
                </span>&nbsp;
             </td>
-            <td>
-               <span class="glyphicon glyphicon-th-list"
-                     ng-click="showMatchedEntries( rule )">
-               </span>&nbsp;
-            </td>
-            <td>{{rule.l1Category}}</td>
-            <td>{{rule.l2Category}}</td>
             <td>{{rule.ruleName}}</td>
+            <td>
+                <a ng-click="showMatchedEntries( rule )"
+                   style="font-size:16px;">
+                    {{rule.matchCount}}
+                </a>
+            </td>
             <td>
                <pre>{{rule.ruleText}}</pre>
                <span class="glyphicon glyphicon-pencil"
@@ -52,6 +51,8 @@
                      ng-click="showRuleEditor( rule )">
                </span>&nbsp;
             </td>
+            <td>{{rule.l1Category}}</td>
+            <td>{{rule.l2Category}}</td>
             <td style="vertical-align:middle;">
                <span class="glyphicon glyphicon-trash"
                      ng-click="deleteRule( rule )"

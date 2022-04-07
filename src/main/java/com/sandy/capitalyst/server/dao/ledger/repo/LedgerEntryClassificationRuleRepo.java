@@ -24,9 +24,9 @@ public interface LedgerEntryClassificationRuleRepo
           + "    LedgerEntryClassificationRule l "
           + "ORDER BY "
           + "    l.creditClassifier ASC, "
+          + "    l.ruleName ASC, "
           + "    l.l1Category ASC, "
-          + "    l.l2Category ASC, "
-          + "    l.ruleName ASC"
+          + "    l.l2Category ASC "
     )
     public List<LedgerEntryClassificationRule> findAllRules() ;
     

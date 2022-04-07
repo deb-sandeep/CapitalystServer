@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.api.ledger;
 
+import java.util.ArrayList ;
 import java.util.Date ;
 import java.util.Iterator ;
 import java.util.List ;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.ledger.helpers.RuleMatchCount ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
@@ -129,5 +131,49 @@ public class LedgerClassificationRulesController {
                                  .body( null ) ;
         }
     }
+    
+    @GetMapping( "/Ledger/ClassificationRule/MatchingCounter" ) 
+    public ResponseEntity<List<RuleMatchCount>> getMatchingCounts() {
+        
+        try {
+            List<LedgerEntry> entries = null ;
+            List<LedgerEntryClassificationRule> rules = null ;
+            LEClassifierRuleBuilder builder = null ;
+            LEClassifierRule classifier = null ;
+            List<RuleMatchCount> counter = new ArrayList<>() ;
+            
+            Date today = new Date() ;
+            Date oneYrPastDate = new Date( today.getTime() - 31536000000L ) ;
+            
+            entries = lRepo.findEntries( oneYrPastDate, today ) ;
+            rules = lecrRepo.findAllRules() ;
+            
+            builder = new LEClassifierRuleBuilder() ;
+            
+            for( LedgerEntryClassificationRule rule : rules ) {
+                
+                int matchCount = 0 ;
+                classifier = builder.buildClassifier( rule.getRuleText() ) ;
+                
+                for( LedgerEntry entry : entries ) {
+                    if( classifier.isRuleMatched( entry ) ) {
+                        matchCount++ ;
+                    }
+                }
+                
+                counter.add( new RuleMatchCount( rule.getId(), matchCount ) ) ;
+            }
+            
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( counter ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
+    
+    
     
 }

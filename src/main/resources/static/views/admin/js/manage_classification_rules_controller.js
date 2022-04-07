@@ -193,14 +193,48 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
         $http.get( '/Ledger/ClassificationRule' )
         .then ( 
             function( response ){
-                console.log( response.data ) ;
+                
                 for( var i=0; i<response.data.length; i++ ) {
                     var rule = response.data[i] ;
+                    // Additional injected attribute
+                    rule.matchCount = 0 ;
                     $scope.rules.push( rule ) ;
                 }
+                
+                fetchRuleMatchCounter() ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function fetchRuleMatchCounter() {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.get( '/Ledger/ClassificationRule/MatchingCounter' )
+        .then ( 
+            function( response ){
+                
+                for( var i=0; i<response.data.length; i++ ) {
+                    
+                    var counter = response.data[i] ;
+                    
+                    for( var j=0; j<$scope.rules.length; j++ ) {
+                        
+                        var rule = $scope.rules[j] ;
+                        if( rule.id == counter.ruleId ) {
+                            rule.matchCount = counter.numMatches ;
+                        }
+                    }
+                }
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch rule match count.\n" +
                                               error.data.message ) ;
             }
         )
