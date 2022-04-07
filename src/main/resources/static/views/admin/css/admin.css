@@ -71,11 +71,24 @@ pre {
 	border:none;
 	background-color:white;
 	padding:2px;
-	font-family: "Courier New" ;
+	font-family: "Courier" ;
     overflow-x: auto;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;	
+}
+
+.rule-edit-textarea {
+	font-family: "Courier";
+	font-size: 12px;
+}
+
+.valid-rule {
+	background-color: #e2f7e4;
+}
+
+.invalid-rule {
+    background-color: #f8e7e5;
 }

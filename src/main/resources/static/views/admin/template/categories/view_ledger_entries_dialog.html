@@ -5,8 +5,8 @@
     <div class="modal-header" style="background-color:#C5C5C5;padding:5px">
       <h3 class="modal-title">
         Ledger Entries. [
-            {{$parent.ledgerEntriesForSelectedCategory[0].l1Cat}} &gt;
-            {{$parent.ledgerEntriesForSelectedCategory[0].l2Cat}}
+            {{$parent.ledgerEntriesForDisplay[0].l1Cat}} &gt;
+            {{$parent.ledgerEntriesForDisplay[0].l2Cat}}
         ] 
       </h3>
     </div>
@@ -23,7 +23,7 @@
 		       </tr>
 		   </thead>
 		   <tbody>
-		      <tr ng-repeat="entry in $parent.ledgerEntriesForSelectedCategory">
+		      <tr ng-repeat="entry in $parent.ledgerEntriesForDisplay">
 		          <td class="numeric">
 		              {{entry.valueDate | date : "dd/MMM/yyyy"}}
 		          </td>

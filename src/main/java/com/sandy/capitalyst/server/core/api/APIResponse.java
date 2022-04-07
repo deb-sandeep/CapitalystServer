@@ -6,6 +6,10 @@ public class APIResponse {
 
     private String message = null ;
     
+    public APIResponse() {
+        this.message = "OK" ;
+    }
+    
     public APIResponse( String msg ) {
         this.message = msg ;
     }

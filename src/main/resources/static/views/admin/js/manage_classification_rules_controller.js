@@ -26,7 +26,21 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
        }
     } ;    
     
+    $scope.catData = null ;
+    
     $scope.rules = [] ;
+    
+    $scope.ruleUnderEdit = {
+        ruleId : null,
+        creditClassifier : false,
+        ruleName : null,
+        l1CatName : null,
+        l2CatName : null,
+        ruleText : null,
+        validationStatus : null
+    } ;
+    
+    $scope.ledgerEntriesForDisplay = [] ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -43,13 +57,15 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
     
     $scope.showCreditEntries = function() {
         $scope.activeCategory = "Credit" ;
+        $scope.catData = $scope.ledgerCategories.credit ;
     }
     
     $scope.showDebitEntries = function() {
         $scope.activeCategory = "Debit" ;
+        $scope.catData = $scope.ledgerCategories.debit ;
     }
     
-    $scope.showRule = function( rule ) {
+    $scope.isRuleVisible = function( rule ) {
         if( rule.creditClassifier ) {
             return $scope.activeCategory == 'Credit' ;
         }
@@ -58,8 +74,60 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
         }
     }
     
-    // --- [START] Scope functions dealilng with non UI logic ----------------
+    $scope.showRuleEditor = function( rule ) {
+        setRuleUnderEdit( rule ) ;
+        $( '#ruleEditorDialog' ).modal( 'show' ) ;
+    }
     
+    $scope.hideRuleEditor = function() {
+        clearRuleUnderEdit() ;
+        $( '#ruleEditorDialog' ).modal( 'hide' ) ;
+    }
+    
+    $scope.getRuleEditBoxClass = function() {
+        var status = $scope.ruleUnderEdit.validationStatus ; 
+        if( status == null ) {
+            return "" ;
+        }
+        else if( status == "OK" ) {
+            return "valid-rule" ;
+        }
+        return "invalid-rule" ;
+    }
+    
+    $scope.validateEditedRule = function() {
+        console.log( "Validating rule under edit." ) ;
+        validateRuleOnServer( function() {
+            $scope.ruleUnderEdit.validationStatus = "OK" ;
+        }, function() {
+            $scope.ruleUnderEdit.validationStatus = "Error" ;
+        } ) ;
+    }
+    
+    $scope.saveEditedRule = function() {
+        saveRuleOnServer() ;
+    }
+    
+    $scope.addNewRule = function() {
+        clearRuleUnderEdit() ;
+        $scope.showRuleEditor() ;
+    }
+    
+    $scope.deleteRule = function( rule ) {
+        deleteRuleOnServer( rule ) ;
+    }
+    
+    $scope.showMatchedEntries = function( rule ) {
+        fetchMatchingEntries( rule, function(){
+            $( "#viewLedgerEntriesDialog" ).modal( 'show' ) ;
+        }) ;
+    }
+    
+    $scope.hideLedgerEntriesDialog = function() {
+        $scope.ledgerEntriesForDisplay.length = 0 ;
+        $( "#viewLedgerEntriesDialog" ).modal( 'hide' ) ;
+    }
+
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -67,6 +135,27 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
     
     function initializeController() {
         fetchClassificationCategories() ;
+    }
+    
+    function clearRuleUnderEdit() {
+        $scope.ruleUnderEdit.ruleId           = null ;
+        $scope.ruleUnderEdit.creditClassifier = ( $scope.activeCategory == 'Credit' ) ;
+        $scope.ruleUnderEdit.ruleName         = null ;
+        $scope.ruleUnderEdit.l1CatName        = null ;
+        $scope.ruleUnderEdit.l2CatName        = null ;
+        $scope.ruleUnderEdit.ruleText         = null ;
+    }
+    
+    function setRuleUnderEdit( rule ) {
+        clearRuleUnderEdit() ;
+        if( rule != null ) {
+            $scope.ruleUnderEdit.ruleId           = rule.id ;
+            $scope.ruleUnderEdit.creditClassifier = rule.creditClassifier ;
+            $scope.ruleUnderEdit.ruleName         = rule.ruleName ;
+            $scope.ruleUnderEdit.l1CatName        = rule.l1Category ;
+            $scope.ruleUnderEdit.l2CatName        = rule.l2Category ;
+            $scope.ruleUnderEdit.ruleText         = rule.ruleText ;
+        }
     }
     
     // ------------------- Server comm functions -----------------------------
@@ -120,6 +209,95 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
         }) ;
     }
     
+    function fetchMatchingEntries( rule, callback ) {
+        
+        $scope.ledgerEntriesForDisplay.length = 0 ;
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.get( '/Ledger/ClassificationRule/MatchingEntries/' + rule.id )
+        .then ( 
+            function( response ){
+                console.log( response.data ) ;
+                for( var i=0; i<response.data.length; i++ ) {
+                    var entry = response.data[i] ;
+                    $scope.ledgerEntriesForDisplay.push( entry ) ;
+                }
+                callback() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function validateRuleOnServer( successCallback, errorCallback ) {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/Ledger/ClassificationRule/Validate', 
+                   $scope.ruleUnderEdit.ruleText )
+        .then ( 
+            function( response ){
+                successCallback() ;
+            }, 
+            function( error ){
+                errorCallback() ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function saveRuleOnServer() {
+
+        var editedAttribs = $scope.ruleUnderEdit ;
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/Ledger/ClassificationRule', {
+            id               : editedAttribs.ruleId,
+            creditClassifier : editedAttribs.creditClassifier,
+            l1Category       : editedAttribs.l1CatName,
+            l2Category       : editedAttribs.l2CatName,
+            ruleName         : editedAttribs.ruleName,
+            ruleText         : editedAttribs.ruleText
+        } )
+        .then ( 
+            function( response ){
+                $scope.hideRuleEditor() ;
+                fetchClassificationRules() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
+    function deleteRuleOnServer( rule ) {
+
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.delete( '/Ledger/ClassificationRule/' + rule.id )
+        .then ( 
+            function( response ){
+                fetchClassificationRules() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not delete rule.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+    
     // ------------------- Server response processors ------------------------
     
     function populateMasterCategories( categories ) {
@@ -141,6 +319,7 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
                                               category ) ; 
             }
         }
+        $scope.catData = $scope.ledgerCategories.debit ;
     }
     
     function classifyCategoryInMasterList( categoryData, category ) {

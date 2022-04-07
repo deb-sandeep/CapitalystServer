@@ -35,7 +35,8 @@ public class LEClassifierRuleBuilder
         this.errorListener = errList ;
     }
     
-    public LEClassifierRule buildClassifier( String input ) {
+    public LEClassifierRule buildClassifier( String input ) 
+        throws IllegalArgumentException {
         
         ANTLRInputStream  ais = new ANTLRInputStream( input ) ;
         LedgerEntryClassifierLexer lexer  = new LedgerEntryClassifierLexer( ais ) ;

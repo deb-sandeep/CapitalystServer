@@ -50,7 +50,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         newL2CatName : null,
     }
     
-    $scope.ledgerEntriesForSelectedCategory = [] ;
+    $scope.ledgerEntriesForDisplay = [] ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -257,7 +257,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     }
     
     $scope.hideLedgerEntriesDialog = function() {
-        $scope.ledgerEntriesForSelectedCategory.length = 0 ;
+        $scope.ledgerEntriesForDisplay.length = 0 ;
         $( '#viewLedgerEntriesDialog' ).modal( 'hide' ) ;
     }
     
@@ -380,7 +380,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     function fetchLedgerEntries( cat ) {
         
-        $scope.ledgerEntriesForSelectedCategory.length = 0 ;
+        $scope.ledgerEntriesForDisplay.length = 0 ;
         
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
@@ -390,7 +390,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                    '&l2CatName=' + cat.l2CatName )
         .then ( 
             function( response ){
-                $scope.ledgerEntriesForSelectedCategory = response.data ;
+                $scope.ledgerEntriesForDisplay = response.data ;
                 $( '#viewLedgerEntriesDialog' ).modal( 'show' ) ; 
             }, 
             function( error ){
