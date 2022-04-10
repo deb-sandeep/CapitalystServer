@@ -7,8 +7,12 @@
    <thead>
        <tr>
            <th>Category</th>
-           <th>Sub-category</th>
-           <th>#</th>
+           <th width="200px">Sub-category</th>
+           <th width="40px">#</th>
+           <th width="40px"
+               ng-if="$parent.catType == 'Debit'">
+                Yr. Cap
+           </th>
            <th>Txn Pivot</th>
            <th>Cash Entry</th>
            <th>Change L1</th>
@@ -17,7 +21,7 @@
    </thead>
    <tbody ng-repeat="catName in catData.l1Categories">
        <tr class='cat-name'>
-           <td colspan="7">
+           <td colspan="{{$parent.$parent.catType=='Debit'?8:7}}">
                 <div ng-show="!catName.beingEdited" 
                      ng-click="startEditingL1CategoryName( catName )">
                     <b>{{catName.displayName}}</b>
@@ -51,6 +55,10 @@
 	                {{cat.numLedgerEntries}}
                 </a>
             </td>
+	        <td ng-if="$parent.$parent.$parent.catType == 'Debit'" 
+	            class="numeric">
+	               {{cat.yearlyCap}}
+	        </td>
             <td class="centered-cell">
                 <input type="checkbox" 
                        ng-model="cat.selectedForTxnPivot"

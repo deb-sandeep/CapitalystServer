@@ -12,12 +12,12 @@
 	</button>
 </div>
 
-<div ng-init="catName='Debit';catData=ledgerCategories.debit;"
+<div ng-init="catType='Debit';catData=ledgerCategories.debit;"
      ng-if="activeCategory == 'Debit'"
      ng-include="'template/categories/ledger_cat_editor.html'">
 </div>
 
-<div ng-init="catName='Credit';catData=ledgerCategories.credit;"
+<div ng-init="catType='Credit';catData=ledgerCategories.credit;"
      ng-if="activeCategory == 'Credit'"
      ng-include="'template/categories/ledger_cat_editor.html'">
 </div>
