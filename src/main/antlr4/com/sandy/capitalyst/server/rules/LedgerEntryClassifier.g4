@@ -12,7 +12,13 @@ le_group_stmt :
     '(' le_classifier ')' ;
                           
 remark_match : 
+     single_remark_match | multi_remark_match ;
+    
+single_remark_match :
     'remark' 'like' Value ;
+    
+multi_remark_match :
+    'remark' 'like' '(' (Value '|')* Value ')' ;
     
 l1cat_match :
     'l1Cat' 'like' Value ;

@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.core.ledger.classifier;
 
+import java.util.ArrayList ;
+import java.util.List ;
 import java.util.regex.Matcher ;
 import java.util.regex.Pattern ;
 
@@ -7,20 +9,37 @@ import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 
 public class LEClassifierRemarkMatchRule extends LEClassifierRule {
 
-    private String regex = null ;
-    private Pattern pattern = null ;
+    private List<String>  regexes  = new ArrayList<>() ;
+    private List<Pattern> patterns = new ArrayList<>() ;
     
-    public LEClassifierRemarkMatchRule( String regex ) {
-        this.regex = regex.replace( "*", ".*" ) ;
-        this.pattern = Pattern.compile( this.regex.toLowerCase() ) ;
+    public LEClassifierRemarkMatchRule( List<String> regexList ) {
+        
+        for( String regex : regexList ) {
+            
+            regex = regex.replace( "*", ".*" ) ;
+            Pattern pattern = Pattern.compile( regex.toLowerCase() ) ;
+            
+            regexes.add( regex ) ;
+            patterns.add( pattern ) ;
+        }
     }
 
     public boolean isRuleMatched( LedgerEntry ledgerEntry ) {
-        Matcher m = pattern.matcher( ledgerEntry.getRemarks().toLowerCase() ) ;
-        return m.matches() ;
+        
+        for( Pattern pattern : patterns ) {
+            Matcher m = pattern.matcher( ledgerEntry.getRemarks().toLowerCase() ) ;
+            if( m.matches() ) {
+                return true ;
+            }
+        }
+        return false ;
     }
 
     public String getFormattedString( String indent ) {
-        return indent + "Remark ~ " + regex ;
+        StringBuilder sb = new StringBuilder( indent ) ;
+        for( String regex : regexes ) {
+            sb.append( regex + " | " ) ;
+        }
+        return sb.toString() ;
     }
 }

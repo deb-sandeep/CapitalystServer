@@ -1,9 +1,13 @@
 package com.sandy.capitalyst.server.core.ledger.classifier;
 
+import java.util.ArrayList ;
+import java.util.List ;
+
 import org.antlr.v4.runtime.ANTLRErrorListener ;
 import org.antlr.v4.runtime.ANTLRInputStream ;
 import org.antlr.v4.runtime.CommonTokenStream ;
 import org.antlr.v4.runtime.tree.ParseTree ;
+import org.antlr.v4.runtime.tree.TerminalNode ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierAmtMatchRule.OpType ;
@@ -19,9 +23,11 @@ import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Binary_opCo
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.L1cat_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.L2cat_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Le_group_stmtContext ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Multi_remark_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Neg_opContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Note_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Remark_matchContext ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Single_remark_matchContext ;
 
 public class LEClassifierRuleBuilder 
     extends LedgerEntryClassifierBaseListener {
@@ -116,9 +122,33 @@ public class LEClassifierRuleBuilder
     }
     
     private LEClassifierRule buildRemarkMatchRule( ParseTree tree ) {
+        
+        List<String> values = new ArrayList<>() ;
+        String matchStr = null ;
+        
         Remark_matchContext ctx = ( Remark_matchContext )tree ;
-        String regex = ctx.Value().getText() ;
-        return new LEClassifierRemarkMatchRule( regex.replace( "\"", "" ) ) ;
+        ParseTree child = ctx.getChild( 0 ) ;
+        
+        if( child instanceof Single_remark_matchContext ) {
+            
+            Single_remark_matchContext singleMatch = null ;
+            singleMatch = ctx.single_remark_match() ;
+            matchStr = singleMatch.Value().getText() ;
+            
+            values.add( matchStr.replace( "\"", "" ) ) ;
+        }
+        else {
+            
+            Multi_remark_matchContext multiMatch = null ;
+            multiMatch = ctx.multi_remark_match() ;
+            
+            for( TerminalNode node : multiMatch.Value() ) {
+                matchStr = node.getText() ;
+                values.add( matchStr.replace( "\"", "" ) ) ;
+            }
+        }
+            
+        return new LEClassifierRemarkMatchRule( values ) ;
     }
     
     private LEClassifierRule buildL1CatMatchRule( ParseTree tree ) {
