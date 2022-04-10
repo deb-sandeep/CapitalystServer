@@ -47,8 +47,14 @@ public class LEClassifier {
         config = CapitalystServer.getConfig() ;
         
         for( LedgerEntryClassificationRule lecr : lecrRepo.findAll() ) {
-            LEClassifierRule rule = ruleBuilder.buildClassifier( lecr.getRuleText() ) ;
+            
+            LEClassifierRule rule = null ;
+            
+            rule = ruleBuilder.buildClassifier( lecr.getRuleName(), 
+                                                lecr.getRuleText() ) ;
+            
             RuleData data = new RuleData( rule, lecr ) ;
+            
             if( lecr.isCreditClassifier() ) {
                 creditRules.put( lecr.getRuleName(), data ) ;
             }
@@ -63,7 +69,9 @@ public class LEClassifier {
         String ruleName = lecr.getRuleName() ;
         log.debug( "Running Ledger Classifier for rule " + ruleName ) ;
         
-        LEClassifierRule rule = ruleBuilder.buildClassifier( lecr.getRuleText() ) ;
+        LEClassifierRule rule = null ;
+        rule = ruleBuilder.buildClassifier( lecr.getRuleName(), 
+                                            lecr.getRuleText() ) ;
         
         List<LedgerEntry> entriesToSave = new ArrayList<>() ;
         Iterable<LedgerEntry> entries = lRepo.findAll() ;
@@ -84,10 +92,13 @@ public class LEClassifier {
                 if( ( lecr.isCreditClassifier() && entry.isCredit() ) || 
                     ( !lecr.isCreditClassifier() && !entry.isCredit() ) ) {
                     
-                    if( rule.isRuleMatched( entry ) ) {
+                    String matchResult = rule.getMatchResult( entry ) ;
+                    
+                    if( matchResult != null ) {
+                        
                         entry.setL1Cat( lecr.getL1Category() ) ;
                         entry.setL2Cat( lecr.getL2Category() ) ;
-                        entry.setNotes( lecr.getRuleName() ) ;
+                        entry.setNotes( matchResult ) ;
                         entriesToSave.add( entry ) ;
                     }
                 }
@@ -127,16 +138,17 @@ public class LEClassifier {
         
         Map<String, RuleData> ruleSet = null ;
         ruleSet = ( entry.getAmount() < 0 ) ? debitRules : creditRules ;
+        
         for( String key : ruleSet.keySet() ) {
+            
             RuleData ruleData = ruleSet.get( key ) ;
-            if( ruleData.rule.isRuleMatched( entry ) ) {
-                
-                String existingNotes = entry.getNotes() == null ?
-                                       "" : entry.getNotes() + " " ;
+            String matchResult = ruleData.rule.getMatchResult( entry ) ;
+            
+            if( matchResult != null ) {
                 
                 entry.setL1Cat( ruleData.ruleMeta.getL1Category() ) ;
                 entry.setL2Cat( ruleData.ruleMeta.getL2Category() ) ;
-                entry.setNotes( existingNotes + ruleData.ruleMeta.getRuleName() ) ;
+                entry.setNotes( matchResult ) ;
                 
                 if( entriesToSave != null ) {
                     entriesToSave.add( entry ) ;

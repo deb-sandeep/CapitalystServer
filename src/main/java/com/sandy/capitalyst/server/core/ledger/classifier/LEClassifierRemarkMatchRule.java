@@ -12,7 +12,9 @@ public class LEClassifierRemarkMatchRule extends LEClassifierRule {
     private List<String>  regexes  = new ArrayList<>() ;
     private List<Pattern> patterns = new ArrayList<>() ;
     
-    public LEClassifierRemarkMatchRule( List<String> regexList ) {
+    public LEClassifierRemarkMatchRule( String ruleName, List<String> regexList ) {
+        
+        super( ruleName ) ;
         
         for( String regex : regexList ) {
             
@@ -24,15 +26,19 @@ public class LEClassifierRemarkMatchRule extends LEClassifierRule {
         }
     }
 
-    public boolean isRuleMatched( LedgerEntry ledgerEntry ) {
+    public String getMatchResult( LedgerEntry ledgerEntry ) {
         
-        for( Pattern pattern : patterns ) {
+        for( int i=0; i<patterns.size(); i++ ) {
+            
+            Pattern pattern = patterns.get( i ) ;
+            String  regex   = regexes.get( i ) ;
+            
             Matcher m = pattern.matcher( ledgerEntry.getRemarks().toLowerCase() ) ;
             if( m.matches() ) {
-                return true ;
+                return formatRuleValue( ruleName + " - " + regex ) ;
             }
         }
-        return false ;
+        return null ;
     }
 
     public String getFormattedString( String indent ) {

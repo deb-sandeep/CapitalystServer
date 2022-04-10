@@ -296,11 +296,12 @@ public class LedgerRestController {
         String customRule = sc.getCustomRule() ;
         if( StringUtil.isNotEmptyOrNull( customRule ) ) {
             LEClassifierRuleBuilder ruleBuilder = new LEClassifierRuleBuilder() ;
-            LEClassifierRule rule = ruleBuilder.buildClassifier( customRule ) ;
+            LEClassifierRule rule = ruleBuilder.buildClassifier( "Temp rule", 
+                                                                 customRule ) ;
             
             for( Iterator<LedgerEntry> iter = entries.iterator(); iter.hasNext(); ) {
                 LedgerEntry entry = iter.next() ;
-                if( !rule.isRuleMatched( entry ) ) {
+                if( rule.getMatchResult( entry ) == null ) {
                     iter.remove() ;
                 }
             }

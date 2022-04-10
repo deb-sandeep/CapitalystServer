@@ -11,7 +11,8 @@ public class LEClassifierAmtMatchRule extends LEClassifierRule {
     private Float minAmt = null ;
     private Float maxAmt = null ;
     
-    public LEClassifierAmtMatchRule( OpType opType ) {
+    public LEClassifierAmtMatchRule( String ruleName, OpType opType ) {
+        super( ruleName ) ;
         this.opType = opType ;
     }
     
@@ -27,19 +28,27 @@ public class LEClassifierAmtMatchRule extends LEClassifierRule {
         this.maxAmt = amt ;
     }
 
-    public boolean isRuleMatched( LedgerEntry entry ) {
+    public String getMatchResult( LedgerEntry entry ) {
+        
+        boolean matched = false ;
+        
         switch( opType ) {
             case EQ:
-                return amt == entry.getAmount() ;
+                matched = ( amt == entry.getAmount() ) ;
+                break ;
             case GT:
-                return amt >= entry.getAmount() ;
+                matched = ( amt >= entry.getAmount() ) ;
+                break ;
             case LT:
-                return amt <= entry.getAmount() ;
+                matched = ( amt <= entry.getAmount() ) ;
+                break ;
             case BW:
-                return minAmt >= entry.getAmount() && 
-                       maxAmt <= entry.getAmount() ;
+                matched = ( minAmt >= entry.getAmount() && 
+                            maxAmt <= entry.getAmount() ) ;
+                break ;
         }
-        return false ;
+        
+        return ( matched ) ? super.ruleName : null ;
     }
 
     public String getFormattedString( String indent ) {

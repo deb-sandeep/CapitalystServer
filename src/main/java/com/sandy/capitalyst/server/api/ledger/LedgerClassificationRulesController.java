@@ -85,7 +85,7 @@ public class LedgerClassificationRulesController {
     public ResponseEntity<APIResponse> valiateRule( @RequestBody String ruleText ) {
         try {
             LEClassifierRuleBuilder builder = new LEClassifierRuleBuilder() ;
-            builder.buildClassifier( ruleText ) ;
+            builder.buildClassifier( "Temp rule", ruleText ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( null ) ;
@@ -115,12 +115,17 @@ public class LedgerClassificationRulesController {
             entries = lRepo.findUnclassifiedEntries( oneYrPastDate, today ) ;
             builder = new LEClassifierRuleBuilder() ;
             
-            classifier = builder.buildClassifier( rule.getRuleText() ) ;
+            classifier = builder.buildClassifier( rule.getRuleName(), 
+                                                  rule.getRuleText() ) ;
             
             for( LedgerEntry entry : entries ) {
-                if( classifier.isRuleMatched( entry ) ) {
+                
+                String matchResult = classifier.getMatchResult( entry ) ;
+                
+                if( matchResult != null ) {
                     entry.setL1Cat( rule.getL1Category() ) ;
                     entry.setL2Cat( rule.getL2Category() ) ;
+                    entry.setNotes( matchResult ) ;
                     
                     lRepo.save( entry ) ;
                     
@@ -160,12 +165,18 @@ public class LedgerClassificationRulesController {
             
             for( LedgerEntryClassificationRule rule : rules ) {
                 
-                classifier = builder.buildClassifier( rule.getRuleText() ) ;
+                classifier = builder.buildClassifier( rule.getRuleName(), 
+                                                      rule.getRuleText() ) ;
                 
                 for( LedgerEntry entry : entries ) {
-                    if( classifier.isRuleMatched( entry ) ) {
+                    
+                    String matchResult = classifier.getMatchResult( entry ) ;
+                    
+                    if( matchResult != null ) {
+                    
                         entry.setL1Cat( rule.getL1Category() ) ;
                         entry.setL2Cat( rule.getL2Category() ) ;
+                        entry.setNotes( matchResult ) ;
                         
                         lRepo.save( entry ) ;
                         
@@ -200,12 +211,15 @@ public class LedgerClassificationRulesController {
             entries = lRepo.findEntries( oneYrPastDate, today ) ;
             rule = lecrRepo.findById( id ).get() ;
             builder = new LEClassifierRuleBuilder() ;
-            classifier = builder.buildClassifier( rule.getRuleText() ) ;
+            
+            classifier = builder.buildClassifier( rule.getRuleName(), 
+                                                  rule.getRuleText() ) ;
             
             Iterator<LedgerEntry> iter = entries.iterator() ;
             while( iter.hasNext() ) {
+                
                 LedgerEntry entry = iter.next() ;
-                if( !classifier.isRuleMatched( entry ) ) {
+                if( classifier.getMatchResult( entry ) == null ) {
                     iter.remove() ;
                 }
             }
@@ -241,10 +255,13 @@ public class LedgerClassificationRulesController {
             for( LedgerEntryClassificationRule rule : rules ) {
                 
                 int matchCount = 0 ;
-                classifier = builder.buildClassifier( rule.getRuleText() ) ;
+                
+                classifier = builder.buildClassifier( rule.getRuleName(), 
+                                                      rule.getRuleText() ) ;
                 
                 for( LedgerEntry entry : entries ) {
-                    if( classifier.isRuleMatched( entry ) ) {
+                    
+                    if( classifier.getMatchResult( entry ) != null ) {
                         matchCount++ ;
                     }
                 }

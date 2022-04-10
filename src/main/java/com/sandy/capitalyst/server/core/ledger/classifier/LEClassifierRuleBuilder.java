@@ -36,13 +36,16 @@ public class LEClassifierRuleBuilder
 
     private LedgerEntryClassifierParser parser = null ; 
     private ANTLRErrorListener errorListener = null ;
+    private String ruleName = null ;
     
     public void setErrorListener( ANTLRErrorListener errList ) {
         this.errorListener = errList ;
     }
     
-    public LEClassifierRule buildClassifier( String input ) 
+    public LEClassifierRule buildClassifier( String ruleName, String input ) 
         throws IllegalArgumentException {
+        
+        this.ruleName = ruleName ;
         
         ANTLRInputStream  ais = new ANTLRInputStream( input ) ;
         LedgerEntryClassifierLexer lexer  = new LedgerEntryClassifierLexer( ais ) ;
@@ -74,7 +77,7 @@ public class LEClassifierRuleBuilder
                 binOp = ( Binary_opContext )tree.getChild( fromChildIndex + 1 ) ;
                 rightStmt = buildRule( tree, fromChildIndex+2 ) ;
                 
-                opRule = new LEClassifierBinaryOpRule( binOp.getText() ) ;
+                opRule = new LEClassifierBinaryOpRule( ruleName, binOp.getText() ) ;
                 opRule.setLeftRule( rule ) ;
                 opRule.setRightRule( rightStmt ) ;
                 
@@ -116,7 +119,7 @@ public class LEClassifierRuleBuilder
         }
         
         if( negOpFound ) {
-            return new LEClassifierNegOpRule( rule ) ;
+            return new LEClassifierNegOpRule( ruleName, rule ) ;
         }
         return rule ;
     }
@@ -148,25 +151,25 @@ public class LEClassifierRuleBuilder
             }
         }
             
-        return new LEClassifierRemarkMatchRule( values ) ;
+        return new LEClassifierRemarkMatchRule( ruleName, values ) ;
     }
     
     private LEClassifierRule buildL1CatMatchRule( ParseTree tree ) {
         L1cat_matchContext ctx = ( L1cat_matchContext )tree ;
         String regex = ctx.Value().getText() ;
-        return new LEClassifierL1CatMatchRule( regex.replace( "\"", "" ) ) ;
+        return new LEClassifierL1CatMatchRule( ruleName, regex.replace( "\"", "" ) ) ;
     }
     
     private LEClassifierRule buildL2CatMatchRule( ParseTree tree ) {
         L2cat_matchContext ctx = ( L2cat_matchContext )tree ;
         String regex = ctx.Value().getText() ;
-        return new LEClassifierL2CatMatchRule( regex.replace( "\"", "" ) ) ;
+        return new LEClassifierL2CatMatchRule( ruleName, regex.replace( "\"", "" ) ) ;
     }
     
     private LEClassifierRule buildNoteMatchRule( ParseTree tree ) {
         Note_matchContext ctx = ( Note_matchContext )tree ;
         String regex = ctx.Value().getText() ;
-        return new LEClassifierNoteMatchRule( regex.replace( "\"", "" ) ) ;
+        return new LEClassifierNoteMatchRule( ruleName, regex.replace( "\"", "" ) ) ;
     }
     
     private LEClassifierRule buildAmountMatchRule( ParseTree tree ) {
@@ -182,22 +185,22 @@ public class LEClassifierRuleBuilder
         ParseTree stmt = ctx.getChild( 0 ) ;
         if( stmt instanceof Amt_eq_stmtContext ) {
             eqStmt = ( Amt_eq_stmtContext )stmt ;
-            rule = new LEClassifierAmtMatchRule( OpType.EQ ) ;
+            rule = new LEClassifierAmtMatchRule( ruleName, OpType.EQ ) ;
             rule.setAmt( Float.parseFloat( eqStmt.Amount().getText() ) ) ;
         }
         else if( stmt instanceof Amt_lt_stmtContext ) {
             ltStmt = ( Amt_lt_stmtContext )stmt ;
-            rule = new LEClassifierAmtMatchRule( OpType.LT ) ;
+            rule = new LEClassifierAmtMatchRule( ruleName, OpType.LT ) ;
             rule.setAmt( Float.parseFloat( ltStmt.Amount().getText() ) ) ;
         }
         else if( stmt instanceof Amt_gt_stmtContext ) {
             gtStmt = ( Amt_gt_stmtContext )stmt ;
-            rule = new LEClassifierAmtMatchRule( OpType.GT ) ;
+            rule = new LEClassifierAmtMatchRule( ruleName, OpType.GT ) ;
             rule.setAmt( Float.parseFloat( gtStmt.Amount().getText() ) ) ;
         }
         else if( stmt instanceof Amt_bw_stmtContext ) {
             bwStmt = ( Amt_bw_stmtContext )stmt ;
-            rule = new LEClassifierAmtMatchRule( OpType.BW ) ;
+            rule = new LEClassifierAmtMatchRule( ruleName, OpType.BW ) ;
             rule.setMinAmt( Float.parseFloat( bwStmt.Amount( 0 ).getText() ) ) ;
             rule.setMaxAmt( Float.parseFloat( bwStmt.Amount( 1 ).getText() ) ) ;
         }

@@ -6,12 +6,20 @@ public class LEClassifierNegOpRule extends LEClassifierRule {
 
     private LEClassifierRule rule = null ;
     
-    public LEClassifierNegOpRule( LEClassifierRule rule ) {
+    public LEClassifierNegOpRule( String ruleName, LEClassifierRule rule ) {
+        super( ruleName ) ;
         this.rule = rule ;
     }
 
-    public boolean isRuleMatched( LedgerEntry ledgerEntry ) {
-        return !rule.isRuleMatched( ledgerEntry ) ;
+    public String getMatchResult( LedgerEntry ledgerEntry ) {
+        
+        String ruleMatchResult = rule.getMatchResult( ledgerEntry ) ;
+        
+        // A neg op rule matches as true when the underlying rule is not a match
+        if( ruleMatchResult == null ) {
+            return "!" + ruleName ;
+        }
+        return null ;
     }
 
     public String getFormattedString( String indent ) {

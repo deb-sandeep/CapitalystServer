@@ -8,7 +8,8 @@ public class LEClassifierBinaryOpRule extends LEClassifierRule {
     private LEClassifierRule leftRule = null ;
     private LEClassifierRule rightRule = null ;
     
-    public LEClassifierBinaryOpRule( String op ) {
+    public LEClassifierBinaryOpRule( String ruleName, String op ) {
+        super( ruleName ) ;
         this.op = op ;
     }
     
@@ -20,20 +21,25 @@ public class LEClassifierBinaryOpRule extends LEClassifierRule {
         this.rightRule = rule ;
     }
 
-    public boolean isRuleMatched( LedgerEntry ledgerEntry ) {
+    public String getMatchResult( LedgerEntry ledgerEntry ) {
         
-        boolean isLeftRuleMatched = leftRule.isRuleMatched( ledgerEntry ) ;
+        String leftRuleMatchResult = leftRule.getMatchResult( ledgerEntry ) ;
         
         if( op.equals( "OR" ) ) {
-            if( isLeftRuleMatched ) return true ;
+            
+            if( leftRuleMatchResult != null ) {
+                return leftRuleMatchResult ;
+            }
             else {
-                return rightRule.isRuleMatched( ledgerEntry ) ;
+                return rightRule.getMatchResult( ledgerEntry ) ;
             }
         }
         else {
-            if( !isLeftRuleMatched ) return false ;
+            if( leftRuleMatchResult == null ) {
+                return null ;
+            }
             else {
-                return rightRule.isRuleMatched( ledgerEntry ) ;
+                return rightRule.getMatchResult( ledgerEntry ) ;
             }
         }
     }

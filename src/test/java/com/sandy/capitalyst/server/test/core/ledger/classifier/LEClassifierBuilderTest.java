@@ -21,7 +21,7 @@ public class LEClassifierBuilderTest {
     private void execute() throws Exception {
         File file = new File( "src/test/resources/rule.txt" ) ;
         String ruleText = FileUtils.readFileToString( file ) ;
-        LEClassifierRule rule = builder.buildClassifier( ruleText ) ;
+        LEClassifierRule rule = builder.buildClassifier( "Test Rule", ruleText ) ;
         log.debug( rule.getFormattedString( "" ) ) ;
     }
 

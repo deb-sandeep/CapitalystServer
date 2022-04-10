@@ -10,16 +10,21 @@ public class LEClassifierNoteMatchRule extends LEClassifierRule {
     private String regex = null ;
     private Pattern pattern = null ;
     
-    public LEClassifierNoteMatchRule( String regex ) {
+    public LEClassifierNoteMatchRule( String ruleName, String regex ) {
+        super( ruleName ) ;
         this.regex = regex.replace( "*", ".*" ) ;
         this.pattern = Pattern.compile( this.regex.toLowerCase() ) ;
     }
 
-    public boolean isRuleMatched( LedgerEntry ledgerEntry ) {
+    public String getMatchResult( LedgerEntry ledgerEntry ) {
         String cat = ledgerEntry.getNotes() ;
         cat = ( cat == null ) ? "" : cat.toLowerCase() ;
         Matcher m = pattern.matcher( cat ) ;
-        return m.matches() ;
+        
+        if( m.matches() ) {
+            return formatRuleValue( ruleName + " - " + regex ) ;
+        }
+        return null ;
     }
 
     public String getFormattedString( String indent ) {
