@@ -316,6 +316,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.catEditCtx.amountLoadingRule = cat.amountLoadingRule ;
         $scope.catEditCtx.yearlyCap         = cat.yearlyCap ;
         
+        $scope.validateLoadingRule() ;
+        
         $( '#yearlyCapEditDialog' ).modal( 'show' ) ;
     }
 
@@ -328,23 +330,40 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         clearLoadingRuleValidationResult() ;
 
         validateLoadingRuleOnServer( function( yearlyCap, monthlyCap ) {
-            console.log( yearlyCap ) ;
-            console.log( monthlyCap ) ;
             
             $scope.loadingRuleValidationResult.yearlyCap = yearlyCap ;
-            
             for( var i=0; i<monthlyCap.length; i++ ) {
                 $scope.loadingRuleValidationResult.monthlyCap.push( monthlyCap[i] ) ; 
             }
             
         }, function( errMsg ) {
-            console.log( "Error " + errMsg ) ;
             
             if( errMsg.startsWith( 'Required request body is missing' ) ) {
                 errMsg = "Empty rule." ;
             }
             $scope.loadingRuleValidationResult.validationMsg = errMsg ;
         } ) ;
+    }
+    
+    $scope.saveYearlyCapRule = function() {
+        
+        var editedCatList = [] ;
+        var cat = $scope.catEditCtx.cat ;
+        
+        cat.amountLoadingRule = $scope.catEditCtx.amountLoadingRule ;
+        cat.yearlyCap         = $scope.loadingRuleValidationResult.yearlyCap ;
+        
+        editedCatList.push( cat ) ;
+        
+        saveCategoryEditChangesOnServer( editedCatList,
+            function() {
+                $scope.hideYearlyCapEditDialog() ;
+            },
+            function() {
+                $scope.hideYearlyCapEditDialog() ;
+                fetchClassificationCategories() ;
+            } 
+        ) ;
     }
     
     // --- [END] Scope functions
@@ -448,13 +467,13 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         }) ;        
     }
     
-    function saveCategoryEditChangesOnServer( l2List, 
+    function saveCategoryEditChangesOnServer( categoryList, 
                                               successCallback, 
                                               errorCallback ) {
         
-        $http.post( '/Ledger/Categories', l2List )
+        $http.post( '/Ledger/Categories', categoryList )
         .then ( 
-            function( response ){
+            function(){
                 console.log( "Changes successfully saved on server" ) ;
                 successCallback() ;
             }, 
@@ -476,7 +495,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
             newL2CatName : newL2CatName
         } )
         .then ( 
-            function( response ){
+            function(){
                 console.log( "Changes successfully saved on server" ) ;
                 fetchClassificationCategories() ;
             }, 
@@ -497,12 +516,10 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                     $scope.catEditCtx.amountLoadingRule )
         .then ( 
             function( response ){
-                console.log( response.data ) ;
                 successCallback( response.data.yearlyCap,
                                  response.data.monthlyCap ) ;
             }, 
             function( error ){
-                console.log( error ) ;
                 errorCallback( error.data.message ) ;
             }
         )

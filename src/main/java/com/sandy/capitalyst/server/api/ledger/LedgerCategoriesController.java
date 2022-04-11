@@ -140,6 +140,7 @@ public class LedgerCategoriesController {
         Map<String, Object> result = new HashMap<>() ;
         
         try {
+            
             MonthlyLoadingCalculator calc = null ;
             calc = new MonthlyLoadingCalculator( ruleText ) ;
             
@@ -152,7 +153,7 @@ public class LedgerCategoriesController {
         catch( Exception e ) {
             //log.debug( "Error", e ) ;
             result.put( "message", e.getMessage() ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+            return ResponseEntity.status( HttpStatus.BAD_REQUEST )
                                  .body( result ) ;
         }
     }

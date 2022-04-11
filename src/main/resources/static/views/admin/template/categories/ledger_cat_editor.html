@@ -58,7 +58,7 @@
 	        <td ng-if="$parent.$parent.$parent.catType == 'Debit'" 
 	            class="numeric">
 	            <a ng-click="showYearlyCapEditDialog( cat )">
-	               {{cat.yearlyCap}}
+	               {{cat.yearlyCap | amt}}
 	            </a>
 	        </td>
             <td class="centered-cell">
