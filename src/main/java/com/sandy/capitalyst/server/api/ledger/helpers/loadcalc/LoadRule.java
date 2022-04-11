@@ -4,6 +4,7 @@ import static com.sandy.capitalyst.server.api.ledger.helpers.loadcalc.CalendarUt
 import static com.sandy.capitalyst.server.api.ledger.helpers.loadcalc.CalendarUtil.getMonthIndex ;
 
 import org.apache.log4j.Logger ;
+import org.dom4j.IllegalAddException ;
 
 import lombok.Getter ;
 
@@ -45,6 +46,10 @@ class LoadRule {
     private void parseRule() {
         
         String[] ruleParts = parseLoadAction() ;
+        if( ruleParts.length != 2 ) {
+            throw new IllegalAddException( "Line " + lineNo + 
+                                           ". RHS of rule missing." ) ;
+        }
         this.loadAmt = ctx.evaluate( ruleParts[1].trim() ) ;
         parseMonths( ruleParts[0] ) ;
     }

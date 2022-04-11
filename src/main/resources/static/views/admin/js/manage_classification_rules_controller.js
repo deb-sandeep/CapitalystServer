@@ -96,7 +96,6 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
     }
     
     $scope.validateEditedRule = function() {
-        console.log( "Validating rule under edit." ) ;
         validateRuleOnServer( function() {
             $scope.ruleUnderEdit.validationStatus = "OK" ;
         }, function() {

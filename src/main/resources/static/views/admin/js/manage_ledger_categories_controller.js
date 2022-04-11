@@ -49,9 +49,14 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         selectedL2CatName : null,
         newL1CatName      : null,
         newL2CatName      : null,
-        amountLoadingRule : null,
-        yearlyCap         : 0
-    }
+        amountLoadingRule : null
+    } ;
+    
+    $scope.loadingRuleValidationResult = {
+        validationMsg : null,
+        yearlyCap     : 0,
+        monthlyCap    : []
+    } ;
     
     $scope.ledgerEntriesForDisplay = [] ;
     
@@ -109,7 +114,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     // Reverts/Escapes the editing mode of L1 category name. Since no
     // changes are made to the core data structures this is a simple rollback
     $scope.revertL1CategoryEditChanges = function( catName ) {
-        console.log( "Reverting edit changes" ) ;
         catName.beingEdited = false ;
         $scope.l1CatNameBeingEdited = null ;
     }
@@ -319,6 +323,30 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $( '#yearlyCapEditDialog' ).modal( 'hide' ) ;
     }
 
+    $scope.validateLoadingRule = function() {
+        
+        clearLoadingRuleValidationResult() ;
+
+        validateLoadingRuleOnServer( function( yearlyCap, monthlyCap ) {
+            console.log( yearlyCap ) ;
+            console.log( monthlyCap ) ;
+            
+            $scope.loadingRuleValidationResult.yearlyCap = yearlyCap ;
+            
+            for( var i=0; i<monthlyCap.length; i++ ) {
+                $scope.loadingRuleValidationResult.monthlyCap.push( monthlyCap[i] ) ; 
+            }
+            
+        }, function( errMsg ) {
+            console.log( "Error " + errMsg ) ;
+            
+            if( errMsg.startsWith( 'Required request body is missing' ) ) {
+                errMsg = "Empty rule." ;
+            }
+            $scope.loadingRuleValidationResult.validationMsg = errMsg ;
+        } ) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -463,6 +491,23 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         }) ;
     }
     
+    function validateLoadingRuleOnServer( successCallback, errorCallback ) {
+        
+        $http.post( '/Ledger/Category/AmountLoading/Validate', 
+                    $scope.catEditCtx.amountLoadingRule )
+        .then ( 
+            function( response ){
+                console.log( response.data ) ;
+                successCallback( response.data.yearlyCap,
+                                 response.data.monthlyCap ) ;
+            }, 
+            function( error ){
+                console.log( error ) ;
+                errorCallback( error.data.message ) ;
+            }
+        )
+    }
+    
     // ------------------- Server response processors ------------------------
     
     function clearCatEditCtx() {
@@ -474,7 +519,12 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.catEditCtx.newL1CatName = null ;
         $scope.catEditCtx.newL2CatName = null ;
         $scope.catEditCtx.amountLoadingRule = null ;
-        $scope.catEditCtx.yearlyCap = null ;
+    }
+
+    function clearLoadingRuleValidationResult() {
+        $scope.loadingRuleValidationResult.validationMsg = null ;
+        $scope.loadingRuleValidationResult.yearlyCap = 0 ;
+        $scope.loadingRuleValidationResult.monthlyCap.length = 0 ;
     }
 
     function populateMasterCategories( categories ) {
@@ -594,6 +644,4 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
             } 
         ) ;        
     }
-    
-    
 } ) ;
