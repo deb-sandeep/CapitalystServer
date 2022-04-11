@@ -7,7 +7,7 @@ import org.apache.log4j.Logger ;
 
 import com.udojava.evalex.Expression ;
 
-public class LoadRuleCtx {
+class LoadRuleCtx {
     
     static final Logger log = Logger.getLogger( LoadRuleCtx.class ) ;
 

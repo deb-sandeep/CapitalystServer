@@ -11,29 +11,9 @@ import com.udojava.evalex.Expression.ExpressionException ;
 
 import lombok.Getter ;
 
-/**
- * 
- * var amt : 12000
- * Jan-Dec : amt/12
- * Mar,Jun,Sep,Dec : amt/24 
- * 
- * Jan : 1000
- * Feb : 1000
- * Mar : 1000 + 500
- * Apr : 1000
- * May : 1000
- * Jun : 1000 + 500
- * Jul : 1000
- * Aug : 1000
- * Sep : 1000 + 500
- * Oct : 1000
- * Nov : 1000
- * Dec : 1000 + 500
- *
- */
-public class DebitCatAmtLoadCalculator {
+public class MonthlyLoadingCalculator {
     
-    private static final Logger log = Logger.getLogger( DebitCatAmtLoadCalculator.class ) ;
+    private static final Logger log = Logger.getLogger( MonthlyLoadingCalculator.class ) ;
     
     private LoadRuleCtx ctx = new LoadRuleCtx() ;
     private List<LoadRule> rules = new ArrayList<>() ;
@@ -41,7 +21,7 @@ public class DebitCatAmtLoadCalculator {
     @Getter private int[] monthlyCap = new int[12] ;
     @Getter private int yearlyCap = 0 ;
 
-    public DebitCatAmtLoadCalculator( String ruleSet ) {
+    public MonthlyLoadingCalculator( String ruleSet ) {
         parseRuleSet( ruleSet ) ;
         aggregateLoading() ;
     }
@@ -145,8 +125,8 @@ public class DebitCatAmtLoadCalculator {
         log.debug( "Rule set = \n" + ruleSet ) ;
         log.debug( "---------------------------------" ) ;
         
-        DebitCatAmtLoadCalculator calc = null ;
-        calc = new DebitCatAmtLoadCalculator( ruleSet ) ;
+        MonthlyLoadingCalculator calc = null ;
+        calc = new MonthlyLoadingCalculator( ruleSet ) ;
         
         int[] amt = calc.getMonthlyCap() ;
         for( int i=0; i<amt.length; i++ ) {

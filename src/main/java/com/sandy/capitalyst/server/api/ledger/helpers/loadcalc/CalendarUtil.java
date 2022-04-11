@@ -30,5 +30,4 @@ public class CalendarUtil {
     public static String getMonthName( int index ) {
         return MONTH_NAMES[index] ;
     }
-    
 }

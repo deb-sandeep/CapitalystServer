@@ -7,7 +7,7 @@ import org.apache.log4j.Logger ;
 
 import lombok.Getter ;
 
-public class LoadRule {
+class LoadRule {
     
     private static Logger log = Logger.getLogger( LoadRule.class ) ;
     
