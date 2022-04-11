@@ -41,13 +41,16 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
        }
     } ;    
 
+    // Note - catData contains either ledgerCategories.credit or debit
     $scope.catEditCtx = {
-        catData : null,
-        cat : null,
+        catData           : null,
+        cat               : null,
         selectedL1CatName : null,
         selectedL2CatName : null,
-        newL1CatName : null,
-        newL2CatName : null,
+        newL1CatName      : null,
+        newL2CatName      : null,
+        amountLoadingRule : null,
+        yearlyCap         : 0
     }
     
     $scope.ledgerEntriesForDisplay = [] ;
@@ -301,6 +304,20 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         }
         $scope.hideMergeCategoryDialog() ;
     }
+    
+    $scope.showYearlyCapEditDialog = function( cat ) {
+        
+        clearCatEditCtx() ;
+        $scope.catEditCtx.cat = cat ;
+        $scope.catEditCtx.amountLoadingRule = cat.amountLoadingRule ;
+        $scope.catEditCtx.yearlyCap         = cat.yearlyCap ;
+        
+        $( '#yearlyCapEditDialog' ).modal( 'show' ) ;
+    }
+
+    $scope.hideYearlyCapEditDialog = function() {
+        $( '#yearlyCapEditDialog' ).modal( 'hide' ) ;
+    }
 
     // --- [END] Scope functions
 
@@ -456,6 +473,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.catEditCtx.selectedL2CatName = null ;
         $scope.catEditCtx.newL1CatName = null ;
         $scope.catEditCtx.newL2CatName = null ;
+        $scope.catEditCtx.amountLoadingRule = null ;
+        $scope.catEditCtx.yearlyCap = null ;
     }
 
     function populateMasterCategories( categories ) {

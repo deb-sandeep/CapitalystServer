@@ -57,7 +57,9 @@
             </td>
 	        <td ng-if="$parent.$parent.$parent.catType == 'Debit'" 
 	            class="numeric">
+	            <a ng-click="showYearlyCapEditDialog( cat )">
 	               {{cat.yearlyCap}}
+	            </a>
 	        </td>
             <td class="centered-cell">
                 <input type="checkbox" 
