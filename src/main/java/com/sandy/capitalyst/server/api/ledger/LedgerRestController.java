@@ -162,7 +162,6 @@ public class LedgerRestController {
             tupule[2] = l2Cat ;
             tupule[3] = PIVOT_SDF.format( entry.getValueDate() ) ;
             tupule[4] = Float.toString( entry.getAmount() ) ;
-            tupule[5] = entry.getRemarks() ;
             
             pivotEntries.add( tupule ) ;
         }
