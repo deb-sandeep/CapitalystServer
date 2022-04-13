@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.api.ledger;
+package com.sandy.capitalyst.server.api.ledgermgmt;
 
 import java.util.ArrayList ;
 import java.util.Date ;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.api.ledger.helpers.RuleMatchCount ;
+import com.sandy.capitalyst.server.api.ledgermgmt.helpers.RuleMatchCount ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;

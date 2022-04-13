@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.api.ledger.helpers;
+package com.sandy.capitalyst.server.api.ledgermgmt.helpers;
 
 import org.apache.log4j.Logger ;
 

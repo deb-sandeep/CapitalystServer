@@ -1,10 +1,10 @@
-package com.sandy.capitalyst.server.api.ledger.helpers;
+package com.sandy.capitalyst.server.api.ledgermgmt.helpers;
 
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.api.ledger.helpers.loadcalc.MonthlyLoadingCalculator ;
+import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.MonthlyLoadingCalculator ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryClassificationRuleRepo ;

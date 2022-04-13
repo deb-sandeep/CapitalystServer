@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.api.ledger;
+package com.sandy.capitalyst.server.api.ledgermgmt;
 
 import java.util.ArrayList ;
 import java.util.Collections ;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.api.ledger.helpers.CategoryMergeHelper ;
-import com.sandy.capitalyst.server.api.ledger.helpers.ChangedCategorySaveHelper ;
-import com.sandy.capitalyst.server.api.ledger.helpers.MergeLedgeEntryCategoriesInput ;
-import com.sandy.capitalyst.server.api.ledger.helpers.loadcalc.MonthlyLoadingCalculator ;
+import com.sandy.capitalyst.server.api.ledgermgmt.helpers.CategoryMergeHelper ;
+import com.sandy.capitalyst.server.api.ledgermgmt.helpers.ChangedCategorySaveHelper ;
+import com.sandy.capitalyst.server.api.ledgermgmt.helpers.MergeLedgeEntryCategoriesInput ;
+import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.MonthlyLoadingCalculator ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.repo.ClassifiedLedgerEntriesCounter ;
