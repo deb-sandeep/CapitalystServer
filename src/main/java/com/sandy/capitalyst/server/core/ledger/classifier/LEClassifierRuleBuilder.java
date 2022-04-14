@@ -7,10 +7,10 @@ import org.antlr.v4.runtime.ANTLRErrorListener ;
 import org.antlr.v4.runtime.ANTLRInputStream ;
 import org.antlr.v4.runtime.CommonTokenStream ;
 import org.antlr.v4.runtime.tree.ParseTree ;
-import org.antlr.v4.runtime.tree.TerminalNode ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierAmtMatchRule.OpType ;
+import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRemarkMatchRule.MatchValueWithAlias ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierBaseListener ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierLexer ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser ;
@@ -28,6 +28,7 @@ import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Neg_opConte
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Note_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Remark_matchContext ;
 import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Single_remark_matchContext ;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Value_with_aliasContext ;
 
 public class LEClassifierRuleBuilder 
     extends LedgerEntryClassifierBaseListener {
@@ -126,8 +127,8 @@ public class LEClassifierRuleBuilder
     
     private LEClassifierRule buildRemarkMatchRule( ParseTree tree ) {
         
-        List<String> values = new ArrayList<>() ;
-        String matchStr = null ;
+        MatchValueWithAlias mva = null ;
+        List<MatchValueWithAlias> values = new ArrayList<>() ;
         
         Remark_matchContext ctx = ( Remark_matchContext )tree ;
         ParseTree child = ctx.getChild( 0 ) ;
@@ -136,22 +137,40 @@ public class LEClassifierRuleBuilder
             
             Single_remark_matchContext singleMatch = null ;
             singleMatch = ctx.single_remark_match() ;
-            matchStr = singleMatch.Value().getText() ;
+            mva = createMatchValueWithAlias( singleMatch.value_with_alias() ) ;
             
-            values.add( matchStr.replace( "\"", "" ) ) ;
+            values.add( mva ) ;
         }
         else {
             
             Multi_remark_matchContext multiMatch = null ;
             multiMatch = ctx.multi_remark_match() ;
             
-            for( TerminalNode node : multiMatch.Value() ) {
-                matchStr = node.getText() ;
-                values.add( matchStr.replace( "\"", "" ) ) ;
+            for( Value_with_aliasContext vwaCtx : multiMatch.value_with_alias() ) {
+                
+                mva = createMatchValueWithAlias( vwaCtx ) ;
+                values.add( mva ) ;
             }
         }
             
         return new LEClassifierRemarkMatchRule( ruleName, values ) ;
+    }
+    
+    private MatchValueWithAlias createMatchValueWithAlias( 
+                                              Value_with_aliasContext vwaCtx ) {
+        
+        int numChildren = vwaCtx.getChildCount() ;
+        MatchValueWithAlias mva = new MatchValueWithAlias() ;
+        
+        String regex = vwaCtx.Value( 0 ).getText().trim() ;
+        mva.setRegex( regex.replace( "\"", "" ) ) ;
+        
+        if( numChildren > 1 ) {
+            String alias = vwaCtx.Value( 1 ).getText().trim() ;
+            mva.setAlias( alias.replace( "\"", "" ) ) ;
+        }
+        
+        return mva ;
     }
     
     private LEClassifierRule buildL1CatMatchRule( ParseTree tree ) {

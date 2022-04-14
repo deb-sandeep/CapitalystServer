@@ -227,9 +227,6 @@ public class LedgerRestController {
             Float upperLim = sc.getMaxAmt() == null ?
                              Float.MAX_VALUE : sc.getMaxAmt() ;
             
-            log.debug( "Lower limit = " + lowerLim ) ;
-            log.debug( "Upper limit = " + upperLim ) ;
-            
             results = lRepo.findEntries( sc.getAccountIds(),
                                          sc.getStartDate(),
                                          sc.getEndDate(),

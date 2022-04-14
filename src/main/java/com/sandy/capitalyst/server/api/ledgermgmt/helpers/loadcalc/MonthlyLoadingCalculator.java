@@ -54,6 +54,11 @@ public class MonthlyLoadingCalculator {
             }
             
             try {
+                if( str.contains( "//" ) ) {
+                    str = str.substring( 0, str.indexOf( "//" ) ) ;
+                    str = str.trim() ;
+                }
+                
                 if( str.startsWith( "var" ) ) {
                     populateContext( lineNo, str ) ;
                 }

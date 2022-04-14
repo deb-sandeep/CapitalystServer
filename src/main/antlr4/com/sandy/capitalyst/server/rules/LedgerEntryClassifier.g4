@@ -15,10 +15,13 @@ remark_match :
      single_remark_match | multi_remark_match ;
     
 single_remark_match :
-    'remark' 'like' Value ;
+    'remark' 'like' value_with_alias ;
     
 multi_remark_match :
-    'remark' 'like' '(' (Value '|')* Value ')' ;
+    'remark' 'like' '(' (value_with_alias '|')* value_with_alias ')' ;
+    
+value_with_alias :
+    Value ( 'alias' Value )? ;
     
 l1cat_match :
     'l1Cat' 'like' Value ;

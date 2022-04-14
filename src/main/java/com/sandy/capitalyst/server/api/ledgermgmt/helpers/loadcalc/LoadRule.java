@@ -51,7 +51,20 @@ class LoadRule {
                                            ". RHS of rule missing." ) ;
         }
         this.loadAmt = ctx.evaluate( ruleParts[1].trim() ) ;
-        parseMonths( ruleParts[0] ) ;
+        
+        String lVal = ruleParts[0].trim() ;
+        
+        if( lVal.equalsIgnoreCase( "permonth" ) ) {
+            lVal = "Apr-Mar" ;
+        }
+        else if( lVal.equalsIgnoreCase( "quarter-start" ) ) {
+            lVal = "Apr,Jul,Oct,Jan" ;
+        }
+        else if( lVal.equalsIgnoreCase( "quarter-end" ) ) {
+            lVal = "Jun,Sep,Dec,Mar" ;
+        }
+        
+        parseMonths( lVal ) ;
     }
     
     private String[] parseLoadAction() {
