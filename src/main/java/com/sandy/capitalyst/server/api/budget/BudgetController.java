@@ -26,13 +26,13 @@ public class BudgetController {
     
     @GetMapping( "/Budget/Spread/{fy}" ) 
     public ResponseEntity<BudgetSpread> getBudgetSpread( 
-                                  @PathVariable( "fy") String financialYear ) {
+                                  @PathVariable( "fy") int financialYear ) {
         
         try {
             log.debug( "Generating budget spread for FY " + financialYear ) ;
             
             BudgetSpreadBuilder builder = new BudgetSpreadBuilder( lRepo, lecRepo ) ;
-            BudgetSpread spread = builder.createBudgetSpread( "FY21" ) ;
+            BudgetSpread spread = builder.createBudgetSpread( financialYear ) ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( spread ) ;
         }

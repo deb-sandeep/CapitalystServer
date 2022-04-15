@@ -5,6 +5,7 @@ import java.util.LinkedHashMap ;
 import java.util.List ;
 import java.util.Map ;
 
+import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 
 import lombok.Getter ;
@@ -12,7 +13,7 @@ import lombok.Setter ;
 
 public class L1LineItem extends BudgetLineItem {
     
-    private BudgetSpread spread = null ;
+    BudgetSpread spread = null ;
     
     private Map<String, L2LineItem> l2LineItemMap = new LinkedHashMap<>() ;
     
@@ -39,5 +40,13 @@ public class L1LineItem extends BudgetLineItem {
     public void addMonthlyCaps( int[] monthlyCaps ) {
         super.addMonthlyCaps( monthlyCaps ) ;
         spread.addMonthlyCaps( monthlyCaps ) ;
+    }
+
+    public void processEntry( LedgerEntry entry ) {
+        
+        L2LineItem l2LineItem = l2LineItemMap.get( entry.getL2Cat() ) ;
+        if( l2LineItem != null ) {
+            l2LineItem.processEntry( entry ) ;
+        }
     }
 }

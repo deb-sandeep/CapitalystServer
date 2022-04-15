@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.api.budget.vo;
 
+import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.CalendarUtil ;
+
 import lombok.Getter ;
 
 public abstract class BudgetLineItem {
@@ -15,7 +17,7 @@ public abstract class BudgetLineItem {
         this.lineItemName = name ;
         
         for( int i=0; i<budgetCells.length; i++ ) {
-            budgetCells[i] = new BudgetCell() ;
+            budgetCells[i] = new BudgetCell( CalendarUtil.getMonthName( i ) ) ;
         }
     }
 

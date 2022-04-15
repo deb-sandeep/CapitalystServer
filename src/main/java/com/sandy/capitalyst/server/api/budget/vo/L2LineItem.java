@@ -1,6 +1,10 @@
 package com.sandy.capitalyst.server.api.budget.vo;
 
+import java.util.Calendar ;
+import java.util.Date ;
+
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.MonthlyLoadingCalculator ;
+import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 
 import lombok.Getter ;
@@ -32,5 +36,32 @@ public class L2LineItem extends BudgetLineItem {
         
         super.addMonthlyCaps( monthlyCaps ) ;
         parent.addMonthlyCaps( monthlyCaps ) ;
+    }
+
+    public void processEntry( LedgerEntry entry ) {
+        
+        int amt = -1* (int)entry.getAmount() ;
+        int month = getBudgetMonth( entry.getValueDate() ) ;
+        
+        budgetCells               [ month ].addConsumed( amt ) ;
+        parent.budgetCells        [ month ].addConsumed( amt ) ;
+        parent.spread.budgetCells [ month ].addConsumed( amt ) ;
+    }
+    
+    private int getBudgetMonth( Date date ) {
+        Calendar cal = Calendar.getInstance() ;
+        cal.setTime( date ) ;
+        
+        int calMonth = cal.get( Calendar.MONTH ) ;
+        int budgetMonth = 0 ;
+        
+        if( calMonth < 3 ) {
+            budgetMonth = calMonth + 9 ;
+        }
+        else {
+            budgetMonth = calMonth - 3 ;
+        }
+        
+        return budgetMonth ;
     }
 }

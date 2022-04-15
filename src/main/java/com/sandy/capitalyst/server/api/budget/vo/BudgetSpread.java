@@ -5,7 +5,9 @@ import java.util.LinkedHashMap ;
 import java.util.List ;
 import java.util.Map ;
 
+import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
+import com.sandy.common.util.StringUtil ;
 
 import lombok.Getter ;
 
@@ -16,8 +18,8 @@ public class BudgetSpread extends BudgetLineItem {
     @Getter
     private List<L1LineItem> l1LineItems = new ArrayList<>() ;
     
-    public BudgetSpread( String name ) {
-        super( name ) ;
+    public BudgetSpread( int fy ) {
+        super( "Budget for FY " + fy ) ;
     }
 
     public void addCategory( LedgerEntryCategory cat ) {
@@ -35,5 +37,21 @@ public class BudgetSpread extends BudgetLineItem {
         }
         
         l1LineItem.addCategory( cat ) ;
+    }
+
+    public void processEntry( LedgerEntry entry ) {
+        
+        String l1Cat = entry.getL1Cat() ;
+        String l2Cat = entry.getL2Cat() ;
+        
+        if( StringUtil.isEmptyOrNull( l1Cat ) || 
+            StringUtil.isEmptyOrNull( l2Cat ) ) {
+            return ;
+        }
+        
+        L1LineItem l1LineItem = l1LineItemMap.get( l1Cat ) ;
+        if( l1LineItem != null ) {
+            l1LineItem.processEntry( entry ) ;
+        }
     }
 }
