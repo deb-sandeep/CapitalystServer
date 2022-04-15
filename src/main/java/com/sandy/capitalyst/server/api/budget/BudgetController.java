@@ -32,7 +32,7 @@ public class BudgetController {
             log.debug( "Generating budget spread for FY " + financialYear ) ;
             
             BudgetSpreadBuilder builder = new BudgetSpreadBuilder( lRepo, lecRepo ) ;
-            BudgetSpread spread = builder.createBudgetSpread() ;
+            BudgetSpread spread = builder.createBudgetSpread( "FY21" ) ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( spread ) ;
         }

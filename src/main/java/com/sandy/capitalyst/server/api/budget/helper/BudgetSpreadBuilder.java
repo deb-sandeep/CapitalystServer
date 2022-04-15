@@ -18,10 +18,17 @@ public class BudgetSpreadBuilder {
         this.lecRepo = lecRepo ;
     }
 
-    public BudgetSpread createBudgetSpread() {
+    public BudgetSpread createBudgetSpread( String financialYear ) {
+        
+        BudgetSpread spread = new BudgetSpread( financialYear ) ;
+        
         List<LedgerEntryCategory> budgetedCategories = null ;
         budgetedCategories = lecRepo.findBudgetedCategories() ;
         
-        return null ;
+        for( LedgerEntryCategory cat : budgetedCategories ) {
+            spread.addCategory( cat ) ;
+        }
+        
+        return spread ;
     }
 }

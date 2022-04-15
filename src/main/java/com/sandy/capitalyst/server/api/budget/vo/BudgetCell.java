@@ -11,4 +11,8 @@ public class BudgetCell {
     public int getRemaining() {
         return planned - consumed ;
     }
+
+    public void addPlannedAmount( int amt ) {
+        this.planned += amt ;
+    }
 }
