@@ -32,8 +32,6 @@ public class CCLedgerRestController {
     @Autowired
     private AccountRepo accountRepo = null ;
     
-    private LEClassifier classifier = new LEClassifier() ;
-    
     /*
      * Note that the request elements only contain the following attributes. 
      * 
@@ -68,8 +66,10 @@ public class CCLedgerRestController {
     private int processTxnEntries( List<CCTxnEntry> entries ) 
         throws Exception {
         
-        LedgerEntry ledgerEntry = null ;
-        LedgerEntry possibleDup = null ;
+        LedgerEntry  ledgerEntry = null ;
+        LedgerEntry  possibleDup = null ;
+        LEClassifier classifier  = new LEClassifier() ;
+        
         int numSaved = 0 ;
         
         updateCCDues( entries.get( 0 ) ) ;

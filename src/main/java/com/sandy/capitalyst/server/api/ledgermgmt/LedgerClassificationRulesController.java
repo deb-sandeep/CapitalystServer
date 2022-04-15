@@ -91,7 +91,6 @@ public class LedgerClassificationRulesController {
                                  .body( null ) ;
         }
         catch( Exception e ) {
-            log.error( "Error :: Saving account data.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( new APIResponse( e.getMessage() ) ) ;
         }
@@ -273,7 +272,7 @@ public class LedgerClassificationRulesController {
                                  .body( counter ) ;
         }
         catch( Exception e ) {
-            log.error( "Error :: Saving account data.", e ) ;
+            log.error( "Error :: Getting matching counters.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( null ) ;
         }

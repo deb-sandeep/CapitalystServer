@@ -3,7 +3,6 @@ package com.sandy.capitalyst.server.core.ledger.classifier;
 import java.util.ArrayList ;
 import java.util.List ;
 
-import org.antlr.v4.runtime.ANTLRErrorListener ;
 import org.antlr.v4.runtime.ANTLRInputStream ;
 import org.antlr.v4.runtime.CommonTokenStream ;
 import org.antlr.v4.runtime.tree.ParseTree ;
@@ -36,12 +35,7 @@ public class LEClassifierRuleBuilder
     static final Logger log = Logger.getLogger( LEClassifierRuleBuilder.class ) ;
 
     private LedgerEntryClassifierParser parser = null ; 
-    private ANTLRErrorListener errorListener = null ;
     private String ruleName = null ;
-    
-    public void setErrorListener( ANTLRErrorListener errList ) {
-        this.errorListener = errList ;
-    }
     
     public LEClassifierRule buildClassifier( String ruleName, String input ) 
         throws IllegalArgumentException {
@@ -54,9 +48,7 @@ public class LEClassifierRuleBuilder
         
         parser = new LedgerEntryClassifierParser( tokens ) ;
         parser.removeErrorListeners() ;
-        if( errorListener != null ) {
-            parser.addErrorListener( errorListener ) ;
-        }
+        parser.addErrorListener( new LEClassifierRuleErrorListener() ) ;
         
         ParseTree tree   = parser.le_classifier() ;
         LEClassifierRule rule = buildRule( tree, 0 ) ;

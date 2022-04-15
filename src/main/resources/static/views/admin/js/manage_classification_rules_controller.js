@@ -37,7 +37,8 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
         l1CatName : null,
         l2CatName : null,
         ruleText : null,
-        validationStatus : null
+        validationStatus : null,
+        validationMsg : null
     } ;
     
     $scope.ledgerEntriesForDisplay = [] ;
@@ -98,8 +99,10 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
     $scope.validateEditedRule = function() {
         validateRuleOnServer( function() {
             $scope.ruleUnderEdit.validationStatus = "OK" ;
-        }, function() {
+            $scope.ruleUnderEdit.validationMsg = null ;
+        }, function( errMsg ) {
             $scope.ruleUnderEdit.validationStatus = "Error" ;
+            $scope.ruleUnderEdit.validationMsg = errMsg ;
         } ) ;
     }
     
@@ -151,6 +154,9 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
         $scope.ruleUnderEdit.l1CatName        = null ;
         $scope.ruleUnderEdit.l2CatName        = null ;
         $scope.ruleUnderEdit.ruleText         = null ;
+        $scope.ruleUnderEdit.validationStatus = null ;
+        $scope.ruleUnderEdit.validationMsg    = null ;
+        
     }
     
     function setRuleUnderEdit( rule ) {
@@ -162,6 +168,8 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
             $scope.ruleUnderEdit.l1CatName        = rule.l1Category ;
             $scope.ruleUnderEdit.l2CatName        = rule.l2Category ;
             $scope.ruleUnderEdit.ruleText         = rule.ruleText ;
+            $scope.ruleUnderEdit.validationStatus = null ;
+            $scope.ruleUnderEdit.validationMsg    = null ;
         }
     }
     
@@ -283,8 +291,8 @@ capitalystNgApp.controller( 'ManageClassificationRulesController',
             function(){
                 successCallback() ;
             }, 
-            function(){
-                errorCallback() ;
+            function( error ){
+                errorCallback( error.data.message ) ;
             }
         )
     }

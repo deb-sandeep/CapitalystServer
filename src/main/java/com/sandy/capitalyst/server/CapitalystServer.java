@@ -69,6 +69,7 @@ public class CapitalystServer
         CapitalystConfig cfg = CapitalystServer.getConfig() ;
         
         if( cfg.isRunClassificationOnStartup() ) {
+            
             log.debug( "Running Ledger Classifier" ) ;
             LEClassifier classifier = new LEClassifier() ;
             classifier.runClassification() ;

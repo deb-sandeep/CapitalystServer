@@ -366,6 +366,27 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         ) ;
     }
     
+    $scope.deleteYearlyCapRule = function() {
+        
+        var editedCatList = [] ;
+        var cat = $scope.catEditCtx.cat ;
+        
+        cat.amountLoadingRule = null ;
+        cat.yearlyCap         = 0 ;
+        
+        editedCatList.push( cat ) ;
+        
+        saveCategoryEditChangesOnServer( editedCatList,
+            function() {
+                $scope.hideYearlyCapEditDialog() ;
+            },
+            function() {
+                $scope.hideYearlyCapEditDialog() ;
+                fetchClassificationCategories() ;
+            } 
+        ) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

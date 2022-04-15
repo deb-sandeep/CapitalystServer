@@ -41,6 +41,7 @@ public class LEClassifier {
     private Map<String, RuleData> creditRules = new HashMap<>() ;
     
     public LEClassifier() {
+        
         ApplicationContext appCtx = CapitalystServer.getAppContext() ;
         lecrRepo = appCtx.getBean( LedgerEntryClassificationRuleRepo.class ) ;
         lRepo = appCtx.getBean( LedgerRepo.class ) ;
@@ -48,18 +49,27 @@ public class LEClassifier {
         
         for( LedgerEntryClassificationRule lecr : lecrRepo.findAll() ) {
             
-            LEClassifierRule rule = null ;
-            
-            rule = ruleBuilder.buildClassifier( lecr.getRuleName(), 
-                                                lecr.getRuleText() ) ;
-            
-            RuleData data = new RuleData( rule, lecr ) ;
-            
-            if( lecr.isCreditClassifier() ) {
-                creditRules.put( lecr.getRuleName(), data ) ;
+            try {
+                LEClassifierRule rule = null ;
+                
+                rule = ruleBuilder.buildClassifier( lecr.getRuleName(), 
+                                                    lecr.getRuleText() ) ;
+                
+                RuleData data = new RuleData( rule, lecr ) ;
+                
+                if( lecr.isCreditClassifier() ) {
+                    creditRules.put( lecr.getRuleName(), data ) ;
+                }
+                else {
+                    debitRules.put( lecr.getRuleName(), data ) ;
+                }
             }
-            else {
-                debitRules.put( lecr.getRuleName(), data ) ;
+            catch( IllegalArgumentException e ) {
+                
+                log.error( "\nERROR DETECTED. Ignoring LEClassifier rule." ) ;
+                log.error( "Rule name = " + lecr.getRuleName() ) ; 
+                log.error( "Rule = " + lecr.getRuleText() ) ; 
+                log.error( "Error = " + e.getMessage() ) ;
             }
         }
     }

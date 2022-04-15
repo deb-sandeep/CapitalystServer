@@ -20,8 +20,6 @@ public abstract class LedgerImporter {
     
     public static final SimpleDateFormat SDF = new SimpleDateFormat( "dd/MM/yyyy" ) ;
     
-    private LEClassifier classifier = new LEClassifier() ;
-    
     protected LedgerRepo ledgerRepo = null ;
     protected AccountRepo accountIndexRepo = null ;
     
@@ -33,7 +31,8 @@ public abstract class LedgerImporter {
         }
     }
 
-    public final LedgerImportResult importLedgerEntries( Account account, File file )
+    public final LedgerImportResult importLedgerEntries( Account account, 
+                                                         File file )
         throws Exception {
         
         LedgerImportResult result = new LedgerImportResult() ;
@@ -45,6 +44,8 @@ public abstract class LedgerImporter {
         log.debug( "Ledger entries parsed." ) ;
         log.debug( "\tNum ledger entries = " + entries.size() ) ;
         result.setNumEntriesFound( entries.size() ) ;
+        
+        LEClassifier classifier = new LEClassifier() ;
         
         LedgerEntry possibleDup = null ;
         for( LedgerEntry entry : entries ) {
