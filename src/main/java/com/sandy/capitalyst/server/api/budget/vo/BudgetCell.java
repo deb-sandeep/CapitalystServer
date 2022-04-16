@@ -21,7 +21,11 @@ public class BudgetCell {
         this.planned += amt ;
     }
 
-    public void addConsumed( int amtConsumed ) {
+    public void addConsumedAmount( int amtConsumed ) {
         this.consumed += amtConsumed ;
+    }
+    
+    public boolean hasExceededBudged() {
+        return consumed > planned ;
     }
 }

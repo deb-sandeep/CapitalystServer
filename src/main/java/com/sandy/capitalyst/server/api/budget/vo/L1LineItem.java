@@ -20,6 +20,9 @@ public class L1LineItem extends BudgetLineItem {
     @Getter @Setter
     private List<L2LineItem> l2LineItems = new ArrayList<>() ;
     
+    @Getter
+    private boolean hasBudgedExceedCell = false ;
+    
     public L1LineItem( String name, BudgetSpread spread ) {
         super( name ) ;
         this.spread = spread ;
@@ -47,6 +50,9 @@ public class L1LineItem extends BudgetLineItem {
         L2LineItem l2LineItem = l2LineItemMap.get( entry.getL2Cat() ) ;
         if( l2LineItem != null ) {
             l2LineItem.processEntry( entry ) ;
+            if( !hasBudgedExceedCell ) {
+                hasBudgedExceedCell = l2LineItem.hasBudgedExceedCell() ;
+            }
         }
     }
 }

@@ -43,12 +43,13 @@ public class L2LineItem extends BudgetLineItem {
         int amt = -1* (int)entry.getAmount() ;
         int month = getBudgetMonth( entry.getValueDate() ) ;
         
-        budgetCells               [ month ].addConsumed( amt ) ;
-        parent.budgetCells        [ month ].addConsumed( amt ) ;
-        parent.spread.budgetCells [ month ].addConsumed( amt ) ;
+        addConsumed( month, amt ) ;
+        parent.addConsumed( month, amt ) ;
+        parent.spread.addConsumed( month, amt ) ;
     }
     
     private int getBudgetMonth( Date date ) {
+        
         Calendar cal = Calendar.getInstance() ;
         cal.setTime( date ) ;
         

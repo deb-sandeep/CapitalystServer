@@ -9,8 +9,6 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     
     $scope.financialYear = $scope.financialYearChoices[2] ;
     
-    $scope.budgetSpread = null ;
-
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading TxnPivotHomeController" ) ;
@@ -44,7 +42,7 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
         .then ( 
             function( response ){
                 console.log( response.data ) ;
-                $scope.budgetSpread = response.data ;
+                new BudgetTableRenderer( response.data ).render() ;
             }, 
             function(){
                 $scope.$parent.addErrorAlert( "Could not fetch budget spread." ) ;

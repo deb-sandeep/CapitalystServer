@@ -26,40 +26,45 @@ table.treetable tr.branch>td {
 }
 
 table.treetable tr.branch:not([data-tt-parent-id])>td {
-	font-size:14px;
-	background-color: #85d5f4;
+	font-size:13px;
+	background-color: rgb(222, 236, 255);
 }
 
-#pivot_table_div {
-	padding:0px 10px 0px 10px;
+#budget-table-div {
+	padding:5px 10px 0px 5px;
 }
 
-#pivot_table_div tr>td:not(:first-child) {
+#budget-table-div thead tr:not(:first-child) {
+    background-color: #eaeaea ;
+}
+
+#budget-table-div tr>td:not(:first-child) {
     font-family:'Courier';
 }
 
-#pivot_table_div tr>td:last-child {
+#budget-table-div tr>td:last-child {
     color:black;
 }
 
-#pivot_table_div tr>td.debit {
-    color:red;
-}
-
-#pivot_table_div tr>td.credit {
-    color:#295f19;
-}
-
-#pivot_table_div tr>td.row-total {
+#budget-table-div tr>td.row-total {
 	background-color:#f5f8fb;
 }
 
-#pivot_table_div tr.leaf td:not(:first-child) {
-    color:#4a4a4a!important;
+#budget-table-div tr.leaf td:not(:first-child) {
+    color:#4a4a4a;
     font-size:11px;
     font-style: italic;
 }
 
-#pivot_table_div tr.branch[depth="2"] td:not(:first-child) {
+#budget-table-div tr.branch[depth="2"] td:not(:first-child) {
     background-color:#eff5f9;
 }
+
+#budget-table-div tr>td.red-font {
+    color:red !important ;
+}
+
+#budget-table-div tr>td.green-font {
+    color:#295f19 !important;
+}
+
