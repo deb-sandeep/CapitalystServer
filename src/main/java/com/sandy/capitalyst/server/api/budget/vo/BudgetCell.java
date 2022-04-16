@@ -1,16 +1,21 @@
 package com.sandy.capitalyst.server.api.budget.vo;
 
+import java.util.Date ;
+
 import lombok.Data ;
 
 @Data
 public class BudgetCell {
     
-    private String month = null ;
+    private String monthName = null ;
+    private Date startOfMonth = null ;
+    
     private int planned = 0 ;
     private int consumed = 0 ;
     
-    public BudgetCell( String monthName ) {
-        this.month = monthName ;
+    public BudgetCell( String monthName, Date startOfMonth ) {
+        this.monthName = monthName ;
+        this.startOfMonth = startOfMonth ;
     }
     
     public int getRemaining() {

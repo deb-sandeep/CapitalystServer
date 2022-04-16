@@ -1,10 +1,12 @@
 package com.sandy.capitalyst.server.api.budget.vo;
 
 import java.util.ArrayList ;
+import java.util.Date ;
 import java.util.LinkedHashMap ;
 import java.util.List ;
 import java.util.Map ;
 
+import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.CalendarUtil ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.common.util.StringUtil ;
@@ -18,8 +20,9 @@ public class BudgetSpread extends BudgetLineItem {
     @Getter
     private List<L1LineItem> l1LineItems = new ArrayList<>() ;
     
-    public BudgetSpread( int fy ) {
-        super( "Budget for FY " + fy ) ;
+    public BudgetSpread( Date fyStart, Date fyEnd ) {
+        super( "Budget for FY " + CalendarUtil.getYear( fyStart ), 
+               fyStart, fyEnd ) ;
     }
 
     public void addCategory( LedgerEntryCategory cat ) {
@@ -53,5 +56,13 @@ public class BudgetSpread extends BudgetLineItem {
         if( l1LineItem != null ) {
             l1LineItem.processEntry( entry ) ;
         }
+    }
+    
+    @Override
+    public void computeBudgetOverflows() {
+        for( L1LineItem lineItem : l1LineItems ) {
+            lineItem.computeBudgetOverflows() ;
+        }
+        super.computeBudgetOverflows() ;
     }
 }

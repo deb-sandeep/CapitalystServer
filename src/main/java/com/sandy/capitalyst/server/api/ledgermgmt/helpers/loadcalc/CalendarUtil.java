@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc;
 
+import java.util.Calendar ;
+import java.util.Date ;
 import java.util.HashMap ;
 import java.util.Map ;
 
@@ -29,5 +31,11 @@ public class CalendarUtil {
     
     public static String getMonthName( int index ) {
         return MONTH_NAMES[index] ;
+    }
+    
+    public static int getYear( Date date ) {
+        Calendar cal = Calendar.getInstance() ;
+        cal.setTime( date ) ;
+        return cal.get( Calendar.YEAR ) ;
     }
 }

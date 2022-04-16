@@ -24,19 +24,27 @@ public class BudgetSpreadBuilder {
 
     public BudgetSpread createBudgetSpread( int financialYear ) {
         
-        BudgetSpread spread = buildBudgetSpread( financialYear ) ;
-        List<LedgerEntry> ledgerEntries = findLedgerEntries( financialYear ) ;
+        Date startDate = getStartOfFY( financialYear ) ;
+        Date endDate   = getEndOfFY( financialYear ) ;
+        
+        BudgetSpread spread = null ;
+        List<LedgerEntry> ledgerEntries = null ;
+        
+        spread = buildBudgetSpread( financialYear, startDate, endDate ) ;
+        ledgerEntries = lRepo.findCreditEntries( startDate, endDate ) ;
         
         for( LedgerEntry entry : ledgerEntries ) {
             spread.processEntry( entry ) ;
         }
         
+        spread.computeBudgetOverflows() ;
+        
         return spread ;
     }
     
-    private BudgetSpread buildBudgetSpread( int fy ) {
+    private BudgetSpread buildBudgetSpread( int fy, Date startDate, Date endDate ) {
         
-        BudgetSpread spread = new BudgetSpread( fy ) ;
+        BudgetSpread spread = new BudgetSpread( startDate, endDate ) ;
         
         List<LedgerEntryCategory> budgetedCategories = null ;
         budgetedCategories = lecRepo.findBudgetedCategories() ;
@@ -48,16 +56,17 @@ public class BudgetSpreadBuilder {
         return spread ;
     }
     
-    private List<LedgerEntry> findLedgerEntries( int fy ) {
+    private Date getStartOfFY( int fy ) {
         
         Calendar cal = new GregorianCalendar() ;
         cal.set( fy, Calendar.APRIL, 1, 0, 0, 0 ) ;
-        Date startDate = cal.getTime() ;
+        return cal.getTime() ;
+    }
+
+    private Date getEndOfFY( int fy ) {
         
-        cal = new GregorianCalendar() ;
-        cal.set( fy+1, Calendar.MARCH, 31, 0, 0, 0 ) ;
-        Date endDate = cal.getTime() ;
-        
-        return lRepo.findCreditEntries( startDate, endDate ) ;
+        Calendar cal = new GregorianCalendar() ;
+        cal.set( fy+1, Calendar.MARCH, 31, 23, 59, 59 ) ;
+        return cal.getTime() ;
     }
 }

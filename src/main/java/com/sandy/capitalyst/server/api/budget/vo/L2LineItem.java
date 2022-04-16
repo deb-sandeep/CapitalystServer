@@ -19,7 +19,10 @@ public class L2LineItem extends BudgetLineItem {
     
     public L2LineItem( L1LineItem parent, LedgerEntryCategory cat ) {
         
-        super( cat.getL2CatName() ) ;
+        super( cat.getL2CatName(), 
+               parent.getStartOfYear(), 
+               parent.getEndOfYear() ) ;
+        
         this.parent = parent ;
         this.category = cat ;
         

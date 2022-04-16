@@ -53,7 +53,7 @@ function BudgetTableRenderer( spread ) {
            TD(),
            TD.map( spread.budgetCells, function( cell, attributes ) {
                 attributes[ "width" ] = 90 ;
-                return cell.month ; 
+                return cell.monthName ; 
            } ),
            TD( 'Total' ) 
         ) ;

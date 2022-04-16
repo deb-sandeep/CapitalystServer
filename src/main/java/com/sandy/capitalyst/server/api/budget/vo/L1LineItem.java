@@ -24,7 +24,7 @@ public class L1LineItem extends BudgetLineItem {
     private boolean hasBudgedExceedCell = false ;
     
     public L1LineItem( String name, BudgetSpread spread ) {
-        super( name ) ;
+        super( name, spread.getStartOfYear(), spread.getEndOfYear() ) ;
         this.spread = spread ;
     }
 
@@ -54,5 +54,13 @@ public class L1LineItem extends BudgetLineItem {
                 hasBudgedExceedCell = l2LineItem.hasBudgedExceedCell() ;
             }
         }
+    }
+
+    @Override
+    public void computeBudgetOverflows() {
+        for( L2LineItem lineItem : l2LineItems ) {
+            lineItem.computeBudgetOverflows() ;
+        }
+        super.computeBudgetOverflows() ;
     }
 }
