@@ -59,7 +59,7 @@ public class BudgetSpreadBuilder {
     private Date getStartOfFY( int fy ) {
         
         Calendar cal = new GregorianCalendar() ;
-        cal.set( fy, Calendar.APRIL, 1, 0, 0, 0 ) ;
+        cal.set( fy, Calendar.MARCH, 31, 22, 0, 0 ) ;
         return cal.getTime() ;
     }
 

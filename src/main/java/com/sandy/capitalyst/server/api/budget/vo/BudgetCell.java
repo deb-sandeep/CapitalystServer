@@ -8,10 +8,11 @@ import lombok.Data ;
 public class BudgetCell {
     
     private String monthName = null ;
-    private Date startOfMonth = null ;
+    private transient Date startOfMonth = null ;
     
     private int planned = 0 ;
     private int consumed = 0 ;
+    private int carryOver = 0 ;
     
     public BudgetCell( String monthName, Date startOfMonth ) {
         this.monthName = monthName ;
@@ -19,7 +20,11 @@ public class BudgetCell {
     }
     
     public int getRemaining() {
-        return planned - consumed ;
+        return getAvailable() - consumed ;
+    }
+    
+    public int getAvailable() {
+        return planned + carryOver ;
     }
 
     public void addPlannedAmount( int amt ) {

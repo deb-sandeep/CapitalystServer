@@ -24,11 +24,10 @@ public interface LedgerRepo
           + "    LedgerEntry le "
           + "WHERE "
           + "    le.amount < 0 AND "
-          + "    le.valueDate BETWEEN :startDate AND :endDate "
+          + "    le.valueDate >= :startDate AND "
+          + "    le.valueDate <= :endDate "
           + "ORDER BY "
-          + "    le.l1Cat ASC, "
-          + "    le.l2Cat ASC, "
-          + "    le.valueDate DESC"
+          + "    le.valueDate ASC "
     )
     public List<LedgerEntry> findCreditEntries( 
                                         @Param( "startDate" ) Date startDate,

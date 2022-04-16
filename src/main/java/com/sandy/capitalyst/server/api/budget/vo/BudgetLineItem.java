@@ -82,6 +82,19 @@ public abstract class BudgetLineItem {
     
     public void computeBudgetOverflows() {
         
+        int carryOver = 0 ;
+        Date today = new Date() ;
         
+        for( int i=0; i<budgetCells.length; i++ ) {
+            
+            BudgetCell cell = budgetCells[i] ;
+            if( today.after( cell.getStartOfMonth() ) ) {
+                cell.setCarryOver( carryOver ) ;
+            }
+            else {
+                break ;
+            }
+            carryOver = cell.getRemaining() ;
+        }
     }
 }
