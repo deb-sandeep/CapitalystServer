@@ -4,7 +4,7 @@
 <head>
     <meta charset="ISO-8859-1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TxnPivot</title>
+    <title>Budget Tracker</title>
     <script src="/js/lib/jquery/jquery-2.1.1.min.js"></script>
     <script src="/js/lib/angular/angular.min.js"></script>
     <script src="/js/lib/angular/angular-route.min.js"></script>
@@ -38,8 +38,9 @@
     </script>
 </head>
 
-<body ng-controller="TxnPivotController"
-      style="background-color: #FFFFFF;">
+<body ng-controller="BudgetTrackerRootController"
+      style="background-color: #FFFFFF;"
+      id="bodyId">
 
 <nav class="navbar navbar-inverse navbar-static-top"
      style="min-height:0px;margin-bottom:0px;">
@@ -60,7 +61,7 @@
 {{alert.msg}}
 </div>
 
-<div ng-view></div>
+<div id="route-hosting-div" ng-view></div>
 
 <div id="serverInteractionLoader" 
      class="modal loader" 

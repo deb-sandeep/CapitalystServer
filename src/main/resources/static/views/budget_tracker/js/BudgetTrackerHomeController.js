@@ -17,8 +17,10 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
         financialYear : $scope.financialYearChoices[2],
         showPlanned   : false,
         showAvailable : false,
-        showConsumed  : false
+        showConsumed  : true
     }
+    
+    $scope.ledgerEntriesForDisplay = [] ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -52,6 +54,24 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     $scope.handleRowDisplayOptionsChanges = function() {
         tableRenderer.render( budgetSpread, $scope.userChoices ) ;
     }
+
+    $scope.showLedgerEntriesDialog = function( cat ) {
+        $( '#viewLedgerEntriesDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.hideLedgerEntriesDialog = function() {
+        $scope.ledgerEntriesForDisplay.length = 0 ;
+        $( '#viewLedgerEntriesDialog' ).modal( 'hide' ) ;
+    }
+    
+    $scope.triggerLedgerEntryDisplay = function( id, startOfMonth ) {
+        console.log( id + ", " + startOfMonth ) ;
+    }
+
+    $scope.$on( 'ledgerEntryDisplayTrigger', function( event, args ) {
+        console.log( "In home controller. Id = " + args.categoryId + 
+                     ", startDate = " + args.startOfMonth ) ;
+    } ) ;
 
     // --- [END] Scope functions
 

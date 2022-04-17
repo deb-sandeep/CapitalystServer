@@ -1,4 +1,4 @@
-capitalystNgApp.controller( 'TxnPivotController', 
+capitalystNgApp.controller( 'BudgetTrackerRootController', 
     function( $scope, $http, $rootScope, $location, $window, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
@@ -27,6 +27,13 @@ capitalystNgApp.controller( 'TxnPivotController',
         }
     } ) ;
 
+    $scope.triggerLedgerEntryDisplay = function( id, startOfMonth ) {
+        $scope.$broadcast( 'ledgerEntryDisplayTrigger', {
+            categoryId : id,
+            startOfMonth : startOfMonth
+        }) ;
+    }
+    
     // ----------- UI related scope functions --------------------------------
     $scope.addErrorAlert = function( msgString ) {
         console.log( msgString ) ;

@@ -6,7 +6,7 @@
     </select>
     <button type="button" 
             class="btn btn-default btn-sm action-bar-ctl"
-            ng-click="refreshTree()">
+            ng-click="showLedgerEntriesDialog()">
           <span class="glyphicon glyphicon-refresh"></span>
     </button>
     <button type="button" 
@@ -37,3 +37,10 @@
 </div>
 <div id="budget-table-div">
 </div>    
+
+<div id="viewLedgerEntriesDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'/views/admin/template/categories/view_ledger_entries_dialog.html'">
+</div>

@@ -1,3 +1,13 @@
+function triggerLedgerEntryDisplay( entryId, startOfMonth ) {
+    console.log( entryId ) ;
+    
+    var controllerElement = document.getElementById( 'bodyId' ) ;
+    var angularElement    = angular.element( controllerElement ) ;
+    var scope             = angularElement.scope() ;
+    
+    scope.triggerLedgerEntryDisplay( entryId, startOfMonth ) ;
+}
+
 function BudgetTableRenderer() {
 
     var spread = null ;
@@ -293,7 +303,11 @@ function BudgetTableRenderer() {
             },
             TD( "Consumed" ),
             TD.map( l2LineItem.budgetCells, function( cell, attributes ){
-                attributes[ "class" ] = getFGClass(cell.available - cell.consumed) ;
+                
+                attributes[ "class" ]   = getFGClass(cell.available - cell.consumed) ;
+                attributes[ "onclick" ] = "triggerLedgerEntryDisplay( " + 
+                                                l2LineItem.category.id + "," + 
+                                                "'" + cell.startOfMonth +"' ) ;" ;
                 return fmtAmt( cell.consumed ) ; 
             } ),
             TD( fmtAmt( l2LineItem.totalConsumed ) )  
