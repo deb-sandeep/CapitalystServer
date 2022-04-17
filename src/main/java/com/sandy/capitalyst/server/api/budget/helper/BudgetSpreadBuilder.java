@@ -4,6 +4,7 @@ import java.util.Calendar ;
 import java.util.Date ;
 import java.util.GregorianCalendar ;
 import java.util.List ;
+import java.util.TimeZone ;
 
 import com.sandy.capitalyst.server.api.budget.vo.BudgetSpread ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
@@ -58,14 +59,14 @@ public class BudgetSpreadBuilder {
     
     private Date getStartOfFY( int fy ) {
         
-        Calendar cal = new GregorianCalendar() ;
-        cal.set( fy, Calendar.MARCH, 31, 22, 0, 0 ) ;
+        Calendar cal = new GregorianCalendar( TimeZone.getTimeZone( "GMT+10:30" ) ) ;
+        cal.set( fy, Calendar.APRIL, 1, 0, 0, 0 ) ;
         return cal.getTime() ;
     }
 
     private Date getEndOfFY( int fy ) {
         
-        Calendar cal = new GregorianCalendar() ;
+        Calendar cal = new GregorianCalendar( TimeZone.getTimeZone( "GMT+10:30" ) ) ;
         cal.set( fy+1, Calendar.MARCH, 31, 23, 59, 59 ) ;
         return cal.getTime() ;
     }

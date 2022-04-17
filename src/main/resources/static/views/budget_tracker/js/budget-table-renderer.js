@@ -1,11 +1,10 @@
-function triggerLedgerEntryDisplay( entryId, startOfMonth ) {
-    console.log( entryId ) ;
+function triggerLedgerEntryDisplay( l1CatName, l2CatName, startOfMonth ) {
     
     var controllerElement = document.getElementById( 'bodyId' ) ;
     var angularElement    = angular.element( controllerElement ) ;
     var scope             = angularElement.scope() ;
     
-    scope.triggerLedgerEntryDisplay( entryId, startOfMonth ) ;
+    scope.triggerLedgerEntryDisplay( l1CatName, l2CatName, startOfMonth ) ;
 }
 
 function BudgetTableRenderer() {
@@ -241,7 +240,13 @@ function BudgetTableRenderer() {
             },
             TD( "Consumed" ),
             TD.map( l1LineItem.budgetCells, function( cell, attributes ){
+                
                 attributes[ "class" ] = getFGClass(cell.available - cell.consumed) ;
+                attributes[ "onclick" ] = "triggerLedgerEntryDisplay( " + 
+                                                "'" + l1LineItem.lineItemName + "'," + 
+                                                "''," + 
+                                                "'" + cell.startOfMonth +"' ) ;" ;
+                                                
                 return fmtAmt( cell.consumed ) ; 
             } ),
             TD( fmtAmt( l1LineItem.totalConsumed ) )  
@@ -306,7 +311,8 @@ function BudgetTableRenderer() {
                 
                 attributes[ "class" ]   = getFGClass(cell.available - cell.consumed) ;
                 attributes[ "onclick" ] = "triggerLedgerEntryDisplay( " + 
-                                                l2LineItem.category.id + "," + 
+                                                "'" + l2LineItem.category.l1CatName + "'," + 
+                                                "'" + l2LineItem.category.l2CatName + "'," + 
                                                 "'" + cell.startOfMonth +"' ) ;" ;
                 return fmtAmt( cell.consumed ) ; 
             } ),

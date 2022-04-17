@@ -6,6 +6,7 @@ import java.util.Date ;
 import java.util.Iterator ;
 import java.util.List ;
 
+import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.format.annotation.DateTimeFormat ;
@@ -81,6 +82,45 @@ public class LedgerRestController {
             }
             else {
                 entries = lRepo.findDebitEntries( l1CatName, l2CatName ) ; 
+            }
+            
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( entries ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                .body( null ) ;
+        }
+    }
+    
+    @GetMapping( "/Ledger/CreditEntriesForMonth" )
+    public ResponseEntity<List<LedgerEntry>> getCreditLedgerEntriesForMonth( 
+                                @RequestParam( "l1CatName" ) 
+                                String l1CatName,
+                                
+                                @RequestParam( "l2CatName" )
+                                String l2CatName,
+                                
+                                @RequestParam( "startOfMonth" ) 
+                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                Date startOfMonth ) {
+        
+        try {
+            List<LedgerEntry> entries = null ;
+            
+            Date endOfMonth = DateUtils.addMonths( startOfMonth, 1 ) ;
+            
+            if( StringUtil.isNotEmptyOrNull( l2CatName ) ) {
+                entries = lRepo.findCreditEntries( l1CatName, 
+                                                   l2CatName, 
+                                                   startOfMonth, 
+                                                   endOfMonth ) ;
+            }
+            else {
+                entries = lRepo.findCreditEntries( l1CatName, 
+                                                   startOfMonth, 
+                                                   endOfMonth ) ;
             }
             
             return ResponseEntity.status( HttpStatus.OK )
@@ -199,7 +239,6 @@ public class LedgerRestController {
     
     
     private void saveNewClassifier( String l1Cat, String l2Cat ) {
-        log.debug( "Saving new classification category." ) ;
         LedgerEntryCategory newCat = null ;
         newCat = new LedgerEntryCategory() ;
         newCat.setCreditClassification( false ) ;

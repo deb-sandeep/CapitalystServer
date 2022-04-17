@@ -35,7 +35,7 @@ public class BudgetController {
                                  .body( spread ) ;
         }
         catch( Exception e ) {
-            log.error( "Error :: Saving account data.", e ) ;
+            log.error( "Error :: Creatign budget spread.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( null ) ;
         }

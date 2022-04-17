@@ -81,3 +81,9 @@ table.treetable tr.branch[l2-branch]>td {
     color:#295f19 !important;
 }
 
+.ledger-entry-div {
+    background-color:#FEFEFE;
+    padding:5px;
+    height: 500px;  
+    overflow-y: scroll;
+}

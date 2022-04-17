@@ -21,6 +21,8 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     }
     
     $scope.ledgerEntriesForDisplay = [] ;
+    $scope.l1CatForEntries = null ;
+    $scope.l2CatForEntries = null ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -55,22 +57,19 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
         tableRenderer.render( budgetSpread, $scope.userChoices ) ;
     }
 
-    $scope.showLedgerEntriesDialog = function( cat ) {
-        $( '#viewLedgerEntriesDialog' ).modal( 'show' ) ;
-    }
-    
     $scope.hideLedgerEntriesDialog = function() {
         $scope.ledgerEntriesForDisplay.length = 0 ;
         $( '#viewLedgerEntriesDialog' ).modal( 'hide' ) ;
     }
     
-    $scope.triggerLedgerEntryDisplay = function( id, startOfMonth ) {
-        console.log( id + ", " + startOfMonth ) ;
-    }
-
     $scope.$on( 'ledgerEntryDisplayTrigger', function( event, args ) {
-        console.log( "In home controller. Id = " + args.categoryId + 
-                     ", startDate = " + args.startOfMonth ) ;
+        
+        $scope.l1CatForEntries = args.l1CatName ;
+        $scope.l2CatForEntries = args.l2CatName ;
+        
+        fetchLedgerEntriesForMonth( args.l1CatName, 
+                                    args.l2CatName, 
+                                    args.startOfMonth ) ;
     } ) ;
 
     // --- [END] Scope functions
@@ -83,6 +82,30 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     }
     
     // ------------------- Server comm functions -----------------------------
+    
+    function fetchLedgerEntriesForMonth( l1CatName, l2CatName, startOfMonth ) {
+        
+        $scope.ledgerEntriesForDisplay.length = 0 ;
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.get( '/Ledger/CreditEntriesForMonth?' +
+                   'l1CatName=' + l1CatName + '&' +
+                   'l2CatName=' + l2CatName + '&' + 
+                   'startOfMonth=' + startOfMonth )
+        .then ( 
+            function( response ){
+                $scope.ledgerEntriesForDisplay = response.data ;
+                $( '#viewLedgerEntriesDialog' ).modal( 'show' ) ; 
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch ledger entries.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;        
+    }
     
     function fetchBudgetSpread() {
         

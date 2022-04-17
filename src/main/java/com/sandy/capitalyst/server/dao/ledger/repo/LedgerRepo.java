@@ -16,7 +16,7 @@ public interface LedgerRepo
     extends CrudRepository<LedgerEntry, Integer> {
     
     public LedgerEntry findByHash( String hash ) ;
-    
+
     @Query( value =   
             "SELECT "
           + "    le "
@@ -24,12 +24,47 @@ public interface LedgerRepo
           + "    LedgerEntry le "
           + "WHERE "
           + "    le.amount < 0 AND "
-          + "    le.valueDate >= :startDate AND "
-          + "    le.valueDate <= :endDate "
+          + "    le.valueDate BETWEEN :startDate AND :endDate "
           + "ORDER BY "
           + "    le.valueDate ASC "
     )
     public List<LedgerEntry> findCreditEntries( 
+                                        @Param( "startDate" ) Date startDate,
+                                        @Param( "endDate"   ) Date endDate ) ; 
+
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.amount < 0 AND "
+          + "    le.valueDate BETWEEN :startDate AND :endDate AND "
+          + "    le.l1Cat = :l1CatName AND "
+          + "    le.l2Cat = :l2CatName "
+          + "ORDER BY "
+          + "    le.valueDate ASC "
+    )
+    public List<LedgerEntry> findCreditEntries( 
+                                        @Param( "l1CatName" ) String l1CatName,
+                                        @Param( "l2CatName" ) String l2CatName,
+                                        @Param( "startDate" ) Date startDate,
+                                        @Param( "endDate"   ) Date endDate ) ; 
+
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.amount < 0 AND "
+          + "    le.valueDate BETWEEN :startDate AND :endDate AND "
+          + "    le.l1Cat = :l1CatName "
+          + "ORDER BY "
+          + "    le.valueDate ASC "
+    )
+    public List<LedgerEntry> findCreditEntries( 
+                                        @Param( "l1CatName" ) String l1CatName,
                                         @Param( "startDate" ) Date startDate,
                                         @Param( "endDate"   ) Date endDate ) ; 
 

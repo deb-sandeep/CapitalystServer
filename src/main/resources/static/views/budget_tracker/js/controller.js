@@ -27,9 +27,10 @@ capitalystNgApp.controller( 'BudgetTrackerRootController',
         }
     } ) ;
 
-    $scope.triggerLedgerEntryDisplay = function( id, startOfMonth ) {
+    $scope.triggerLedgerEntryDisplay = function( l1CatName, l2CatName, startOfMonth ) {
         $scope.$broadcast( 'ledgerEntryDisplayTrigger', {
-            categoryId : id,
+            l1CatName : l1CatName,
+            l2CatName : l2CatName,
             startOfMonth : startOfMonth
         }) ;
     }

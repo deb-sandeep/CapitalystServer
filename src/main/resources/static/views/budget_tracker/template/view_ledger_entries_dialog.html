@@ -1,0 +1,58 @@
+<div class="modal-dialog" 
+     style="width:750px;">
+     
+  <div class="modal-content" >
+    <div class="modal-header" style="background-color:#C5C5C5;padding:5px">
+      <h3 class="modal-title">
+        Ledger Entries. [
+            {{$parent.l1CatForEntries}} &gt;
+            {{$parent.l2CatForEntries}}
+        ] 
+      </h3>
+    </div>
+    
+    <div class="modal-body ledger-entry-div">
+		<table class="pure-table pure-table-bordered"
+		       style="width:100%;">
+		   <thead>
+		       <tr>
+		           <th width="100px;">Date</th>
+		           <th>Amount</th>
+		           <th ng-if="$parent.l2CatForEntries == ''">L2</th>
+		           <th>Notes</th>
+		           <th>Remarks</th>
+		       </tr>
+		   </thead>
+		   <tbody>
+		      <tr ng-repeat="entry in $parent.ledgerEntriesForDisplay">
+		          <td class="numeric">
+		              {{entry.valueDate | date : "dd/MMM/yyyy"}}
+		          </td>
+                  <td class="fixed-font amt">
+                    {{entry.amount | number : 0}}
+                  </td>
+                  <td ng-if="$parent.l2CatForEntries == ''">
+                    {{entry.l2Cat}}
+                  </td>
+                  <td style="padding-left:5px;font-size:11px;">
+                    {{entry.notes}}
+                  </td>
+                  <td style="padding-left:5px;font-size:11px;">
+                    {{entry.remarks | remark}}
+                  </td>
+		      </tr>
+		   </tbody>
+		</table>        
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-info btn-sm" 
+              ng-click="hideLedgerEntriesDialog()">
+            Ok
+      </button>
+    </div>
+    
+    <p>
+  </div>
+</div>
