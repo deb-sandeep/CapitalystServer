@@ -1,7 +1,17 @@
-function BudgetTableRenderer( spread ) {
+function BudgetTableRenderer() {
 
-    this.render = function() {
+    var spread = null ;
+    var showPlanned = false ;
+    var showAvailable = false ;
+    var showConsumed = false ;
+    
+    this.render = function( spreadData, userChoices ) {
 
+        spread = spreadData ;
+        showPlanned = userChoices.showPlanned ;
+        showAvailable = userChoices.showAvailable ;
+        showConsumed = userChoices.showConsumed ;
+        
         var tableDOM = getTableDOM() ;
         var container = document.getElementById( "budget-table-div" ) ;
         while( container.firstChild ) {
@@ -10,22 +20,33 @@ function BudgetTableRenderer( spread ) {
         container.appendChild( tableDOM ) ;
         
         $( "#budget-spread-table" ).treetable( { expandable: true } ) ;
-        //expandL1WithBudgetExceeds( spread ) ;
     }
     
-    /*
-    function expandL1WithBudgetExceeds( spread ) {
+    this.changeL1ExpansionState = function( expand ) {
+        
+        var table = $( "#budget-spread-table" ) ;
+        var cmd   = expand ? "expandNode" : "collapseNode" ; 
+        
+        for( var i=0; i<spread.l1LineItems.length; i++ ) {
+            table.treetable( cmd, "L1-" + i ) ;
+        }
+    }
+
+    this.changeTreeExpansionState = function( expand ) {
+        
+        var table = $( "#budget-spread-table" ) ; 
+        var cmd   = expand ? "expandNode" : "collapseNode" ; 
         
         for( var i=0; i<spread.l1LineItems.length; i++ ) {
             
-            var lineItem = spread.l1LineItems[i] ;
-            if( lineItem.hasBudgedExceedCell ) {
-                $( "#budget-spread-table" ).treetable( "expandNode", 
-                                                       "L1-" + i ) ;
+            table.treetable( cmd, "L1-" + i ) ;
+
+            var l1LineItem = spread.l1LineItems[i] ;
+            for( var j=0; j<l1LineItem.l2LineItems.length; j++ ) {
+                table.treetable( cmd, "L1-" + i + "-" + j ) ;
             }
         }
     }
-    */
 
     function getTableDOM() {
         
@@ -40,14 +61,22 @@ function BudgetTableRenderer( spread ) {
     }
     
     function buildTableHeader() {
-        return THEAD( 
-            
-            buildHdrMonthNameRow(),
-            buildHdrPlannedRow(),
-            buildHdrAvailableRow(),
-            buildHdrConsumedRow(),
-            buildHdrRemainingRow()
-        ) ;
+        
+        var rows = [] ;
+        
+        rows.push( buildHdrMonthNameRow() ) ;
+        if( showPlanned ) {
+            rows.push( buildHdrPlannedRow() ) ;
+        }
+        if( showAvailable ) {
+            rows.push( buildHdrAvailableRow() ) ;
+        }
+        if( showConsumed ) {
+            rows.push( buildHdrConsumedRow() ) ;
+        }
+        rows.push( buildHdrRemainingRow() ) ;
+        
+        return THEAD( rows ) ;
     }
     
     function buildHdrMonthNameRow() {
@@ -119,18 +148,30 @@ function BudgetTableRenderer( spread ) {
             var l1Item = l1LineItems[i] ;
             
             trList.push( buildL1RemainingTR( l1Item, i ) ) ;
-            trList.push( buildL1PlannedTR  ( l1Item, i ) ) ;
-            trList.push( buildL1AvailableTR( l1Item, i ) ) ;
-            trList.push( buildL1ConsumedTR ( l1Item, i ) ) ;
+            if( showPlanned ) {
+                trList.push( buildL1PlannedTR( l1Item, i ) ) ;
+            }
+            if( showAvailable ) {
+                trList.push( buildL1AvailableTR( l1Item, i ) ) ;
+            }
+            if( showConsumed ) {
+                trList.push( buildL1ConsumedTR( l1Item, i ) ) ;
+            }
             
             for( var j=0; j<l1Item.l2LineItems.length; j++ ) {
                 
                 var l2Item = l1Item.l2LineItems[j] ;
                 
                 trList.push( buildL2RemainingTR( l2Item, i, j ) ) ;
-                trList.push( buildL2PlannedTR  ( l2Item, i, j ) ) ;
-                trList.push( buildL2AvailableTR( l2Item, i, j ) ) ;
-                trList.push( buildL2ConsumedTR ( l2Item, i, j ) ) ;
+                if( showPlanned ) {
+                    trList.push( buildL2PlannedTR  ( l2Item, i, j ) ) ;
+                }
+                if( showAvailable ) {
+                    trList.push( buildL2AvailableTR( l2Item, i, j ) ) ;
+                }
+                if( showConsumed ) {
+                    trList.push( buildL2ConsumedTR ( l2Item, i, j ) ) ;
+                }
             }
         }
         
@@ -190,7 +231,7 @@ function BudgetTableRenderer( spread ) {
             },
             TD( "Consumed" ),
             TD.map( l1LineItem.budgetCells, function( cell, attributes ){
-                attributes[ "class" ] = getFGClass(cell.planned - cell.consumed) ;
+                attributes[ "class" ] = getFGClass(cell.available - cell.consumed) ;
                 return fmtAmt( cell.consumed ) ; 
             } ),
             TD( fmtAmt( l1LineItem.totalConsumed ) )  
@@ -203,7 +244,8 @@ function BudgetTableRenderer( spread ) {
         
         return TR( {
                 "data-tt-id" : "L1-" + l1Index + "-" + l2Index,
-                "data-tt-parent-id" : "L1-" + l1Index
+                "data-tt-parent-id" : "L1-" + l1Index,
+                "l2-branch" : "true"
             },
             TD( l2LineItem.lineItemName ),
             TD.map( l2LineItem.budgetCells, function( cell, attributes ){
@@ -251,7 +293,7 @@ function BudgetTableRenderer( spread ) {
             },
             TD( "Consumed" ),
             TD.map( l2LineItem.budgetCells, function( cell, attributes ){
-                attributes[ "class" ] = getFGClass(cell.planned - cell.consumed) ;
+                attributes[ "class" ] = getFGClass(cell.available - cell.consumed) ;
                 return fmtAmt( cell.consumed ) ; 
             } ),
             TD( fmtAmt( l2LineItem.totalConsumed ) )  

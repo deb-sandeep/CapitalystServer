@@ -8,7 +8,7 @@ import lombok.Data ;
 public class BudgetCell {
     
     private String monthName = null ;
-    private transient Date startOfMonth = null ;
+    private Date startOfMonth = null ;
     
     private int planned = 0 ;
     private int consumed = 0 ;

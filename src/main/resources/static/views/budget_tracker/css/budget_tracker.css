@@ -11,6 +11,14 @@
 	margin: 5px;
 }
 
+.action-bar-ctl {
+	height: 30px;
+	font-size: 12px;
+	margin-top:-5px;
+	padding: 0px;
+	width: 50px;
+}
+
 table.treetable {
 	width : 100%;
 	border: 0px;
@@ -28,6 +36,11 @@ table.treetable tr.branch>td {
 table.treetable tr.branch:not([data-tt-parent-id])>td {
 	font-size:13px;
 	background-color: rgb(222, 236, 255);
+}
+
+table.treetable tr.branch[l2-branch]>td {
+    font-size:12px;
+    background-color: #f2f8fa;
 }
 
 #budget-table-div {

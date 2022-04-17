@@ -3,11 +3,22 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     
     // ---------------- Local variables --------------------------------------
     
+    var tableRenderer = new BudgetTableRenderer() ;
+    var budgetSpread = null ;
+    
+    var l1Expanded = false ;
+    var treeExpanded = false ;
+    
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Budget Tracker" ;
     $scope.financialYearChoices = [ 2020, 2021, 2022 ] ;
     
-    $scope.financialYear = $scope.financialYearChoices[2] ;
+    $scope.userChoices = {
+        financialYear : $scope.financialYearChoices[2],
+        showPlanned   : false,
+        showAvailable : false,
+        showConsumed  : false
+    }
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -22,6 +33,24 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     
     $scope.handleFYChange = function() {
         fetchBudgetSpread() ;
+    }
+    
+    $scope.refreshTree = function() {
+        fetchBudgetSpread() ;
+    }
+    
+    $scope.toggleExpandL1 = function() {
+        l1Expanded = !l1Expanded ;
+        tableRenderer.changeL1ExpansionState( l1Expanded ) ;
+    }
+    
+    $scope.toggleExpandAll = function() {
+        treeExpanded = !treeExpanded ;
+        tableRenderer.changeTreeExpansionState( treeExpanded ) ;
+    }
+    
+    $scope.handleRowDisplayOptionsChanges = function() {
+        tableRenderer.render( budgetSpread, $scope.userChoices ) ;
     }
 
     // --- [END] Scope functions
@@ -38,11 +67,13 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     function fetchBudgetSpread() {
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.get( '/Budget/Spread/' + $scope.financialYear )
+        $http.get( '/Budget/Spread/' + $scope.userChoices.financialYear )
         .then ( 
             function( response ){
                 console.log( response.data ) ;
-                new BudgetTableRenderer( response.data ).render() ;
+                budgetSpread = response.data ;
+                $scope.$parent.navBarTitle = response.data.lineItemName ;
+                tableRenderer.render( budgetSpread, $scope.userChoices ) ;
             }, 
             function(){
                 $scope.$parent.addErrorAlert( "Could not fetch budget spread." ) ;

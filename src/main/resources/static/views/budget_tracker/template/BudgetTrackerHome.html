@@ -1,10 +1,39 @@
 <div id="action-pane">
     <select id="fin-year-select"
-            ng-model="financialYear"
+            ng-model="userChoices.financialYear"
             ng-options="('FY ' + item) for item in financialYearChoices"
             ng-change="handleFYChange()">
     </select>
-    <span style="color:white;font-size:18px;">{{budgetSpread.lineItemName}}</span>
+    <button type="button" 
+            class="btn btn-default btn-sm action-bar-ctl"
+            ng-click="refreshTree()">
+          <span class="glyphicon glyphicon-refresh"></span>
+    </button>
+    <button type="button" 
+            class="btn btn-default btn-sm action-bar-ctl"
+            ng-click="toggleExpandL1()">
+          <span class="glyphicon glyphicon-fullscreen"></span> L1
+    </button>
+    <button type="button" 
+            class="btn btn-default btn-sm action-bar-ctl"
+            ng-click="toggleExpandAll()">
+          <span class="glyphicon glyphicon-fullscreen"></span> All
+    </button>
+    &nbsp;&nbsp;
+    <input type="checkbox" 
+           ng-model="userChoices.showPlanned"
+           ng-change="handleRowDisplayOptionsChanges()"/> 
+           <span style="color:white;"> Show planned &nbsp; | </span>
+    &nbsp;&nbsp;
+    <input type="checkbox" 
+           ng-model="userChoices.showAvailable"
+           ng-change="handleRowDisplayOptionsChanges()"/> 
+           <span style="color:white;"> Show available &nbsp; | </span>
+    &nbsp;&nbsp;
+    <input type="checkbox" 
+           ng-model="userChoices.showConsumed"
+           ng-change="handleRowDisplayOptionsChanges()"/> 
+           <span style="color:white;"> Show consumed &nbsp; | </span>
 </div>
 <div id="budget-table-div">
 </div>    
