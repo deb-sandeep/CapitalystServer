@@ -26,7 +26,7 @@ public interface LedgerRepo
           + "    le.amount < 0 AND "
           + "    le.valueDate BETWEEN :startDate AND :endDate "
           + "ORDER BY "
-          + "    le.valueDate ASC "
+          + "    le.valueDate DESC "
     )
     public List<LedgerEntry> findCreditEntries( 
                                         @Param( "startDate" ) Date startDate,
@@ -43,7 +43,7 @@ public interface LedgerRepo
           + "    le.l1Cat = :l1CatName AND "
           + "    le.l2Cat = :l2CatName "
           + "ORDER BY "
-          + "    le.valueDate ASC "
+          + "    le.valueDate DESC "
     )
     public List<LedgerEntry> findCreditEntries( 
                                         @Param( "l1CatName" ) String l1CatName,
@@ -61,7 +61,7 @@ public interface LedgerRepo
           + "    le.valueDate BETWEEN :startDate AND :endDate AND "
           + "    le.l1Cat = :l1CatName "
           + "ORDER BY "
-          + "    le.valueDate ASC "
+          + "    le.valueDate DESC "
     )
     public List<LedgerEntry> findCreditEntries( 
                                         @Param( "l1CatName" ) String l1CatName,
