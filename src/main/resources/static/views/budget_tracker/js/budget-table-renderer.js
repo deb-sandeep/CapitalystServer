@@ -74,15 +74,9 @@ function BudgetTableRenderer() {
         var rows = [] ;
         
         rows.push( buildHdrMonthNameRow() ) ;
-        if( showPlanned ) {
-            rows.push( buildHdrPlannedRow() ) ;
-        }
-        if( showAvailable ) {
-            rows.push( buildHdrAvailableRow() ) ;
-        }
-        if( showConsumed ) {
-            rows.push( buildHdrConsumedRow() ) ;
-        }
+        rows.push( buildHdrPlannedRow() ) ;
+        rows.push( buildHdrAvailableRow() ) ;
+        rows.push( buildHdrConsumedRow() ) ;
         rows.push( buildHdrRemainingRow() ) ;
         
         return THEAD( rows ) ;
