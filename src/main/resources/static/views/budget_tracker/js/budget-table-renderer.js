@@ -120,7 +120,9 @@ function BudgetTableRenderer() {
         
         return TR(
            TD( "Available" ),
-           TD.map( spread.budgetCells, function( cell ) {
+           TD.map( spread.budgetCells, function( cell, attributes ) {
+
+                attributes[ "class" ] = getFGClass( cell.available ) ; 
                 return fmtAmt( cell.available ) ; 
            } ),
            TD( "" ) 
