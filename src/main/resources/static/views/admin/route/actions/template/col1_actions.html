@@ -1,77 +1,29 @@
-<div class="panel-group" id="accordion"
-     style="font-size:12px;padding:5px;">
+<div class="panel-group" id="acc" style="font-size:12px;padding:5px;">
   
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
-        <a data-toggle="collapse" 
-           data-parent="#accordion" 
-           data-target="#amtThreshold">
-        Amount
+        <a data-target="#equityMaster" data-toggle="collapse" data-parent="#acc">
+        Equity Master
         </a>
       </h4>
     </div>
-    <div id="amtThreshold" class="panel-collapse collapse form"
-         style="padding: 10px;">
-        <label>Lower amount limit</label>
-        <input class='form-field'
-               type="number" 
-               ng-model="searchQuery.minAmt" />
-        <span style="display:block;padding:5px;"></span> 
-        <label>Upper amount limit</label>
-        <input class='form-field'
-               type="number" 
-               ng-model="searchQuery.maxAmt" /> 
+    <div id="equityMaster" class="panel-collapse form action-div">
+        <div class="explanation">
+            Refreshes the NSE equity master table by populating equity 
+            symbol, company name and ISIN. 
+        </div>
+        <div class="action-btn">
+	        <button class="btn btn-sm btn-default"
+	                ng-click="refreshEquityMaster()">
+              <span class="glyphicon glyphicon-flash"></span>
+	          Execute
+	        </button>
+        </div>
+        <div class="action-result">
+            
+        </div>
     </div>
   </div>
-  
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" 
-           data-parent="#accordion" 
-           data-target="#catSelectionDiv">
-        Category selection
-        </a>
-      </h4>
-    </div>
-    <div id="catSelectionDiv"
-         style="padding:10px;">
-         
-        <input type="checkbox" 
-               ng-model="searchQuery.creditClassifier"
-               ng-change="creditClassifierChanged()"/> Credit classifiers
-        <p>
-        <label>L1 category</label>
-        <select class="form-field" 
-                ng-model="searchQuery.l1CatName"
-                ng-options="item for item in filterCategories.l1Categories">
-            <option value=""></option>
-        </select>
-        <label>L2 category</label>
-        <select class="form-field" 
-                ng-model="searchQuery.l2CatName"
-                ng-options="item for item in filterCategories.l2Categories.get( searchQuery.l1CatName )">
-            <option value=""></option>
-        </select>
-    </div>
-  </div>      
-
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" 
-           data-parent="#accordion" 
-           data-target="#sundryOptionsDiv">
-        Sundry options
-        </a>
-      </h4>
-    </div>
-    <div id="sundryOptionsDiv" style="padding:5px;">
-        <input type="checkbox" 
-               ng-model="searchQuery.showOnlyUnclassified"
-               ng-change="showOnlyUnclassifiedCriteriaChanged()"/> Show only unclassified
-    </div>
-  </div>    
 
 </div>

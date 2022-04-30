@@ -93,3 +93,12 @@ pre {
 .invalid-rule {
     background-color: #f8e7e5;
 }
+
+.action-div {
+	padding: 5px;
+	font-size:13px;
+}
+
+.action-btn {
+	text-align:center;
+}
