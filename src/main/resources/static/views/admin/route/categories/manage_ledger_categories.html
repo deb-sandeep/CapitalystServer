@@ -14,38 +14,38 @@
 
 <div ng-init="catType='Debit';catData=ledgerCategories.debit;"
      ng-if="activeCategory == 'Debit'"
-     ng-include="'route/categories/ledger_cat_editor.html'">
+     ng-include="'route/categories/template/ledger_cat_editor.html'">
 </div>
 
 <div ng-init="catType='Credit';catData=ledgerCategories.credit;"
      ng-if="activeCategory == 'Credit'"
-     ng-include="'route/categories/ledger_cat_editor.html'">
+     ng-include="'route/categories/template/ledger_cat_editor.html'">
 </div>
 
 <div id="changeParentCategoryDialog" 
      class="modal" 
      role="dialog"
      data-backdrop="static"
-     ng-include="'route/categories/change_parent_category_dialog.html'">
+     ng-include="'route/categories/dialog/change_parent_category_dialog.html'">
 </div>
 
 <div id="viewLedgerEntriesDialog" 
      class="modal" 
      role="dialog"
      data-backdrop="static"
-     ng-include="'route/categories/view_ledger_entries_dialog.html'">
+     ng-include="'route/categories/dialog/view_ledger_entries_dialog.html'">
 </div>
 
 <div id="mergeLedgerCategoryDialog" 
      class="modal" 
      role="dialog"
      data-backdrop="static"
-     ng-include="'route/categories/merge_category_dialog.html'">
+     ng-include="'route/categories/dialog/merge_category_dialog.html'">
 </div>
 
 <div id="yearlyCapEditDialog" 
      class="modal" 
      role="dialog"
      data-backdrop="static"
-     ng-include="'route/categories/yearly_cap_editor_dialog.html'">
+     ng-include="'route/categories/dialog/yearly_cap_editor_dialog.html'">
 </div>
