@@ -431,7 +431,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         .then ( 
             function( response ){
                 populateMasterCategories( response.data ) ;
-                console.log( $scope.ledgerCategories ) ;
                 console.log( "Fetching ledger enties classification counter." ) ;
                 fetchClassifiedLedgerEntriesCounter() ;
             }, 
