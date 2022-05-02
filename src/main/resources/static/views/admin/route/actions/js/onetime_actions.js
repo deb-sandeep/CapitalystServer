@@ -16,7 +16,7 @@ capitalystNgApp.controller( 'OneTimeActionsController',
     $scope.$parent.activeModuleId = "onetime_actions" ;
     
     $scope.otaStat = {
-        'refreshEquityMaster' : new OTAStat( 'refreshEquityMaster' )    
+        'RefreshEquityMaster' : new OTAStat( 'RefreshEquityMaster' )    
     } ;
     
     // -----------------------------------------------------------------------
@@ -120,7 +120,9 @@ capitalystNgApp.controller( 'OneTimeActionsController',
             ota.message = ota.message + "ENDED.\n\n" ;
         }
         
-        var textarea = document.getElementById( actionId + "_ta" ) ;
-        textarea.scrollTop = textarea.scrollHeight ;        
+        setTimeout( function() {
+            var textarea = document.getElementById( actionId + "_ta" ) ;
+            textarea.scrollTop = textarea.scrollHeight ;        
+        }, 500 ) ;
     }
 } ) ;

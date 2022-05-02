@@ -3,7 +3,7 @@ package com.sandy.capitalyst.server.core.scheduler;
 import java.util.HashMap ;
 import java.util.Map ;
 
-import com.sandy.capitalyst.server.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 public class JobState {
 

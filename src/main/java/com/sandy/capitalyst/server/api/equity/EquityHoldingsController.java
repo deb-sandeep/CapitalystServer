@@ -17,10 +17,10 @@ import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVOBuilder ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
-import com.sandy.capitalyst.server.dao.equity.EquityISIN ;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityISINRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
 
 @RestController
@@ -35,7 +35,7 @@ public class EquityHoldingsController {
     private EquityTxnRepo etRepo = null ;
     
     @Autowired
-    private EquityISINRepo eiRepo = null ;
+    private EquityMasterRepo emRepo = null ;
     
     @GetMapping( "/Equity/Holding" ) 
     public ResponseEntity<List<EquityHoldingVO>> getEquityHoldings() {
@@ -112,7 +112,7 @@ public class EquityHoldingsController {
         }
         
         // Update the NSE symbol by looking up the ISIN Symbol map
-        EquityISIN eqIsin = eiRepo.findByIsin( postedHolding.getIsin() ) ;
+        EquityMaster eqIsin = emRepo.findByIsin( postedHolding.getIsin() ) ;
         if( eqIsin != null ) {
             log.debug( "Updating NSE symbol." ) ;
             holding.setSymbolNse( eqIsin.getSymbol() ) ;

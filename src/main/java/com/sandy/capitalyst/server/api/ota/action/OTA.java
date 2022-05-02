@@ -20,6 +20,9 @@ public abstract class OTA implements Runnable {
     
     private static final Logger log = Logger.getLogger( OTA.class ) ;
 
+    @Getter
+    private String name = null ;
+    
     @Setter
     protected Map<String, String> parameters = null ;
     
@@ -28,17 +31,42 @@ public abstract class OTA implements Runnable {
     @Getter 
     private boolean complete = false ;
     
-    protected void addResult( String message ) {
-        queue.add( new PartResult( Message, message ) ) ;
+    protected OTA( String name ) {
+        this.name = name ;
     }
     
-    protected void addResult( Exception e ) {
+    @Override
+    public final void run() {
+
+        try {
+            log.debug( "Executing OTA - " + this.name ) ;
+            execute() ;
+        }
+        catch( Exception e ) {
+            addResult( e ) ;
+            log.error( "Error in OTA - ", e ) ;
+        }
+        finally {
+            markEndOfProcessing() ;
+        }
+    }
+    
+    protected abstract void execute() throws Exception ;
+    
+    public void addResult( String message ) {
+        queue.add( new PartResult( Message, message ) ) ;
+        log.debug( "2CLIENT : " + message ) ;
+    }
+    
+    public void addResult( Exception e ) {
         queue.add( new PartResult( Exception, e.getMessage() ) ) ;
+        log.debug( "2CLIENT : Error : " + e.getMessage() ) ;
     }
     
     protected void markEndOfProcessing() {
         queue.add( new PartResult( EndOfProcessing, null ) ) ;
         this.complete = true ;
+        log.debug( "2CLIENT : End of processing" ) ;
     }
     
     public List<PartResult> getPartResults() {

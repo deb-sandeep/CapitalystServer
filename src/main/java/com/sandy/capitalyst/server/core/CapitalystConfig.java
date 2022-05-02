@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.config;
+package com.sandy.capitalyst.server.core;
 
 import java.io.File ;
 

@@ -12,10 +12,10 @@ import org.apache.log4j.Logger ;
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.dao.equity.EquityCandle ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
-import com.sandy.capitalyst.server.dao.equity.EquityISIN ;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityCandleRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityISINRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.sandy.common.util.StringUtil ;
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;
@@ -25,12 +25,12 @@ public class NSEBhavcopyImporter {
     static final Logger log = Logger.getLogger( NSEBhavcopyImporter.class ) ;
     
     private EquityCandleRepo ecRepo = null ;
-    private EquityISINRepo eiRepo = null ;
+    private EquityMasterRepo emRepo = null ;
     private EquityHoldingRepo ehRepo = null ;
     
     public NSEBhavcopyImporter() {
         ecRepo = CapitalystServer.getBean( EquityCandleRepo.class ) ;
-        eiRepo = CapitalystServer.getBean( EquityISINRepo.class ) ;
+        emRepo = CapitalystServer.getBean( EquityMasterRepo.class ) ;
         ehRepo = CapitalystServer.getBean( EquityHoldingRepo.class ) ;
     }
 
@@ -78,19 +78,23 @@ public class NSEBhavcopyImporter {
         
         CsvParserSettings settings = new CsvParserSettings() ;
         settings.detectFormatAutomatically() ;
+        
         CsvParser csvParser = new CsvParser( settings ) ;
         
         List<String[]> csvData = csvParser.parseAll( bhavcopyFile ) ;
+        
         for( int i=1;i<csvData.size(); i++ ) {
+            
             String[] record = csvData.get( i ) ;
+            
             String symbol = record[0] ;
             String series = record[1] ;
-            String isin = record[12] ;
+            String isin   = record[12] ;
             
             long totalTradeQty = Long.parseLong( record[8] ) ;
             
             if( series.equals( "EQ" ) && totalTradeQty > 50000 ) {
-                EquityCandle candle = transformRecord( record, date ) ;
+                EquityCandle candle = buildEquityCandle( record, date ) ;
                 ecRepo.save( candle ) ;
                 
                 if( holdingsMap.containsKey( symbol ) ) {
@@ -108,7 +112,7 @@ public class NSEBhavcopyImporter {
     private void updateEquityISINMapping( String symbol, String isin ) {
         
         try {
-            EquityISIN eqIsin = eiRepo.findByIsin( isin ) ;
+            EquityMaster eqIsin = emRepo.findByIsin( isin ) ;
             if( eqIsin == null ) {
                 // If we can't find a mapping via ISIN, it can also mean than
                 // the ISIN has changed. In this case, we see if the we can 
@@ -116,21 +120,21 @@ public class NSEBhavcopyImporter {
                 // new mapping.
                 //
                 // Case observed - IRCON ISIN changed on 7th May 2020
-                eqIsin = eiRepo.findBySymbol( symbol ) ;
+                eqIsin = emRepo.findBySymbol( symbol ) ;
                 if( eqIsin != null ) {
                     eqIsin.setIsin( isin ) ;
                     
                     // In case we have updated an existing mapping, we have to
                     // check if this ISIN was being used by any of our
                     // existing holdings. If so, we update those too.
-                    ehRepo.updateIsin( isin, symbol ) ;
+                    ehRepo.updateISIN( isin, symbol ) ;
                 }
                 else {
-                    eqIsin = new EquityISIN() ;
+                    eqIsin = new EquityMaster() ;
                     eqIsin.setSymbol( symbol ) ;
                     eqIsin.setIsin( isin ) ;
                 }
-                eiRepo.save( eqIsin ) ;
+                emRepo.save( eqIsin ) ;
             }
         }
         catch( Exception e ) {
@@ -141,7 +145,8 @@ public class NSEBhavcopyImporter {
         }
     }
 
-    private EquityCandle transformRecord( String[] record, Date date ) {
+    private EquityCandle buildEquityCandle( String[] record, Date date ) {
+        
         EquityCandle candle = new EquityCandle() ;
         candle.setSymbol( record[0] ) ;
         candle.setOpen( Float.parseFloat( record[2] ) ) ;

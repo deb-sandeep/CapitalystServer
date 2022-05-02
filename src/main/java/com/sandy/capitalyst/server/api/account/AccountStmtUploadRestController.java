@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 import org.springframework.web.multipart.MultipartFile ;
 
-import com.sandy.capitalyst.server.config.CapitalystConfig ;
+import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImportResult ;
 import com.sandy.capitalyst.server.core.ledger.loader.LedgerImporter ;
 import com.sandy.capitalyst.server.dao.account.Account ;

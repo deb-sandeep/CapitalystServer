@@ -1,22 +1,22 @@
-        <div class="action-btn">
-            <button class="btn btn-sm btn-default"
-                    ng-click="executeOTA( ota.id )" ng-disabled="ota.executing">
-              <span class="glyphicon glyphicon-flash" ng-hide="ota.executing"></span>
-              <img src="/img/gear.gif" ng-show="ota.executing"/>
-              Execute
-            </button>
-            <button class="btn btn-sm btn-default"
-                    ng-click="viewOTALog( ota.id )">
-              <span class="glyphicon glyphicon-eye-open"></span>
-            </button>
-        </div>
-        <div class="action-result">
-            <p/>
-            <textarea id='refreshEquityMaster_ta'
-                      class="form-field rule-edit-textarea"
-                      ng-model="ota.message" 
-                      rows="10"
-                      ng-disabled="true"
-                      ng-show="ota.viewLog">
-            </textarea> 
-        </div>
+<div class="action-btn">
+    <button class="btn btn-sm btn-default"
+            ng-click="executeOTA( ota.id )" ng-disabled="ota.executing">
+      <span class="glyphicon glyphicon-flash" ng-hide="ota.executing"></span>
+      <img src="/img/gear.gif" ng-show="ota.executing"/>
+      Execute
+    </button>
+    <button class="btn btn-sm btn-default"
+            ng-click="viewOTALog( ota.id )">
+      <span class="glyphicon glyphicon-eye-open"></span>
+    </button>
+</div>
+<div class="action-result">
+    <p/>
+    <textarea id='{{ota.id}}_ta'
+              class="form-field rule-edit-textarea"
+              ng-model="ota.message" 
+              rows="10"
+              ng-disabled="true"
+              ng-show="ota.viewLog">
+    </textarea> 
+</div>

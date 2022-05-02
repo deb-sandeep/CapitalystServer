@@ -16,6 +16,8 @@ public interface EquityHoldingRepo
     EquityHolding findByOwnerNameAndSymbolIcici( String ownerName, 
                                                  String symbolIcici ) ;
     
+    List<EquityHolding> findBySymbolNse( String symbolNse ) ;
+
     @Query( value =   
             "SELECT "
           + "    eh "
@@ -34,7 +36,19 @@ public interface EquityHoldingRepo
           + "SET "
           + "   eh.isin = :isin " 
           + "WHERE "
-          + "   eh.symbolNse =:symbol ")
-    void updateIsin( @Param( "isin"   ) String isin, 
-                     @Param( "symbol" ) String symbol ) ;
+          + "   eh.symbolNse =:symbolNse ")
+    void updateISIN( @Param( "isin"      ) String isin, 
+                     @Param( "symbolNse" ) String symbolNse ) ;
+
+    @Transactional
+    @Modifying( clearAutomatically = true )
+    @Query( 
+            "UPDATE " 
+          + "   EquityHolding eh "
+          + "SET "
+          + "   eh.symbolNse = :symbolNse " 
+          + "WHERE "
+          + "   eh.isin =:isin ")
+    void updateSymbolNSE( @Param( "isin"      ) String isin, 
+                          @Param( "symbolNse" ) String symbolNse ) ;
 }

@@ -8,9 +8,7 @@ import java.util.Map ;
 
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.CapitalystServer ;
-import com.sandy.capitalyst.server.config.CapitalystConfig ;
-import com.sandy.capitalyst.server.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 import okhttp3.OkHttpClient ;
 import okhttp3.Request ;
@@ -36,19 +34,7 @@ public class HTTPResourceDownloader {
     
     private void initializeHttpClient() {
         
-        CapitalystConfig config = CapitalystServer.getConfig() ;
         okhttp3.OkHttpClient.Builder builder = new OkHttpClient.Builder() ;
-        
-        if( config != null ) {
-//            File workspaceDir = config.getWorkspaceDir() ;
-//            File httpCacheDir = new File( workspaceDir, "http_cache" ) ;
-            
-//            if( !httpCacheDir.exists() ) {
-//                httpCacheDir.mkdirs() ;
-//            }
-//            builder.cache( null ) ;
-        }
-        
         client = builder.cache(null).build() ;
     }
     
@@ -82,7 +68,8 @@ public class HTTPResourceDownloader {
         throws Exception {
         
         okhttp3.Request.Builder builder = null ;
-        builder = new Request.Builder().url( url ) ;
+        builder = new Request.Builder()
+                             .url( url ) ;
         
         log.debug( "Downloading resource from " + url ) ;
         if( headers != null && !headers.isEmpty() ) {

@@ -13,7 +13,7 @@ import org.jsoup.nodes.Document ;
 import org.jsoup.select.Elements ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
-import com.sandy.capitalyst.server.config.CapitalystConfig ;
+import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
 import com.sandy.common.util.StringUtil ;
 

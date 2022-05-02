@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.util;
+package com.sandy.capitalyst.server.core.util;
 
 public class ResponseMsg {
 
