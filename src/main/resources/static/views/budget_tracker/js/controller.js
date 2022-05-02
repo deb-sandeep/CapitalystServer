@@ -8,6 +8,7 @@ capitalystNgApp.controller( 'BudgetTrackerRootController',
     // Common framework variables. 
     $scope.alerts = [] ;
     $scope.navBarTitle = "<Fill navbar title>" ;
+    $scope.onMobile = window.mobileCheck() ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -44,6 +45,7 @@ capitalystNgApp.controller( 'BudgetTrackerRootController',
     $scope.dismissAlert = function( index ) {
         $scope.alerts.splice( index, 1 ) ;
     }
+
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

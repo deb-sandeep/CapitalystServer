@@ -20,9 +20,22 @@ public class BudgetSpread extends BudgetLineItem {
     @Getter
     private List<L1LineItem> l1LineItems = new ArrayList<>() ;
     
+    @Getter
+    private String currentMonth = null ;
+    
+    @Getter
+    private int currentMonthIndex = -1 ;
+    
     public BudgetSpread( Date fyStart, Date fyEnd ) {
         super( "Budget for FY " + CalendarUtil.getYear( fyStart ), 
                fyStart, fyEnd ) ;
+        
+        Date today = new Date() ;
+        
+        if( today.after( fyStart ) && today.before( fyEnd ) ) {
+            this.currentMonth      = CalendarUtil.getMonthName( today ) ;
+            this.currentMonthIndex = CalendarUtil.getMonthIndex( this.currentMonth ) ;
+        }
     }
 
     public void addCategory( LedgerEntryCategory cat ) {

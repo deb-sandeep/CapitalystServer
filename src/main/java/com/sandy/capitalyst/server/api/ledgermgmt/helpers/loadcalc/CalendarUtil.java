@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc;
 
+import java.text.SimpleDateFormat ;
 import java.util.Calendar ;
 import java.util.Date ;
 import java.util.HashMap ;
@@ -7,6 +8,8 @@ import java.util.Map ;
 
 public class CalendarUtil {
 
+    private static SimpleDateFormat SDF = new SimpleDateFormat( "MMM" ) ;
+    
     public static final String[] MONTH_NAMES = {
             "Apr", "May", "Jun", "Jul", "Aug", "Sep", 
             "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"
@@ -37,5 +40,9 @@ public class CalendarUtil {
         Calendar cal = Calendar.getInstance() ;
         cal.setTime( date ) ;
         return cal.get( Calendar.YEAR ) ;
+    }
+    
+    public static String getMonthName( Date date ) {
+        return SDF.format( date ) ;
     }
 }

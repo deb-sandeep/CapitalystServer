@@ -1,4 +1,6 @@
-<div id="action-pane">
+<div id="action-pane"
+     ng-if="!onMobile">
+     
     <select id="fin-year-select"
             ng-model="userChoices.financialYear"
             ng-options="('FY ' + item) for item in financialYearChoices"

@@ -3,7 +3,7 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     
     // ---------------- Local variables --------------------------------------
     
-    var tableRenderer = new BudgetTableRenderer() ;
+    var tableRenderer = new BudgetTableRenderer( $scope.$parent.onMobile ) ;
     var budgetSpread = null ;
     
     var l1Expanded = false ;
@@ -78,6 +78,9 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
+        if( $scope.$parent.onMobile ) {
+            l1Expanded = true ;
+        }
         fetchBudgetSpread() ;
     }
     

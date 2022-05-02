@@ -7,7 +7,7 @@ function triggerLedgerEntryDisplay( l1CatName, l2CatName, startOfMonth ) {
     scope.triggerLedgerEntryDisplay( l1CatName, l2CatName, startOfMonth ) ;
 }
 
-function BudgetTableRenderer() {
+function BudgetTableRenderer( onMobile ) {
 
     var spread = null ;
     var showPlanned = false ;
@@ -77,18 +77,39 @@ function BudgetTableRenderer() {
         rows.push( buildHdrPlannedRow() ) ;
         rows.push( buildHdrAvailableRow() ) ;
         rows.push( buildHdrConsumedRow() ) ;
-        rows.push( buildHdrRemainingRow() ) ;
+        rows.push( buildHdrSavingsRow() ) ;
         
         return THEAD( rows ) ;
+    }
+    
+    function isColVisible( loopIdx ) {
+        if( onMobile ) {
+            if( spread.currentMonthIndex > -1 && 
+                spread.currentMonthIndex == loopIdx ) {
+                return true ;
+            }
+            return false ;
+        }
+        return true ;
     }
     
     function buildHdrMonthNameRow() {
         
         return TR(
            TD(),
-           TD.map( spread.budgetCells, function( cell, attributes ) {
-                attributes[ "width" ] = 90 ;
-                return cell.monthName ; 
+           TD.map( spread.budgetCells, function( cell, attributes, loopStatus ) {
+            
+                if( isColVisible( loopStatus.index ) ) {
+                    
+                    attributes[ "width" ] = 90 ;
+                    if( spread.currentMonth != null && 
+                        spread.currentMonth == cell.monthName ) {
+                        
+                        attributes[ "class" ] = "curr-mth" ;
+                    }
+                    return cell.monthName ; 
+                }
+                return null ;
            } ),
            TD( 'Total' ) 
         ) ;
@@ -98,8 +119,12 @@ function BudgetTableRenderer() {
         
         return TR(
            TD( "Planned" ),
-           TD.map( spread.budgetCells, function( cell ) {
-                return fmtAmt( cell.planned ) ; 
+           TD.map( spread.budgetCells, function( cell, attributes, loopStatus ) {
+            
+                if( isColVisible( loopStatus.index ) ) {
+                    return fmtAmt( cell.planned ) ; 
+                }
+                return null ;
            } ),
            TD( fmtAmt( spread.totalPlanned ) ) 
         ) ;
@@ -109,8 +134,12 @@ function BudgetTableRenderer() {
         
         return TR(
            TD( "Consumed" ),
-           TD.map( spread.budgetCells, function( cell ) {
-                return fmtAmt( cell.consumed ) ; 
+           TD.map( spread.budgetCells, function( cell, attributes, loopStatus ) {
+            
+                if( isColVisible( loopStatus.index ) ) {
+                    return fmtAmt( cell.consumed ) ; 
+                }
+                return null ;
            } ),
            TD( fmtAmt( spread.totalConsumed ) ) 
         ) ;
@@ -120,24 +149,30 @@ function BudgetTableRenderer() {
         
         return TR(
            TD( "Available" ),
-           TD.map( spread.budgetCells, function( cell, attributes ) {
+           TD.map( spread.budgetCells, function( cell, attributes, loopStatus ) {
 
-                attributes[ "class" ] = getFGClass( cell.available ) ; 
-                return fmtAmt( cell.available ) ; 
+                if( isColVisible( loopStatus.index ) ) {
+                    attributes[ "class" ] = getFGClass( cell.available ) ; 
+                    return fmtAmt( cell.available ) ; 
+                }
+                return null ;
            } ),
            TD( "" ) 
         ) ;
     }
     
-    function buildHdrRemainingRow() {
+    function buildHdrSavingsRow() {
         
         var totalDev = spread.totalPlanned - spread.totalConsumed ;
         return TR(
            TD( "Savings" ),
-           TD.map( spread.budgetCells, function( cell, attributes ) {
+           TD.map( spread.budgetCells, function( cell, attributes, loopStatus ) {
             
-                attributes[ "class" ] = getFGClass( cell.remaining ) ; 
-                return fmtAmt( cell.remaining ) ; 
+                if( isColVisible( loopStatus.index ) ) {
+                    attributes[ "class" ] = getFGClass( cell.remaining ) ; 
+                    return fmtAmt( cell.remaining ) ; 
+                }
+                return null ;
            } ),
            TD( { "class" : getFGClass( totalDev ) }, fmtAmt( totalDev ) )  
         ) ;
@@ -191,10 +226,13 @@ function BudgetTableRenderer() {
                 "data-tt-id" : "L1-" + index
             }, 
             TD( l1LineItem.lineItemName ),
-            TD.map( l1LineItem.budgetCells, function( cell, attributes ){
+            TD.map( l1LineItem.budgetCells, function( cell, attributes, loopStatus ){
                 
-                attributes[ "class" ] = getFGClass( cell.remaining ) ; 
-                return fmtAmt( cell.remaining ) ; 
+                if( isColVisible( loopStatus.index ) ) {
+                    attributes[ "class" ] = getFGClass( cell.remaining ) ; 
+                    return fmtAmt( cell.remaining ) ; 
+                }
+                return null ;
             } ),
             TD( { "class" : getFGClass( totalDev ) }, fmtAmt( totalDev ) )  
         ) ;
@@ -207,8 +245,12 @@ function BudgetTableRenderer() {
                 "data-tt-parent-id" : "L1-" + index
             },
             TD( "Planned" ),
-            TD.map( l1LineItem.budgetCells, function( cell ){
-                return fmtAmt( cell.planned ) ; 
+            TD.map( l1LineItem.budgetCells, function( cell, attributes, loopStatus ){
+
+                if( isColVisible( loopStatus.index ) ) {
+                    return fmtAmt( cell.planned ) ; 
+                }
+                return null ;
             } ),
             TD( fmtAmt( l1LineItem.totalPlanned ) )  
         ) ;
@@ -221,8 +263,12 @@ function BudgetTableRenderer() {
                 "data-tt-parent-id" : "L1-" + index
             },
             TD( "Available" ),
-            TD.map( l1LineItem.budgetCells, function( cell ){
-                return fmtAmt( cell.available ) ; 
+            TD.map( l1LineItem.budgetCells, function( cell, attributes, loopStatus ){
+
+                if( isColVisible( loopStatus.index ) ) {
+                    return fmtAmt( cell.available ) ; 
+                }
+                return null ;
             } ),
             TD( "" )  
         ) ;
@@ -235,15 +281,21 @@ function BudgetTableRenderer() {
                 "data-tt-parent-id" : "L1-" + index
             },
             TD( "Consumed" ),
-            TD.map( l1LineItem.budgetCells, function( cell, attributes ){
+            TD.map( l1LineItem.budgetCells, function( cell, attributes, loopStatus ){
                 
-                attributes[ "class" ] = getFGClass(cell.available - cell.consumed) ;
-                attributes[ "onclick" ] = "triggerLedgerEntryDisplay( " + 
-                                                "'" + l1LineItem.lineItemName + "'," + 
-                                                "''," + 
-                                                "'" + cell.startOfMonth +"' ) ;" ;
-                                                
-                return fmtAmt( cell.consumed ) ; 
+                if( isColVisible( loopStatus.index ) ) {
+                    
+                    attributes[ "class" ] = getFGClass(cell.available - cell.consumed) ;
+                    
+                    if( !onMobile ) {
+                        attributes[ "onclick" ] = "triggerLedgerEntryDisplay( " + 
+                                                        "'" + l1LineItem.lineItemName + "'," + 
+                                                        "''," + 
+                                                        "'" + cell.startOfMonth +"' ) ;" ;
+                    }
+                    return fmtAmt( cell.consumed ) ; 
+                }
+                return null ;
             } ),
             TD( fmtAmt( l1LineItem.totalConsumed ) )  
         ) ;
@@ -259,10 +311,13 @@ function BudgetTableRenderer() {
                 "l2-branch" : "true"
             },
             TD( l2LineItem.lineItemName ),
-            TD.map( l2LineItem.budgetCells, function( cell, attributes ){
+            TD.map( l2LineItem.budgetCells, function( cell, attributes, loopStatus ){
                 
-                attributes[ "class" ] = getFGClass( cell.remaining ) ; 
-                return fmtAmt( cell.remaining ) ; 
+                if( isColVisible( loopStatus.index ) ) {
+                    attributes[ "class" ] = getFGClass( cell.remaining ) ; 
+                    return fmtAmt( cell.remaining ) ; 
+                }
+                return null ;
             } ),
             TD( { "class" : getFGClass( totalDev ) }, fmtAmt( totalDev ) )  
         ) ;
@@ -275,8 +330,12 @@ function BudgetTableRenderer() {
                 "data-tt-parent-id" : "L1-" + l1Index + "-" + l2Index
             },
             TD( "Planned" ),
-            TD.map( l2LineItem.budgetCells, function( cell ){
-                return fmtAmt( cell.planned ) ; 
+            TD.map( l2LineItem.budgetCells, function( cell, attributes, loopStatus ){
+
+                if( isColVisible( loopStatus.index ) ) {
+                    return fmtAmt( cell.planned ) ; 
+                }
+                return null ;
             } ),
             TD( fmtAmt( l2LineItem.totalPlanned ) )  
         ) ;
@@ -289,8 +348,12 @@ function BudgetTableRenderer() {
                 "data-tt-parent-id" : "L1-" + l1Index + "-" + l2Index
             },
             TD( "Available" ),
-            TD.map( l2LineItem.budgetCells, function( cell ){
-                return fmtAmt( cell.available ) ; 
+            TD.map( l2LineItem.budgetCells, function( cell, attributes, loopStatus ){
+
+                if( isColVisible( loopStatus.index ) ) {
+                    return fmtAmt( cell.available ) ; 
+                }
+                return null ;
             } ),
             TD( "" )  
         ) ;
@@ -303,14 +366,21 @@ function BudgetTableRenderer() {
                 "data-tt-parent-id" : "L1-" + l1Index + "-" + l2Index
             },
             TD( "Consumed" ),
-            TD.map( l2LineItem.budgetCells, function( cell, attributes ){
+            TD.map( l2LineItem.budgetCells, function( cell, attributes, loopStatus ){
                 
-                attributes[ "class" ]   = getFGClass(cell.available - cell.consumed) ;
-                attributes[ "onclick" ] = "triggerLedgerEntryDisplay( " + 
-                                                "'" + l2LineItem.category.l1CatName + "'," + 
-                                                "'" + l2LineItem.category.l2CatName + "'," + 
-                                                "'" + cell.startOfMonth +"' ) ;" ;
-                return fmtAmt( cell.consumed ) ; 
+                if( isColVisible( loopStatus.index ) ) {
+                    
+                    attributes[ "class" ]   = getFGClass(cell.available - cell.consumed) ;
+                    
+                    if( !onMobile ) {
+                        attributes[ "onclick" ] = "triggerLedgerEntryDisplay( " + 
+                                                    "'" + l2LineItem.category.l1CatName + "'," + 
+                                                    "'" + l2LineItem.category.l2CatName + "'," + 
+                                                    "'" + cell.startOfMonth +"' ) ;" ;
+                    }
+                    return fmtAmt( cell.consumed ) ; 
+                }
+                return null ;
             } ),
             TD( fmtAmt( l2LineItem.totalConsumed ) )  
         ) ;
