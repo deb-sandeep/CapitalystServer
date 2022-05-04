@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.core.util;
+package com.sandy.capitalyst.server.api.ota.action.emrefresh;
 
 import java.io.StringReader ;
 import java.util.HashMap ;
@@ -10,8 +10,8 @@ import java.util.Map.Entry ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
-import com.sandy.capitalyst.server.api.ota.action.emrefresh.EquityMasterRefreshOTA ;
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
@@ -25,13 +25,13 @@ public class ListedEquitiesRefresher {
     private static final String LISTED_EQUITIES_URL = 
             "https://www1.nseindia.com/content/equities/EQUITY_L.csv" ;
     
-    private HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
-    
     private EquityMasterRepo  emRepo = null ;
     private EquityHoldingRepo ehRepo = null ;
     
-    private EquityMasterRefreshOTA ota = null ;
-    private Map<String, EquityMaster> dbCache = new HashMap<>() ;
+    protected HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
+    
+    protected EquityMasterRefreshOTA ota = null ;
+    protected Map<String, EquityMaster> dbCache = new HashMap<>() ;
     
     public ListedEquitiesRefresher( EquityMasterRefreshOTA ota ) {
         
@@ -43,26 +43,26 @@ public class ListedEquitiesRefresher {
 
     public void refreshEquityMaster() throws Exception {
         
-        ota.addResult( "Downloading from network." ) ;
+        ota.addResult( " Downloading from network." ) ;
         List<String[]> csvRows = parseOnlineCSV() ;
-        ota.addResult( "Network data downlaoded." ) ;
+        ota.addResult( " Network data downloaded." ) ;
         
-        ota.addResult( "Loading database cache" ) ; 
+        ota.addResult( " Loading database cache" ) ; 
         loadDBCache() ;
-        ota.addResult( "DB Cache loaded." ) ;
+        ota.addResult( " DB Cache loaded." ) ;
         
-        ota.addResult( "Refreshing equity master." ) ;
+        ota.addResult( " Refreshing equity master." ) ;
         refreshEquityMaster( csvRows ) ;
         
         int numSymbolsToPurge = getNumNonETFDelistedEquities() ;
         if( numSymbolsToPurge > 0 ) {
-            ota.addResult( "Removing " + numSymbolsToPurge + " delisted symbols." ) ;
-            removeDelistedSymbols() ;
-            ota.addResult( "Delisted symbols purged." ) ;
+            ota.addResult( " Removing " + numSymbolsToPurge + " delisted symbols." ) ;
+            removeDelistedSymbols( true ) ;
+            ota.addResult( " Delisted symbols purged." ) ;
         }
     }
     
-    private void loadDBCache() throws Exception {
+    protected void loadDBCache() throws Exception {
         
         dbCache.clear() ;
         
@@ -113,18 +113,19 @@ public class ListedEquitiesRefresher {
             String isin   = row[6].trim() ;
             
             if( series.equals( "EQ" ) ) {
-                refresh( symbol, name, isin ) ;
+                refresh( symbol, name, isin, false ) ;
             }
             
             if( i % 25 == 0 ) {
-                ota.addResult( "  " + i + " of " + csvRows.size() + " completed."  ) ;
+                ota.addResult( "   " + i + " of " + csvRows.size() + " completed."  ) ;
             }
         }
     }
     
-    private void refresh( String symbol, String name, String isin ) {
+    protected void refresh( String symbol, String name, 
+                            String isin, boolean isEtf ) {
         
-        log.debug( "Refreshing " + symbol + " - " + name ) ;
+        log.debug( " Refreshing " + symbol + " - " + name ) ;
         
         EquityMaster eqMaster = emRepo.findBySymbol( symbol ) ;
         if( eqMaster != null ) {
@@ -157,13 +158,14 @@ public class ListedEquitiesRefresher {
                 eqMaster.setIsin( isin ) ;
                 eqMaster.setName( name ) ;
                 eqMaster.setSymbol( symbol ) ;
+                eqMaster.setEtf( isEtf ) ;
                 
                 emRepo.save( eqMaster ) ;
             }
         }
     }
     
-    private void removeDelistedSymbols() {
+    protected void removeDelistedSymbols( boolean excludeEtf ) {
         
         Iterator<Entry<String, EquityMaster>> iter = null ;
         
@@ -175,17 +177,19 @@ public class ListedEquitiesRefresher {
             String       symbol = entry.getKey() ;
             EquityMaster em     = entry.getValue() ;
             
-            if( !em.isEtf() ) {
-                // We need to remove the equity master, but first we check if
-                // this symbol is being used in equity holding. If so, we have
-                // an issue. We need to notify user to manually update
-                ota.addResult( "Removing symbol " + symbol ) ;
-                
-                if( !ehRepo.findBySymbolNse( symbol ).isEmpty() ) {
-                    ota.addResult( "ALERT: " + symbol + " unlisted but in holding." ) ;
-                }
-                emRepo.delete( em ) ;
+            if( excludeEtf && em.isEtf() ) {
+                continue ;
             }
+            
+            // We need to remove the equity master, but first we check if
+            // this symbol is being used in equity holding. If so, we have
+            // an issue. We need to notify user to manually update
+            ota.addResult( " Removing symbol " + symbol ) ;
+            
+            if( !ehRepo.findBySymbolNse( symbol ).isEmpty() ) {
+                ota.addResult( " ALERT: " + symbol + " unlisted but in holding." ) ;
+            }
+            emRepo.delete( em ) ;
         }
     }
 }

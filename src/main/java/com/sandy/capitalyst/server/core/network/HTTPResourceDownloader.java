@@ -50,6 +50,13 @@ public class HTTPResourceDownloader {
         return getResource( url, headers ) ;
     }
     
+    public byte[] getResourceAsBytes( String url ) 
+        throws Exception {
+        
+        Map<String, String> headers = null ;
+        return getResourceAsBytes( url, headers ) ;
+    }
+    
     public byte[] getResourceAsBytes( String url, String headerResourceName ) 
         throws Exception {
         
