@@ -1,1 +1,19 @@
-Manage indexes
+<table class="pure-table pure-table-bordered">
+   <thead>
+       <tr>
+           <th width="200px">Type</th>
+           <th width="200px">Name</th>
+       </tr>
+   </thead>
+   <tbody>
+    <tr ng-repeat="idx in idxList">
+        <td>{{idx.type}}</td>
+        <td>
+            <a href="{{idx.includedStocksUrl}}">
+                <span class="glyphicon glyphicon-link"></span>
+            </a>&nbsp;&nbsp;
+            {{idx.name}}
+        </td>
+    </tr>
+   </tbody>
+</table>

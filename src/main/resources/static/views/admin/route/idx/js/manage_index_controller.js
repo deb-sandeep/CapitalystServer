@@ -7,6 +7,8 @@ capitalystNgApp.controller( 'ManageIndexController',
     $scope.$parent.navBarTitle = "Manage indexes" ;
     $scope.$parent.activeModuleId = "idx_management" ;
     
+    $scope.idxList = [] ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading ManageIndexController" ) ;
@@ -39,6 +41,9 @@ capitalystNgApp.controller( 'ManageIndexController',
         .then ( 
             function( response ){
                 console.log( response.data ) ;
+                for( var i=0; i<response.data.length; i++ ) {
+                    $scope.idxList.push( response.data[i] ) ;
+                }
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not fetch index masters.\n" +
