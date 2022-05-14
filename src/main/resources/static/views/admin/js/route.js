@@ -16,4 +16,8 @@ capitalystNgApp.config( function( $routeProvider ) {
         templateUrl : "/views/admin/route/actions/onetime_actions.html",
         controller : "OneTimeActionsController"
     })
+    .when( "/manage_idx", {
+        templateUrl : "/views/admin/route/idx/manage_index.html",
+        controller : "ManageIndexController"
+    })
 });

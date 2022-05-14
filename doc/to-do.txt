@@ -5,6 +5,9 @@ CREATE TABLE `capitalyst`.`index_master` (
   PRIMARY KEY (`id`));
 
 ALTER TABLE `capitalyst`.`index_master` 
+CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `capitalyst`.`index_master` 
 ADD COLUMN `type` VARCHAR(64) NULL AFTER `name`;
 
 ALTER TABLE `capitalyst`.`index_master` 

@@ -37,6 +37,7 @@
     
     <script src="/views/admin/route/categories/js/manage_ledger_categories_controller.js"></script>
     <script src="/views/admin/route/rules/js/manage_classification_rules_controller.js"></script>
+    <script src="/views/admin/route/idx/js/manage_index_controller.js"></script>
     <script src="/views/admin/route/actions/js/onetime_actions.js"></script>
 </head>
 
@@ -71,6 +72,10 @@
       <a ng-class="getActiveClass('classification_rules')" 
          href="#!/manage_classification_rules">
         <i class="fa fa-arrows-turn-right"></i>
+      </a>
+      <a ng-class="getActiveClass('idx_management')" 
+         href="#!/manage_idx">
+        <i class="fa fa-address-book"></i>
       </a>
       <a ng-class="getActiveClass('onetime_actions')" 
          href="#!/onetime_actions">
