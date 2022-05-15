@@ -86,6 +86,11 @@ pre {
 	font-size: 12px;
 }
 
+.idx-meta-url {
+    font-family: "Courier";
+    font-size: 10px;
+}
+
 .valid-rule {
 	background-color: #e2f7e4;
 }

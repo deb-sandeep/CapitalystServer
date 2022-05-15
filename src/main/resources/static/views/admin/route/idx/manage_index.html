@@ -1,12 +1,22 @@
 <table class="pure-table pure-table-bordered">
    <thead>
        <tr>
-           <th width="200px">Type</th>
+           <th>
+	            <a ng-click="showIndexMetaEditDialog(null)">
+	                <span class="glyphicon glyphicon-plus"></span>
+	            </a>
+           </th>
+           <th width="100px">Type</th>
            <th width="200px">Name</th>
        </tr>
    </thead>
    <tbody>
     <tr ng-repeat="idx in idxList">
+        <td>
+            <a ng-click="showIndexMetaEditDialog( idx )">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+        </td>
         <td>{{idx.type}}</td>
         <td>
             <a href="{{idx.includedStocksUrl}}">
@@ -17,3 +27,10 @@
     </tr>
    </tbody>
 </table>
+
+<div id="idxMetaEditorDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/idx/dialog/idxmeta_editor_dialog.html'">
+</div>
