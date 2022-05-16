@@ -23,6 +23,8 @@ capitalystNgApp.controller( 'ManageIndexController',
         description : null
     } ;
     
+    $scope.messages = [] ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading ManageIndexController" ) ;
@@ -33,6 +35,14 @@ capitalystNgApp.controller( 'ManageIndexController',
     // --- [START] Scope functions -------------------------------------------
     
     // --- [START] Scope functions dealilng with non UI logic ----------------
+    $scope.addMessage = function( msgString ) {
+        $scope.messages.push( msgString ) ;
+    } ;
+    
+    $scope.dismissMessage = function( index ) {
+        $scope.messages.splice( index, 1 ) ;
+    }
+    
     $scope.showIndexMetaEditDialog = function( meta ) {
         populateIdxUnderEdit( meta ) ;
         $( '#idxMetaEditorDialog' ).modal( 'show' ) ;
@@ -59,6 +69,7 @@ capitalystNgApp.controller( 'ManageIndexController',
                 $scope.idxList.push( updatedMeta ) ;
             }
             
+            $scope.addMessage( "Index " + updatedMeta.name + " updated" ) ;
             $scope.hideIndexMetaEditDialog() ;
         } ) ;
     }
@@ -66,6 +77,10 @@ capitalystNgApp.controller( 'ManageIndexController',
     $scope.hideIndexMetaEditDialog = function() {
         clearState() ;
         $( '#idxMetaEditorDialog' ).modal( 'hide' ) ;
+    }
+    
+    $scope.refreshIndex = function( idx ) {
+        refreshIndexMaster( idx ) ;
     }
     
     // --- [END] Scope functions
@@ -139,4 +154,22 @@ capitalystNgApp.controller( 'ManageIndexController',
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
     }
+    
+    function refreshIndexMaster( idx ) {
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/IndexMaster/Refresh/' + idx.id )
+        .then ( 
+            function( response ){
+                $scope.addMessage( response.data.message + " for index " + idx.name ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not save index masters.\n" +
+                                              error.data.message ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }    
 } ) ;

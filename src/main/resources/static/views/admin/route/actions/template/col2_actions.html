@@ -1,0 +1,21 @@
+<div class="panel-group" id="acc" style="font-size:12px;padding:5px;">
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-target="#indexMaster" data-toggle="collapse" data-parent="#acc">
+        Index Master
+        </a>
+      </h4>
+    </div>
+    <div id="indexMaster" class="panel-collapse form action-div"
+         ng-init="ota=$parent.otaStat[ 'RefreshIndexMaster' ]">
+        <div class="explanation">
+            Refreshes the NSE index master table by refreshing index, stock
+            associations.
+        </div>
+        <div ng-include="'route/actions/template/action.html'"></div>
+    </div>
+  </div>
+
+</div>

@@ -24,4 +24,6 @@ public class EquityMaster {
     
     @Column( name = "is_etf" )
     private boolean etf = false ;
+    
+    private String industry = null ;
 }

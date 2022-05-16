@@ -1,3 +1,12 @@
+<p/>
+
+<div class="alert alert-success alert-dismissible" ng-repeat="msg in messages">
+<a ng-click="dismissMessage( $index )" 
+   class="close" 
+   data-dismiss="alert">&times;</a>
+{{msg}}
+</div>
+
 <table class="pure-table pure-table-bordered">
    <thead>
        <tr>
@@ -8,6 +17,7 @@
            </th>
            <th width="100px">Type</th>
            <th width="200px">Name</th>
+           <th></th>
        </tr>
    </thead>
    <tbody>
@@ -23,6 +33,11 @@
                 <span class="glyphicon glyphicon-link"></span>
             </a>&nbsp;&nbsp;
             {{idx.name}}
+        </td>
+        <td>
+            <a ng-click="refreshIndex( idx )">
+                <span class="glyphicon glyphicon-refresh"></span>
+            </a>
         </td>
     </tr>
    </tbody>

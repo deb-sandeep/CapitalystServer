@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.index.helper.IndexRefresher ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.index.IndexMaster ;
 import com.sandy.capitalyst.server.dao.index.repo.IndexMasterRepo ;
@@ -84,6 +85,25 @@ public class IndexMasterController {
         }
     }
 
+    @PostMapping( "/IndexMaster/Refresh/{id}" ) 
+    public ResponseEntity<APIResponse> refreshIdx( @PathVariable Integer id ) {
+        try {
+            log.debug( "Updating index master" ) ;
+            
+            IndexRefresher refresher = new IndexRefresher( null ) ;
+            int numUpdates = refresher.refreshIndex( id ) ;
+            
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( new APIResponse(
+                                         numUpdates + " symbols updated." ) ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving index master.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( new APIResponse( e.getMessage() ) ) ;
+        }
+    }
+
     @DeleteMapping( "/IndexMaster/{id}" ) 
     public ResponseEntity<APIResponse> delete( @PathVariable Integer id ) {
         try {
@@ -95,7 +115,7 @@ public class IndexMasterController {
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
+                                 .body( new APIResponse( e.getMessage() ) ) ;
         }
     }
 }

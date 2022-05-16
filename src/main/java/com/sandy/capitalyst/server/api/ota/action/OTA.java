@@ -16,7 +16,7 @@ import com.sandy.capitalyst.server.api.ota.vo.PartResult ;
 import lombok.Getter ;
 import lombok.Setter ;
 
-public abstract class OTA implements Runnable {
+public abstract class OTA implements Runnable, OTALogger {
     
     private static final Logger log = Logger.getLogger( OTA.class ) ;
 

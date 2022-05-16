@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.ota.action.OTA ;
 import com.sandy.capitalyst.server.api.ota.action.emrefresh.EquityMasterRefreshOTA ;
+import com.sandy.capitalyst.server.api.ota.action.idxrefresh.IndexMasterRefreshOTA ;
 import com.sandy.capitalyst.server.api.ota.vo.PartResult ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 
@@ -35,6 +36,8 @@ public class OnetimeActionController {
     public OnetimeActionController() {
         
         otaMap.put( EquityMasterRefreshOTA.NAME, EquityMasterRefreshOTA.class ) ;
+        otaMap.put( IndexMasterRefreshOTA.NAME,  IndexMasterRefreshOTA.class ) ;
+        
         executorService = Executors.newFixedThreadPool( 5 ) ;
     }
     
