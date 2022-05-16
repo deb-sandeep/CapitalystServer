@@ -91,20 +91,28 @@ public class NSEBhavcopyImporter {
             String series = record[1] ;
             String isin   = record[12] ;
             
-            long totalTradeQty = Long.parseLong( record[8] ) ;
-            
-            if( series.equals( "EQ" ) && totalTradeQty > 50000 ) {
-                EquityCandle candle = buildEquityCandle( record, date ) ;
-                ecRepo.save( candle ) ;
+            if( series.equals( "EQ" ) ) {
                 
-                if( holdingsMap.containsKey( symbol ) ) {
-                    for( EquityHolding holding : holdingsMap.get( symbol ) ) {
-                        holding.setCurrentMktPrice( candle.getClose() ) ;
-                        holding.setLastUpdate( date ) ;
-                        ehRepo.save( holding ) ;
+                EquityMaster em = emRepo.findBySymbol( symbol ) ;
+                if( em != null ) {
+                    
+                    if( StringUtil.isNotEmptyOrNull( em.getIndustry() ) || 
+                        em.isEtf() ) {
+                        
+                        EquityCandle candle = buildEquityCandle( record, date ) ;
+                        ecRepo.save( candle ) ;
+                        
+                        if( holdingsMap.containsKey( symbol ) ) {
+                            
+                            for( EquityHolding holding : holdingsMap.get( symbol ) ) {
+                                holding.setCurrentMktPrice( candle.getClose() ) ;
+                                holding.setLastUpdate( date ) ;
+                                ehRepo.save( holding ) ;
+                            }
+                        }
+                        updateEquityISINMapping( symbol, isin ) ;
                     }
                 }
-                updateEquityISINMapping( symbol, isin ) ;
             }
         }
     }

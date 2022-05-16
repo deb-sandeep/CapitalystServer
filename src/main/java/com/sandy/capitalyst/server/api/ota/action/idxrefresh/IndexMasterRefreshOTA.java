@@ -25,7 +25,7 @@ public class IndexMasterRefreshOTA extends OTA {
         IndexMasterRepo imRepo = getBean( IndexMasterRepo.class ) ;
         Iterable<IndexMaster> indexMasters = imRepo.findAll() ;
         
-        IndexRefresher refresher = new IndexRefresher(this ) ;
+        IndexRefresher refresher = new IndexRefresher( this ) ;
         
         for( IndexMaster idx : indexMasters ) {
             try {

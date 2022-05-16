@@ -40,14 +40,14 @@ public class IndexRefresher {
     }
     
     protected void log( String msg ) {
-        log.debug( "  " + msg ) ;
+        log.debug( msg ) ;
         if( this.otaLogger != null ) {
             this.otaLogger.addResult( "  " + msg ) ;
         }
     }
     
     protected void log( Exception e ) {
-        log.debug( "  Exception: " + e.getMessage(), e ) ;
+        log.debug( "Exception: " + e.getMessage(), e ) ;
         if( this.otaLogger != null ) {
             this.otaLogger.addResult( e ) ;
         }
@@ -63,7 +63,7 @@ public class IndexRefresher {
     public int refreshIndex( IndexMaster idx ) 
         throws Exception {
         
-        log( "Refreshing index " + idx.getName() ) ;
+        log( "Refreshing - " + idx.getName() ) ;
         
         int numUpdates = 0 ;
         List<String[]> csvRows = parseOnlineCSV( idx.getIncludedStocksUrl() ) ;
@@ -82,10 +82,11 @@ public class IndexRefresher {
                 
                 if( series.equals( "EQ" ) ) {
                     insertMapping( idx, symbol, industry ) ;
-                    log( "    " + symbol ) ;
                     numUpdates++ ;
                 }
             }
+            
+            log( "  " + numUpdates + " symbols updated." ) ;
         }
         return numUpdates ;
     }
@@ -94,7 +95,7 @@ public class IndexRefresher {
         
         EquityMaster em = emRepo.findBySymbol( symbol ) ;
         if( em == null ) {
-            log( "INFO: Symbol " + symbol + " not found." ) ; 
+            log( "  INFO: Symbol " + symbol + " not found." ) ; 
         }
         else {
             IndexEquity ie = new IndexEquity() ;
@@ -109,7 +110,7 @@ public class IndexRefresher {
 
     public List<String[]> parseOnlineCSV( String url ) throws Exception {
         
-        log( "Downloading CSV - " + url.substring( url.lastIndexOf( '/' ) ) ) ;
+        log( "  Downloading - " + url.substring( url.lastIndexOf( '/' )+1 ) ) ;
         
         String            resource  = null ;
         CsvParserSettings settings  = null ;
