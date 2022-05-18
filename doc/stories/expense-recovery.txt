@@ -40,27 +40,27 @@ Functional Approach
 Design approach
 --------------------------------------------------------------------------------
 
-- Database table - expense_recovery_association
+X- Database table - debit_credit_association
 
     debit_txn_id  - ref integrity to ledger id
     credit_txn_id - ref integrity to ledger id
     recovery_amt  - float
     note          - varchar(64)
     
-- JPA mapping and repository (ledger package)
+X- JPA mapping and repository (ledger package)
 
-    - ExpenseRecovery (expense_recovery_association)
-    - ExpenseRecoveryRepo 
+    - DebitCreditAssoc (debit_credit_association)
+    - DebitCreditAssocRepo 
 
 - API
-    - ExpenseRecoveryAPI ( /ExpenseRecovery )
+    - DebitCreditAssocAPI ( /ExpenseRecovery )
         - POST /Save
             - Takes an array of ExpenseRecovery objects
             - Deletes and re-applies mapping
         - GET /{ledgerEntryId}
             - Can take a credit or debit id
             - Returns a list of ExpenseRecovery instances
-        - DELETE /{expenseRecoveryId}
+        - DELETE /{assocId}
             - Deletes the association
     - Ledger API
         - Marker for debit entries which have recovery associated with them
