@@ -10,10 +10,10 @@ import java.util.Map ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
-import com.sandy.capitalyst.server.dao.equity.EquityCandle ;
+import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityCandleRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.sandy.common.util.StringUtil ;
@@ -24,12 +24,12 @@ public class NSEBhavcopyImporter {
     
     static final Logger log = Logger.getLogger( NSEBhavcopyImporter.class ) ;
     
-    private EquityCandleRepo ecRepo = null ;
+    private HistoricEQDataRepo ecRepo = null ;
     private EquityMasterRepo emRepo = null ;
     private EquityHoldingRepo ehRepo = null ;
     
     public NSEBhavcopyImporter() {
-        ecRepo = CapitalystServer.getBean( EquityCandleRepo.class ) ;
+        ecRepo = CapitalystServer.getBean( HistoricEQDataRepo.class ) ;
         emRepo = CapitalystServer.getBean( EquityMasterRepo.class ) ;
         ehRepo = CapitalystServer.getBean( EquityHoldingRepo.class ) ;
     }
@@ -99,7 +99,7 @@ public class NSEBhavcopyImporter {
                     if( StringUtil.isNotEmptyOrNull( em.getIndustry() ) || 
                         em.isEtf() ) {
                         
-                        EquityCandle candle = buildEquityCandle( record, date ) ;
+                        HistoricEQData candle = buildEquityCandle( record, date ) ;
                         ecRepo.save( candle ) ;
                         
                         if( holdingsMap.containsKey( symbol ) ) {
@@ -153,9 +153,9 @@ public class NSEBhavcopyImporter {
         }
     }
 
-    private EquityCandle buildEquityCandle( String[] record, Date date ) {
+    private HistoricEQData buildEquityCandle( String[] record, Date date ) {
         
-        EquityCandle candle = new EquityCandle() ;
+        HistoricEQData candle = new HistoricEQData() ;
         candle.setSymbol( record[0] ) ;
         candle.setOpen( Float.parseFloat( record[2] ) ) ;
         candle.setHigh( Float.parseFloat( record[3] ) ) ;

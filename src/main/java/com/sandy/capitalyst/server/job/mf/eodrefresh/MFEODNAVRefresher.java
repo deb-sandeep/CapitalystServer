@@ -8,9 +8,9 @@ import java.util.Set ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
-import com.sandy.capitalyst.server.dao.mf.HistoricMFNav ;
+import com.sandy.capitalyst.server.dao.mf.HistoricMFData ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAsset ;
-import com.sandy.capitalyst.server.dao.mf.repo.HistoricMFNavRepo ;
+import com.sandy.capitalyst.server.dao.mf.repo.HistoricMFDataRepo ;
 import com.sandy.capitalyst.server.dao.mf.repo.MutualFundAssetRepo ;
 import com.sandy.common.util.StringUtil ;
 
@@ -19,7 +19,7 @@ public class MFEODNAVRefresher {
     private static final Logger log = Logger.getLogger( MFEODNAVRefresher.class ) ;
     
     private MutualFundAssetRepo mfAssetRepo = null ;
-    private HistoricMFNavRepo histMFNavRepo = null ;
+    private HistoricMFDataRepo histMFNavRepo = null ;
     
     private MFEODParser navParser = new MFEODParser() ;
     private Date latestAvailableNAVDate = null ;
@@ -27,7 +27,7 @@ public class MFEODNAVRefresher {
     
     public MFEODNAVRefresher() {
         mfAssetRepo = CapitalystServer.getBean( MutualFundAssetRepo.class ) ;
-        histMFNavRepo = CapitalystServer.getBean( HistoricMFNavRepo.class ) ;
+        histMFNavRepo = CapitalystServer.getBean( HistoricMFDataRepo.class ) ;
     }
 
     public Date refreshNAV( Date lastImportDate ) 
@@ -88,7 +88,7 @@ public class MFEODNAVRefresher {
             return ;
         }
         
-        HistoricMFNav navSnapshot = new HistoricMFNav() ;
+        HistoricMFData navSnapshot = new HistoricMFData() ;
         navSnapshot.setIsin( asset.getIsin() ) ;
         navSnapshot.setDate( asset.getLastUpdate() ) ;
         navSnapshot.setNav( asset.getLastRecordedNav() ) ;
