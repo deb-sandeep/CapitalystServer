@@ -1,0 +1,80 @@
+Expense Recovery
+--------------------------------------------------------------------------------
+
+Some debit transactions are later either fully or partially recovered by one
+or more credit transactions. For example - medical expense reimbursement,
+cashback, agent commission payback, etc.
+
+Such reversals have an effect on budget tracking and needs to be accounted for.
+
+Functional Approach
+--------------------------------------------------------------------------------
+
+- Budget Tracker
+    - Each debit transaction needs to be checked for any credit recoveries
+    - If found, the debit amount needs to be suitably adjusted before
+      computing budget burn
+      
+- Ledger
+      
+    - Every credit entry should have an action associated with it to 
+      associate it with debit entries.
+      
+    - Clicking on the action should show a dialog containing
+        - Existing debit associations
+            - Each association should have a recovery amount
+        - Paged list of debit transactions from which one or more transactions
+          can be selected
+        - Validation
+            - Sum of all recover amounts should equal to or less than the
+              credit amount
+            - No recovery amount can be negative
+            - No recovery amount can be empty
+            
+    - Every debit entry whose cost has been fully or partially recovered should
+      have an icon associated with it
+      
+        - Clicking the icon should show a read only dialog of all credit
+          transactions which have contributed to expense recovery
+
+Design approach
+--------------------------------------------------------------------------------
+
+- Database table - expense_recovery_association
+
+    debit_txn_id  - ref integrity to ledger id
+    credit_txn_id - ref integrity to ledger id
+    recovery_amt  - float
+    note          - varchar(64)
+    
+- JPA mapping and repository (ledger package)
+
+    - ExpenseRecovery (expense_recovery_association)
+    - ExpenseRecoveryRepo 
+
+- API
+    - ExpenseRecoveryAPI ( /ExpenseRecovery )
+        - POST /Save
+            - Takes an array of ExpenseRecovery objects
+            - Deletes and re-applies mapping
+        - GET /{ledgerEntryId}
+            - Can take a credit or debit id
+            - Returns a list of ExpenseRecovery instances
+        - DELETE /{expenseRecoveryId}
+            - Deletes the association
+    - Ledger API
+        - Marker for debit entries which have recovery associated with them
+            
+- Ledger controller and UI
+
+    - UI trigger for invoking recovery edit dialog
+    - UI trigger for invoking view credit transactions for recovery
+    - Associated controller changes to show, hide, cancel and save dialog
+    
+- CreditRecoveryEditDialog
+
+- CreditRecoveryViewDialog
+
+- Budget Tracker
+    - API
+    - UI should not have any changes
