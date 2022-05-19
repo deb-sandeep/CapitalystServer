@@ -3,8 +3,10 @@ package com.sandy.capitalyst.server.api.ledger;
 import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
 import java.util.Date ;
+import java.util.HashMap ;
 import java.util.Iterator ;
 import java.util.List ;
+import java.util.Map ;
 
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
@@ -29,6 +31,7 @@ import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
+import com.sandy.capitalyst.server.dao.ledger.repo.DebitCreditAssocRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 import com.sandy.common.util.StringUtil ;
@@ -47,6 +50,9 @@ public class LedgerRestController {
     
     @Autowired
     private LedgerEntryCategoryRepo lecRepo = null ;
+    
+    @Autowired
+    private DebitCreditAssocRepo dcaRepo = null ;
     
     @GetMapping( "/Ledger/PivotData" ) 
     public ResponseEntity<List<String[]>> getPivotDataEntries( 
@@ -134,15 +140,24 @@ public class LedgerRestController {
     }
     
     @PostMapping( "/Ledger/Search" ) 
-    public ResponseEntity<List<LedgerEntry>> findLedgerEntries( 
+    public ResponseEntity<Map<String,List<?>>> findLedgerEntries( 
                          @RequestBody LedgerSearchCriteria searchCriteria ) {
         try {
+            
+            Map<String, List<?>> response = new HashMap<>() ;
+            
             List<LedgerEntry> entries = null ;
             entries = searchEntries( searchCriteria ) ;
             entries = filterResultsByCustomRule( searchCriteria, entries ) ;
+            response.put( "ledgerEntries", entries ) ;
+            
+            List<Integer> associatedIds = new ArrayList<>() ;
+            associatedIds.addAll( dcaRepo.findDistinctDebitTxnId() ) ;
+            associatedIds.addAll( dcaRepo.findDistinctCreditTxnId() ) ;
+            response.put( "associatedTxnIds", associatedIds ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( entries ) ;
+                                 .body( response ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;

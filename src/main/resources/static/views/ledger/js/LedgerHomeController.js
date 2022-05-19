@@ -553,27 +553,36 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $http.post( '/Ledger/Search', $scope.searchQuery )
         .then ( 
             function( response ){
+                
+                var ledgerEntries    = response.data[ "ledgerEntries" ] ;
+                var associatedTxnIds = response.data[ "associatedTxnIds" ] ;
+                
                 $scope.ledgerEntries.length = 0 ;
-                for( var i=0; i<response.data.length; i++ ) {
-                    var entry = response.data[i] ;
+                for( var i=0; i<ledgerEntries.length; i++ ) {
+                    
+                    var entry = ledgerEntries[i] ;
                     if( i == 0 && $scope.searchQuery.accountIds.length == 1 ) {
                         $scope.$parent.navBarTitle = 
                             entry.account.accountOwner + " - " + 
                             entry.account.accountNumber + " - " + 
                             entry.account.shortName ;
                     }
+                    
                     // Additional attribute to track user selection in view
                     entry.selected = false ;
                     entry.visible = true ;
                     entry.editing = false ;
+                    entry.hasAssociatedTxn = associatedTxnIds.includes( entry.id ) ;
+                    
                     $scope.ledgerEntries.push( entry ) ;
                 }
+                
                 resetClassificationState() ;
                 resetPivotCatSelection() ;
                 filterEntries( true ) ;
                 fetchClassificationCategories() ;
             }, 
-            function( error ){
+            function(){
                 $scope.$parent.addErrorAlert( "Could not fetch search results." ) ;
             }
         )

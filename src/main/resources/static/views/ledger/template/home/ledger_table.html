@@ -21,7 +21,7 @@
                         ng-model="bulkSelState.value"
                         ng-change="toggleSelectionForAllEntries()"/>
                 </th>
-                <th style="width:125px;" class="js-sort-valueDate">Date</th>
+                <th style="width:100px;" class="js-sort-valueDate">Date</th>
                 <th style="width:300px;">
                     <div style="display:inline-block;">Remarks</div>
                     <div style="display:inline-block;padding-left:10px;">
@@ -76,10 +76,15 @@
                </td>
                <td class="fixed-font amt" ng-class="amtClass( entry.amount )">{{entry.amount | amt}}</td>
                <td class="remarks">
-                    <div ng-show="!entry.editing" ng-click="editEntry(entry)">
+                    <span ng-if="entry.hasAssociatedTxn"
+                         style="color:green;display:inline-block;"
+                         class="glyphicon glyphicon-object-align-bottom"> </span>
+                    <div ng-show="!entry.editing" ng-click="editEntry(entry)"
+                         style="display:inline-block;">
                         {{entry.notes == null ? "---" : entry.notes}}
                     </div>
-                    <div ng-show="entry.editing">
+                    <div ng-show="entry.editing"
+                         style="display:inline-block;">
                         <input class='form-field' 
                                type="text" 
                                ng-model="userSel.notes" 
