@@ -118,7 +118,7 @@
 	</div>
   </td>
   <td width="*" valign="top">
-    <div ng-include="'template/home/ledger_table.html'">
+    <div ng-include="'template/ledger_table.html'">
     </div>
   </td>
  </tr>
@@ -128,12 +128,19 @@
      class="modal" 
      role="dialog"
      data-backdrop="static"
-     ng-include="'template/home/ledger_entry_categorization_dialog.html'">
+     ng-include="'template/dialog/ledger_entry_categorization_dialog.html'">
 </div>
 
 <div id="entrySplitDialog" 
      class="modal" 
      role="dialog"
      data-backdrop="static"
-     ng-include="'template/home/ledger_entry_split_dialog.html'">
+     ng-include="'template/dialog/ledger_entry_split_dialog.html'">
+</div>
+
+<div id="debitRecoveryDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'template/dialog/debit_recovery_dialog.html'">
 </div>

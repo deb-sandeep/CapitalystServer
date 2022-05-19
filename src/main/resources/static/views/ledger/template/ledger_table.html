@@ -73,6 +73,11 @@
                 <span class="glyphicon glyphicon-scissors"
                       ng-if="entry.amount < 0"
                       ng-click="showSplitLedgerEntryDialog( $index )"></span>
+                      
+                <span class="glyphicon glyphicon-object-align-horizontal"
+                      ng-if="entry.amount > 0"
+                      style="color:lightgray;"
+                      ng-click="showDebitRecoveryDialog( $index )"></span>
                </td>
                <td class="fixed-font amt" ng-class="amtClass( entry.amount )">{{entry.amount | amt}}</td>
                <td class="remarks">

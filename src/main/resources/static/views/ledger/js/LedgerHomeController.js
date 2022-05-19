@@ -336,8 +336,6 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     $scope.validateSplitEntry = function() {
         
-        console.log( "Validating split entry amount." ) ;
-        
         var splitDetails = $scope.splitEntryDetails ;
         var parentEntry = $scope.entryBeingSplit ;
         
@@ -420,6 +418,14 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }
     }
     
+    $scope.showDebitRecoveryDialog = function( index ) {
+        $( '#debitRecoveryDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.hideDebitRecoveryDialog = function() {
+        $( '#debitRecoveryDialog' ).modal( 'hide' ) ;
+    }
+
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
