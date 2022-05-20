@@ -419,13 +419,13 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.showDebitRecoveryDialog = function( index ) {
+        
+        var creditTxn = $scope.ledgerEntries[ index ] ;
+        $scope.$broadcast( 'creditTxnSetForDebitRecoveryDialog', creditTxn ) ;
+        
         $( '#debitRecoveryDialog' ).modal( 'show' ) ;
     }
     
-    $scope.hideDebitRecoveryDialog = function() {
-        $( '#debitRecoveryDialog' ).modal( 'hide' ) ;
-    }
-
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
