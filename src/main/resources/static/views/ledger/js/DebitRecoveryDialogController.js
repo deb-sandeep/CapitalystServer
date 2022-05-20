@@ -5,6 +5,8 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     
     // ---------------- Scope variables --------------------------------------
     $scope.creditTxn = null ;
+    $scope.selectedDebitTxns = [] ;
+    $scope.debitTxnList = [] ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -23,19 +25,64 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         $scope.creditTxn = args ;
         initializeController() ;
     } ) ;
-
+    
+    $scope.getNextBatchOfDebitTxns = function() {
+        
+        var refTxnId = $scope.creditTxn.id ;
+        if( $scope.debitTxnList.length != 0 ) {
+            var lastEntry = $scope.debitTxnList[ $scope.debitTxnList.length-1 ] ;
+            refTxnId = lastEntry.id ;
+        }
+        getDebitTxns( refTxnId, true ) ;
+    } 
+    
+    $scope.getPreviousBatchOfDebitTxns = function() {
+        
+        var refTxnId = $scope.creditTxn.id ;
+        if( $scope.debitTxnList.length != 0 ) {
+            var firstEntry = $scope.debitTxnList[ 0 ] ;
+            refTxnId = firstEntry.id ;
+        }
+        getDebitTxns( refTxnId, false ) ;
+    } 
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
-    function initializeController() {
-        
-        // Clear the state
-        // Get next 15 credit txns from the txn id.
-    } 
-    
     function clearState() {
         
+        $scope.creditTxn = null ;
+        $scope.selectedDebitTxns.length = 0 ;
+        $scope.debitTxnList.length = 0 ;
+    }
+    
+    function initializeController() {
+        
+        clearState() ;
+        getNextBatchOfDebitTxns() ;
+    }
+    
+    function getDebitTxns( refTxnId, prev ) {
+        
+        $scope.debitTxnList.length = 0 ;
+        
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.get( 'Ledger/DebitEntries?refTxnId=' + refTxnId + 
+                                       '&isNextBatch=' + prev + 
+                                       '&numTxns=15' )
+        .then ( 
+            function( response ){
+                console.log( response.data ) ;
+                $scope.debitTxnList = response.data ;
+            }, 
+            function(){
+                $scope.$parent.addErrorAlert( "Error getting debit txn batch." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
     }
     
 } ) ;

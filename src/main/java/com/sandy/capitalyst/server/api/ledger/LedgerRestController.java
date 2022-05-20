@@ -100,6 +100,32 @@ public class LedgerRestController {
         }
     }
     
+    @GetMapping( "/Ledger/DebitEntries" )
+    public ResponseEntity<List<LedgerEntry>> getDebitEntries( 
+                @RequestParam( "refTxnId" )    Integer refTxnId,
+                @RequestParam( "isNextBatch" ) Boolean isNextBatch,
+                @RequestParam( "numTxns" )     Integer numTxns ) {
+        
+        try {
+            List<LedgerEntry> entries = null ;
+            
+            if( isNextBatch ) {
+                entries = lRepo.findNextDebitEntries( refTxnId, numTxns ) ;
+            }
+            else {
+                entries = lRepo.findPrevDebitEntries( refTxnId, numTxns ) ;
+            }
+            
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( entries ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                .body( null ) ;
+        }
+    }
+    
     @GetMapping( "/Ledger/CreditEntriesForMonth" )
     public ResponseEntity<List<LedgerEntry>> getCreditLedgerEntriesForMonth( 
                                 @RequestParam( "l1CatName" ) 

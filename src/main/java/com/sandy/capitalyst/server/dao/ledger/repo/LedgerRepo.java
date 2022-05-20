@@ -102,6 +102,38 @@ public interface LedgerRepo
                                     @Param( "l1CatName" ) String l1CatName,
                                     @Param( "l2CatName" ) String l2CatName ) ; 
 
+    @Query( nativeQuery = true,
+            value =   
+            "SELECT "
+          + "    * "
+          + "FROM "
+          + "    account_ledger le "
+          + "WHERE "
+          + "    le.id < ?1 AND "
+          + "    le.amount < 0 "
+          + "ORDER BY "
+          + "    le.value_date DESC "
+          + "LIMIT ?2"
+    )
+    public List<LedgerEntry> findNextDebitEntries( Integer refTxnId,
+                                                   Integer numTxns ) ; 
+
+    @Query( nativeQuery = true,
+            value =   
+            "SELECT "
+          + "    * "
+          + "FROM "
+          + "    account_ledger le "
+          + "WHERE "
+          + "    le.id > ?1 AND "
+          + "    le.amount < 0 "
+          + "ORDER BY "
+          + "    le.value_date ASC "
+          + "LIMIT ?2"
+    )
+    public List<LedgerEntry> findPrevDebitEntries( Integer refTxnId,
+                                                   Integer numTxns ) ; 
+
     @Query( value =   
             "SELECT "
           + "    le "
