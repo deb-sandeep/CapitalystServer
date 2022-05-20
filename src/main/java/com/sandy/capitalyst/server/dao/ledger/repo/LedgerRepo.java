@@ -128,7 +128,7 @@ public interface LedgerRepo
           + "    le.id > ?1 AND "
           + "    le.amount < 0 "
           + "ORDER BY "
-          + "    le.value_date ASC "
+          + "    le.value_date DESC "
           + "LIMIT ?2"
     )
     public List<LedgerEntry> findPrevDebitEntries( Integer refTxnId,

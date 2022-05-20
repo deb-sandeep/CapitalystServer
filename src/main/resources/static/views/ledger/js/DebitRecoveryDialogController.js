@@ -21,6 +21,7 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     }
 
     $scope.$on( 'creditTxnSetForDebitRecoveryDialog', function( event, args ) {
+        
         console.log( "Credit txn set for debit recovery mapping." ) ;
         $scope.creditTxn = args ;
         initializeController() ;
@@ -45,6 +46,21 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         }
         getDebitTxns( refTxnId, false ) ;
     } 
+    
+    $scope.alreadySelected = function( entry ) {
+        
+        for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
+            var selEntry = $scope.selectedDebitTxns[i] ;
+            if( entry.id == selEntry.id ) {
+                return true ;
+            }
+        }
+        return false ;
+    }
+    
+    $scope.selectDebitTxn = function( entry ) {
+        $scope.selectedDebitTxns.push( entry ) ;
+    }
     
     // --- [END] Scope functions
 

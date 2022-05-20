@@ -40,7 +40,37 @@
 	       </div>
 	       
 	       <div>
-               <h5>Selected Credit Transaction</h5>
+               <h5>Associated Debit Transaction</h5>
+               <table style="width:100%;" class="ledger-table">
+                   <tr ng-repeat="entry in selectedDebitTxns">
+                       <td class="fixed-font" width="100px;">
+                           {{entry.valueDate | date}}
+                       </td>
+                       <td class="fixed-font amt" width="75px;">
+                           {{entry.amount | amt}}
+                       </td>
+                       <td>
+                           {{entry.notes}}
+                       </td>
+                       <td>
+                           {{entry.l1Cat}} &gt; {{entry.l2Cat}}
+                       </td>
+                       <td class="remarks fixed-font" style="padding-left:10px;">
+                           {{entry.remarks | remark}}
+                           &nbsp;
+                           <span ng-if="entry.chequePayment"
+                                 class="glyphicon glyphicon-map-marker"></span>
+                           <span ng-if="$parent.$parent.isCreditCardEntry( entry )"
+                                 class="glyphicon glyphicon-subtitles"></span>
+                           <span ng-if="$parent.$parent.isCashEntry( entry )"
+                                 class="glyphicon glyphicon-leaf"></span>
+                       </td>
+                   </tr>
+               </table>
+	       </div>
+	       
+	       <div>
+               <h5>Debit Transaction</h5>
                <div id="debit-entries-div">
 				    <table class="ledger-table" style="width: 100%;">
 				        <thead>
@@ -59,7 +89,8 @@
 				            <tr ng-repeat="entry in debitTxnList">
 				               <td>
 				                 <span class="glyphicon glyphicon-plus-sign"
-				                       ng-click="selectAndCategorize( entry )"></span>
+				                       ng-show="!alreadySelected( entry )"
+				                       ng-click="selectDebitTxn( entry )"></span>
 				               </td>
 				               <td class="fixed-font">{{entry.valueDate | date}}</td>
 				               <td class="remarks" ng-click="selectEntry(entry)">
