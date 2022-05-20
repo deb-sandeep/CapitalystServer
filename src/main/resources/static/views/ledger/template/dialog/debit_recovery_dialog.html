@@ -1,4 +1,4 @@
-<div class="modal-dialog" style="width:700px;"
+<div class="modal-dialog" style="width:1100px;"
      ng-controller="DebitRecoveryDialogController">
      
   <div class="modal-content" >
@@ -8,6 +8,7 @@
     
     <div class="modal-body" style="background-color:#FEFEFE;padding:5px">
 	    <div class="form">
+	    
 	       <div>
 	           <h5>Selected Credit Transaction</h5>
 	           <table style="width:100%;" class="ledger-table">
@@ -18,7 +19,13 @@
                        <td class="fixed-font amt" width="75px;">
                            {{creditTxn.amount | amt}}
                        </td>
-		               <td class="remarks fixed-font  " style="padding-left:10px;">
+                       <td>
+                           {{creditTxn.notes}}
+                       </td>
+                       <td>
+                           {{creditTxn.l1Cat}} &gt; {{creditTxn.l2Cat}}
+                       </td>
+		               <td class="remarks fixed-font" style="padding-left:10px;">
 		                   {{creditTxn.remarks | remark}}
 		                   &nbsp;
 		                   <span ng-if="creditTxn.chequePayment"
@@ -29,20 +36,80 @@
 		                         class="glyphicon glyphicon-leaf"></span>
 		               </td>
 	               </tr>
-                   <tr>
-                       <td colspan="2">
-                           {{creditTxn.notes}}
-                       </td>
-                       <td>
-                           {{creditTxn.l1Cat}} &gt; {{creditTxn.l2Cat}}
-                       </td>
-                   </tr>
 	           </table>
 	       </div>
 	       
-	       
+	       <div>
+               <h5>Selected Credit Transaction</h5>
+               <div id="debit-entries-div">
+				    <table class="ledger-table" style="width: 100%;">
+				        <thead>
+				            <tr class="success">
+				                <th style="width:25px;"></th>
+				                <th style="width:100px;" class="js-sort-valueDate">Date</th>
+				                <th style="width:300px;">Remarks</th>
+				                <th style="width:75px;">Owner</th>
+				                <th style="width:90px;" class="js-sort-number">Amount</th>
+				                <th style="width:150px;" >Notes</th>
+				                <th style="width:130px;">L1</th>
+				                <th style="width:130px;">L2</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+				            <tr ng-repeat="entry in debitTxnList">
+				               <td>
+				                 <span class="glyphicon glyphicon-plus-sign"
+				                       ng-click="selectAndCategorize( entry )"></span>
+				               </td>
+				               <td class="fixed-font">{{entry.valueDate | date}}</td>
+				               <td class="remarks" ng-click="selectEntry(entry)">
+				                   {{entry.remarks | remark}}
+				                   &nbsp;
+				                   <span ng-if="entry.chequePayment"
+				                         class="glyphicon glyphicon-map-marker"></span>
+				                   <span ng-if="isCreditCardEntry( entry )"
+				                         class="glyphicon glyphicon-subtitles"></span>
+				                   <span ng-if="isCashEntry( entry )"
+				                         class="glyphicon glyphicon-leaf"></span>
+				               </td>
+				               <td ng-if="searchQuery.accountIds.length > 1">
+				                    {{entry.account.accountOwner}}
+				               </td>
+				               <td class="fixed-font amt" 
+				                   ng-class="$parent.$parent.amtClass( entry.amount )">
+				                   {{entry.amount | amt}}
+				               </td>
+				               <td class="remarks">
+			                        {{entry.notes == null ? "---" : entry.notes}}
+				               </td>
+				               <td class="remarks">
+			                        {{entry.l1Cat == null ? "---" : entry.l1Cat}}
+				               </td>
+				               <td class="remarks">
+			                        {{entry.l2Cat == null ? "---" : entry.l2Cat}}
+				               </td>
+				            </tr>
+				        </tbody>
+				    </table>
+               </div>
+	       </div>
 	    </div>
+	    
 	    <div class="modal-footer">
+	      <div style="float:left;">
+	          <button type="button" 
+	                  class="btn btn-default btn-sm" 
+	                  ng-click="getPreviousBatchOfDebitTxns()">
+	                <span class="glyphicon glyphicon-backward"></span>
+	                Prev
+	          </button>
+	          <button type="button" 
+	                  class="btn btn-default btn-sm"
+	                  ng-click="getNextBatchOfDebitTxns()">
+	                Next
+	                <span class="glyphicon glyphicon-forward"></span>
+	          </button>
+	      </div>
 	      <button type="button" 
 	              class="btn btn-default btn-sm" 
 	              ng-click="hideDebitRecoveryDialog()">

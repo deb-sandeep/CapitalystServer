@@ -63,3 +63,10 @@
 #pivot_table_div .row-total {
     font-family:'Courier';
 }
+
+#debit-entries-div {
+    background-color:#FEFEFE;
+    padding:5px;
+    height: 350px;  
+    overflow-y: scroll;
+}

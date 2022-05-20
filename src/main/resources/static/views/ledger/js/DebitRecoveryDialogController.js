@@ -66,7 +66,6 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         
         $scope.debitTxnList.length = 0 ;
         
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Ledger/DebitEntries?refTxnId=' + refTxnId + 
                                        '&isNextBatch=' + prev + 
                                        '&numTxns=15' )
@@ -79,9 +78,5 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                 $scope.$parent.addErrorAlert( "Error getting debit txn batch." ) ;
             }
         )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
     }
-    
 } ) ;
