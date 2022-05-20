@@ -1,4 +1,4 @@
-<div class="modal-dialog" style="width:300px;"
+<div class="modal-dialog" style="width:700px;"
      ng-controller="DebitRecoveryDialogController">
      
   <div class="modal-content" >
@@ -7,10 +7,41 @@
     </div>
     
     <div class="modal-body" style="background-color:#FEFEFE;padding:5px">
-    
 	    <div class="form">
+	       <div>
+	           <h5>Selected Credit Transaction</h5>
+	           <table style="width:100%;" class="ledger-table">
+	               <tr>
+	                   <td class="fixed-font" width="100px;">
+	                       {{creditTxn.valueDate | date}}
+	                   </td>
+                       <td class="fixed-font amt" width="75px;">
+                           {{creditTxn.amount | amt}}
+                       </td>
+		               <td class="remarks fixed-font  " style="padding-left:10px;">
+		                   {{creditTxn.remarks | remark}}
+		                   &nbsp;
+		                   <span ng-if="creditTxn.chequePayment"
+		                         class="glyphicon glyphicon-map-marker"></span>
+		                   <span ng-if="$parent.$parent.isCreditCardEntry( creditTxn )"
+		                         class="glyphicon glyphicon-subtitles"></span>
+		                   <span ng-if="$parent.$parent.isCashEntry( creditTxn )"
+		                         class="glyphicon glyphicon-leaf"></span>
+		               </td>
+	               </tr>
+                   <tr>
+                       <td colspan="2">
+                           {{creditTxn.notes}}
+                       </td>
+                       <td>
+                           {{creditTxn.l1Cat}} &gt; {{creditTxn.l2Cat}}
+                       </td>
+                   </tr>
+	           </table>
+	       </div>
+	       
+	       
 	    </div>
-    
 	    <div class="modal-footer">
 	      <button type="button" 
 	              class="btn btn-default btn-sm" 

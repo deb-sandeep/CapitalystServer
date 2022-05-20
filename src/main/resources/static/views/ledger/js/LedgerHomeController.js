@@ -271,11 +271,17 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.isCreditCardEntry = function( entry ) {
-        return entry.account.accountType == "CREDIT" ;
+        if( entry != null ) {
+            return entry.account.accountType == "CREDIT" ;
+        }
+        return false ;
     }
     
     $scope.isCashEntry = function( entry ) {
-        return entry.account.accountNumber == "CASH@HOME" ;
+        if( entry != null ) {
+            return entry.account.accountNumber == "CASH@HOME" ;
+        }
+        return false ;
     }
 
     $scope.showSplitLedgerEntryDialog = function( index ) {

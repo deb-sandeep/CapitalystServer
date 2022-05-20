@@ -52,7 +52,6 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     // --- [START] Local functions -------------------------------------------
     function clearState() {
         
-        $scope.creditTxn = null ;
         $scope.selectedDebitTxns.length = 0 ;
         $scope.debitTxnList.length = 0 ;
     }
@@ -60,7 +59,7 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     function initializeController() {
         
         clearState() ;
-        getNextBatchOfDebitTxns() ;
+        $scope.getNextBatchOfDebitTxns() ;
     }
     
     function getDebitTxns( refTxnId, prev ) {
@@ -68,7 +67,7 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         $scope.debitTxnList.length = 0 ;
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.get( 'Ledger/DebitEntries?refTxnId=' + refTxnId + 
+        $http.get( '/Ledger/DebitEntries?refTxnId=' + refTxnId + 
                                        '&isNextBatch=' + prev + 
                                        '&numTxns=15' )
         .then ( 
