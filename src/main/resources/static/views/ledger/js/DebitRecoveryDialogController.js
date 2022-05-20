@@ -7,6 +7,7 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     $scope.creditTxn = null ;
     $scope.selectedDebitTxns = [] ;
     $scope.debitTxnList = [] ;
+    $scope.currentResultPage = -1 ;
 
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -22,29 +23,16 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
 
     $scope.$on( 'creditTxnSetForDebitRecoveryDialog', function( event, args ) {
         
-        console.log( "Credit txn set for debit recovery mapping." ) ;
         $scope.creditTxn = args ;
         initializeController() ;
     } ) ;
     
     $scope.getNextBatchOfDebitTxns = function() {
-        
-        var refTxnId = $scope.creditTxn.id ;
-        if( $scope.debitTxnList.length != 0 ) {
-            var lastEntry = $scope.debitTxnList[ $scope.debitTxnList.length-1 ] ;
-            refTxnId = lastEntry.id ;
-        }
-        getDebitTxns( refTxnId, true ) ;
+        getDebitTxns( $scope.creditTxn.id, 1 ) ;
     } 
     
     $scope.getPreviousBatchOfDebitTxns = function() {
-        
-        var refTxnId = $scope.creditTxn.id ;
-        if( $scope.debitTxnList.length != 0 ) {
-            var firstEntry = $scope.debitTxnList[ 0 ] ;
-            refTxnId = firstEntry.id ;
-        }
-        getDebitTxns( refTxnId, false ) ;
+        getDebitTxns( $scope.creditTxn.id, -1 ) ;
     } 
     
     $scope.alreadySelected = function( entry ) {
@@ -68,6 +56,7 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     // --- [START] Local functions -------------------------------------------
     function clearState() {
         
+        $scope.currentResultPage = -1 ;
         $scope.selectedDebitTxns.length = 0 ;
         $scope.debitTxnList.length = 0 ;
     }
@@ -78,16 +67,23 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         $scope.getNextBatchOfDebitTxns() ;
     }
     
-    function getDebitTxns( refTxnId, prev ) {
+    function getDebitTxns( refTxnId, pageStep ) {
+        
+        if( $scope.currentResultPage <=0 && pageStep == -1 ) {
+            return ;
+        }
         
         $scope.debitTxnList.length = 0 ;
+        $scope.currentResultPage += pageStep ;
+        
+        var numTxnsPerPage = 10 ;
+        var offset = $scope.currentResultPage * numTxnsPerPage ;
         
         $http.get( '/Ledger/DebitEntries?refTxnId=' + refTxnId + 
-                                       '&isNextBatch=' + prev + 
-                                       '&numTxns=15' )
+                                       '&offset='   + offset + 
+                                       '&numTxns='  + numTxnsPerPage )
         .then ( 
             function( response ){
-                console.log( response.data ) ;
                 $scope.debitTxnList = response.data ;
             }, 
             function(){

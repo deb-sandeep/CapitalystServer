@@ -36,6 +36,8 @@ import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 import com.sandy.common.util.StringUtil ;
 
+import static org.springframework.http.ResponseEntity.* ;
+
 @RestController
 public class LedgerRestController {
 
@@ -70,8 +72,8 @@ public class LedgerRestController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR )
+                   .body( null ) ;
         }
     }
     
@@ -95,34 +97,32 @@ public class LedgerRestController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                .body( null ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR )
+                   .body( null ) ;
         }
     }
     
     @GetMapping( "/Ledger/DebitEntries" )
     public ResponseEntity<List<LedgerEntry>> getDebitEntries( 
-                @RequestParam( "refTxnId" )    Integer refTxnId,
-                @RequestParam( "isNextBatch" ) Boolean isNextBatch,
-                @RequestParam( "numTxns" )     Integer numTxns ) {
+                                @RequestParam( "refTxnId" ) Integer refTxnId,
+                                @RequestParam( "offset" )   Integer offset,
+                                @RequestParam( "numTxns" )  Integer numTxns ) {
         
         try {
             List<LedgerEntry> entries = null ;
             
-            if( isNextBatch ) {
-                entries = lRepo.findNextDebitEntries( refTxnId, numTxns ) ;
-            }
-            else {
-                entries = lRepo.findPrevDebitEntries( refTxnId, numTxns ) ;
-            }
+            LedgerEntry le = lRepo.findById( refTxnId ).get() ;
+            Date refDate = le.getValueDate() ;
+            
+            entries = lRepo.findDebitEntries( refDate, offset, numTxns ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( entries ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                .body( null ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR )
+                   .body( null ) ;
         }
     }
     
@@ -160,8 +160,8 @@ public class LedgerRestController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                .body( null ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR )
+                   .body( null ) ;
         }
     }
     
@@ -187,8 +187,8 @@ public class LedgerRestController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR )
+                   .body( null ) ;
         }
     }
     
@@ -212,8 +212,8 @@ public class LedgerRestController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR )
+                   .body( null ) ;
         }
     }
     
@@ -273,8 +273,8 @@ public class LedgerRestController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR )
+                   .body( null ) ;
         }
     }
     

@@ -109,30 +109,16 @@ public interface LedgerRepo
           + "FROM "
           + "    account_ledger le "
           + "WHERE "
-          + "    le.id < ?1 AND "
-          + "    le.amount < 0 "
+          + "    le.amount < 0 AND "
+          + "    le.value_date <= ?1 "
           + "ORDER BY "
-          + "    le.value_date DESC "
-          + "LIMIT ?2"
+          + "    le.value_date DESC, "
+          + "    le.id DESC "
+          + "LIMIT ?3 OFFSET ?2"
     )
-    public List<LedgerEntry> findNextDebitEntries( Integer refTxnId,
-                                                   Integer numTxns ) ; 
-
-    @Query( nativeQuery = true,
-            value =   
-            "SELECT "
-          + "    * "
-          + "FROM "
-          + "    account_ledger le "
-          + "WHERE "
-          + "    le.id > ?1 AND "
-          + "    le.amount < 0 "
-          + "ORDER BY "
-          + "    le.value_date DESC "
-          + "LIMIT ?2"
-    )
-    public List<LedgerEntry> findPrevDebitEntries( Integer refTxnId,
-                                                   Integer numTxns ) ; 
+    public List<LedgerEntry> findDebitEntries( Date refDate,
+                                               Integer offset,
+                                               Integer numTxns ) ; 
 
     @Query( value =   
             "SELECT "

@@ -19,10 +19,10 @@
                        <td class="fixed-font amt" width="75px;">
                            {{creditTxn.amount | amt}}
                        </td>
-                       <td>
+                       <td width="120px;">
                            {{creditTxn.notes}}
                        </td>
-                       <td>
+                       <td width="250px;">
                            {{creditTxn.l1Cat}} &gt; {{creditTxn.l2Cat}}
                        </td>
 		               <td class="remarks fixed-font" style="padding-left:10px;">
@@ -49,10 +49,10 @@
                        <td class="fixed-font amt" width="75px;">
                            {{entry.amount | amt}}
                        </td>
-                       <td>
+                       <td width="120px;">
                            {{entry.notes}}
                        </td>
-                       <td>
+                       <td width="250px;">
                            {{entry.l1Cat}} &gt; {{entry.l2Cat}}
                        </td>
                        <td class="remarks fixed-font" style="padding-left:10px;">
@@ -130,7 +130,8 @@
 	      <div style="float:left;">
 	          <button type="button" 
 	                  class="btn btn-default btn-sm" 
-	                  ng-click="getPreviousBatchOfDebitTxns()">
+	                  ng-click="getPreviousBatchOfDebitTxns()"
+	                  ng-disabled="currentResultPage <= 0">
 	                <span class="glyphicon glyphicon-backward"></span>
 	                Prev
 	          </button>
