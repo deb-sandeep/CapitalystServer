@@ -1,6 +1,7 @@
 package com.sandy.capitalyst.server.api.equity ;
 
 import java.util.ArrayList ;
+import java.util.Comparator ;
 import java.util.List ;
 
 import org.apache.commons.lang.exception.ExceptionUtils ;
@@ -55,6 +56,13 @@ public class EquityHoldingsController {
                     }
                 }
             }
+            
+            voHoldings.sort( new Comparator<EquityHoldingVO>() {
+                public int compare( EquityHoldingVO o1, EquityHoldingVO o2 ) {
+                    return o1.getCompanyName().compareTo( o2.getCompanyName() ) ;
+                }
+            } ) ;
+            
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( voHoldings ) ;
         }

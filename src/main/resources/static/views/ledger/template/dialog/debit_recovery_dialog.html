@@ -19,7 +19,7 @@
                        <td class="fixed-font amt" width="75px;">
                            {{creditTxn.amount | amt}}
                        </td>
-                       <td width="120px;">
+                       <td width="150px;">
                            {{creditTxn.notes}}
                        </td>
                        <td width="250px;">
@@ -44,26 +44,39 @@
                <table style="width:100%;" class="ledger-table">
                    <tr ng-repeat="entry in selectedDebitTxns">
                        <td class="fixed-font" width="100px;">
-                           {{entry.valueDate | date}}
+                           {{entry.debitTxn.valueDate | date}}
                        </td>
                        <td class="fixed-font amt" width="75px;">
-                           {{entry.amount | amt}}
+                           {{entry.debitTxn.amount | amt}}
                        </td>
-                       <td width="120px;">
-                           {{entry.notes}}
+                       <td width="150px;">
+                           {{entry.debitTxn.notes}}
                        </td>
                        <td width="250px;">
-                           {{entry.l1Cat}} &gt; {{entry.l2Cat}}
+                           {{entry.debitTxn.l1Cat}} &gt; {{entry.debitTxn.l2Cat}}
                        </td>
-                       <td class="remarks fixed-font" style="padding-left:10px;">
-                           {{entry.remarks | remark}}
+                       <td class="remarks fixed-font" 
+                           style="padding-left:10px;">
+                           {{entry.debitTxn.remarks | remark}}
                            &nbsp;
                            <span ng-if="entry.chequePayment"
                                  class="glyphicon glyphicon-map-marker"></span>
-                           <span ng-if="$parent.$parent.isCreditCardEntry( entry )"
+                           <span ng-if="$parent.$parent.isCreditCardEntry( entry.debitTxn )"
                                  class="glyphicon glyphicon-subtitles"></span>
-                           <span ng-if="$parent.$parent.isCashEntry( entry )"
+                           <span ng-if="$parent.$parent.isCashEntry( entry.debitTxn )"
                                  class="glyphicon glyphicon-leaf"></span>
+                       </td>
+                       <td>
+	                        <input class='form-field' 
+	                               type="number" 
+	                               min="0"
+	                               max="99999999"
+	                               ng-model="entry.recoveredAmount"
+	                               style="text-align:right;"/> 
+                       </td>
+                       <td>
+                          <span class="glyphicon glyphicon-trash"
+                                ng-click="removeDebitTxn( $index )"></span>
                        </td>
                    </tr>
                </table>

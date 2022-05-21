@@ -1,3 +1,9 @@
+function SelectedDebitTxn( debitTxn, remainingAmount ) {
+    
+    this.debitTxn = debitTxn ;
+    this.recoveredAmount = remainingAmount ;
+}
+
 capitalystNgApp.controller( 'DebitRecoveryDialogController', 
     function( $scope, $http, $ngConfirm ) {
     
@@ -39,15 +45,22 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         
         for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
             var selEntry = $scope.selectedDebitTxns[i] ;
-            if( entry.id == selEntry.id ) {
+            if( entry.id == selEntry.debitTxn.id ) {
                 return true ;
             }
         }
         return false ;
     }
     
-    $scope.selectDebitTxn = function( entry ) {
+    $scope.selectDebitTxn = function( debitTxn ) {
+        
+        var entry = new SelectedDebitTxn( debitTxn, 
+                                          getRemainingAmount( debitTxn ) ) ;
         $scope.selectedDebitTxns.push( entry ) ;
+    }
+    
+    $scope.removeDebitTxn = function( index ) {
+        $scope.selectedDebitTxns.splice( index, 1 ) ;
     }
     
     // --- [END] Scope functions
@@ -90,5 +103,20 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                 $scope.$parent.addErrorAlert( "Error getting debit txn batch." ) ;
             }
         )
+    }
+    
+    function getRemainingAmount( debitTxn ) {
+        
+        var remainingAmt = $scope.creditTxn.amount ;
+        for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
+            var debit = $scope.selectedDebitTxns[i] ;
+            remainingAmt -= debit.recoveredAmount ;    
+        }
+        
+        remainingAmt = remainingAmt > 0 ? remainingAmt : 0 ;
+        if( remainingAmt > -1*debitTxn.amount ) {
+            remainingAmt = ( -1 * debitTxn.amount ) ;
+        }
+        return remainingAmt ;
     }
 } ) ;
