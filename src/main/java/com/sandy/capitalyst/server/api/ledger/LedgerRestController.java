@@ -102,7 +102,7 @@ public class LedgerRestController {
         }
     }
     
-    @GetMapping( "/Ledger/DebitEntries" )
+    @GetMapping( "/Ledger/PaginatedDebitEntries" )
     public ResponseEntity<List<LedgerEntry>> getDebitEntries( 
                                 @RequestParam( "refTxnId" ) Integer refTxnId,
                                 @RequestParam( "offset" )   Integer offset,

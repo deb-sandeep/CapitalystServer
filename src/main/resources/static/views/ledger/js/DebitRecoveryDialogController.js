@@ -1,7 +1,9 @@
-function SelectedDebitTxn( debitTxn, remainingAmount ) {
+function SelectedDebitTxn( debitTxn, associationId, recoveredAmt, note ) {
     
-    this.debitTxn = debitTxn ;
-    this.recoveredAmount = remainingAmount ;
+    this.associationId   = associationId ;
+    this.debitTxn        = debitTxn ;
+    this.recoveredAmount = recoveredAmt ;
+    this.note            = note ;
 }
 
 capitalystNgApp.controller( 'DebitRecoveryDialogController', 
@@ -14,7 +16,7 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     $scope.selectedDebitTxns = [] ;
     $scope.debitTxnList = [] ;
     $scope.currentResultPage = -1 ;
-
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading DebitRecoveryDialogController." ) ;
@@ -34,11 +36,11 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     } ) ;
     
     $scope.getNextBatchOfDebitTxns = function() {
-        getDebitTxns( $scope.creditTxn.id, 1 ) ;
+        getPaginatedDebitTxns( $scope.creditTxn.id, 1 ) ;
     } 
     
     $scope.getPreviousBatchOfDebitTxns = function() {
-        getDebitTxns( $scope.creditTxn.id, -1 ) ;
+        getPaginatedDebitTxns( $scope.creditTxn.id, -1 ) ;
     } 
     
     $scope.alreadySelected = function( entry ) {
@@ -55,7 +57,10 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     $scope.selectDebitTxn = function( debitTxn ) {
         
         var entry = new SelectedDebitTxn( debitTxn, 
-                                          getRemainingAmount( debitTxn ) ) ;
+                                          -1,
+                                          getRemainingAmount( debitTxn ), 
+                                          "" ) ;
+                                          
         $scope.selectedDebitTxns.push( entry ) ;
     }
     
@@ -77,10 +82,44 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     function initializeController() {
         
         clearState() ;
-        $scope.getNextBatchOfDebitTxns() ;
+        
+        // Fetch any already associated debit transactions
+        getAssociatedDebitTxns( $scope.creditTxn.id, function(){
+            // Fetch the first batch of debit transactions
+            $scope.getNextBatchOfDebitTxns() ;
+        }) ;
+        
     }
     
-    function getDebitTxns( refTxnId, pageStep ) {
+    function getAssociatedDebitTxns( creditTxnId, callback ) {
+        
+        $scope.selectedDebitTxns.length = 0 ;
+        
+        $http.get( '/DebitAssociation/'  + creditTxnId )
+        .then ( 
+            function( response ){
+                for( var i=0; i<response.data.length; i++ ) {
+                    
+                    var tupule   = response.data[i] ;
+                    var dca      = tupule[0] ;
+                    var debitTxn = tupule[1] ;
+                    
+                    var entry = new SelectedDebitTxn( debitTxn,
+                                                      dca.id,
+                                                      dca.amount,
+                                                      dca.note ) ;
+                                                      
+                    $scope.selectedDebitTxns.push( entry ) ;
+                }
+                callback() ;
+            }, 
+            function(){
+                $scope.$parent.addErrorAlert( "Error getting associated debit txns." ) ;
+            }
+        )
+    }
+    
+    function getPaginatedDebitTxns( refTxnId, pageStep ) {
         
         if( $scope.currentResultPage <=0 && pageStep == -1 ) {
             return ;
@@ -92,7 +131,8 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         var numTxnsPerPage = 10 ;
         var offset = $scope.currentResultPage * numTxnsPerPage ;
         
-        $http.get( '/Ledger/DebitEntries?refTxnId=' + refTxnId + 
+        $http.get( '/Ledger/PaginatedDebitEntries' + 
+                                       '?refTxnId=' + refTxnId + 
                                        '&offset='   + offset + 
                                        '&numTxns='  + numTxnsPerPage )
         .then ( 

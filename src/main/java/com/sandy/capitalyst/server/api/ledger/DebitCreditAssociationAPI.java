@@ -56,6 +56,33 @@ public class DebitCreditAssociationAPI {
         }
     }
     
+    @GetMapping( "/DebitAssociation/{creditTxnId}" ) 
+    public ResponseEntity<List<Object[]>> getAssociatedDebitEntries( 
+                                         @PathVariable Integer creditTxnId ) {
+        try {
+            List<DebitCreditAssoc> associations = null ;
+            List<Object[]> debitAssociations = new ArrayList<>() ;
+            
+            associations = dcaRepo.findByCreditTxnId( creditTxnId ) ;
+            
+            if( associations != null && !associations.isEmpty() ) {
+                for( DebitCreditAssoc assoc : associations ) {
+                    
+                    Object[] tupule = new Object[2] ;
+                    tupule[0] = assoc ;
+                    tupule[1] = lRepo.findById( assoc.getDebitTxnId() ).get() ;
+                    
+                    debitAssociations.add( tupule ) ;
+                }
+            }
+            return status( HttpStatus.OK ).body( debitAssociations ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Getting association entries.", e ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR ).body( null ) ;
+        }
+    }
+    
     @GetMapping( "/DebitCreditAssociation/AssociatedIds" ) 
     public ResponseEntity<List<Integer>> get() {
         try {

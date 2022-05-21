@@ -52,11 +52,8 @@
                        <td width="150px;">
                            {{entry.debitTxn.notes}}
                        </td>
-                       <td width="250px;">
-                           {{entry.debitTxn.l1Cat}} &gt; {{entry.debitTxn.l2Cat}}
-                       </td>
-                       <td class="remarks fixed-font" 
-                           style="padding-left:10px;">
+                       <td width="400px;">
+                           {{entry.debitTxn.l1Cat}} &gt; {{entry.debitTxn.l2Cat}}<br/>
                            {{entry.debitTxn.remarks | remark}}
                            &nbsp;
                            <span ng-if="entry.chequePayment"
@@ -65,8 +62,9 @@
                                  class="glyphicon glyphicon-subtitles"></span>
                            <span ng-if="$parent.$parent.isCashEntry( entry.debitTxn )"
                                  class="glyphicon glyphicon-leaf"></span>
+                           
                        </td>
-                       <td>
+                       <td width="100px">
 	                        <input class='form-field' 
 	                               type="number" 
 	                               min="0"
@@ -74,7 +72,12 @@
 	                               ng-model="entry.recoveredAmount"
 	                               style="text-align:right;"/> 
                        </td>
-                       <td>
+                       <td width="200px">
+                            <input class='form-field' 
+                                   type="text" 
+                                   ng-model="entry.note"/> 
+                       </td>
+                       <td width="50px" style="text-align:center;">
                           <span class="glyphicon glyphicon-trash"
                                 ng-click="removeDebitTxn( $index )"></span>
                        </td>
