@@ -63,10 +63,12 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                                           "" ) ;
                                           
         $scope.selectedDebitTxns.push( entry ) ;
+        $scope.recomputeRemainingCreditAmt() ;
     }
     
     $scope.removeDebitTxn = function( index ) {
         $scope.selectedDebitTxns.splice( index, 1 ) ;
+        $scope.recomputeRemainingCreditAmt() ;
         // TODO: Remove it from the server if the id is != -1
     }
     
