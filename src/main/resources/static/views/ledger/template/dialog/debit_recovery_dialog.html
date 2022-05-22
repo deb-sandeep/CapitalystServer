@@ -10,7 +10,11 @@
 	    <div class="form">
 	    
 	       <div>
-	           <h5>Selected Credit Transaction</h5>
+	           <h5>Selected Credit Transaction.
+		           <span style="color:red;">
+		               Remaining amount : {{creditAmtRemaining | amt}}
+		           </span> 
+	           </h5>
 	           <table style="width:100%;" class="ledger-table">
 	               <tr>
 	                   <td class="fixed-font" width="100px;">
@@ -40,9 +44,19 @@
 	       </div>
 	       
 	       <div>
-               <h5>Associated Debit Transaction</h5>
+               <h5>
+                    Associated Debit Transaction
+                    <span class="glyphicon glyphicon-ban-circle"
+                          style="color:red;"
+                          ng-if="!isValidAssociation()"
+                          ng-click="showErrorMessages()"></span>
+                    
+               </h5>
                <table style="width:100%;" class="ledger-table">
                    <tr ng-repeat="entry in selectedDebitTxns">
+                       <td class="fixed-font" width="10px">
+                            {{$index}}
+                       </td>
                        <td class="fixed-font" width="100px;">
                            {{entry.debitTxn.valueDate | date}}
                        </td>
@@ -70,6 +84,7 @@
 	                               min="0"
 	                               max="99999999"
 	                               ng-model="entry.recoveredAmount"
+	                               ng-change="recomputeRemainingCreditAmt()"
 	                               style="text-align:right;"/> 
                        </td>
                        <td width="200px">
@@ -165,7 +180,8 @@
 	      </button>
 	      <button type="button" 
 	              class="btn btn-info btn-sm"
-	              ng-click="saveSplitLedgerEntry()">
+	              ng-click="saveSplitLedgerEntry()"
+	              ng-disabled="!isValidAssociation()">
 	            Save
 	      </button>
 	    </div>
