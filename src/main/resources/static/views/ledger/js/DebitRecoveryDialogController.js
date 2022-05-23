@@ -20,6 +20,8 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     $scope.creditAmtRemaining = 0 ;
     $scope.errorMessages = [] ;
     
+    $scope.saveSuccessFlag = false ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading DebitRecoveryDialogController." ) ;
@@ -66,12 +68,6 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         $scope.recomputeRemainingCreditAmt() ;
     }
     
-    $scope.removeDebitTxn = function( index ) {
-        $scope.selectedDebitTxns.splice( index, 1 ) ;
-        $scope.recomputeRemainingCreditAmt() ;
-        // TODO: Remove it from the server if the id is != -1
-    }
-    
     $scope.recomputeRemainingCreditAmt = function() {
         
         $scope.creditAmtRemaining = $scope.creditTxn.amount ;
@@ -115,6 +111,73 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                 },
             }
         });
+    }
+    
+    $scope.saveAssociations = function() {
+        
+        var associations = [] ;
+        
+        for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
+            var debit = $scope.selectedDebitTxns[i] ;
+            associations.push( {
+                "id" : debit.associationId,
+                "creditTxnId" : $scope.creditTxn.id,
+                "debitTxnId"  : debit.debitTxn.id,
+                "amount"      : debit.recoveredAmount,
+                "note"        : debit.note
+            }) ;
+        }
+        
+        $http.post( '/DebitCreditAssociation', associations )
+        .then ( 
+            function( response ){
+                var savedAssociations = response.data ;
+                
+                for( var j=0; j<savedAssociations.length; j++ ) {
+                    
+                    var savedAssoc = savedAssociations[j] ;
+                    
+                    for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
+                        
+                        var debit = $scope.selectedDebitTxns[i] ;
+                        
+                        if( debit.associationId == -1 &&
+                            debit.debitTxn.id  == savedAssoc.debitTxnId &&
+                            $scope.creditTxn.id == savedAssoc.creditTxnId ) {
+                            
+                            debit.associationId = savedAssoc.id ;
+                        }
+                    }
+                }
+                $scope.saveSuccessFlag = true ;
+                setTimeout( function(){
+                    $scope.saveSuccessFlag = false ;
+                    $scope.$apply() ;
+                }, 1000 ) ;
+            }, 
+            function(){
+                $scope.$parent.addErrorAlert( "Error saving associations." ) ;
+            }
+        )
+    }
+    
+    $scope.removeDebitTxn = function( index ) {
+        
+        var removedAssoc = $scope.selectedDebitTxns.splice( index, 1 )[0] ;
+        $scope.recomputeRemainingCreditAmt() ;
+        
+        if( removedAssoc.associationId != -1 ) {
+            
+            $http.delete( '/DebitCreditAssociation/' + removedAssoc.associationId )
+            .then ( 
+                function(){
+                    console.log( "Successfully deleted association on server." ) ;
+                }, 
+                function(){
+                    $scope.$parent.addErrorAlert( "Error saving associations." ) ;
+                }
+            )
+        }
     }
     
     // --- [END] Scope functions

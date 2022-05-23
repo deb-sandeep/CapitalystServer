@@ -46,16 +46,11 @@
 	       <div>
                <h5>
                     Associated Debit Transaction
-                    <span class="glyphicon glyphicon-ban-circle"
-                          style="color:red;"
-                          ng-if="!isValidAssociation()"
-                          ng-click="showErrorMessages()"></span>
-                    
                </h5>
                <table style="width:100%;" class="ledger-table">
                    <tr ng-repeat="entry in selectedDebitTxns">
                        <td class="fixed-font" width="10px">
-                            {{$index}}
+                            {{$index + 1}}
                        </td>
                        <td class="fixed-font" width="100px;">
                            {{entry.debitTxn.valueDate | date}}
@@ -180,10 +175,18 @@
 	      </button>
 	      <button type="button" 
 	              class="btn btn-info btn-sm"
-	              ng-click="saveSplitLedgerEntry()"
+	              ng-click="saveAssociations()"
 	              ng-disabled="!isValidAssociation()">
 	            Save
 	      </button>
+          <span class="glyphicon glyphicon-ban-circle"
+                style="color:red;"
+                ng-show="!isValidAssociation()"
+                ng-click="showErrorMessages()"></span>
+                
+          <span class="glyphicon glyphicon-ok"
+                style="color:green;"
+                ng-show="saveSuccessFlag"></span>
 	    </div>
     </div>
     

@@ -100,16 +100,20 @@ public class DebitCreditAssociationAPI {
     }
     
     @PostMapping( "/DebitCreditAssociation" ) 
-    public ResponseEntity<APIResponse> save( 
+    public ResponseEntity<List<DebitCreditAssoc>> save( 
                          @RequestBody List<DebitCreditAssoc> associations ) {
         try {
-            dcaRepo.saveAll( associations ) ;
-            return status( HttpStatus.OK ).body( APIResponse.SUCCESS ) ;
+            List<DebitCreditAssoc> savedAssociations = new ArrayList<>() ;
+            
+            Iterable<DebitCreditAssoc> iterable = dcaRepo.saveAll( associations ) ;
+            iterable.forEach( savedAssociations::add ) ;
+            
+            return status( HttpStatus.OK ).body( savedAssociations ) ;
         }
         catch( DataIntegrityViolationException d ) {
-            log.error( "Error: Duplicate entry. " + d.getMessage() ) ;
+            log.error( "Error: Duplicate entry. " + d.getMessage(), d ) ;
             return status( HttpStatus.BAD_REQUEST )
-                   .body( new APIResponse( "Duplicate credit debit association." ) ) ;
+                   .body( null ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving association entry.", e ) ;
