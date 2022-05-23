@@ -432,6 +432,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $( '#debitRecoveryDialog' ).modal( 'show' ) ;
     }
     
+    $scope.hideDebitRecoveryDialog = function() {
+        $( '#debitRecoveryDialog' ).modal( 'hide' ) ;
+        $scope.searchLedgerEntries() ;
+    }
+
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

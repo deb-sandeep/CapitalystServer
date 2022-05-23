@@ -56,7 +56,8 @@
                            {{entry.debitTxn.valueDate | date}}
                        </td>
                        <td class="fixed-font amt" width="75px;">
-                           {{entry.debitTxn.amount | amt}}
+                           {{entry.debitTxn.amount | amt}} <br/>
+                           ({{entry.maxRecoverableAmount | amt}})
                        </td>
                        <td width="150px;">
                            {{entry.debitTxn.notes}}
@@ -171,7 +172,7 @@
 	      <button type="button" 
 	              class="btn btn-default btn-sm" 
 	              ng-click="hideDebitRecoveryDialog()">
-	            Cancel
+	            Done
 	      </button>
 	      <button type="button" 
 	              class="btn btn-info btn-sm"

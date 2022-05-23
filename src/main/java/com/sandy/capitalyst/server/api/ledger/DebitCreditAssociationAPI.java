@@ -23,6 +23,73 @@ import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.repo.DebitCreditAssocRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 
+/**
+ * This function, given a credit transaction entry returns a list of 
+ * debit associations whose cost has been fully or partially recovered
+ * by this credit entry.
+ * 
+ * For example, consider the following 
+ * 
+ * [[ Ledger ]]
+ * 
+ *                Credit Amt    Debit Amount
+ * -----------------------------------------------------------------------------
+ * Credit Txn1          1000                  ..... (A)
+ * Credit Txn2           500                  ..... (B)
+ * Debit  TxnA                         -200   ..... (C)
+ * Debit  TxnB                         -100   ..... (D)
+ * Debit  TxnC                         -400   ..... (E)
+ * 
+ * [[ DebitCreditAssociations ]]
+ * 
+ * Credit Txn        Debit Txn      Recovered 
+ *                                     Amount
+ * -----------------------------------------------------------------------------
+ * Credit Txn1       Debit TxnA          100  ..... (F)
+ * Credit Txn1       Debit TxnB           50  ..... (G)
+ * Credit Txn2       Debit TxnA           50  ..... (H)
+ * Credit Txn2       Debit TxnB           50  ..... (I)
+ * Credit Txn3       Debit TxnC          400  ..... (J)
+ * 
+ * [[ Analysis of credit txn1 associations ]]
+ * 
+ * Credit Txn1
+ *      - Credit Amount            :    1000  ..... (A)
+ *      - Remaining amount         :     850  ..... (A-2-3) 
+ *      - Debit recoveries
+ *          - Debit TxnA           :     100  ..... (2)
+ *              - Total amount     :    -200  ..... (C)
+ *              - Max recovery amt :     150  ..... (C-3) *
+ *              - Recovery credits
+ *                  - Credit Txn1  :     100  ..... (F)
+ *                  - Credit Txn2  :      50  ..... (H)
+ *              - Balance debit    :     -50  ..... (C+F+H)
+ *              
+ *          - Debit TxnB           :      50  ..... (3)
+ *              - Total amount     :    -100  ..... (D)
+ *              - Recovery credits
+ *                  - Credit Txn1  :      50  ..... (G)
+ *                  - Credit Txn2  :      50  ..... (I)
+ *              - Balance debit    :       0  ..... (D+G+I)
+ * 
+ * [[ Analysis of debit txnA associations ]]
+ * 
+ * Debit TxnA
+ *      - Debit Amount             :    -200  ..... (C)
+ *      - Credit recoveries
+ *          - Credit Txn1          :     100  ..... (F)
+ *          - Credit Txn2          :      50  ..... (H)
+ *          
+ * * - This is an important point. 
+ *      While associating a debit entry with a credit for recovery, there is 
+ *      a maximum amount of debit can be recovered. This amount apart from
+ *      how much of credit is available, also depends upon how much of the 
+ *      debit has already been recovered.
+ *      
+ *      In the above example, for debit txnA, max 150 can be recovered from
+ *      Credit Txn1 because 50 has already been recovered by Txn2 (H)
+ * 
+ */
 @RestController
 public class DebitCreditAssociationAPI {
 
@@ -33,28 +100,6 @@ public class DebitCreditAssociationAPI {
     
     @Autowired
     private DebitCreditAssocRepo dcaRepo = null ;
-    
-    @GetMapping( "/DebitCreditAssociation/{ledgerEntryId}" ) 
-    public ResponseEntity<List<DebitCreditAssoc>> get( 
-                                         @PathVariable Integer ledgerEntryId ) {
-        try {
-            List<DebitCreditAssoc> associations = null ;
-            LedgerEntry le = lRepo.findById( ledgerEntryId ).get() ;
-            
-            if( le.isCredit() ) {
-                associations = dcaRepo.findByCreditTxnId( ledgerEntryId ) ;
-            }
-            else {
-                associations = dcaRepo.findByDebitTxnId( ledgerEntryId ) ;
-            }
-            
-            return status( HttpStatus.OK ).body( associations ) ;
-        }
-        catch( Exception e ) {
-            log.error( "Error :: Getting association entries.", e ) ;
-            return status( HttpStatus.INTERNAL_SERVER_ERROR ).body( null ) ;
-        }
-    }
     
     @GetMapping( "/DebitAssociation/{creditTxnId}" ) 
     public ResponseEntity<List<Object[]>> getAssociatedDebitEntries( 
@@ -68,9 +113,13 @@ public class DebitCreditAssociationAPI {
             if( associations != null && !associations.isEmpty() ) {
                 for( DebitCreditAssoc assoc : associations ) {
                     
-                    Object[] tupule = new Object[2] ;
+                    LedgerEntry debitLE = null ;
+                    debitLE = lRepo.findById( assoc.getDebitTxnId() ).get() ;
+                    
+                    Object[] tupule = new Object[3] ;
                     tupule[0] = assoc ;
-                    tupule[1] = lRepo.findById( assoc.getDebitTxnId() ).get() ;
+                    tupule[1] = debitLE ;
+                    tupule[2] = findSecondaryRecoveyAssociations( debitLE ) ;
                     
                     debitAssociations.add( tupule ) ;
                 }
@@ -78,9 +127,52 @@ public class DebitCreditAssociationAPI {
             return status( HttpStatus.OK ).body( debitAssociations ) ;
         }
         catch( Exception e ) {
-            log.error( "Error :: Getting association entries.", e ) ;
+            log.error( "Error :: Getting debit association entries.", e ) ;
             return status( HttpStatus.INTERNAL_SERVER_ERROR ).body( null ) ;
         }
+    }
+    
+    @GetMapping( "/CreditAssociation/{debitTxnId}" ) 
+    public ResponseEntity<List<Object[]>> getAssociatedCreditEntries( 
+                                         @PathVariable Integer debitTxnId ) {
+        try {
+            List<DebitCreditAssoc> associations = null ;
+            List<Object[]> creditAssociations = new ArrayList<>() ;
+            
+            associations = dcaRepo.findByDebitTxnId( debitTxnId ) ;
+            
+            if( associations != null && !associations.isEmpty() ) {
+                for( DebitCreditAssoc assoc : associations ) {
+                    
+                    LedgerEntry creditLE = null ;
+                    creditLE = lRepo.findById( assoc.getCreditTxnId() ).get() ;
+                    
+                    Object[] tupule = new Object[3] ;
+                    tupule[0] = assoc ;
+                    tupule[1] = creditLE ;
+                    tupule[2] = findSecondaryRecoveyAssociations( creditLE ) ;
+                    
+                    creditAssociations.add( tupule ) ;
+                }
+            }
+            return status( HttpStatus.OK ).body( creditAssociations ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Getting credit association entries.", e ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR ).body( null ) ;
+        }
+    }
+    
+    private List<DebitCreditAssoc> findSecondaryRecoveyAssociations( LedgerEntry entry ) {
+        
+        List<DebitCreditAssoc> assocs = null ;
+        if( entry.isCredit() ) {
+            assocs = dcaRepo.findByCreditTxnId( entry.getId() ) ;
+        }
+        else {
+            assocs = dcaRepo.findByDebitTxnId( entry.getId() ) ;
+        }
+        return assocs ;
     }
     
     @GetMapping( "/DebitCreditAssociation/AssociatedIds" ) 

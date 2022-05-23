@@ -1,9 +1,12 @@
-function SelectedDebitTxn( debitTxn, associationId, recoveredAmt, note ) {
+function SelectedDebitTxn( debitTxn, associationId, note ) {
     
     this.associationId   = associationId ;
     this.debitTxn        = debitTxn ;
-    this.recoveredAmount = recoveredAmt ;
+    this.recoveredAmount = 0 ;
     this.note            = note ;
+    
+    this.maxRecoverableAmount = 0 ;
+    this.otherCreditTxns      = [] ;
 }
 
 capitalystNgApp.controller( 'DebitRecoveryDialogController', 
@@ -30,10 +33,6 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
-    $scope.hideDebitRecoveryDialog = function() {
-        $( '#debitRecoveryDialog' ).modal( 'hide' ) ;
-    }
-
     $scope.$on( 'creditTxnSetForDebitRecoveryDialog', function( event, creditTxn ) {
         initializeController( creditTxn ) ;
     } ) ;
@@ -59,13 +58,18 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     
     $scope.selectDebitTxn = function( debitTxn ) {
         
-        var entry = new SelectedDebitTxn( debitTxn, 
-                                          -1,
-                                          getMaxRecoverableAmount( debitTxn ), 
-                                          "" ) ;
+        var entry = new SelectedDebitTxn( debitTxn, -1, "" ) ;
                                           
         $scope.selectedDebitTxns.push( entry ) ;
-        $scope.recomputeRemainingCreditAmt() ;
+        
+        // Fetch any other associated recovery credit transactions and 
+        // adjust the validation cap accordingly. This is to cater for the 
+        // extreme situation where a debit transaction is being recovered 
+        // independently for more than its amount by independent credit 
+        // transactions.
+        associateOtherCredits( entry, function(){
+            $scope.recomputeRemainingCreditAmt() ;
+        } ) ;
     }
     
     $scope.recomputeRemainingCreditAmt = function() {
@@ -85,6 +89,7 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         validateZeroAssociations() ;
         validateNegativeAssociationAmounts() ;
         validateRecoveredAmountLessThanCreditAmount() ;
+        validateRecoveryMoreThanAllowed() ;
         
         return $scope.errorMessages.length == 0 ;
     }
@@ -222,14 +227,23 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
             function( response ){
                 for( var i=0; i<response.data.length; i++ ) {
                     
-                    var tupule   = response.data[i] ;
-                    var dca      = tupule[0] ;
-                    var debitTxn = tupule[1] ;
+                    var tupule      = response.data[i] ;
+                    var dca         = tupule[0] ;
+                    var debitTxn    = tupule[1] ;
+                    var creditDCAs  = tupule[2] ;
                     
                     var entry = new SelectedDebitTxn( debitTxn,
                                                       dca.id,
-                                                      dca.amount,
                                                       dca.note ) ;
+                                                      
+                    entry.recoveredAmount = dca.amount ;
+                                                      
+                    for( var j=0; j<creditDCAs.length; j++ ) {
+                        var cTxn = creditDCAs[j] ;
+                        if( cTxn.creditTxnId != $scope.creditTxn.id ) {
+                            entry.otherCreditTxns.push( cTxn ) ;
+                        }
+                    }
                                                       
                     $scope.selectedDebitTxns.push( entry ) ;
                 }
@@ -239,6 +253,54 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                 $scope.$parent.addErrorAlert( "Error getting associated debit txns." ) ;
             }
         )
+    }
+    
+    function associateOtherCredits( selDebitTxn, callback ) {
+        
+        $http.get( '/CreditAssociation/'  + selDebitTxn.debitTxn.id )
+        .then ( 
+            function( response ){
+                
+                var alreadyRecoveredAmount = 0 ;
+                for( var i=0; i<response.data.length; i++ ) {
+                    
+                    var tupule  = response.data[i] ;
+                    var dca     = tupule[0] ;
+                                                      
+                    if( $scope.creditTxn.id != dca.creditTxnId ) {
+                        selDebitTxn.otherCreditTxns.push( dca ) ;
+                        alreadyRecoveredAmount += dca.amount ;
+                    }
+                }
+                
+                selDebitTxn.maxRecoverableAmount = selDebitTxn.debitTxn.amount +
+                                                   alreadyRecoveredAmount ;
+                                                   
+                selDebitTxn.recoveredAmount = getDefaultRecoveryAmount( selDebitTxn ) ;
+                callback() ;
+            }, 
+            function(){
+                $scope.$parent.addErrorAlert( "Error getting associated credit txns." ) ;
+            }
+        )
+    }
+    
+    function getDefaultRecoveryAmount( selDebitTxn ) {
+        
+        var defaultRecoveryAmt = $scope.creditTxn.amount ;
+        
+        for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
+            var debit = $scope.selectedDebitTxns[i] ;
+            defaultRecoveryAmt -= debit.recoveredAmount ;    
+        }
+        
+        defaultRecoveryAmt = defaultRecoveryAmt > 0 ? defaultRecoveryAmt : 0 ;
+        
+        if( defaultRecoveryAmt > -1*selDebitTxn.maxRecoverableAmount ) {
+            defaultRecoveryAmt = ( -1 * selDebitTxn.maxRecoverableAmount ) ;
+        }
+        
+        return defaultRecoveryAmt ;
     }
     
     function getPaginatedDebitTxns( refTxnId, pageStep ) {
@@ -267,21 +329,6 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         )
     }
     
-    function getMaxRecoverableAmount( debitTxn ) {
-        
-        var remainingAmt = $scope.creditTxn.amount ;
-        for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
-            var debit = $scope.selectedDebitTxns[i] ;
-            remainingAmt -= debit.recoveredAmount ;    
-        }
-        
-        remainingAmt = remainingAmt > 0 ? remainingAmt : 0 ;
-        if( remainingAmt > -1*debitTxn.amount ) {
-            remainingAmt = ( -1 * debitTxn.amount ) ;
-        }
-        return remainingAmt ;
-    }
-    
     function validateZeroAssociations() {
         
         if( $scope.selectedDebitTxns.length == 0 ) {
@@ -306,6 +353,18 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         if( $scope.creditAmtRemaining < 0 ) {
             var msg = "Total associated amt is more than credit amount." ;
             $scope.errorMessages.push( msg ) ;
+        }
+    }
+    
+    function validateRecoveryMoreThanAllowed() {
+        
+        for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
+            var debit = $scope.selectedDebitTxns[i] ;
+            if( debit.recoveredAmount > Math.abs( debit.maxRecoverableAmount ) ) {
+                var msg = "Txn " + (i+1) + " recovery is more than permissible. " +
+                          "Max = " + (-1*debit.maxRecoverableAmount)  ;
+                $scope.errorMessages.push( msg ) ;
+            }   
         }
     }
 } ) ;
