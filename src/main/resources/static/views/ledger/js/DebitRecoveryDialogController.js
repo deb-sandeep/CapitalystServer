@@ -25,16 +25,29 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     
     $scope.saveSuccessFlag = false ;
     
-    // -----------------------------------------------------------------------
-    // --- [START] Controller initialization ---------------------------------
-    console.log( "Loading DebitRecoveryDialogController." ) ;
-    // --- [END] Controller initialization -----------------------------------
+    // -------------------------------------------------------------------------
+    // --- [START] Scope functions ---------------------------------------------
     
-    
-    // -----------------------------------------------------------------------
-    // --- [START] Scope functions -------------------------------------------
-    $scope.$on( 'creditTxnSetForDebitRecoveryDialog', function( event, creditTxn ) {
-        initializeController( creditTxn ) ;
+    $scope.$on( 'creditTxnSetForDebitRecoveryDialog', 
+                function( event, creditTxn ) {
+                    
+        clearState() ;
+        
+        $scope.creditTxn = creditTxn ;
+        $scope.creditAmtRemaining = $scope.creditTxn.amount ;
+        
+        // Fetch any already associated debit transactions
+        getAssociatedDebitTxns( $scope.creditTxn.id, function(){
+            
+            // Deduct the recovered amounts from the credit amount that remains
+            for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
+                var txn = $scope.selectedDebitTxns[i] ;
+                $scope.creditAmtRemaining -= txn.recoveredAmount ;
+            }
+            
+            // Fetch the first page of debit transactions
+            $scope.getNextBatchOfDebitTxns() ;
+        }) ;
     } ) ;
     
     $scope.getNextBatchOfDebitTxns = function() {
@@ -45,7 +58,11 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         getPaginatedDebitTxns( $scope.creditTxn.id, -1 ) ;
     } 
     
-    $scope.alreadySelected = function( entry ) {
+    // If a debit ledger entry is already selected, hide the selection link
+    // from it, preventing it from being selected again and visually denoting
+    // that this entry is alredy selected for association. Note that this marker
+    // does not imply that association with this entry is saved in the database.
+    $scope.isLedgerEntryAlreadySelected = function( entry ) {
         
         for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
             var selEntry = $scope.selectedDebitTxns[i] ;
@@ -56,22 +73,24 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         return false ;
     }
     
-    $scope.selectDebitTxn = function( debitTxn ) {
+    // Called when a debit ledger entry is selected for association with the 
+    // credit entry.
+    $scope.selectDebitTxn = function( debitLedgerEntry ) {
         
-        var entry = new SelectedDebitTxn( debitTxn, -1, "" ) ;
+        var entry = new SelectedDebitTxn( debitLedgerEntry, -1, "" ) ;
                                           
         $scope.selectedDebitTxns.push( entry ) ;
         
-        // Fetch any other associated recovery credit transactions and 
-        // adjust the validation cap accordingly. This is to cater for the 
-        // extreme situation where a debit transaction is being recovered 
-        // independently for more than its amount by independent credit 
-        // transactions.
-        associateOtherCredits( entry, function(){
-            $scope.recomputeRemainingCreditAmt() ;
-        } ) ;
+        // Fetch any associated recovery credit transactions (other than the
+        // current credit transaction) and adjust the remaining credit 
+        // accordingly. Note that a debit entry can be recovered by more than
+        // one credit entry. Doing this ensures that we don't over recover
+        // a debit entry.
+        associateOtherCredits( entry ) ;
     }
     
+    // Computes how much of the credit transaction amount is still available
+    // for recovering debit expenses.
     $scope.recomputeRemainingCreditAmt = function() {
         
         $scope.creditAmtRemaining = $scope.creditTxn.amount ;
@@ -86,9 +105,18 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         
         $scope.errorMessages.length = 0 ;
         
+        // At least one valid debit association should exist
         validateZeroAssociations() ;
+        
+        // None of the associated debit recoveries should be negative
         validateNegativeAssociationAmounts() ;
+        
+        // None of the recovered amount should be more than the credit amount
         validateRecoveredAmountLessThanCreditAmount() ;
+        
+        // None of the recovered amount should be more than the max allowed
+        // recovery amount for that debit transaction. Remember that a debit
+        // transaction can be recovered through many credit transactions.
         validateRecoveryMoreThanAllowed() ;
         
         return $scope.errorMessages.length == 0 ;
@@ -118,6 +146,7 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         });
     }
     
+    // This function can be called when all the validations have passed.
     $scope.saveAssociations = function() {
         
         var associations = [] ;
@@ -136,14 +165,17 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         $http.post( '/DebitCreditAssociation', associations )
         .then ( 
             function( response ){
-                var savedAssociations = response.data ;
                 
+                var savedAssociations = response.data ;
+
+                // Saved associations have their id updated to a non negative
+                // integer. We need to populate the new id with the approprirate
+                // selected debit entry, so that any future updates will 
+                // happen appropriately.
                 for( var j=0; j<savedAssociations.length; j++ ) {
-                    
                     var savedAssoc = savedAssociations[j] ;
                     
                     for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
-                        
                         var debit = $scope.selectedDebitTxns[i] ;
                         
                         if( debit.associationId == -1 &&
@@ -154,6 +186,9 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                         }
                     }
                 }
+                
+                // A temporary visual marker to show that the save was successful
+                // The marker disappears after a second.
                 $scope.saveSuccessFlag = true ;
                 setTimeout( function(){
                     $scope.saveSuccessFlag = false ;
@@ -187,8 +222,8 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
     
     // --- [END] Scope functions
 
-    // -----------------------------------------------------------------------
-    // --- [START] Local functions -------------------------------------------
+    // -------------------------------------------------------------------------
+    // --- [START] Local functions ---------------------------------------------
     function clearState() {
         
         $scope.creditTxn = null ;
@@ -198,26 +233,8 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         $scope.debitTxnList.length = 0 ;
     }
     
-    function initializeController( creditTxn ) {
-        
-        clearState() ;
-        
-        $scope.creditTxn = creditTxn ;
-        $scope.creditAmtRemaining = $scope.creditTxn.amount ;
-        
-        // Fetch any already associated debit transactions
-        getAssociatedDebitTxns( $scope.creditTxn.id, function(){
-            
-            for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
-                var txn = $scope.selectedDebitTxns[i] ;
-                $scope.creditAmtRemaining -= txn.recoveredAmount ;
-            }
-            
-            // Fetch the first batch of debit transactions
-            $scope.getNextBatchOfDebitTxns() ;
-        }) ;
-    }
-    
+    // During initialization, for the given credit transaction fetch any 
+    // existing debit transactions.
     function getAssociatedDebitTxns( creditTxnId, callback ) {
         
         $scope.selectedDebitTxns.length = 0 ;
@@ -225,26 +242,36 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         $http.get( '/DebitAssociation/'  + creditTxnId )
         .then ( 
             function( response ){
+                
+                // Thre response is a list of tupules where each tupule consists
+                // of the following:
+                //
+                //  1. The debit credit association. This contains the association
+                //     attributes like description and the recovery amount
+                //  2. Debit ledger entry. Note that all debit entries share
+                //     the same credit with which this dialog is instantiated
+                //  3. A list of possible credit associations which might be
+                //     trying to recover the debit transaction in this tupule
                 for( var i=0; i<response.data.length; i++ ) {
+                    var tupule = response.data[i] ;
                     
-                    var tupule      = response.data[i] ;
-                    var dca         = tupule[0] ;
-                    var debitTxn    = tupule[1] ;
-                    var creditDCAs  = tupule[2] ;
+                    var dca              = tupule[0] ;
+                    var debitLedgerEntry = tupule[1] ;
+                    var creditDCAs       = tupule[2] ;
                     
-                    var entry = new SelectedDebitTxn( debitTxn,
+                    var entry = new SelectedDebitTxn( debitLedgerEntry,
                                                       dca.id,
                                                       dca.note ) ;
                                                       
                     entry.recoveredAmount = dca.amount ;
                                                       
                     for( var j=0; j<creditDCAs.length; j++ ) {
-                        var cTxn = creditDCAs[j] ;
-                        if( cTxn.creditTxnId != $scope.creditTxn.id ) {
-                            entry.otherCreditTxns.push( cTxn ) ;
+                        var creditAssociation = creditDCAs[j] ;
+                        
+                        if( creditAssociation.creditTxnId != $scope.creditTxn.id ) {
+                            entry.otherCreditTxns.push( creditAssociation ) ;
                         }
                     }
-                                                      
                     $scope.selectedDebitTxns.push( entry ) ;
                 }
                 callback() ;
@@ -255,6 +282,10 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         )
     }
     
+    // When a debit ledger entry is selected from the paginated list we fetch
+    // any associated credit transactions (other than the current credit txn)
+    // This will help us determine the max recoverable amount of this debit
+    // entry.
     function associateOtherCredits( selDebitTxn, callback ) {
         
         $http.get( '/CreditAssociation/'  + selDebitTxn.debitTxn.id )
@@ -266,7 +297,9 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                     
                     var tupule  = response.data[i] ;
                     var dca     = tupule[0] ;
-                                                      
+                    
+                    // We only consider credit transactions apart from the one
+                    // we are dealing with                                  
                     if( $scope.creditTxn.id != dca.creditTxnId ) {
                         selDebitTxn.otherCreditTxns.push( dca ) ;
                         alreadyRecoveredAmount += dca.amount ;
@@ -275,9 +308,13 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                 
                 selDebitTxn.maxRecoverableAmount = selDebitTxn.debitTxn.amount +
                                                    alreadyRecoveredAmount ;
-                                                   
+                
                 selDebitTxn.recoveredAmount = getDefaultRecoveryAmount( selDebitTxn ) ;
-                callback() ;
+                
+                // Since we have populated the default recovery amount, we 
+                // also need to recompute the remaining credit amount for the 
+                // main credit transaction.
+                $scope.recomputeRemainingCreditAmt() ;
             }, 
             function(){
                 $scope.$parent.addErrorAlert( "Error getting associated credit txns." ) ;
@@ -285,17 +322,22 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
         )
     }
     
+    // For a selected debit ledger entry, compute the default recovery amount.
     function getDefaultRecoveryAmount( selDebitTxn ) {
         
+        // To start with default recovery amount is the entire credit amount 
         var defaultRecoveryAmt = $scope.creditTxn.amount ;
         
+        // Subtract the recovery amounts from all the associated debit txns
         for( var i=0; i<$scope.selectedDebitTxns.length; i++ ) {
             var debit = $scope.selectedDebitTxns[i] ;
             defaultRecoveryAmt -= debit.recoveredAmount ;    
         }
         
+        // Negative is not logical, so set minimum to zero
         defaultRecoveryAmt = defaultRecoveryAmt > 0 ? defaultRecoveryAmt : 0 ;
         
+        // Cap it at the max recoverable amount for the selected debit ledger entry
         if( defaultRecoveryAmt > -1*selDebitTxn.maxRecoverableAmount ) {
             defaultRecoveryAmt = ( -1 * selDebitTxn.maxRecoverableAmount ) ;
         }

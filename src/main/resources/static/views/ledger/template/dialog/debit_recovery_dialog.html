@@ -116,7 +116,7 @@
 				            <tr ng-repeat="entry in debitTxnList">
 				               <td>
 				                 <span class="glyphicon glyphicon-plus-sign"
-				                       ng-show="!alreadySelected( entry )"
+				                       ng-show="!isLedgerEntryAlreadySelected( entry )"
 				                       ng-click="selectDebitTxn( entry )"></span>
 				               </td>
 				               <td class="fixed-font">{{entry.valueDate | date}}</td>
