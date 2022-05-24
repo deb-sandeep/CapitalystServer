@@ -62,7 +62,7 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
         $( '#viewLedgerEntriesDialog' ).modal( 'hide' ) ;
     }
     
-    $scope.$on( 'ledgerEntryDisplayTrigger', function( event, args ) {
+    $scope.$on( 'ledgerEntryDisplayTrigger', function( _event, args ) {
         
         $scope.l1CatForEntries = args.l1CatName ;
         $scope.l2CatForEntries = args.l2CatName ;
