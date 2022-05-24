@@ -81,13 +81,21 @@
                </td>
                <td class="fixed-font amt" ng-class="amtClass( entry.amount )">{{entry.amount | amt}}</td>
                <td class="remarks">
-                    <span ng-if="entry.hasAssociatedTxn"
-                         style="color:green;display:inline-block;"
-                         class="glyphicon glyphicon-object-align-bottom"> </span>
+                    <a ng-if="entry.hasAssociatedTxn && (entry.amount < 0)"
+                       ng-click="showAssociatedCreditsDialog( $index )">
+	                    <span ng-if="entry.hasAssociatedTxn"
+	                          style="color:green;display:inline-block;"
+	                          class="glyphicon glyphicon-object-align-bottom"> </span>
+                    </a>
+                    <span ng-if="entry.hasAssociatedTxn && (entry.amount > 0)"
+                          style="color:green;display:inline-block;"
+                          class="glyphicon glyphicon-object-align-bottom"> </span>
+                          
                     <div ng-show="!entry.editing" ng-click="editEntry(entry)"
                          style="display:inline-block;">
                         {{entry.notes == null ? "---" : entry.notes}}
                     </div>
+                    
                     <div ng-show="entry.editing"
                          style="display:inline-block;">
                         <input class='form-field' 

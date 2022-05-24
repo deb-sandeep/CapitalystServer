@@ -436,6 +436,20 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $( '#debitRecoveryDialog' ).modal( 'hide' ) ;
         $scope.searchLedgerEntries() ;
     }
+    
+    $scope.showAssociatedCreditsDialog = function( index ) {
+        
+        var debitTxn = $scope.ledgerEntries[ index ] ;
+        $scope.$broadcast( 'debitTxnSetForAssociatedCreditsDialog', debitTxn ) ;
+        
+        $( '#associatedCreditsDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.hideAssociatedCreditsDialog = function() {
+        
+        $( '#associatedCreditsDialog' ).modal( 'hide' ) ;
+        $scope.searchLedgerEntries() ;
+    }
 
     // --- [END] Scope functions
 

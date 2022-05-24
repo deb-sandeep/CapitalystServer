@@ -34,7 +34,7 @@ Functional Approach
     - Every debit entry whose cost has been fully or partially recovered should
       have an icon associated with it
       
-        - Clicking the icon should show a read only dialog of all credit
+        - TODO: Clicking the icon should show a read only dialog of all credit
           transactions which have contributed to expense recovery
 
 Design approach

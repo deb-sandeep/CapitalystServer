@@ -265,13 +265,19 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                                                       
                     entry.recoveredAmount = dca.amount ;
                                                       
+                    var alreadyRecoveredAmount = 0 ;
                     for( var j=0; j<creditDCAs.length; j++ ) {
                         var creditAssociation = creditDCAs[j] ;
                         
                         if( creditAssociation.creditTxnId != $scope.creditTxn.id ) {
                             entry.otherCreditTxns.push( creditAssociation ) ;
+                            alreadyRecoveredAmount += creditAssociation.amount ;
                         }
                     }
+                    
+                    entry.maxRecoverableAmount = entry.debitTxn.amount +
+                                                       alreadyRecoveredAmount ;
+                                                       
                     $scope.selectedDebitTxns.push( entry ) ;
                 }
                 callback() ;
