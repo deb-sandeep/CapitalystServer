@@ -126,7 +126,7 @@ public class LedgerRestController {
         }
     }
     
-    @GetMapping( "/Ledger/CreditEntriesForMonth" )
+    @GetMapping( "/Ledger/DebitEntriesForMonth" )
     public ResponseEntity<List<LedgerEntry>> getCreditLedgerEntriesForMonth( 
                                 @RequestParam( "l1CatName" ) 
                                 String l1CatName,
@@ -144,19 +144,16 @@ public class LedgerRestController {
             Date endOfMonth = DateUtils.addMonths( startOfMonth, 1 ) ;
             
             if( StringUtil.isNotEmptyOrNull( l2CatName ) ) {
-                entries = lRepo.findCreditEntries( l1CatName, 
-                                                   l2CatName, 
-                                                   startOfMonth, 
-                                                   endOfMonth ) ;
+                entries = lRepo.findDebitEntriesForPeriod( l1CatName, l2CatName, 
+                                                           startOfMonth, 
+                                                           endOfMonth ) ;
             }
             else {
-                entries = lRepo.findCreditEntries( l1CatName, 
-                                                   startOfMonth, 
-                                                   endOfMonth ) ;
+                entries = lRepo.findDebitEntriesForPeriod( l1CatName, startOfMonth, 
+                                                           endOfMonth ) ;
             }
             
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( entries ) ;
+            return status( HttpStatus.OK ).body( entries ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
@@ -182,8 +179,7 @@ public class LedgerRestController {
             associatedIds.addAll( dcaRepo.findDistinctCreditTxnId() ) ;
             response.put( "associatedTxnIds", associatedIds ) ;
             
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( response ) ;
+            return status( HttpStatus.OK ).body( response ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
@@ -207,8 +203,8 @@ public class LedgerRestController {
                 aRepo.save( account ) ;
             }
             
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( "Successfully deleted" ) ) ;
+            return status( HttpStatus.OK ).
+                   body( new APIResponse( "Successfully deleted" ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;

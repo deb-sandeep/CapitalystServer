@@ -23,74 +23,6 @@ public interface LedgerRepo
           + "FROM "
           + "    LedgerEntry le "
           + "WHERE "
-          + "    le.amount < 0 AND "
-          + "    le.valueDate BETWEEN :startDate AND :endDate "
-          + "ORDER BY "
-          + "    le.valueDate DESC "
-    )
-    public List<LedgerEntry> findCreditEntries( 
-                                        @Param( "startDate" ) Date startDate,
-                                        @Param( "endDate"   ) Date endDate ) ; 
-
-    @Query( value =   
-            "SELECT "
-          + "    le "
-          + "FROM "
-          + "    LedgerEntry le "
-          + "WHERE "
-          + "    le.amount < 0 AND "
-          + "    le.valueDate BETWEEN :startDate AND :endDate AND "
-          + "    le.l1Cat = :l1CatName AND "
-          + "    le.l2Cat = :l2CatName "
-          + "ORDER BY "
-          + "    le.valueDate DESC "
-    )
-    public List<LedgerEntry> findCreditEntries( 
-                                        @Param( "l1CatName" ) String l1CatName,
-                                        @Param( "l2CatName" ) String l2CatName,
-                                        @Param( "startDate" ) Date startDate,
-                                        @Param( "endDate"   ) Date endDate ) ; 
-
-    @Query( value =   
-            "SELECT "
-          + "    le "
-          + "FROM "
-          + "    LedgerEntry le "
-          + "WHERE "
-          + "    le.amount < 0 AND "
-          + "    le.valueDate BETWEEN :startDate AND :endDate AND "
-          + "    le.l1Cat = :l1CatName "
-          + "ORDER BY "
-          + "    le.valueDate DESC "
-    )
-    public List<LedgerEntry> findCreditEntries( 
-                                        @Param( "l1CatName" ) String l1CatName,
-                                        @Param( "startDate" ) Date startDate,
-                                        @Param( "endDate"   ) Date endDate ) ; 
-
-    @Query( value =   
-            "SELECT "
-          + "    le "
-          + "FROM "
-          + "    LedgerEntry le "
-          + "WHERE "
-          + "    le.l1Cat = :l1CatName AND "
-          + "    le.l2Cat = :l2CatName AND "
-          + "    le.amount > 0 "
-          + "ORDER BY "
-          + "    le.valueDate DESC, "
-          + "    le.id DESC"
-    )
-    public List<LedgerEntry> findCreditEntries( 
-                                    @Param( "l1CatName" ) String l1CatName,
-                                    @Param( "l2CatName" ) String l2CatName ) ; 
-
-    @Query( value =   
-            "SELECT "
-          + "    le "
-          + "FROM "
-          + "    LedgerEntry le "
-          + "WHERE "
           + "    le.l1Cat = :l1CatName AND "
           + "    le.l2Cat = :l2CatName AND "
           + "    le.amount < 0 "
@@ -119,6 +51,74 @@ public interface LedgerRepo
     public List<LedgerEntry> findDebitEntries( Date refDate,
                                                Integer offset,
                                                Integer numTxns ) ; 
+
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.amount < 0 AND "
+          + "    le.valueDate BETWEEN :startDate AND :endDate "
+          + "ORDER BY "
+          + "    le.valueDate DESC "
+    )
+    public List<LedgerEntry> findDebitEntries( 
+                                        @Param( "startDate" ) Date startDate,
+                                        @Param( "endDate"   ) Date endDate ) ; 
+
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.amount < 0 AND "
+          + "    le.valueDate BETWEEN :startDate AND :endDate AND "
+          + "    le.l1Cat = :l1CatName AND "
+          + "    le.l2Cat = :l2CatName "
+          + "ORDER BY "
+          + "    le.valueDate DESC "
+    )
+    public List<LedgerEntry> findDebitEntriesForPeriod( 
+                                        @Param( "l1CatName" ) String l1CatName,
+                                        @Param( "l2CatName" ) String l2CatName,
+                                        @Param( "startDate" ) Date startDate,
+                                        @Param( "endDate"   ) Date endDate ) ; 
+
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.amount < 0 AND "
+          + "    le.valueDate BETWEEN :startDate AND :endDate AND "
+          + "    le.l1Cat = :l1CatName "
+          + "ORDER BY "
+          + "    le.valueDate DESC "
+    )
+    public List<LedgerEntry> findDebitEntriesForPeriod( 
+                                        @Param( "l1CatName" ) String l1CatName,
+                                        @Param( "startDate" ) Date startDate,
+                                        @Param( "endDate"   ) Date endDate ) ; 
+
+    @Query( value =   
+            "SELECT "
+          + "    le "
+          + "FROM "
+          + "    LedgerEntry le "
+          + "WHERE "
+          + "    le.l1Cat = :l1CatName AND "
+          + "    le.l2Cat = :l2CatName AND "
+          + "    le.amount > 0 "
+          + "ORDER BY "
+          + "    le.valueDate DESC, "
+          + "    le.id DESC"
+    )
+    public List<LedgerEntry> findCreditEntries( 
+                                    @Param( "l1CatName" ) String l1CatName,
+                                    @Param( "l2CatName" ) String l2CatName ) ; 
 
     @Query( value =   
             "SELECT "

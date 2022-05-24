@@ -91,7 +91,7 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
         $scope.ledgerEntriesForDisplay.length = 0 ;
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.get( '/Ledger/CreditEntriesForMonth?' +
+        $http.get( '/Ledger/DebitEntriesForMonth?' +
                    'l1CatName=' + l1CatName + '&' +
                    'l2CatName=' + l2CatName + '&' + 
                    'startOfMonth=' + startOfMonth )

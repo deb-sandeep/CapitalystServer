@@ -1,7 +1,6 @@
 package com.sandy.capitalyst.server.api.budget;
 
 import org.apache.log4j.Logger ;
-import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
 import org.springframework.web.bind.annotation.GetMapping ;
@@ -10,26 +9,18 @@ import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.budget.helper.BudgetSpreadBuilder ;
 import com.sandy.capitalyst.server.api.budget.vo.BudgetSpread ;
-import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
-import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 
 @RestController
 public class BudgetController {
 
     private static final Logger log = Logger.getLogger( BudgetController.class ) ;
     
-    @Autowired
-    private LedgerRepo lRepo = null ;
-    
-    @Autowired
-    private LedgerEntryCategoryRepo lecRepo = null ;
-    
     @GetMapping( "/Budget/Spread/{fy}" ) 
     public ResponseEntity<BudgetSpread> getBudgetSpread( 
                                   @PathVariable( "fy") int financialYear ) {
         
         try {
-            BudgetSpreadBuilder builder = new BudgetSpreadBuilder( lRepo, lecRepo ) ;
+            BudgetSpreadBuilder builder = new BudgetSpreadBuilder() ;
             BudgetSpread spread = builder.createBudgetSpread( financialYear ) ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( spread ) ;
