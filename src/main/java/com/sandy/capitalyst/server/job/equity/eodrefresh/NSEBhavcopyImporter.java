@@ -52,26 +52,6 @@ public class NSEBhavcopyImporter {
         return latestAvailableBhavcopyDate ;
     }
     
-    private Map<String, List<EquityHolding>> loadHoldingsMap() {
-        
-        List<EquityHolding> holdings = ehRepo.findNonZeroHoldings() ;
-        Map<String, List<EquityHolding>> holdingsMap = new HashMap<>() ;
-        
-        for( EquityHolding holding : holdings ) {
-            String symbol = holding.getSymbolNse() ;
-            if( StringUtil.isNotEmptyOrNull( symbol ) ) {
-                List<EquityHolding> holdingList = holdingsMap.get( symbol ) ;
-                if( holdingList == null ) {
-                    holdingList = new ArrayList<>() ;
-                    holdingsMap.put( symbol, holdingList ) ;
-                }
-                holdingList.add( holding ) ;
-            }
-        }
-        
-        return holdingsMap ;
-    }
-
     private void importBhavcopyFile( File bhavcopyFile, Date date ) {
         
         Map<String, List<EquityHolding>> holdingsMap = loadHoldingsMap() ;
@@ -96,27 +76,48 @@ public class NSEBhavcopyImporter {
                 EquityMaster em = emRepo.findBySymbol( symbol ) ;
                 if( em != null ) {
                     
+                    HistoricEQData candle = buildEquityCandle( record, date ) ;
+                    
                     if( StringUtil.isNotEmptyOrNull( em.getIndustry() ) || 
-                        em.isEtf() ) {
+                        em.isEtf() || 
+                        holdingsMap.containsKey( symbol ) ) {
                         
-                        HistoricEQData candle = buildEquityCandle( record, date ) ;
                         ecRepo.save( candle ) ;
-                        
-                        if( holdingsMap.containsKey( symbol ) ) {
-                            
-                            for( EquityHolding holding : holdingsMap.get( symbol ) ) {
-                                holding.setCurrentMktPrice( candle.getClose() ) ;
-                                holding.setLastUpdate( date ) ;
-                                ehRepo.save( holding ) ;
-                            }
-                        }
                         updateEquityISINMapping( symbol, isin ) ;
+                    }
+                    
+                    if( holdingsMap.containsKey( symbol ) ) {
+                        for( EquityHolding holding : holdingsMap.get( symbol ) ) {
+                            holding.setCurrentMktPrice( candle.getClose() ) ;
+                            holding.setLastUpdate( date ) ;
+                            ehRepo.save( holding ) ;
+                        }
                     }
                 }
             }
         }
     }
     
+    private Map<String, List<EquityHolding>> loadHoldingsMap() {
+        
+        List<EquityHolding> holdings = ehRepo.findNonZeroHoldings() ;
+        Map<String, List<EquityHolding>> holdingsMap = new HashMap<>() ;
+        
+        for( EquityHolding holding : holdings ) {
+            String symbol = holding.getSymbolNse() ;
+            if( StringUtil.isNotEmptyOrNull( symbol ) ) {
+                List<EquityHolding> holdingList = holdingsMap.get( symbol ) ;
+                if( holdingList == null ) {
+                    holdingList = new ArrayList<>() ;
+                    holdingsMap.put( symbol, holdingList ) ;
+                }
+                holdingList.add( holding ) ;
+            }
+        }
+        
+        return holdingsMap ;
+    }
+
     private void updateEquityISINMapping( String symbol, String isin ) {
         
         try {
