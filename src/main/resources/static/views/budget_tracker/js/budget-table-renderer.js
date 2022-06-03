@@ -189,28 +189,36 @@ function BudgetTableRenderer( onMobile ) {
             
             trList.push( buildL1RemainingTR( l1Item, i ) ) ;
             if( showPlanned ) {
-                trList.push( buildL1PlannedTR( l1Item, i ) ) ;
+                if( l1Item.lineItemName != "Ziggy Bank" ) {
+                    trList.push( buildL1PlannedTR( l1Item, i ) ) ;
+                }
             }
             if( showAvailable ) {
-                trList.push( buildL1AvailableTR( l1Item, i ) ) ;
+                if( l1Item.lineItemName != "Ziggy Bank" ) {
+                    trList.push( buildL1AvailableTR( l1Item, i ) ) ;
+                }
             }
             if( showConsumed ) {
-                trList.push( buildL1ConsumedTR( l1Item, i ) ) ;
+                if( l1Item.lineItemName != "Ziggy Bank" ) {
+                    trList.push( buildL1ConsumedTR( l1Item, i ) ) ;
+                }
             }
             
-            for( var j=0; j<l1Item.l2LineItems.length; j++ ) {
-                
-                var l2Item = l1Item.l2LineItems[j] ;
-                
-                trList.push( buildL2RemainingTR( l2Item, i, j ) ) ;
-                if( showPlanned ) {
-                    trList.push( buildL2PlannedTR  ( l2Item, i, j ) ) ;
-                }
-                if( showAvailable ) {
-                    trList.push( buildL2AvailableTR( l2Item, i, j ) ) ;
-                }
-                if( showConsumed ) {
-                    trList.push( buildL2ConsumedTR ( l2Item, i, j ) ) ;
+            if( l1Item.lineItemName != "Ziggy Bank" ) {
+                for( var j=0; j<l1Item.l2LineItems.length; j++ ) {
+                    
+                    var l2Item = l1Item.l2LineItems[j] ;
+                    
+                    trList.push( buildL2RemainingTR( l2Item, i, j ) ) ;
+                    if( showPlanned ) {
+                        trList.push( buildL2PlannedTR  ( l2Item, i, j ) ) ;
+                    }
+                    if( showAvailable ) {
+                        trList.push( buildL2AvailableTR( l2Item, i, j ) ) ;
+                    }
+                    if( showConsumed ) {
+                        trList.push( buildL2ConsumedTR ( l2Item, i, j ) ) ;
+                    }
                 }
             }
         }
