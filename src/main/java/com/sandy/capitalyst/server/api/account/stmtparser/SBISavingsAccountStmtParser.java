@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.core.ledger.loader;
+package com.sandy.capitalyst.server.api.account.stmtparser;
 
 import java.io.File ;
 import java.sql.Date ;
@@ -14,9 +14,9 @@ import com.sandy.common.util.StringUtil ;
 import com.univocity.parsers.tsv.TsvParser ;
 import com.univocity.parsers.tsv.TsvParserSettings ;
 
-public class SBISavingsAccountLedgerImporter extends LedgerImporter {
+public class SBISavingsAccountStmtParser extends AccountStmtParser {
     
-    static final Logger log = Logger.getLogger( SBISavingsAccountLedgerImporter.class ) ;
+    static final Logger log = Logger.getLogger( SBISavingsAccountStmtParser.class ) ;
     
     private static final SimpleDateFormat VALUE_DT_SDF = 
                                         new SimpleDateFormat( "dd MMM yyyy" ) ;

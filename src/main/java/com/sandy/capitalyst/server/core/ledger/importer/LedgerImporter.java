@@ -1,6 +1,5 @@
-package com.sandy.capitalyst.server.core.ledger.loader;
+package com.sandy.capitalyst.server.core.ledger.importer;
 
-import java.io.File ;
 import java.text.SimpleDateFormat ;
 import java.util.List ;
 
@@ -14,42 +13,40 @@ import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 
-public abstract class LedgerImporter {
+public class LedgerImporter {
     
     private static final Logger log = Logger.getLogger( LedgerImporter.class ) ;
     
     public static final SimpleDateFormat SDF = new SimpleDateFormat( "dd/MM/yyyy" ) ;
     
     protected LedgerRepo ledgerRepo = null ;
-    protected AccountRepo accountIndexRepo = null ;
+    protected AccountRepo accountRepo = null ;
     
-    protected LedgerImporter() {
+    public LedgerImporter() {
         ApplicationContext appCtx = CapitalystServer.getAppContext() ;
         if( appCtx != null ) {
             this.ledgerRepo = appCtx.getBean( LedgerRepo.class ) ;
-            this.accountIndexRepo = appCtx.getBean( AccountRepo.class ) ;
+            this.accountRepo = appCtx.getBean( AccountRepo.class ) ;
         }
     }
 
-    public final LedgerImportResult importLedgerEntries( Account account, 
-                                                         File file )
+    public final LedgerImportResult importLedgerEntries(  
+                                    Account acc, List<LedgerEntry> entries )
         throws Exception {
         
-        LedgerImportResult result = new LedgerImportResult() ;
-        result.setFileName( file.getName() ) ;
-        
-        log.debug( "Parsing ledger entries for account " + account.getShortName() ) ;
-        
-        List<LedgerEntry> entries = parseLedgerEntries( account, file ) ;
-        log.debug( "Ledger entries parsed." ) ;
+        log.debug( "Importing ledger entries for A/C " + acc.getShortName() ) ;
         log.debug( "\tNum ledger entries = " + entries.size() ) ;
+        
+        LedgerImportResult result = new LedgerImportResult() ;
+        LEClassifier classifier = new LEClassifier() ;
+        LedgerEntry possibleDup = null ;
+        
         result.setNumEntriesFound( entries.size() ) ;
         
-        LEClassifier classifier = new LEClassifier() ;
-        
-        LedgerEntry possibleDup = null ;
         for( LedgerEntry entry : entries ) {
+            
             possibleDup = ledgerRepo.findByHash( entry.getHash() ) ;
+            
             if( possibleDup == null ) {
                 log.debug( "\tSaving ledger entry = " + 
                            SDF.format( entry.getValueDate() ) + " - " +
@@ -65,19 +62,22 @@ public abstract class LedgerImporter {
                 result.incrementDupCount() ;
             }
         }
-        log.debug( "Ledger entries saved" ) ;
+        
+        // Update the account balance by taking the latest balance from ledger
+        updateAccountBalance( acc ) ;
+        
+        log.debug( "\tNum entries saved = " + result.getNumEntriesImported() ) ;
+        log.debug( "\tNum duplicate entries = " + result.getNumDuplicateEntries() ) ;
+        
         return result ;
     }
     
-    protected abstract List<LedgerEntry> parseLedgerEntries( 
-                                                Account account, File file )
-        throws Exception ;
-    
     public void updateAccountBalance( Account account ) {
+        
         Float balance = this.ledgerRepo.getAccountBalance( account.getId() ) ;
         if( balance != null ) {
             account.setBalance( balance ) ;
-            this.accountIndexRepo.save( account ) ;
+            this.accountRepo.save( account ) ;
         }
     }
 }

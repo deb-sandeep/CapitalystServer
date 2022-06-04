@@ -1,8 +1,9 @@
-package com.sandy.capitalyst.server.core.ledger.loader;
+package com.sandy.capitalyst.server.api.account.stmtparser;
 
 import java.io.File ;
 import java.io.FileInputStream ;
 import java.sql.Date ;
+import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
 import java.util.Comparator ;
 import java.util.List ;
@@ -24,9 +25,11 @@ import com.sandy.common.xlsutil.XLSRowFilter ;
 import com.sandy.common.xlsutil.XLSUtil ;
 import com.sandy.common.xlsutil.XLSWrapper ;
 
-public class ICICICreditCardLedgerImporter extends LedgerImporter {
+public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
     
-    static final Logger log = Logger.getLogger( ICICICreditCardLedgerImporter.class ) ;
+    static final Logger log = Logger.getLogger( ICICICreditCardAccountStmtParser.class ) ;
+    
+    public static final SimpleDateFormat SDF = new SimpleDateFormat( "dd/MM/yyyy" ) ;
     
     private class RowFilter implements XLSRowFilter {
         public boolean accept( XLSRow row ) {
