@@ -23,7 +23,7 @@ capitalystNgApp.controller( 'UploadAccountStmtController',
         $scope.files = files ;
         if( files && files.length ) {
             Upload.upload( {
-                url: '/Account/Statement/Upload',
+                url: '/Statement/AllAccounts/FileUpload',
                 arrayKey:'',
                 data: {
                     files: files,

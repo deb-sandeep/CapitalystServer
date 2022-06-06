@@ -30,16 +30,25 @@ public class LedgerImporter {
         }
     }
 
-    public final LedgerImportResult importLedgerEntries(  
-                                    Account acc, List<LedgerEntry> entries )
+    // NOTE: It is assumed that all the ledger entries are for a single 
+    //       account. Implying, 
+    public LedgerImportResult importLedgerEntries( List<LedgerEntry> entries )
         throws Exception {
+        
+        Account acc = null ;
+        LEClassifier classifier = new LEClassifier() ;
+        LedgerEntry possibleDup = null ;
+        LedgerImportResult result = new LedgerImportResult() ;
+        
+        if( entries.isEmpty() ) {
+            result.getErrMsgs().add( "No ledger entries specified." ) ;
+            return result ;
+        }
+        
+        acc = entries.get(0).getAccount() ;
         
         log.debug( "Importing ledger entries for A/C " + acc.getShortName() ) ;
         log.debug( "\tNum ledger entries = " + entries.size() ) ;
-        
-        LedgerImportResult result = new LedgerImportResult() ;
-        LEClassifier classifier = new LEClassifier() ;
-        LedgerEntry possibleDup = null ;
         
         result.setNumEntriesFound( entries.size() ) ;
         

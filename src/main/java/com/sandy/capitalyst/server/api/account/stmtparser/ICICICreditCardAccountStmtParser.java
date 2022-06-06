@@ -3,6 +3,7 @@ package com.sandy.capitalyst.server.api.account.stmtparser;
 import java.io.File ;
 import java.io.FileInputStream ;
 import java.sql.Date ;
+import java.text.ParseException ;
 import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
 import java.util.Comparator ;
@@ -15,6 +16,7 @@ import org.apache.poi.ss.usermodel.Row ;
 import org.apache.poi.ss.usermodel.Sheet ;
 import org.apache.poi.ss.usermodel.Workbook ;
 
+import com.sandy.capitalyst.server.api.account.helper.CCTxnEntry ;
 import com.sandy.capitalyst.server.core.CapitalystConstants.AccountType ;
 import com.sandy.capitalyst.server.core.CapitalystConstants.Bank ;
 import com.sandy.capitalyst.server.dao.account.Account ;
@@ -53,7 +55,7 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
         
         XLSWrapper wrapper = new XLSWrapper( file ) ;
         List<LedgerEntry> entries = new ArrayList<>() ;
-        List<XLSRow> rows = wrapper.getRows( new RowFilter(), 14, 3, 9 ) ;
+        List<XLSRow> rows = wrapper.getRows( new RowFilter(), 14, 3, 11 ) ;
         
         float balance = extractBalance( file ) ;
         
@@ -104,31 +106,32 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
                                               XLSRow row, float balance ) 
         throws Exception {
         
-        LedgerEntry entry = new LedgerEntry() ;
-        entry.setAccount( account ) ;
-        entry.setValueDate( new Date( SDF.parse( row.getCellValue( 0 ) )
-                                         .getTime() ) ) ;
-        entry.setRemarks( row.getCellValue( 1 ) ) ;
+        CCTxnEntry ccTxnEntry = new CCTxnEntry() ;
         
-        String amtStr = row.getCellValue( 5 ).trim() ;
+        ccTxnEntry.setCreditCardNumber ( account.getAccountNumber()       ) ;
+        ccTxnEntry.setValueDate        ( getDate( row.getCellValue( 0 ) ) ) ;
+        ccTxnEntry.setRemarks          ( row.getCellValue( 1 ).trim()     ) ;
+        ccTxnEntry.setTxnRefNum        ( row.getCellValue( 8 )            ) ;
+        ccTxnEntry.setAmount           ( getAmt( row.getCellValue( 5 ) )  ) ;
+        ccTxnEntry.setBalance          ( balance                          ) ;
+        
+        return ccTxnEntry.convertToLedgerEntry() ;
+    }
+    
+    private Date getDate( String val ) throws ParseException {
+        return new Date( SDF.parse( val ).getTime() ) ;
+    }
+    
+    private Float getAmt( String val ) {
+        
+        String amtStr = val.trim() ;
         boolean isDebit = amtStr.endsWith( "Dr." ) ;
         amtStr = amtStr.replace( ",", "" ) ;
         amtStr = amtStr.substring( 0, amtStr.length()-4 ) ;
 
         Float amt = Float.parseFloat( amtStr ) ;
-        if( isDebit ) {
-            entry.setAmount( -amt ) ;
-        }
-        else{
-            entry.setAmount( amt ) ;
-        }
+        amt = isDebit ? -1*amt : amt ;
         
-        // Why are we generating has before setting the balance? Because,
-        // there is no way to deterministically calculate balance from the 
-        // input. 
-        entry.generateHash() ;
-        entry.setBalance( balance ) ;
-        
-        return entry ;
+        return amt ;
     }
 }

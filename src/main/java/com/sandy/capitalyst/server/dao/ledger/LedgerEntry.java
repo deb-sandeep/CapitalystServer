@@ -107,7 +107,7 @@ public class LedgerEntry implements Cloneable {
         return clone ;
     }
     
-    public String generateHash() throws Exception {
+    public String generateHash() {
         
         StringBuffer buffer = new StringBuffer() ;
         

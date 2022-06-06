@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.core.ledger.importer;
 
+import java.util.ArrayList ;
 import java.util.List ;
 
 import lombok.Data ;
@@ -11,7 +12,7 @@ public class LedgerImportResult {
     private int numEntriesFound = 0 ;
     private int numEntriesImported = 0 ;
     private int numDuplicateEntries = 0 ;
-    private List<String> errMsgs = null ;
+    private List<String> errMsgs = new ArrayList<>() ;
 
     public void incrementImportCount() {
         this.numEntriesImported++ ;
@@ -20,9 +21,13 @@ public class LedgerImportResult {
     public void incrementDupCount() {
         this.numDuplicateEntries++ ;
     }
+    
+    public boolean hasErrors() {
+        return !errMsgs.isEmpty() ;
+    }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder( "StmtUploadResult [\n" ) ; 
+        StringBuilder builder = new StringBuilder( "LedgerImportResult [\n" ) ; 
 
         builder.append( "   fileName = " + fileName + "\n" ) ;
         builder.append( "   numEntriesFound = " + numEntriesFound + "\n" ) ;
