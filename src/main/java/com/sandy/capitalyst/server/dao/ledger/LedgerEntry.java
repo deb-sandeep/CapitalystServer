@@ -50,6 +50,10 @@ public class LedgerEntry implements Cloneable {
     public String getRemarks() {
         return remarks == null ? "" : remarks ;
     }
+    
+    public void addToRemarks( String additionalRemark ) {
+        remarks = getRemarks() + additionalRemark ;
+    }
 
     public boolean isCredit() {
         return amount > 0 ;

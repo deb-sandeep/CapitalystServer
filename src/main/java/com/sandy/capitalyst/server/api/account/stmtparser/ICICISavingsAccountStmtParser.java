@@ -29,8 +29,9 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
         public boolean accept( XLSRow row ) {
             
             String col0Val = row.getCellValue( 0 ) ;
+            String col4Val = row.getCellValue( 4 ) ;
             
-            if( StringUtil.isEmptyOrNull( col0Val ) ) {
+            if( StringUtil.isEmptyOrNull( col4Val ) ) {
                 return false ;
             }
             else if( col0Val.startsWith( "Legends" ) ) {
@@ -42,14 +43,21 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
             }
             
             try {
-                Integer.parseInt( col0Val.trim() ) ;
-                return true ;
+                if( isContinuationRow( row ) ) {
+                    return true ;
+                }
+                else {
+                    Integer.parseInt( col0Val.trim() ) ;
+                    return true ;
+                }
             }
             catch( Exception e ){
                 return false ;
             }
         }
     }
+    
+    
     
     @Override
     public List<LedgerEntry> parseLedgerEntries( Account account, 
@@ -61,10 +69,45 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
         List<LedgerEntry> entries = new ArrayList<>() ;
         List<XLSRow> rows = wrapper.getRows( new RowFilter(), 12, 1, 8 ) ;
         XLSUtil.printRows( rows ) ;
+        
         for( XLSRow row : rows ) {
-            entries.add( constructLedgerEntry( account, row ) ) ;
+            
+            if( isContinuationRow( row ) ) {
+                
+                String additionalRemarks = row.getCellValue( 4 ) ;
+                LedgerEntry lastEntry = entries.get( entries.size()-1 ) ;
+                
+                lastEntry.addToRemarks( additionalRemarks ) ;
+            }
+            else {
+                entries.add( constructLedgerEntry( account, row ) ) ;
+            }
         }
+        
+        for( LedgerEntry entry : entries ) {
+            entry.setRemarks( entry.getRemarks().trim() ) ;
+            entry.generateHash() ;
+        }
+        
         return entries ;
+    }
+    
+    private boolean isContinuationRow( XLSRow row ) {
+        
+        boolean emptyCells[] = { true, true, true, true, false, true, true, true } ;
+        for( int i=0; i<8; i++ ) {
+            if( emptyCells[i] ) { 
+                if( !StringUtil.isEmptyOrNull( row.getCellValue( i ) ) ) {
+                    return false ;
+                }
+            }
+            else {
+                if( StringUtil.isEmptyOrNull( row.getCellValue( i ) ) ) {
+                    return false ;
+                }
+            }
+        }
+        return true ;
     }
     
     private LedgerEntry constructLedgerEntry( Account account, 
@@ -84,7 +127,7 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
             }
         }
         
-        entry.setRemarks( row.getCellValue( 4 ) ) ;
+        entry.setRemarks( row.getRawCellValue( 4 ) ) ;
         
         Float withdrawalAmt = Float.parseFloat( row.getCellValue( 5 ) ) ;
         Float depositAmt = Float.parseFloat( row.getCellValue( 6 ) ) ;
@@ -96,7 +139,6 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
         }
         
         entry.setBalance( Float.parseFloat( row.getCellValue( 7 ) ) ) ;
-        entry.generateHash() ;
         
         return entry ;
     }
