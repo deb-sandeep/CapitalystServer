@@ -29,7 +29,7 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
         public boolean accept( XLSRow row ) {
             
             String col0Val = row.getCellValue( 0 ) ;
-            String col4Val = row.getCellValue( 4 ) ;
+            String col4Val = row.getRawCellValue( 4 ) ;
             
             if( StringUtil.isEmptyOrNull( col4Val ) ) {
                 return false ;
@@ -56,8 +56,6 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
             }
         }
     }
-    
-    
     
     @Override
     public List<LedgerEntry> parseLedgerEntries( Account account, 

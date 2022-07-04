@@ -67,7 +67,7 @@ public class LedgerImporter {
                 result.incrementImportCount() ;
             }
             else {
-                log.info( "Found a duplicate entry " + entry ) ;
+                log.debug( "Found a duplicate entry " + entry ) ;
                 result.incrementDupCount() ;
             }
         }
