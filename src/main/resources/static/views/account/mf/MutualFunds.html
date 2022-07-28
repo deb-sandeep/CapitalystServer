@@ -10,7 +10,6 @@
                 <th></th>
                 <th>Owner</th>
                 <th>Scheme</th>
-                <th>Purpose</th>
                 <th>Category</th>
                 <th class="js-sort-number">Cost price</th>
                 <th class="js-sort-number">Value</th>
@@ -46,9 +45,6 @@
                        {{holding.scheme}}
                    </a>
                </td>
-               <td ng-dblclick="selectAllHoldingsForPurpose( holding.purpose )">
-                     {{holding.purpose}}
-               </td>
                <td>{{holding.category | uppercase}}</td>
                <td class="fixed-font amt">{{holding.valueAtCost | amt}}</td>
                <td class="fixed-font amt">{{holding.valueAtNavAfterTax | amt}}</td>
@@ -75,7 +71,7 @@
         </tbody>
         <tfoot>
             <tr class="success">
-                <th colspan="6"></th>
+                <th colspan="5"></th>
                 <th class="fixed-font amt">{{totalValueAtCost | amt}}</th>
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
                 <th class="fixed-font amt">{{totalProfitLossAfterTax | amt}}</th>
@@ -83,7 +79,7 @@
                 <th></th>
             </tr>
             <tr class="success">
-                <th colspan="6"></th>
+                <th colspan="5"></th>
                 <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
                 <th colspan="5"></th>
