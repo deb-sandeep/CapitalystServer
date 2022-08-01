@@ -1,0 +1,15 @@
+.neg_amt {
+    color:red;
+}
+
+.pos_amt {
+    color:#295f19;
+}
+
+.full_ltcg {
+    background-color: #e7ffdf;
+}
+
+.selected_holding {
+    background-color: #ffd0d5 ;
+}
