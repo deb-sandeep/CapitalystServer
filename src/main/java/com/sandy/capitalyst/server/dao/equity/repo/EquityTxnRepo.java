@@ -11,5 +11,5 @@ public interface EquityTxnRepo
     
     EquityTxn findByHash( String hash ) ;
     
-    List<EquityTxn> findByHoldingIdOrderByTxnDateAsc( int holdingId ) ;
+    List<EquityTxn> findByHoldingIdOrderByTxnDateAscActionAsc( int holdingId ) ;
 }

@@ -9,6 +9,9 @@ import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
 
+import lombok.Data ;
+
+@Data
 @Entity
 @Table( name = "equity_holding" )
 public class EquityHolding {
@@ -51,94 +54,6 @@ public class EquityHolding {
         this.lastUpdate         = blueprint.lastUpdate ;
     }
     
-    public void setId( Integer val ) {
-        this.id = val ;
-    }
-        
-    public Integer getId() {
-        return this.id ;
-    }
-
-    public void setOwnerName( String val ) {
-        this.ownerName = val ;
-    }
-        
-    public String getOwnerName() {
-        return this.ownerName ;
-    }
-
-    public void setSymbolIcici( String val ) {
-        this.symbolIcici = val ;
-    }
-        
-    public String getSymbolIcici() {
-        return this.symbolIcici ;
-    }
-
-    public void setSymbolNse( String val ) {
-        this.symbolNse = val ;
-    }
-        
-    public String getSymbolNse() {
-        return this.symbolNse ;
-    }
-
-    public void setCompanyName( String val ) {
-        this.companyName = val ;
-    }
-        
-    public String getCompanyName() {
-        return this.companyName ;
-    }
-
-    public void setIsin( String val ) {
-        this.isin = val ;
-    }
-        
-    public String getIsin() {
-        return this.isin ;
-    }
-
-    public void setQuantity( int val ) {
-        this.quantity = val ;
-    }
-        
-    public int getQuantity() {
-        return this.quantity ;
-    }
-
-    public void setAvgCostPrice( float val ) {
-        this.avgCostPrice = val ;
-    }
-        
-    public float getAvgCostPrice() {
-        return this.avgCostPrice ;
-    }
-
-    public void setCurrentMktPrice( float val ) {
-        this.currentMktPrice = val ;
-    }
-        
-    public float getCurrentMktPrice() {
-        return this.currentMktPrice ;
-    }
-
-    public void setRealizedProfitLoss( float val ) {
-        this.realizedProfitLoss = val ;
-    }
-        
-    public float getRealizedProfitLoss() {
-        return this.realizedProfitLoss ;
-    }
-    
-    public Date getLastUpdate() {
-        return lastUpdate ;
-    }
-
-    public void setLastUpdate( Date lastUpdate ) {
-        this.lastUpdate = lastUpdate ;
-    }
-
     public String toString() {
         StringBuilder builder = new StringBuilder( "EquityHolding [\n" ) ; 
         

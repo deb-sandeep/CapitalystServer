@@ -49,7 +49,7 @@ public class EquityHoldingsController {
             for( EquityHolding dbHolding : ehRepo.findAll() ) {
                 List<EquityTxn> txns = null ;
                 if( dbHolding.getQuantity() > 0 ) {
-                    txns = etRepo.findByHoldingIdOrderByTxnDateAsc( dbHolding.getId() ) ;
+                    txns = etRepo.findByHoldingIdOrderByTxnDateAscActionAsc( dbHolding.getId() ) ;
                     EquityHoldingVO vo = voBuilder.buildVO( dbHolding, txns ) ;
                     if( vo.getQuantity() > 0 ) {
                     	voHoldings.add( vo ) ;
