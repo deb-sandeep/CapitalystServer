@@ -14,7 +14,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     $scope.searchQuery = {
         accountIds : [],
-        startDate : moment().subtract(1, 'month').toDate(),
+        startDate : moment().startOf('month'),
         endDate : moment().toDate(),
         minAmt : null,
         maxAmt : null,
