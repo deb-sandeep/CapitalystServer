@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode ;
 public class EquityTxnVO extends EquityTxn {
 
     @JsonIgnore
-    private EquityHoldingVO holding = null ;
+    private IndividualEquityHoldingVO holding = null ;
     
     private int   quantityLeft     = 0 ;
     
@@ -27,7 +27,7 @@ public class EquityTxnVO extends EquityTxn {
     private float pat              = 0 ; // Profit after tax
     private float patPct           = 0 ; // Profit after tax percentage
     
-    public EquityTxnVO( EquityHoldingVO holding, EquityTxn txn ) {
+    public EquityTxnVO( IndividualEquityHoldingVO holding, EquityTxn txn ) {
         super( txn ) ;
         this.holding = holding ;
         this.quantityLeft = txn.getQuantity() ;

@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode ;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class EquityHoldingVO extends EquityHolding {
+public class IndividualEquityHoldingVO extends EquityHolding {
     
     private float valueAtCost      = 0 ;
     private float valueAtMktPrice  = 0 ;
@@ -23,7 +23,7 @@ public class EquityHoldingVO extends EquityHolding {
     
     private List<EquityTxnVO> txns = new ArrayList<>() ;
 
-    public EquityHoldingVO( EquityHolding holding ) {
+    public IndividualEquityHoldingVO( EquityHolding holding ) {
         super( holding ) ;
         initializeDerivedValues() ;
     }

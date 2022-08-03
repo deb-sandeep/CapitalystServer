@@ -8,7 +8,7 @@ import java.util.List ;
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.api.equity.vo.EquityHoldingVO ;
+import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.vo.EquityTxnVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
@@ -18,7 +18,7 @@ class EquityLot {
     private EquityTxn buyTxn = null ;
     private EquityTxnVO buyTxnVO = null ;
     
-    public EquityLot( EquityHoldingVO holding, EquityTxn buyTxn ) {
+    public EquityLot( IndividualEquityHoldingVO holding, EquityTxn buyTxn ) {
         this.buyTxn       = buyTxn ;
         this.buyTxnVO     = new EquityTxnVO( holding, buyTxn ) ;
     }
@@ -65,11 +65,11 @@ public class EquityHoldingVOBuilder {
     
     private EquityHolding holding = null ;
 
-    public EquityHoldingVO buildVO( EquityHolding holding, List<EquityTxn> txns ) {
+    public IndividualEquityHoldingVO buildVO( EquityHolding holding, List<EquityTxn> txns ) {
         
         this.holding = holding ;
         
-        EquityHoldingVO holdingVO = new EquityHoldingVO( holding ) ;
+        IndividualEquityHoldingVO holdingVO = new IndividualEquityHoldingVO( holding ) ;
         List<EquityLot> lots = processTxns( holdingVO, txns ) ;
         
         for( EquityLot lot : lots ) {
@@ -86,7 +86,7 @@ public class EquityHoldingVOBuilder {
     
     // NOTE: The transactions are assumed to be in ascending order. Implying
     // that the first transaction is assumed to be a buy transaction.
-    private List<EquityLot> processTxns( EquityHoldingVO holdingVO, 
+    private List<EquityLot> processTxns( IndividualEquityHoldingVO holdingVO, 
                                          List<EquityTxn> txns ) {
         
         List<EquityLot> lots = new ArrayList<>() ;

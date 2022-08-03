@@ -16,16 +16,33 @@ capitalystNgApp.controller( 'PortfolioController',
     $scope.valueAtCostOfSelectedHoldings = 0 ;
     $scope.redemptionValueOfSelectedHoldings = 0 ;
     $scope.profitValueOfSelectedHoldings = 0 ;
-
+    
+    $scope.holdingType = "Family" ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
-    console.log( "Loading PortfolioController" ) ;
-    initializeController() ;
+    console.log( "Loading EquityController" ) ;
+    fetchEquityHoldingsFromServer() ;
     // --- [END] Controller initialization -----------------------------------
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
-    $scope.getAmtClass = function(value) {
+    $scope.changeHoldingType = function( newType ) {
+        
+        $scope.holdingType = newType ;
+        $scope.totalValueAtCost = 0 ;
+        $scope.totalValueAtNav = 0 ;
+        $scope.totalPAT = 0 ;
+        $scope.totalPATPct = 0 ;
+        
+        $scope.valueAtCostOfSelectedHoldings = 0 ;
+        $scope.redemptionValueOfSelectedHoldings = 0 ;
+        $scope.profitValueOfSelectedHoldings = 0 ;
+
+        fetchEquityHoldingsFromServer() ;
+    }
+    
+    $scope.getAmtClass = function( value ) {
         return ( value < 0 ) ? "neg_amt" : "pos_amt" ;
     }
 
@@ -60,7 +77,6 @@ capitalystNgApp.controller( 'PortfolioController',
     }
     
     $scope.triggerJob = function() {
-        console.log( "Triggering job" ) ; 
         triggerJob( 'NSEBhavcopyRefreshJob' ) ;
     }
     
@@ -68,12 +84,9 @@ capitalystNgApp.controller( 'PortfolioController',
 
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
-    function initializeController() {
-        $scope.$parent.activeTabKey = "EQ" ;
-        fetchEquityHoldingsFromServer() ;
-    }
     
     function reCalculateSelectionTotals() {
+        
         $scope.valueAtCostOfSelectedHoldings = 0 ;
         $scope.redemptionValueOfSelectedHoldings = 0 ;
         $scope.profitValueOfSelectedHoldings = 0 ;
@@ -83,20 +96,28 @@ capitalystNgApp.controller( 'PortfolioController',
             if( holding.selected ) {
                 $scope.valueAtCostOfSelectedHoldings += holding.valueAtCost ;
                 $scope.redemptionValueOfSelectedHoldings += holding.valueAtMktPrice ;
-                $scope.profitValueOfSelectedHoldings += holding.profitPostTax ;
+                $scope.profitValueOfSelectedHoldings += holding.pat ;
             }
         }
     }
+    
     // ------------------- Server comm functions -----------------------------
     function fetchEquityHoldingsFromServer() {
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        $http.get( '/Equity/Holding' )
+        
+        $http.get( '/Equity/' + $scope.holdingType + 'Holding' )
         .then ( 
             function( response ){
+                
                 console.log( response.data ) ;
-                $scope.equityHoldings = response.data ;
-                angular.forEach( $scope.equityHoldings, function( holding, key ){
+                
+                $scope.equityHoldings.length = 0 ;
+                
+                for( var i=0; i<response.data.length; i++ ) {
+                    
+                    var holding = response.data[i] ;
+                    
                     $scope.totalValueAtCost += holding.valueAtCost ;
                     $scope.totalValueAtNav += holding.valueAtMktPrice ;
                     $scope.totalPAT += holding.pat ;
@@ -104,10 +125,14 @@ capitalystNgApp.controller( 'PortfolioController',
                     // These are the extra attributes we are adding to the holding
                     holding.selected = false ;
                     holding.visible = holding.quantity > 0 ;
-                }) ;
-                $scope.totalPATPct = Math.ceil( ( $scope.totalPAT / $scope.totalValueAtCost ) * 100 ) ;
+                    
+                    $scope.equityHoldings.push( holding ) ;
+                }
+                
+                $scope.totalPATPct = Math.ceil( ( $scope.totalPAT / 
+                                                  $scope.totalValueAtCost ) * 100 ) ;
             }, 
-            function( error ){
+            function(){
                 $scope.$parent.addErrorAlert( "Error fetching MF portfolio." ) ;
             }
         )
@@ -131,5 +156,6 @@ capitalystNgApp.controller( 'PortfolioController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
-    }    
+    }
+    
 } ) ;
