@@ -11,8 +11,8 @@
                 <th class="js-sort-number">LTCG%</th>
                 <th class="js-sort-number">Cost price</th>
                 <th class="js-sort-number">Value</th>
-                <th class="js-sort-number">Profit</th>
-                <th class="js-sort-number">Profit %</th>
+                <th class="js-sort-number">PAT</th>
+                <th class="js-sort-number">PAT %</th>
                 <th><a ng-click="triggerJob()">Last update</a></th>
             </tr>
         </thead>
@@ -39,12 +39,13 @@
                <td class="fixed-font amt">{{holding.valueAtCost | amt}}</td>
                <td class="fixed-font amt">{{holding.valueAtMktPrice | amt}}</td>
                <td class="fixed-font amt"
-                   ng-class="getAmtClass(holding.profitPostTax)">
-                   {{holding.profitPostTax | amt}}
+                   ng-class="getAmtClass(holding.pat)">
+                   {{holding.pat | amt}}
                </td>
                <td class="fixed-font amt"
-                   ng-class="getAmtClass(holding.profitPctPostTax)">
-                   {{holding.profitPctPostTax | amt}}%</td>
+                   ng-class="getAmtClass(holding.patPct)">
+                   {{holding.patPct | amt}}%
+               </td>
                <td>{{holding.lastUpdate | date : "dd MMM" }}</td>
             </tr>
         </tbody>
@@ -53,8 +54,8 @@
                 <th colspan="6"></th>
                 <th class="fixed-font amt">{{totalValueAtCost | amt}}</th>
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
-                <th class="fixed-font amt">{{totalProfit | amt}}</th>
-                <th class="fixed-font amt">{{totalProfitPct | amt}}%</th>
+                <th class="fixed-font amt">{{totalPAT | amt}}</th>
+                <th class="fixed-font amt">{{totalPATPct | amt}}%</th>
                 <th></th>
             </tr>
             <tr class="success">

@@ -10,8 +10,8 @@ capitalystNgApp.controller( 'PortfolioController',
     $scope.equityHoldings = [] ;
     $scope.totalValueAtCost = 0 ;
     $scope.totalValueAtNav = 0 ;
-    $scope.totalProfit = 0 ;
-    $scope.totalProfitPct = 0 ;
+    $scope.totalPAT = 0 ;
+    $scope.totalPATPct = 0 ;
     
     $scope.valueAtCostOfSelectedHoldings = 0 ;
     $scope.redemptionValueOfSelectedHoldings = 0 ;
@@ -99,13 +99,13 @@ capitalystNgApp.controller( 'PortfolioController',
                 angular.forEach( $scope.equityHoldings, function( holding, key ){
                     $scope.totalValueAtCost += holding.valueAtCost ;
                     $scope.totalValueAtNav += holding.valueAtMktPrice ;
-                    $scope.totalProfit += holding.profitPostTax ;
+                    $scope.totalPAT += holding.pat ;
                     
                     // These are the extra attributes we are adding to the holding
                     holding.selected = false ;
                     holding.visible = holding.quantity > 0 ;
                 }) ;
-                $scope.totalProfitPct = Math.ceil( ( $scope.totalProfit / $scope.totalValueAtCost ) * 100 ) ;
+                $scope.totalPATPct = Math.ceil( ( $scope.totalPAT / $scope.totalValueAtCost ) * 100 ) ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Error fetching MF portfolio." ) ;

@@ -13,18 +13,23 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.api.equity.helper.EquityTxnPosting ;
+import com.sandy.capitalyst.server.api.equity.vo.EquityTxnPostingVO ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
 
-@RestController
-public class EquityTxnController {
+// @Post - /Equity/Transaction
+// @Post - /Equity/Holding
 
-    private static final Logger log = Logger.getLogger( EquityTxnController.class ) ;
+@RestController
+public class EquityHoldingsUploadController {
+
+    private static final Logger log = Logger.getLogger( EquityHoldingsUploadController.class ) ;
     private static final DecimalFormat DF = new DecimalFormat( "#.00" ) ;
     private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
     
@@ -34,13 +39,36 @@ public class EquityTxnController {
     @Autowired
     private EquityTxnRepo etRepo = null ;
     
-    @PostMapping( "/Equity/Transaction" ) 
+    @Autowired
+    private EquityMasterRepo emRepo = null ;
+    
+    @PostMapping( "/Equity/Holding" ) 
     public ResponseEntity<APIResponse> updateEquityHoldings(
-                                @RequestBody List<EquityTxnPosting> txnPostings ) {
+                                @RequestBody List<EquityHolding> holdings ) {
+        try {
+            log.debug( "Updating equity holdings" ) ;
+            for( EquityHolding holding : holdings ) {
+                saveHolding( holding ) ;
+            }
+            String msg = "Success. Updated " + holdings.size() + " records." ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( new APIResponse( msg ) ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving equity holding.", e ) ;
+            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( new APIResponse( stackTrace ) ) ;
+        }
+    }
+
+    @PostMapping( "/Equity/Transaction" ) 
+    public ResponseEntity<APIResponse> updateEquityTransactions(
+                                @RequestBody List<EquityTxnPostingVO> txnPostings ) {
         try {
             log.debug( "Updating equity transactions" ) ;
             int numSaved = 0 ;
-            for( EquityTxnPosting txnPosting : txnPostings ) {
+            for( EquityTxnPostingVO txnPosting : txnPostings ) {
                 if( saveTransaction( txnPosting ) ) {
                     numSaved++ ;
                 }
@@ -57,7 +85,44 @@ public class EquityTxnController {
         }
     }
 
-    private boolean saveTransaction( EquityTxnPosting posting )
+    private void saveHolding( EquityHolding postedHolding )
+        throws Exception {
+        
+        EquityHolding existingHolding = ehRepo.findByOwnerNameAndSymbolIcici( 
+                                            postedHolding.getOwnerName(), 
+                                            postedHolding.getSymbolIcici() ) ;
+        
+        EquityHolding holding = null ;
+        
+        if( existingHolding == null ) {
+            log.debug( "No existing asset found. Creating New." ) ;
+            holding = postedHolding ;
+        }
+        else {
+            log.debug( "Updating asset with posted values." ) ;
+            existingHolding.setAvgCostPrice( postedHolding.getAvgCostPrice() ) ;
+            existingHolding.setCompanyName( postedHolding.getCompanyName() ) ;
+            existingHolding.setCurrentMktPrice( postedHolding.getCurrentMktPrice() ) ;
+            existingHolding.setIsin( postedHolding.getIsin() ) ;
+            existingHolding.setOwnerName( postedHolding.getOwnerName() ) ;
+            existingHolding.setQuantity( postedHolding.getQuantity() ) ;
+            existingHolding.setSymbolIcici( postedHolding.getSymbolIcici() ) ;
+            existingHolding.setLastUpdate( postedHolding.getLastUpdate() ) ;
+            holding = existingHolding ;
+        }
+        
+        // Update the NSE symbol by looking up the ISIN Symbol map
+        EquityMaster eqIsin = emRepo.findByIsin( postedHolding.getIsin() ) ;
+        if( eqIsin != null ) {
+            log.debug( "Updating NSE symbol." ) ;
+            holding.setSymbolNse( eqIsin.getSymbol() ) ;
+        }
+        
+        log.debug( "Updating equity holding" ) ;
+        ehRepo.save( holding ) ;
+    }
+    
+    private boolean saveTransaction( EquityTxnPostingVO posting )
         throws Exception {
         
         EquityTxn txn = null ;
@@ -72,7 +137,7 @@ public class EquityTxnController {
         return false ;
     }
     
-    private EquityTxn createEquityTxn( EquityTxnPosting posting,
+    private EquityTxn createEquityTxn( EquityTxnPostingVO posting,
                                        String hash ) {
         
         EquityTxn txn = new EquityTxn() ;
@@ -93,7 +158,7 @@ public class EquityTxnController {
         return txn ;
     }
     
-    private String getPostingHash( EquityTxnPosting posting ) {
+    private String getPostingHash( EquityTxnPostingVO posting ) {
         
         StringBuilder builder = new StringBuilder() ;
         builder.append( posting.getOwnerName() )

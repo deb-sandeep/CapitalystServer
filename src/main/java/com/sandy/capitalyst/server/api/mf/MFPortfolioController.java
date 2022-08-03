@@ -89,7 +89,7 @@ public class MFPortfolioController {
                     numTxnSaved++ ;
                 }
             }
-            String msg = "Success. Num txn saved = " + numTxnSaved ;
+            String msg = "Success. Num buyTxn saved = " + numTxnSaved ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( new APIResponse( msg ) ) ;
         }

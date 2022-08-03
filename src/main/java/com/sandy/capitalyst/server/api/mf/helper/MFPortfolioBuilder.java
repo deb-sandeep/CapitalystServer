@@ -120,7 +120,7 @@ public class MFPortfolioBuilder {
                 }
             }
             else {
-                throw new RuntimeException( "Unrecognized txn type for MF Txn" ) ;
+                throw new RuntimeException( "Unrecognized buyTxn type for MF Txn" ) ;
             }
         }
 

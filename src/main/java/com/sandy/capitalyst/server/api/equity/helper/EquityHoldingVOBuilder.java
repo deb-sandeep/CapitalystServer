@@ -8,48 +8,54 @@ import java.util.List ;
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
+import com.sandy.capitalyst.server.api.equity.vo.EquityHoldingVO ;
+import com.sandy.capitalyst.server.api.equity.vo.EquityTxnVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 
 class EquityLot {
     
-    int numUnitsLeft = 0 ;
-    Date txnDate = null ;
+    private EquityTxn buyTxn = null ;
+    private EquityTxnVO buyTxnVO = null ;
     
-    public EquityLot( int units, Date date ) {
-        this.numUnitsLeft = units ;
-        this.txnDate = date ;
+    public EquityLot( EquityHoldingVO holding, EquityTxn buyTxn ) {
+        this.buyTxn       = buyTxn ;
+        this.buyTxnVO     = new EquityTxnVO( holding, buyTxn ) ;
     }
     
     // Returns the number of units that COULD NOT be redeemed
-    public int redeemUnits( int unitsToBeRedeemed ) {
+    public int redeemUnits( int qtyToBeRedeemed ) {
         
-        int unRedeemedUnits = unitsToBeRedeemed ;
-        int redeemedUnits = 0 ;
+        int unRedeemedQty = qtyToBeRedeemed ;
+        int redeemedQty = 0 ;
         
-        if( numUnitsLeft > 0 ) {
-            if( unitsToBeRedeemed <= numUnitsLeft ) {
-                redeemedUnits = unitsToBeRedeemed ;
+        if( buyTxnVO.getQuantityLeft() > 0 ) {
+            
+            if( qtyToBeRedeemed <= buyTxnVO.getQuantityLeft() ) {
+                redeemedQty = qtyToBeRedeemed ;
             }
             else {
-                redeemedUnits = numUnitsLeft ;
+                redeemedQty = buyTxnVO.getQuantityLeft() ;
             }
             
-            numUnitsLeft -= redeemedUnits ;
-            unRedeemedUnits = unitsToBeRedeemed - redeemedUnits ;
+            buyTxnVO.redeemQuantity( redeemedQty ) ;
+            unRedeemedQty = qtyToBeRedeemed - redeemedQty ;
         }
         
-        return unRedeemedUnits ;
+        return unRedeemedQty ;
     }
     
-    public int getTenureInDays() {
-        long numMillis = new Date().getTime() - txnDate.getTime() ;
-        return (int)( numMillis / (1000*60*60*24) ) ;
+    public int getQuantityLeft() {
+        return this.buyTxnVO.getQuantityLeft() ;
+    }
+    
+    public EquityTxnVO getBuyTxn() {
+        return this.buyTxnVO ;
     }
     
     public boolean qualifiesForLTCG() {
         Date oneYearPastDate = DateUtils.addYears( new Date(), -1 ) ;
-        return txnDate.before( oneYearPastDate ) ;
+        return buyTxn.getTxnDate().before( oneYearPastDate ) ;
     }
 }
 
@@ -63,19 +69,25 @@ public class EquityHoldingVOBuilder {
         
         this.holding = holding ;
         
-        EquityHoldingVO vo = new EquityHoldingVO( holding ) ;
-        List<EquityLot> lots = processTxns( txns ) ;
+        EquityHoldingVO holdingVO = new EquityHoldingVO( holding ) ;
+        List<EquityLot> lots = processTxns( holdingVO, txns ) ;
         
-        vo.setLtcgQty( computeLTCGQty( lots ) ) ;
-        if( vo.getQuantity() > 0 ) {
-            computeTax( vo ) ;
+        for( EquityLot lot : lots ) {
+            if( lot.getQuantityLeft() > 0 ) {
+                holdingVO.addEquityTxnVO( lot.getBuyTxn() ) ;
+            }
         }
-        return vo ;
+        
+        holdingVO.setLtcgQty( computeLTCGQty( lots ) ) ;
+        holdingVO.computeTax() ;
+        
+        return holdingVO ;
     }
     
     // NOTE: The transactions are assumed to be in ascending order. Implying
     // that the first transaction is assumed to be a buy transaction.
-    private List<EquityLot> processTxns( List<EquityTxn> txns ) {
+    private List<EquityLot> processTxns( EquityHoldingVO holdingVO, 
+                                         List<EquityTxn> txns ) {
         
         List<EquityLot> lots = new ArrayList<>() ;
         
@@ -89,8 +101,7 @@ public class EquityHoldingVOBuilder {
                 
                 if( action.equalsIgnoreCase( "buy" ) ) {
                     
-                    lots.add( new EquityLot( txn.getQuantity(), 
-                                             txn.getTxnDate() ) ) ;
+                    lots.add( new EquityLot( holdingVO, txn ) ) ;
                 }
                 else if( action.equalsIgnoreCase( "sell" ) ) {
                     
@@ -114,7 +125,7 @@ public class EquityHoldingVOBuilder {
                     while( unRedeemedUnits > 0 && allLotsIter.hasNext() ) {
                         
                         EquityLot lot = allLotsIter.next() ;
-                        if( lot.numUnitsLeft > 0 ) {
+                        if( lot.getQuantityLeft() > 0 ) {
                             unRedeemedUnits = lot.redeemUnits( unRedeemedUnits ) ;
                         }
                     }
@@ -130,7 +141,7 @@ public class EquityHoldingVOBuilder {
                     }
                 }
                 else {
-                    throw new RuntimeException( "Unknown equity txn action - " + action ) ;
+                    throw new RuntimeException( "Unknown equity buyTxn action - " + action ) ;
                 }
             }
         }
@@ -141,55 +152,13 @@ public class EquityHoldingVOBuilder {
         
         int ltcgQty = 0 ;
         for( EquityLot lot : lots ) {
-            if( lot.numUnitsLeft > 0 ) {
+            if( lot.getQuantityLeft() > 0 ) {
                 if( lot.qualifiesForLTCG() ) {
-                    ltcgQty += lot.numUnitsLeft ;
+                    ltcgQty += lot.getQuantityLeft() ;
                 }
             }
         }
         return ltcgQty ;
     }
     
-    private void computeTax( EquityHoldingVO vo ) {
-        
-        int ltcgQty = vo.getLtcgQty() ;
-        int stcgQty = vo.getQuantity() - ltcgQty ;
-        
-        float ltcgCost = 0, ltcgValue = 0, ltcgProfit = 0, ltcgTax = 0 ;
-        float stcgCost = 0, stcgValue = 0, stcgProfit = 0, stcgTax = 0 ;
-        
-        float brokerage = 0 ;
-        float totalTax = 0 ;
-        float valuePostTax = 0 ;
-        float profitPostTax = 0 ;
-        float profitPctPostTax = 0 ;
-        
-        if( vo.getOwnerName().equals( "Sandeep" ) ) {
-            brokerage = (float)(vo.getValueAtMktPrice() * (0.24/100)) ;
-        }
-        else {
-            brokerage = (float)(vo.getValueAtMktPrice() * (0.77/100)) ;
-        }
-        
-        ltcgCost = ltcgQty * vo.getAvgCostPrice() ;
-        ltcgValue = ltcgQty * vo.getCurrentMktPrice() ;
-        ltcgProfit = ltcgValue - ltcgCost ;
-        ltcgTax = ltcgProfit > 0 ? 0.1f * ltcgProfit : 0 ;
-        
-        stcgCost = stcgQty * vo.getAvgCostPrice() ;
-        stcgValue = stcgQty * vo.getCurrentMktPrice() ;
-        stcgProfit = stcgValue - stcgCost ;
-        stcgTax = stcgProfit > 0 ? 0.3f * stcgProfit : 0 ;
-        
-        totalTax = ltcgTax + stcgTax ;
-        valuePostTax = vo.getValueAtMktPrice() - totalTax - brokerage ;
-        profitPostTax = valuePostTax - vo.getValueAtCost() ;
-        profitPctPostTax = ( profitPostTax / vo.getValueAtCost() ) * 100 ; 
-        
-        vo.setValuePostTax( valuePostTax ) ;
-        vo.setProfitPostTax( profitPostTax ) ;
-        vo.setProfitPctPostTax( profitPctPostTax ) ;
-        vo.setTaxAmount( totalTax ) ;
-        vo.setBrokerageAmount( brokerage ) ;
-    }
 }
