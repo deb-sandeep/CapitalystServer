@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.job.equity.eodrefresh;
 
+import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+
 import java.io.File ;
 import java.util.ArrayList ;
 import java.util.Date ;
@@ -9,13 +11,12 @@ import java.util.Map ;
 
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.CapitalystServer ;
-import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
-import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
+import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 import com.sandy.common.util.StringUtil ;
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;
@@ -28,10 +29,14 @@ public class NSEBhavcopyImporter {
     private EquityMasterRepo emRepo = null ;
     private EquityHoldingRepo ehRepo = null ;
     
+    private EquityDailyGainUpdater dgUpdater = null ;
+    
     public NSEBhavcopyImporter() {
-        ecRepo = CapitalystServer.getBean( HistoricEQDataRepo.class ) ;
-        emRepo = CapitalystServer.getBean( EquityMasterRepo.class ) ;
-        ehRepo = CapitalystServer.getBean( EquityHoldingRepo.class ) ;
+        ecRepo  = getBean( HistoricEQDataRepo.class ) ;
+        emRepo  = getBean( EquityMasterRepo.class ) ;
+        ehRepo  = getBean( EquityHoldingRepo.class ) ;
+        
+        dgUpdater = new EquityDailyGainUpdater() ;
     }
 
     public Date importBhavcopy( Date lastImportDate ) 
@@ -88,6 +93,10 @@ public class NSEBhavcopyImporter {
                     
                     if( holdingsMap.containsKey( symbol ) ) {
                         for( EquityHolding holding : holdingsMap.get( symbol ) ) {
+                            
+                            log.debug( "Updating daily gain. Holding " + holding.getId() ) ;
+                            dgUpdater.updateEDG( holding, candle ) ;
+                            
                             holding.setCurrentMktPrice( candle.getClose() ) ;
                             holding.setLastUpdate( date ) ;
                             ehRepo.save( holding ) ;

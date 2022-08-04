@@ -50,7 +50,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
     $scope.catSelectionPaneHidden = true ;
     $scope.pivotDuration = {
         startDate : moment().subtract(11, 'month').startOf( 'month' ),
-        endDate : moment().toDate(),
+        endDate : moment().endOf('day').toDate(),
     } ;
 
     $scope.masterCategories = {
@@ -171,8 +171,8 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         function( start, end, label ) {
             var text = start.format( 'MMM D, YYYY' ) + ' - ' + end.format('MMM D, YYYY') ;
             $('#pivotDuration span').html( text ) ;
-            $scope.pivotDuration.startDate = start.toDate() ;
-            $scope.pivotDuration.endDate   = end.toDate() ;
+            $scope.pivotDuration.startDate = start.startOf('day').toDate() ;
+            $scope.pivotDuration.endDate   = end.endOf('day').toDate() ;
             fetchAndRenderPivotEntries() ;
         });
     }
