@@ -23,6 +23,7 @@
                 <th class="js-sort-number">Sell Value</th>
                 <th class="js-sort-number">PAT</th>
                 <th class="js-sort-number">PAT %</th>
+                <th class="js-sort-number">D-Gain</th>
                 <th>
                     <span class="glyphicon glyphicon-refresh"
                           ng-click="triggerJob()">
@@ -69,6 +70,9 @@
                    ng-class="getAmtClass(holding.patPct)">
                    {{holding.patPct | amt}}%
                </td>
+               <td class="fixed-font amt">
+                   {{holding.dayGain | amt}}
+               </td>
                <td>{{holding.lastUpdate | date : "dd MMM" }}</td>
             </tr>
         </tbody>
@@ -81,6 +85,7 @@
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
                 <th class="fixed-font amt">{{totalPAT | amt}}</th>
                 <th class="fixed-font amt">{{totalPATPct | amt}}%</th>
+                <th class="fixed-font amt">{{totalDayGain | amt}}</th>
                 <th></th>
             </tr>
             <tr class="success">
@@ -92,6 +97,7 @@
                 <th class="fixed-font amt">
                     {{(profitValueOfSelectedHoldings/valueAtCostOfSelectedHoldings)*100 | number:0}}%
                 </th>
+                <th class="fixed-font amt">{{dayGainOfSelectedHoldings | amt}}</th>
                 <th></th>
             </tr>
         </tfoot>

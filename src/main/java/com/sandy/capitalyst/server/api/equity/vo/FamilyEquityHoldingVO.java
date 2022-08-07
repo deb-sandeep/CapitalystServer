@@ -26,6 +26,7 @@ public class FamilyEquityHoldingVO {
     private int    ltcgQty          = 0 ;
     private float  taxAmount        = 0 ;
     private float  sellBrokerage    = 0 ;
+    private float  dayGain          = 0 ;
 
     // Computed quantities
     private float  avgCostPrice     = 0.0f ;
@@ -57,6 +58,7 @@ public class FamilyEquityHoldingVO {
         this.ltcgQty         += holding.getLtcgQty() ;
         this.taxAmount       += holding.getTaxAmount() ;
         this.sellBrokerage   += holding.getSellBrokerage() ;
+        this.dayGain         += holding.getDayGain() ;
         
         this.avgCostPrice     = this.valueAtCost / this.quantity ;
         this.valuePostTax     = this.valueAtMktPrice - taxAmount - sellBrokerage ;

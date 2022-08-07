@@ -36,6 +36,9 @@ public class EquityHolding {
     @Column( precision=16, scale=2 )
     private float realizedProfitLoss = 0.0f ;
     
+    @Column( precision=16, scale=2 )
+    private float dayGain = 0.0f ;
+
     private Date lastUpdate = null ;
     
     public EquityHolding() {}
@@ -51,6 +54,7 @@ public class EquityHolding {
         this.avgCostPrice       = blueprint.avgCostPrice ;
         this.currentMktPrice    = blueprint.currentMktPrice ;
         this.realizedProfitLoss = blueprint.realizedProfitLoss ;
+        this.dayGain            = blueprint.dayGain ;
         this.lastUpdate         = blueprint.lastUpdate ;
     }
     
@@ -68,6 +72,7 @@ public class EquityHolding {
         builder.append( "   avgCostPrice       = " + avgCostPrice       + "\n" ) ;
         builder.append( "   currentMktPrice    = " + currentMktPrice    + "\n" ) ;
         builder.append( "   realizedProfitLoss = " + realizedProfitLoss + "\n" ) ;
+        builder.append( "   dayGain            = " + dayGain            + "\n" ) ;
         builder.append( "   lastUpdate         = " + lastUpdate         + "\n" ) ;
         
         builder.append( "]" ) ;

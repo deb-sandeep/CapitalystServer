@@ -111,6 +111,8 @@ public class EquityDailyGainUpdater {
             
             edg.setDayChange( diffPAT ) ;
             edg.setDayChangePct( diffPATPct ) ;
+            
+            edg.getHolding().setDayGain( diffPAT ) ;
         }
     }
 }

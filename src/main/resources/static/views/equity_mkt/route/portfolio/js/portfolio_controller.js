@@ -11,11 +11,13 @@ capitalystNgApp.controller( 'PortfolioController',
     $scope.totalValueAtCost = 0 ;
     $scope.totalValueAtNav = 0 ;
     $scope.totalPAT = 0 ;
+    $scope.totalDayGain = 0 ;
     $scope.totalPATPct = 0 ;
     
     $scope.valueAtCostOfSelectedHoldings = 0 ;
     $scope.redemptionValueOfSelectedHoldings = 0 ;
     $scope.profitValueOfSelectedHoldings = 0 ;
+    $scope.dayGainOfSelectedHoldings = 0 ;
     
     $scope.holdingType = "Family" ;
     $scope.holdingForTxnsDisplay = null ;
@@ -34,11 +36,13 @@ capitalystNgApp.controller( 'PortfolioController',
         $scope.totalValueAtCost = 0 ;
         $scope.totalValueAtNav = 0 ;
         $scope.totalPAT = 0 ;
+        $scope.totalDayGain = 0 ;
         $scope.totalPATPct = 0 ;
         
         $scope.valueAtCostOfSelectedHoldings = 0 ;
         $scope.redemptionValueOfSelectedHoldings = 0 ;
         $scope.profitValueOfSelectedHoldings = 0 ;
+        $scope.dayGainOfSelectedHoldings = 0 ;
 
         fetchEquityHoldingsFromServer() ;
     }
@@ -99,6 +103,7 @@ capitalystNgApp.controller( 'PortfolioController',
         $scope.valueAtCostOfSelectedHoldings = 0 ;
         $scope.redemptionValueOfSelectedHoldings = 0 ;
         $scope.profitValueOfSelectedHoldings = 0 ;
+        $scope.dayGainOfSelectedHoldings = 0 ;
         
         for( var i=0; i<$scope.equityHoldings.length; i++ ) {
             var holding = $scope.equityHoldings[i] ;
@@ -106,6 +111,7 @@ capitalystNgApp.controller( 'PortfolioController',
                 $scope.valueAtCostOfSelectedHoldings += holding.valueAtCost ;
                 $scope.redemptionValueOfSelectedHoldings += holding.valueAtMktPrice ;
                 $scope.profitValueOfSelectedHoldings += holding.pat ;
+                $scope.dayGainOfSelectedHoldings += holding.dayGain ;
             }
         }
     }
@@ -130,6 +136,7 @@ capitalystNgApp.controller( 'PortfolioController',
                     $scope.totalValueAtCost += holding.valueAtCost ;
                     $scope.totalValueAtNav += holding.valueAtMktPrice ;
                     $scope.totalPAT += holding.pat ;
+                    $scope.totalDayGain += holding.dayGain ;
                     
                     // These are the extra attributes we are adding to the holding
                     holding.selected = false ;
