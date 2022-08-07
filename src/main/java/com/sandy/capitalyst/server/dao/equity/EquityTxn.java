@@ -24,7 +24,6 @@ public class EquityTxn {
     private String action    = null ;
     private int    quantity  = 0 ;
     private Date   txnDate   = null ;
-    private String hash      = null ;
 
     @Column( precision=16, scale=2 )
     private float txnPrice = 0.0f ;
@@ -51,7 +50,6 @@ public class EquityTxn {
         this.txnCharges = blueprint.txnCharges ;
         this.stampDuty  = blueprint.stampDuty ;
         this.txnDate    = blueprint.txnDate ;
-        this.hash       = blueprint.hash ;
     }
     
     public String toString() {
@@ -67,7 +65,6 @@ public class EquityTxn {
         builder.append( "   txnCharges = " + txnCharges + "\n" ) ;
         builder.append( "   stampDuty  = " + stampDuty  + "\n" ) ;
         builder.append( "   txnDate    = " + txnDate    + "\n" ) ;
-        builder.append( "   hash       = " + hash       + "\n" ) ;
         
         builder.append( "]" ) ;
         return builder.toString() ;

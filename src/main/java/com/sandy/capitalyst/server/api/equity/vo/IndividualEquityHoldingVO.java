@@ -34,9 +34,40 @@ public class IndividualEquityHoldingVO extends EquityHolding {
     }
 
     public void addEquityTxnVO( EquityTxnVO txnVO ) {
-        this.txns.add( txnVO ) ;
+        
+        EquityTxnVO dayAggTxn = getDayAggregateTxn( txnVO ) ;
+        if( dayAggTxn == null ) {
+            dayAggTxn = new EquityTxnVO( txnVO ) ;
+            this.txns.add( dayAggTxn ) ;
+        }
+        else {
+            dayAggTxn.aggregate( txnVO ) ;
+        }
     }
-
+    
+    private EquityTxnVO getDayAggregateTxn( EquityTxnVO vo ) {
+        
+        String voOwner = vo.getHolding().getOwnerName() ;
+        String voScrip = vo.getHolding().getSymbolNse() ;
+        
+        for( EquityTxnVO txn : txns ) {
+            
+            String txnOwner = txn.getHolding().getOwnerName() ;
+            String txnScrip = txn.getHolding().getSymbolNse() ;
+            
+            if( voOwner.equals( txnOwner ) ) {
+                if( vo.getAction().equals( txn.getAction() ) ) {
+                    if( vo.getTxnDate().equals( txn.getTxnDate() ) ) {
+                        if( voScrip.equals( txnScrip ) ) {
+                            return txn ;
+                        }
+                    }
+                }
+            }
+        }
+        return null ;
+    }
+    
     public void computeTax() {
         
         if( getQuantity() <= 0 ) {

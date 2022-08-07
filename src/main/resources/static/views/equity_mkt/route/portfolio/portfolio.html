@@ -50,7 +50,10 @@
                         {{holding.symbolIcici}}
                    </span>
                </td>
-               <td class="fixed-font amt">{{holding.quantity}}</td>
+               <td class="fixed-font amt"
+                   ng-dblclick="showTransactionsDialog(holding)">
+                    {{holding.quantity}}
+               </td>
                <td class="fixed-font amt">{{holding.currentMktPrice}}</td>
                <td class="fixed-font amt">{{(holding.ltcgQty/holding.quantity)*100 | number:1.0-1}}%</td>
                <td class="fixed-font amt">{{holding.valueAtCost | amt}}</td>
@@ -86,9 +89,19 @@
                 <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{profitValueOfSelectedHoldings | amt}}</th>
-                <th></th>
+                <th class="fixed-font amt">
+                    {{(profitValueOfSelectedHoldings/valueAtCostOfSelectedHoldings)*100 | number:0}}%
+                </th>
                 <th></th>
             </tr>
         </tfoot>
     </table>
+</div>
+
+<div id="txnsDisplayDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/portfolio/dialog/txns_display_dialog.html'"
+     ng-controller="TxnsDisplayDialogController">
 </div>

@@ -18,6 +18,7 @@ capitalystNgApp.controller( 'PortfolioController',
     $scope.profitValueOfSelectedHoldings = 0 ;
     
     $scope.holdingType = "Family" ;
+    $scope.holdingForTxnsDisplay = null ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -78,6 +79,14 @@ capitalystNgApp.controller( 'PortfolioController',
     
     $scope.triggerJob = function() {
         triggerJob( 'NSEBhavcopyRefreshJob' ) ;
+    }
+    
+    $scope.showTransactionsDialog = function( holding ) {
+        $scope.$broadcast( 'holdingTxnsDisplayTrigger', {
+            holding : holding,
+            holdingType : $scope.holdingType
+        }) ;
+        $( '#txnsDisplayDialog' ).modal( 'show' ) ;
     }
     
     // --- [END] Scope functions

@@ -9,7 +9,7 @@ import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 public interface EquityTxnRepo 
     extends CrudRepository<EquityTxn, Integer> {
     
-    EquityTxn findByHash( String hash ) ;
-    
     List<EquityTxn> findByHoldingIdOrderByTxnDateAscActionAsc( int holdingId ) ;
+    
+    void deleteByHoldingId( Integer holdingId ) ;
 }

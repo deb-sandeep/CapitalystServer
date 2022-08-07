@@ -49,7 +49,7 @@ class EquityLot {
         return this.buyTxnVO.getQuantityLeft() ;
     }
     
-    public EquityTxnVO getBuyTxn() {
+    public EquityTxnVO getBuyTxnVO() {
         return this.buyTxnVO ;
     }
     
@@ -72,15 +72,25 @@ public class EquityHoldingVOBuilder {
         IndividualEquityHoldingVO holdingVO = new IndividualEquityHoldingVO( holding ) ;
         List<EquityLot> lots = processTxns( holdingVO, txns ) ;
         
+        int totalQuantityLeft = 0 ;
         for( EquityLot lot : lots ) {
             if( lot.getQuantityLeft() > 0 ) {
-                holdingVO.addEquityTxnVO( lot.getBuyTxn() ) ;
+                holdingVO.addEquityTxnVO( lot.getBuyTxnVO() ) ;
+                totalQuantityLeft += lot.getBuyTxnVO().getQuantityLeft() ;
             }
         }
         
         holdingVO.setLtcgQty( computeLTCGQty( lots ) ) ;
         holdingVO.computeTax() ;
         
+        if( totalQuantityLeft != holding.getQuantity() ) {
+            // This implies some transactions are missing which needs to be
+            // manually added.
+            log.error( "Equity " + holding.getSymbolIcici() + 
+                       " (" + holding.getOwnerName() + ")" +
+                       " hId=" + holding.getId() + " " +
+                       " has missing transactions." ) ;
+        }
         return holdingVO ;
     }
     

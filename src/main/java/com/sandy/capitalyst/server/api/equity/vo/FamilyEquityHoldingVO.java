@@ -58,7 +58,7 @@ public class FamilyEquityHoldingVO {
         this.taxAmount       += holding.getTaxAmount() ;
         this.sellBrokerage   += holding.getSellBrokerage() ;
         
-        this.avgCostPrice     = this.quantity / this.valueAtCost ;
+        this.avgCostPrice     = this.valueAtCost / this.quantity ;
         this.valuePostTax     = this.valueAtMktPrice - taxAmount - sellBrokerage ;
         this.pat              = this.valuePostTax - this.valueAtCost ;
         this.patPct           = ( this.pat / this.valueAtCost )*100 ;
