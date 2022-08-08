@@ -98,6 +98,7 @@ public class EquityDailyGainUpdater {
         
         taxAmount    = ltcgTax + stcgTax ;
         valuePostTax = valueAtMktPrice - taxAmount - sellBrokerage ;
+        
         edg.setPat( valuePostTax - valueAtCost ) ;
         edg.setPatPct( ( edg.getPat() / valueAtCost ) * 100 ) ; 
     }
@@ -105,14 +106,17 @@ public class EquityDailyGainUpdater {
     private void populateDayChange( EquityDailyGain edg ) {
         
         Float lastPAT = edgRepo.getLastPAT( edg.getHolding().getId() ) ;
+        
         if( lastPAT != null ) {
-            float diffPAT = edg.getPat() - lastPAT ;
-            float diffPATPct = ( diffPAT / lastPAT )*100 ;
             
-            edg.setDayChange( diffPAT ) ;
-            edg.setDayChangePct( diffPATPct ) ;
+            // How much did the holding earn or lose today as compared to the
+            // market value yesterday.
+            float dayChange = edg.getPat() - lastPAT ;
             
-            edg.getHolding().setDayGain( diffPAT ) ;
+            edg.setDayChange( dayChange ) ;
+            edg.setDayChangePct( (dayChange/edg.getInvestmentValue())*100 ) ;
+            
+            edg.getHolding().setDayGain( dayChange ) ;
         }
     }
 }
