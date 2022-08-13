@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.api.equity.helper;
 
+import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+
 import java.util.ArrayList ;
 import java.util.Date ;
 import java.util.Iterator ;
@@ -8,10 +10,11 @@ import java.util.List ;
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.vo.EquityTxnVO ;
+import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityDailyGainRepo ;
 
 class EquityLot {
     
@@ -82,6 +85,8 @@ public class EquityHoldingVOBuilder {
         
         holdingVO.setLtcgQty( computeLTCGQty( lots ) ) ;
         holdingVO.computeTax() ;
+        holdingVO.setSparklineData( getSparklineData() ) ;
+        
         
         if( totalQuantityLeft != holding.getQuantity() ) {
             // This implies some transactions are missing which needs to be
@@ -92,6 +97,23 @@ public class EquityHoldingVOBuilder {
                        " has missing transactions." ) ;
         }
         return holdingVO ;
+    }
+    
+    private List<Integer> getSparklineData() {
+        
+        EquityDailyGainRepo edgRepo = getBean( EquityDailyGainRepo.class ) ;
+        Date today = new Date() ;
+        Date startDate = DateUtils.addDays( today, -15 ) ;
+        
+        List<Integer> list = new ArrayList<>() ;
+        List<Float> dbData = null ;
+        
+        dbData = edgRepo.getSparklineData( holding.getId(), startDate, today ) ;
+        for( Float f : dbData ) {
+            list.add( f.intValue() ) ;
+        }
+        
+        return list ;
     }
     
     // NOTE: The transactions are assumed to be in ascending order. Implying

@@ -1,6 +1,7 @@
 package com.sandy.capitalyst.server.dao.equity.repo;
 
 import java.util.Date ;
+import java.util.List ;
 
 import org.springframework.data.jpa.repository.Query ;
 import org.springframework.data.repository.CrudRepository ;
@@ -29,4 +30,19 @@ public interface EquityDailyGainRepo
     )
     public Float getLastPAT( @Param( "holdingId" ) Integer id ) ;
 
+    @Query( nativeQuery = true,
+            value =   
+            "SELECT "
+          + "    edg.day_change "
+          + "FROM "
+          + "    equity_daily_gain edg "
+          + "WHERE "
+          + "    edg.holding_id = :holdingId AND "
+          + "    edg.date BETWEEN :startDate AND :endDate "
+          + "ORDER BY "
+          + "    edg.date DESC "
+    )
+    List<Float> getSparklineData( @Param( "holdingId" ) Integer holdingId,
+                                  @Param( "startDate" ) Date startDate,
+                                  @Param( "endDate"   ) Date endDate ) ;
 }

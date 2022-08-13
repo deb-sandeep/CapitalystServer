@@ -51,4 +51,5 @@ public interface EquityHoldingRepo
           + "   eh.isin =:isin ")
     void updateSymbolNSE( @Param( "isin"      ) String isin, 
                           @Param( "symbolNse" ) String symbolNse ) ;
+    
 }

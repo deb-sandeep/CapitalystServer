@@ -22,6 +22,8 @@ public class IndividualEquityHoldingVO extends EquityHolding {
     private float patPct           = 0 ; // Profit after tax percentage
     
     private List<EquityTxnVO> txns = new ArrayList<>() ;
+    
+    private List<Integer> sparklineData = null ;
 
     public IndividualEquityHoldingVO( EquityHolding holding ) {
         super( holding ) ;

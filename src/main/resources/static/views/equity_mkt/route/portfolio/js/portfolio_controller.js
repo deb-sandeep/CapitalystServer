@@ -147,6 +147,8 @@ capitalystNgApp.controller( 'PortfolioController',
                 
                 $scope.totalPATPct = Math.ceil( ( $scope.totalPAT / 
                                                   $scope.totalValueAtCost ) * 100 ) ;
+                                                  
+                setTimeout( paintSparklines, 100 ) ;
             }, 
             function(){
                 $scope.$parent.addErrorAlert( "Error fetching MF portfolio." ) ;
@@ -155,6 +157,18 @@ capitalystNgApp.controller( 'PortfolioController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function paintSparklines() {
+        console.log( "Painting sparklines." ) ;
+        for( var i=0; i<$scope.equityHoldings.length; i++ ) {
+            var eh = $scope.equityHoldings[i] ;
+            $( '#spark_' + i ).sparkline( eh.sparklineData, {
+                type: 'bar',
+                barColor : 'green',
+                negBarColor : 'red' 
+            } ) ;
+        }
     }
     
     function triggerJob( jobName ) {

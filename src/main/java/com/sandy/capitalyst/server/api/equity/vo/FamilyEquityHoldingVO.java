@@ -36,6 +36,8 @@ public class FamilyEquityHoldingVO {
     
     private List<IndividualEquityHoldingVO> holdings = new ArrayList<>() ;
 
+    private List<Integer> sparklineData = new ArrayList<>() ;
+
     public FamilyEquityHoldingVO( IndividualEquityHoldingVO holding ) {
         
         this.symbolIcici     = holding.getSymbolIcici() ;
@@ -64,5 +66,16 @@ public class FamilyEquityHoldingVO {
         this.valuePostTax     = this.valueAtMktPrice - taxAmount - sellBrokerage ;
         this.pat              = this.valuePostTax - this.valueAtCost ;
         this.patPct           = ( this.pat / this.valueAtCost )*100 ;
+        
+        List<Integer> splData = holding.getSparklineData() ;
+        
+        for( int i=0; i<splData.size(); i++ ) {
+            if( sparklineData.size() >= (i+1) ) {
+                sparklineData.set( i, sparklineData.get( i ) + splData.get( i ) ) ;
+            }
+            else {
+                sparklineData.add( splData.get( i ) ) ;
+            }
+        }
     }
 }
