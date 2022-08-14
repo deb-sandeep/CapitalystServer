@@ -13,8 +13,10 @@ import org.apache.log4j.Logger ;
 import com.sandy.capitalyst.server.api.equity.vo.EquityTxnVO ;
 import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityDailyGainRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 
 class EquityLot {
     
@@ -75,6 +77,9 @@ public class EquityHoldingVOBuilder {
         IndividualEquityHoldingVO holdingVO = new IndividualEquityHoldingVO( holding ) ;
         List<EquityLot> lots = processTxns( holdingVO, txns ) ;
         
+        EquityMasterRepo emRepo = getBean( EquityMasterRepo.class ) ;
+        EquityMaster em = emRepo.findByIsin( holdingVO.getIsin() ) ;
+        
         int totalQuantityLeft = 0 ;
         for( EquityLot lot : lots ) {
             if( lot.getQuantityLeft() > 0 ) {
@@ -86,7 +91,7 @@ public class EquityHoldingVOBuilder {
         holdingVO.setLtcgQty( computeLTCGQty( lots ) ) ;
         holdingVO.computeTax() ;
         holdingVO.setSparklineData( getSparklineData() ) ;
-        
+        holdingVO.setDetailUrl( em.getDetailUrl() ) ;
         
         if( totalQuantityLeft != holding.getQuantity() ) {
             // This implies some transactions are missing which needs to be

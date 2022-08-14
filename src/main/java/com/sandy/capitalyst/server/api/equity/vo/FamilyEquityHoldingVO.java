@@ -18,6 +18,7 @@ public class FamilyEquityHoldingVO {
     private String isin             = null ;
     private float  currentMktPrice  = 0.0f ;
     private Date   lastUpdate       = null ;
+    private String detailUrl        = null ;
     
     // Aggregate quantities
     private int    quantity         = 0 ;
@@ -46,6 +47,7 @@ public class FamilyEquityHoldingVO {
         this.isin            = holding.getIsin() ;
         this.currentMktPrice = holding.getCurrentMktPrice() ;
         this.lastUpdate      = holding.getLastUpdate() ;
+        this.detailUrl       = holding.getDetailUrl() ;
         
         addIndividualHoldingVO( holding ) ;
     }

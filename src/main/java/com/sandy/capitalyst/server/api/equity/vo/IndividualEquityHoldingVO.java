@@ -21,6 +21,8 @@ public class IndividualEquityHoldingVO extends EquityHolding {
     private float pat              = 0 ; // Profit after tax
     private float patPct           = 0 ; // Profit after tax percentage
     
+    private String detailUrl       = null ;
+    
     private List<EquityTxnVO> txns = new ArrayList<>() ;
     
     private List<Integer> sparklineData = null ;

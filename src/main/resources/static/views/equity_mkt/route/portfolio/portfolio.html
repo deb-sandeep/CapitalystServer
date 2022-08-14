@@ -14,6 +14,7 @@
                     </span>
                 </th>
                 <th ng-if="holdingType == 'Individual'">Owner</th>
+                <th></th>
                 <th>Company</th>
                 <th>Qty</th>
                 <th>Price</th>
@@ -45,6 +46,11 @@
                <td ng-if="holdingType == 'Individual'"
                    ng-dblclick="selectAllHoldingsForOwner( holding.ownerName )">
                     {{holding.ownerName}}
+               </td>
+               <td>
+                    <a ng-href="{{holding.detailUrl}}#advchart" target="_blank">
+                        <span class="glyphicon glyphicon-link"></span>
+                    </a>
                </td>
                <td ng-dblclick="selectAllHoldingsForSymbol( holding.symbolIcici )"
                    style="font-size:11px;">
@@ -83,8 +89,8 @@
         
         <tfoot>
             <tr class="success">
-                <th ng-if="holdingType == 'Individual'" colspan="7"></th>
-                <th ng-if="holdingType == 'Family'"     colspan="6"></th>
+                <th ng-if="holdingType == 'Individual'" colspan="8"></th>
+                <th ng-if="holdingType == 'Family'"     colspan="7"></th>
                 <th class="fixed-font amt">{{totalValueAtCost | amt}}</th>
                 <th class="fixed-font amt">{{totalValueAtNav | amt}}</th>
                 <th class="fixed-font amt">{{totalPAT | amt}}</th>
@@ -94,8 +100,8 @@
                 <th></th>
             </tr>
             <tr class="success">
-                <th ng-if="holdingType == 'Individual'" colspan="7"></th>
-                <th ng-if="holdingType == 'Family'"     colspan="6"></th>
+                <th ng-if="holdingType == 'Individual'" colspan="8"></th>
+                <th ng-if="holdingType == 'Family'"     colspan="7"></th>
                 <th class="fixed-font amt">{{valueAtCostOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{redemptionValueOfSelectedHoldings | amt}}</th>
                 <th class="fixed-font amt">{{profitValueOfSelectedHoldings | amt}}</th>
