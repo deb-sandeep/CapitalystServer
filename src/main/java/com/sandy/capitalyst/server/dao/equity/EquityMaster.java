@@ -21,7 +21,7 @@ public class EquityMaster {
     private String symbol = null ;
     private String isin = null ;
     private String name = null ;
-    private String mfName = null ;
+    private String mcName = null ;
     
     @Column( name = "is_etf" )
     private boolean etf = false ;

@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.api.equity.vo.MCNameISIN ;
+import com.sandy.capitalyst.server.api.equity.vo.MCStockMeta ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 
-// @Post - /Equity/Master/MCNameISIN
+// @Post - /Equity/Master/MCStockMeta
 
 @RestController
 public class MCEquityNameISINMapController {
@@ -26,13 +26,13 @@ public class MCEquityNameISINMapController {
     @Autowired
     private EquityMasterRepo emRepo = null ;
     
-    @PostMapping( "/Equity/Master/MCNameISIN" ) 
+    @PostMapping( "/Equity/Master/MCStockMeta" ) 
     public ResponseEntity<APIResponse> updateMCNameISINMapping(
-                                @RequestBody List<MCNameISIN> mappings ) {
+                                @RequestBody List<MCStockMeta> mappings ) {
         try {
             log.debug( "Updating equity master with MC Name ISIN mappings" ) ;
             
-            for( MCNameISIN mapping : mappings ) {
+            for( MCStockMeta mapping : mappings ) {
                 saveMapping( mapping ) ;
             }
             
@@ -48,12 +48,13 @@ public class MCEquityNameISINMapController {
         }
     }
     
-    private void saveMapping( MCNameISIN mapping )
+    private void saveMapping( MCStockMeta mapping )
         throws Exception {
         
         EquityMaster em = emRepo.findByIsin( mapping.getIsin() ) ;
+        
         if( em != null ) {
-            em.setMfName( mapping.getMcName() ) ;
+            em.setMcName( mapping.getMcName() ) ;
             em.setDetailUrl( mapping.getDetailURL() ) ;
             emRepo.save( em ) ;
         }
