@@ -4,6 +4,7 @@ import java.util.ArrayList ;
 import java.util.List ;
 
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
+import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 
 import lombok.Data ;
 import lombok.EqualsAndHashCode ;
@@ -26,6 +27,8 @@ public class IndividualEquityHoldingVO extends EquityHolding {
     private List<EquityTxnVO> txns = new ArrayList<>() ;
     
     private List<Integer> sparklineData = null ;
+    
+    private EquityIndicators indicators = null ;
 
     public IndividualEquityHoldingVO( EquityHolding holding ) {
         super( holding ) ;

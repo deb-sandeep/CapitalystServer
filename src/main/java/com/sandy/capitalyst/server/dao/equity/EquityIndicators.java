@@ -1,14 +1,10 @@
 package com.sandy.capitalyst.server.dao.equity;
 
-import java.util.List ;
-
 import javax.persistence.Column ;
 import javax.persistence.Entity ;
 import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
-import javax.persistence.JoinColumn ;
-import javax.persistence.OneToMany ;
 import javax.persistence.Table ;
 
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators ;
@@ -34,6 +30,7 @@ public class EquityIndicators {
     private float  pb             = 0 ;
     private int    marketCap      = 0 ;
     private int    piotroskiScore = 0 ;
+    private float  currentPrice   = 0 ;
     
     private float sma5   = 0 ;
     private float sma10  = 0 ;
@@ -43,7 +40,7 @@ public class EquityIndicators {
     private float sma200 = 0 ;
     
     @Column( name = "sector_pe" )
-    private float  sectorPE = 0 ;
+    private float sectorPE = 0 ;
 
     @Column( name = "price_perf_1w" )
     private float pricePerf1W = 0 ;
@@ -72,10 +69,6 @@ public class EquityIndicators {
     private int communitySentimentSell = 0 ;
     private int communitySentimentHold = 0 ;
     
-    @OneToMany
-    @JoinColumn( name="isin" )
-    private List<EquityTechIndicator> techIndicators = null ;
-
     public EquityIndicators() {}
     
     public EquityIndicators( StockIndicators ind ) {
@@ -95,6 +88,7 @@ public class EquityIndicators {
         this.pb                     = ind.getPb() ;
         this.marketCap              = ind.getMarketCap() ;
         this.piotroskiScore         = ind.getPiotroskiScore() ;
+        this.currentPrice           = ind.getCurrentPrice() ;
         this.sma5                   = ind.getSma5() ;
         this.sma10                  = ind.getSma10() ;
         this.sma20                  = ind.getSma20() ;

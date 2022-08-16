@@ -27,6 +27,8 @@ public class StockIndicators {
     private int    marketCap      = 0 ;
     private int    piotroskiScore = 0 ;
     
+    private float currentPrice = 0 ;
+    
     private float sma5   = 0 ;
     private float sma10  = 0 ;
     private float sma20  = 0 ;

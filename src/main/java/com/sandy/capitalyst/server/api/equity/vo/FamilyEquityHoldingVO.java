@@ -4,6 +4,8 @@ import java.util.ArrayList ;
 import java.util.Date ;
 import java.util.List ;
 
+import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
+
 import lombok.Data ;
 import lombok.EqualsAndHashCode ;
 
@@ -39,6 +41,8 @@ public class FamilyEquityHoldingVO {
 
     private List<Integer> sparklineData = new ArrayList<>() ;
 
+    private EquityIndicators indicators = null ;
+
     public FamilyEquityHoldingVO( IndividualEquityHoldingVO holding ) {
         
         this.symbolIcici     = holding.getSymbolIcici() ;
@@ -48,6 +52,7 @@ public class FamilyEquityHoldingVO {
         this.currentMktPrice = holding.getCurrentMktPrice() ;
         this.lastUpdate      = holding.getLastUpdate() ;
         this.detailUrl       = holding.getDetailUrl() ;
+        this.indicators      = holding.getIndicators() ;
         
         addIndividualHoldingVO( holding ) ;
     }

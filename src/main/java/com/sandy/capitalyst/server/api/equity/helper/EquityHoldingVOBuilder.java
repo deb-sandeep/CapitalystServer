@@ -16,6 +16,7 @@ import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityDailyGainRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 
 class EquityLot {
@@ -77,7 +78,12 @@ public class EquityHoldingVOBuilder {
         IndividualEquityHoldingVO holdingVO = new IndividualEquityHoldingVO( holding ) ;
         List<EquityLot> lots = processTxns( holdingVO, txns ) ;
         
-        EquityMasterRepo emRepo = getBean( EquityMasterRepo.class ) ;
+        EquityMasterRepo        emRepo  = null ;
+        EquityIndicatorsRepo    eiRepo  = null ;
+        
+        emRepo  = getBean( EquityMasterRepo.class ) ;
+        eiRepo  = getBean( EquityIndicatorsRepo.class ) ;
+
         EquityMaster em = emRepo.findByIsin( holdingVO.getIsin() ) ;
         
         int totalQuantityLeft = 0 ;
@@ -92,6 +98,7 @@ public class EquityHoldingVOBuilder {
         holdingVO.computeTax() ;
         holdingVO.setSparklineData( getSparklineData() ) ;
         holdingVO.setDetailUrl( em.getDetailUrl() ) ;
+        holdingVO.setIndicators( eiRepo.findByIsin( holding.getIsin() ) ) ;
         
         if( totalQuantityLeft != holding.getQuantity() ) {
             // This implies some transactions are missing which needs to be

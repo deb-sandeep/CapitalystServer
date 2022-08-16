@@ -26,6 +26,7 @@
                 <th class="js-sort-number">PAT %</th>
                 <th class="js-sort-number">D-Gain</th>
                 <th class="js-sort-none">Trend</th>
+                <th></th>
                 <th>
                     <span class="glyphicon glyphicon-refresh"
                           ng-click="triggerJob()">
@@ -83,6 +84,34 @@
                <td>
                   <span id="spark_{{$index}}"></span>
                </td>
+               <td style="text-align:center;">
+                   <span ng-if="holding.indicators.trend == 'VERY BULLISH'"
+                         class="glyphicon glyphicon-arrow-up"
+                         style="color:green;"></span>
+                         
+                   <span ng-if="holding.indicators.trend == 'VERY BULLISH'"
+                         class="glyphicon glyphicon-arrow-up"
+                         style="color:green;"></span>
+                         
+                   <span ng-if="holding.indicators.trend == 'BULLISH'"
+                         class="glyphicon glyphicon-arrow-up"
+                         style="color:green;"></span>
+                         
+                   <span ng-if="holding.indicators.trend == 'NEUTRAL'"
+                         class="glyphicon glyphicon-resize-horizontal"></span>
+                         
+                   <span ng-if="holding.indicators.trend == 'BEARISH'"
+                         class="glyphicon glyphicon-arrow-down"
+                         style="color:red;"></span>
+                         
+                   <span ng-if="holding.indicators.trend == 'VERY BEARISH'"
+                         class="glyphicon glyphicon-arrow-down"
+                         style="color:red;"></span>
+                         
+                   <span ng-if="holding.indicators.trend == 'VERY BEARISH'"
+                         class="glyphicon glyphicon-arrow-down"
+                         style="color:red;"></span>
+               </td>
                <td>{{holding.lastUpdate | date : "dd MMM" }}</td>
             </tr>
         </tbody>
@@ -96,8 +125,7 @@
                 <th class="fixed-font amt">{{totalPAT | amt}}</th>
                 <th class="fixed-font amt">{{totalPATPct | amt}}%</th>
                 <th class="fixed-font amt">{{totalDayGain | amt}}</th>
-                <th></th>
-                <th></th>
+                <th colspan="3"></th>
             </tr>
             <tr class="success">
                 <th ng-if="holdingType == 'Individual'" colspan="8"></th>
@@ -109,8 +137,7 @@
                     {{(profitValueOfSelectedHoldings/valueAtCostOfSelectedHoldings)*100 | number:0}}%
                 </th>
                 <th class="fixed-font amt">{{dayGainOfSelectedHoldings | amt}}</th>
-                <th></th>
-                <th></th>
+                <th colspan="3"></th>
             </tr>
         </tfoot>
     </table>
