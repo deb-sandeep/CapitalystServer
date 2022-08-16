@@ -19,9 +19,9 @@ import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 // @Post - /Equity/Master/MCStockMeta
 
 @RestController
-public class MCEquityNameISINMapController {
+public class MCEquityMetaMapController {
 
-    private static final Logger log = Logger.getLogger( MCEquityNameISINMapController.class ) ;
+    private static final Logger log = Logger.getLogger( MCEquityMetaMapController.class ) ;
     
     @Autowired
     private EquityMasterRepo emRepo = null ;
