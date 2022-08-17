@@ -13,6 +13,7 @@
         <table class="pure-table pure-table-bordered">
            <thead>
                <tr>
+                   <th></th>
                    <th ng-if="holdingType == 'Family'"
                        style="width:100px;">
                    Owner
@@ -30,6 +31,11 @@
            <tbody>
               <tr ng-repeat="txn in txns | orderBy:'-'"
                   ng-class="ltcgRowClass(txn)">
+	              <td>
+	                 <input type="checkbox" 
+	                        ng-model="txn.selected"
+	                        ng-change="txnSelectionChanged( txn )"/>
+	              </td>
                   <td ng-if="holdingType == 'Family'">
                       {{txn.ownerName}}
                   </td>
@@ -61,6 +67,7 @@
            </tbody>
            <tfoot>
               <tr style="background-color: #e0e0e0;">
+                  <th></th>
                   <th ng-if="holdingType == 'Family'"></th>
                   <th class="numeric"></th>
                   <th class="numeric">
@@ -80,6 +87,30 @@
                   </th>
                   <th class="numeric">
                       {{(totalPAT/totalCost)*100 | number : 1 }}%
+                  </th>
+                  <th></th>
+              </tr>
+              <tr style="background-color: #e0e0e0;">
+                  <th></th>
+                  <th ng-if="holdingType == 'Family'"></th>
+                  <th class="numeric"></th>
+                  <th class="numeric">
+                      {{selectedTxnsTotalQty | number : 0}}
+                  </th>
+                  <th class="numeric">
+                      {{selectedTxnsAvgCost | number : 1}}
+                  </th>
+                  <th class="numeric">
+                      {{selectedTxnsBuyCost | amt }}
+                  </th>
+                  <th class="numeric">
+                      {{selectedTxnsMktValue | amt }}
+                  </th>
+                  <th class="numeric">
+                      {{selectedTxnsPAT | amt }}
+                  </th>
+                  <th class="numeric">
+                      {{selectedTxnsPATPct | number : 1 }}%
                   </th>
                   <th></th>
               </tr>

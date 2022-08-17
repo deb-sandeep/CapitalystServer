@@ -15,7 +15,16 @@ capitalystNgApp.controller( 'TxnsDisplayDialogController', function( $scope ) {
     $scope.totalValuePostTax = 0 ;
     $scope.totalPAT = 0 ;
     
+    // Aggregate value of selectedt transactions
+    $scope.selectedTxnsTotalQty = 0 ;
+    $scope.selectedTxnsAvgCost = 0 ;
+    $scope.selectedTxnsBuyCost = 0 ;
+    $scope.selectedTxnsMktValue = 0 ;
+    $scope.selectedTxnsPAT = 0 ;
+    $scope.selectedTxnsPATPct = 0 ;
+    
     function clearState() {
+        
         $scope.holding = null ;
         $scope.symbol = null ;
         $scope.companyName = null ;
@@ -27,8 +36,20 @@ capitalystNgApp.controller( 'TxnsDisplayDialogController', function( $scope ) {
         $scope.avgCostPrice = 0 ;
         $scope.totalValuePostTax = 0 ;
         $scope.totalPAT = 0 ;
+        
+        clearAggregateValueState() ;
     }
     
+    function clearAggregateValueState() {
+        
+        $scope.selectedTxnsTotalQty = 0 ;
+        $scope.selectedTxnsAvgCost = 0 ;
+        $scope.selectedTxnsBuyCost = 0 ;
+        $scope.selectedTxnsMktValue = 0 ;
+        $scope.selectedTxnsPAT = 0 ;
+        $scope.selectedTxnsPATPct = 0 ;
+    }
+        
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading TxnsDisplayDialogController" ) ;
@@ -51,6 +72,10 @@ capitalystNgApp.controller( 'TxnsDisplayDialogController', function( $scope ) {
             return "ltcg_row" ;
         }
         return null ;
+    }
+    
+    $scope.txnSelectionChanged = function( txn ) {
+        reCalculateSelectionTotals() ;
     }
     
     // --- [END] Scope functions
@@ -93,10 +118,15 @@ capitalystNgApp.controller( 'TxnsDisplayDialogController', function( $scope ) {
     } 
     
     function extractTxns( ownerName, txns ) {
+        
         for( var i=0; i<txns.length; i++ ) {
+            
             var txn = txns[i] ;
+            
             // Injecting new attribute
             txn.ownerName = ownerName ;
+            txn.selected = txn.ltcgQuailifed ;
+            
             $scope.txns.push( txn ) ;
             
             $scope.totalQuantity += txn.quantityLeft ;
@@ -105,6 +135,34 @@ capitalystNgApp.controller( 'TxnsDisplayDialogController', function( $scope ) {
             $scope.totalValuePostTax += txn.valuePostTax ;
             $scope.totalPAT += txn.pat ;
         }
+        
+        reCalculateSelectionTotals() ;
     }
+    
+    function reCalculateSelectionTotals() {
+        
+        clearAggregateValueState() ;
+        
+        for( var i=0; i<$scope.txns.length; i++ ) {
+            var txn = $scope.txns[i] ;
+            
+            if( txn.selected ) {
+                
+                $scope.selectedTxnsTotalQty += txn.quantityLeft ;
+                $scope.selectedTxnsBuyCost  += txn.valueAtCost ;
+                $scope.selectedTxnsMktValue += txn.valuePostTax ;
+
+                $scope.selectedTxnsAvgCost = $scope.selectedTxnsBuyCost /
+                                             $scope.selectedTxnsTotalQty ;
+                                             
+                $scope.selectedTxnsPAT = $scope.selectedTxnsMktValue - 
+                                         $scope.selectedTxnsBuyCost ;
+                                         
+                $scope.selectedTxnsPATPct = ( $scope.selectedTxnsPAT / 
+                                              $scope.selectedTxnsBuyCost ) * 100 ;
+            }
+        }
+    }
+    
     // ------------------- Server comm functions -----------------------------
 } ) ;
