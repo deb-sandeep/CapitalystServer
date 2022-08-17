@@ -78,7 +78,8 @@
                    ng-class="getAmtClass(holding.patPct)">
                    {{holding.patPct | amt}}%
                </td>
-               <td class="fixed-font amt">
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass(holding.dayGain)">
                    {{holding.dayGain | amt}}
                </td>
                <td>
