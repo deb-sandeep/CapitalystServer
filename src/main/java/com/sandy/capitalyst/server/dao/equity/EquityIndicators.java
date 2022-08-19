@@ -61,6 +61,7 @@ public class EquityIndicators {
     private float pricePerfYTD = 0 ;
     
     private String trend = null ;
+    private String prevTrend = null ;
     private int    mcEssentialScore = 0 ;
     private String mcInsightShort = null ;
     private String mcInsightLong = null ;

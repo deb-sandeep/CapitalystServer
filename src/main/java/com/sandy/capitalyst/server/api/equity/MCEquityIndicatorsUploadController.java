@@ -72,7 +72,9 @@ public class MCEquityIndicatorsUploadController {
             eiDao = new EquityIndicators( ind ) ;
         }
         else {
+            String prevTrend = eiDao.getTrend() ;
             eiDao.copy( ind ) ;
+            eiDao.setPrevTrend( prevTrend ) ;
         }
         eiRepo.save( eiDao ) ;
         

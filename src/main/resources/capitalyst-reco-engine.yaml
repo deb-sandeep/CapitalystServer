@@ -1,0 +1,14 @@
+
+filterCfgs:
+   - id : MarketCapFilter
+     priority : 100
+     range : 10:20
+     attributes:
+        lowerLimit : 100
+        upperLimit : 200
+
+attributeComputerCfgs:
+   - id : TestAttributeComputer
+     weight : 10
+     attributes:
+        name : Sandeep

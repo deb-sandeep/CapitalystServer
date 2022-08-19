@@ -2,6 +2,7 @@ capitalystNgApp.controller( 'PortfolioController',
     function( $scope, $http ) {
     
     // ---------------- Local variables --------------------------------------
+    var curSparklineView = "Discrete" ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Equity Portfolio" ;
@@ -93,6 +94,24 @@ capitalystNgApp.controller( 'PortfolioController',
         $( '#txnsDisplayDialog' ).modal( 'show' ) ;
     }
     
+    $scope.toggleSparkline = function() {
+        
+        curSparklineView = ( curSparklineView == "Discrete" ) ? 
+                           "Cumulative" : "Discrete" ;
+
+        for( var i=0; i<$scope.equityHoldings.length; i++ ) {
+            var eh = $scope.equityHoldings[i] ;
+            
+            if( curSparklineView == "Cumulative" ) {
+                eh.visibleSparklineData = eh.cumulativeSparklineData ;
+            }
+            else {
+                eh.visibleSparklineData = eh.sparklineData ;
+            }
+        }
+        paintSparklines() ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -141,6 +160,8 @@ capitalystNgApp.controller( 'PortfolioController',
                     // These are the extra attributes we are adding to the holding
                     holding.selected = false ;
                     holding.visible = holding.quantity > 0 ;
+                    holding.cumulativeSparklineData = getCumulativeSparklineData( holding ) ;
+                    holding.visibleSparklineData = holding.sparklineData ;
                     
                     $scope.equityHoldings.push( holding ) ;
                 }
@@ -159,11 +180,28 @@ capitalystNgApp.controller( 'PortfolioController',
         }) ;
     }
     
+    function getCumulativeSparklineData( holding ) {
+        
+        var cumData = [] ;
+        var lastData = 0 ;
+        var curData = 0 ;
+        
+        for( var i=holding.sparklineData.length-1; i>=0; i-- ) {
+            curData = lastData + holding.sparklineData[i] ;
+            cumData.push( curData ) ;
+            lastData = curData ; 
+        }
+        
+        cumData.reverse() ;
+        
+        return cumData ;
+    }
+    
     function paintSparklines() {
-        console.log( "Painting sparklines." ) ;
+        
         for( var i=0; i<$scope.equityHoldings.length; i++ ) {
             var eh = $scope.equityHoldings[i] ;
-            $( '#spark_' + i ).sparkline( eh.sparklineData, {
+            $( '#spark_' + i ).sparkline( eh.visibleSparklineData, {
                 type: 'bar',
                 barColor : 'green',
                 negBarColor : 'red' 
