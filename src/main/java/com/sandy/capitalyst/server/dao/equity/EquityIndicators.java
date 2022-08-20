@@ -22,12 +22,17 @@ public class EquityIndicators {
     
     private String isin           = null ;
     private String symbolNse      = null ;
+    private String sector         = null ;
     private float  beta           = 0 ;
     private float  high52         = 0 ;
     private float  low52          = 0 ;
     private float  eps            = 0 ;
     private float  pe             = 0 ;
     private float  pb             = 0 ;
+    private float  dividendYeild  = 0 ;
+    private float  cagrRevenue    = 0 ;
+    private float  cagrNetProfit  = 0 ;
+    private float  cagrEbit       = 0 ;    
     private int    marketCap      = 0 ;
     private int    piotroskiScore = 0 ;
     private float  currentPrice   = 0 ;
@@ -80,6 +85,7 @@ public class EquityIndicators {
         
         this.isin                   = ind.getIsin() ;
         this.symbolNse              = ind.getSymbolNse() ;
+        this.sector                 = ind.getSector() ;
         this.beta                   = ind.getBeta() ;
         this.high52                 = ind.getHigh52() ;
         this.low52                  = ind.getLow52() ;
@@ -87,6 +93,10 @@ public class EquityIndicators {
         this.pe                     = ind.getPe() ;
         this.sectorPE               = ind.getSectorPE() ;
         this.pb                     = ind.getPb() ;
+        this.dividendYeild          = ind.getDividendYeild() ;
+        this.cagrRevenue            = ind.getCagrRevenue() ;
+        this.cagrNetProfit          = ind.getCagrNetProfit() ;
+        this.cagrEbit               = ind.getCagrEbit() ;
         this.marketCap              = ind.getMarketCap() ;
         this.piotroskiScore         = ind.getPiotroskiScore() ;
         this.currentPrice           = ind.getCurrentPrice() ;
