@@ -9,16 +9,30 @@ capitalystNgApp.controller( 'PortfolioController',
     $scope.$parent.activeModuleId = "portfolio" ;
     
     $scope.equityHoldings = [] ;
-    $scope.totalValueAtCost = 0 ;
-    $scope.totalValueAtNav = 0 ;
-    $scope.totalPAT = 0 ;
-    $scope.totalDayGain = 0 ;
-    $scope.totalPATPct = 0 ;
     
-    $scope.valueAtCostOfSelectedHoldings = 0 ;
-    $scope.redemptionValueOfSelectedHoldings = 0 ;
-    $scope.profitValueOfSelectedHoldings = 0 ;
-    $scope.dayGainOfSelectedHoldings = 0 ;
+    $scope.allTotal = {
+        valueAtCost : 0,
+        mktValue : 0,
+        pat : 0,
+        sellValue : 0,
+        patPct : 0,
+        dayGain : 0,
+        discreteSLData : [],
+        cumulativeSLData : [],
+        visibleSLData : null
+    } ;
+    
+    $scope.selTotal = {
+        valueAtCost : 0,
+        mktValue : 0,
+        pat : 0,
+        sellValue : 0,
+        patPct : 0,
+        dayGain : 0,
+        discreteSLData : [],
+        cumulativeSLData : [],
+        visibleSLData : null
+    } ;
     
     $scope.holdingType = "Family" ;
     $scope.holdingForTxnsDisplay = null ;
@@ -27,6 +41,7 @@ capitalystNgApp.controller( 'PortfolioController',
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading EquityController" ) ;
     fetchEquityHoldingsFromServer() ;
+    
     // --- [END] Controller initialization -----------------------------------
     
     // -----------------------------------------------------------------------
@@ -34,16 +49,9 @@ capitalystNgApp.controller( 'PortfolioController',
     $scope.changeHoldingType = function( newType ) {
         
         $scope.holdingType = newType ;
-        $scope.totalValueAtCost = 0 ;
-        $scope.totalValueAtNav = 0 ;
-        $scope.totalPAT = 0 ;
-        $scope.totalDayGain = 0 ;
-        $scope.totalPATPct = 0 ;
         
-        $scope.valueAtCostOfSelectedHoldings = 0 ;
-        $scope.redemptionValueOfSelectedHoldings = 0 ;
-        $scope.profitValueOfSelectedHoldings = 0 ;
-        $scope.dayGainOfSelectedHoldings = 0 ;
+        resetSelTotals() ;
+        resetAllTotals() ;
 
         fetchEquityHoldingsFromServer() ;
     }
@@ -63,7 +71,7 @@ capitalystNgApp.controller( 'PortfolioController',
     }
     
     $scope.holdingSelectionChanged = function( holding ) {
-        reCalculateSelectionTotals() ;
+        calculateTotals( true ) ;
     }
     
     $scope.selectAllHoldingsForOwner = function( ownerName ) {
@@ -71,7 +79,7 @@ capitalystNgApp.controller( 'PortfolioController',
             var holding = $scope.equityHoldings[i] ;
             holding.selected = ( holding.ownerName == ownerName ) ;
         }
-        reCalculateSelectionTotals() ;
+        calculateTotals( true ) ;
     }
     
     $scope.selectAllHoldingsForSymbol = function( symbolIcici ) {
@@ -79,7 +87,7 @@ capitalystNgApp.controller( 'PortfolioController',
             var holding = $scope.equityHoldings[i] ;
             holding.selected = ( holding.symbolIcici == symbolIcici ) ;
         }
-        reCalculateSelectionTotals() ;
+        calculateTotals( true ) ;
     }
     
     $scope.triggerJob = function() {
@@ -109,6 +117,15 @@ capitalystNgApp.controller( 'PortfolioController',
                 eh.visibleSparklineData = eh.sparklineData ;
             }
         }
+        
+        $scope.allTotal.visibleSLData = ( curSparklineView == "Discrete" ) ?
+                                        $scope.allTotal.discreteSLData :
+                                        $scope.allTotal.cumulativeSLData ;
+        
+        $scope.selTotal.visibleSLData = ( curSparklineView == "Discrete" ) ?
+                                        $scope.selTotal.discreteSLData :
+                                        $scope.selTotal.cumulativeSLData ;
+
         paintSparklines() ;
     }
     
@@ -117,21 +134,93 @@ capitalystNgApp.controller( 'PortfolioController',
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     
-    function reCalculateSelectionTotals() {
+    function resetState() {
         
-        $scope.valueAtCostOfSelectedHoldings = 0 ;
-        $scope.redemptionValueOfSelectedHoldings = 0 ;
-        $scope.profitValueOfSelectedHoldings = 0 ;
-        $scope.dayGainOfSelectedHoldings = 0 ;
+        $scope.holdingType           = "Family" ;
+        $scope.holdingForTxnsDisplay = null ;
+        
+        resetAllTotals() ;
+        resetSelTotals() ;
+        
+        $scope.allTotal.visibleSLData = $scope.selTotal.discreteSLData ;
+        $scope.selTotal.visibleSLData = $scope.selTotal.discreteSLData ;
+    }
+    
+    function resetSelTotals() {
+        
+        $scope.selTotal.valueAtCost             = 0 ;
+        $scope.selTotal.mktValue                = 0 ;
+        $scope.selTotal.pat                     = 0 ;
+        $scope.selTotal.sellValue               = 0 ;
+        $scope.selTotal.patPct                  = 0 ;
+        $scope.selTotal.dayGain                 = 0 ;
+        $scope.selTotal.discreteSLData.length   = 0 ;
+        $scope.selTotal.cumulativeSLData.length = 0 ;
+    }
+    
+    function resetAllTotals() {
+        
+        $scope.allTotal.valueAtCost             = 0 ;
+        $scope.allTotal.mktValue                = 0 ;
+        $scope.allTotal.pat                     = 0 ;
+        $scope.allTotal.sellValue               = 0 ;
+        $scope.allTotal.patPct                  = 0 ;
+        $scope.allTotal.dayGain                 = 0 ;
+        $scope.allTotal.discreteSLData.length   = 0 ;
+        $scope.allTotal.cumulativeSLData.length = 0 ;
+    }
+    
+    function calculateTotals( selected ) {
+        
+        resetSelTotals() ;
+        
+        var total = selected ? $scope.selTotal : $scope.allTotal ;
         
         for( var i=0; i<$scope.equityHoldings.length; i++ ) {
+            
             var holding = $scope.equityHoldings[i] ;
-            if( holding.selected ) {
-                $scope.valueAtCostOfSelectedHoldings += holding.valueAtCost ;
-                $scope.redemptionValueOfSelectedHoldings += holding.valueAtMktPrice ;
-                $scope.profitValueOfSelectedHoldings += holding.pat ;
-                $scope.dayGainOfSelectedHoldings += holding.dayGain ;
+            
+            if( selected && !holding.selected ) {
+                continue ;
             }
+            
+            total.valueAtCost += holding.valueAtCost ;
+            total.mktValue    += holding.valueAtMktPrice ;
+            total.pat         += holding.pat ;
+            total.dayGain     += holding.dayGain ;
+            
+            for( var j=0; j<holding.sparklineData.length; j++ ) {
+                var slData = holding.sparklineData[j] ;
+                
+                if( total.discreteSLData.length > j ) {
+                    total.discreteSLData[j] += slData ;
+                }
+                else {
+                    total.discreteSLData.push( slData ) ;
+                }
+            }
+        }
+        
+        total.sellValue = total.mktValue + total.pat ;
+        total.cumulativeSLData = getCumulativeSLData( total.discreteSLData ) ;
+        
+        if( total.valueAtCost == 0 ) {
+            total.patPct = 0 ;
+        }
+        else {
+            total.patPct = ( total.pat / total.valueAtCost ) * 100 ;
+        }
+        
+        if( selected ) {
+            $scope.selTotal.visibleSLData = ( curSparklineView == "Discrete" ) ?
+                                            $scope.selTotal.discreteSLData :
+                                            $scope.selTotal.cumulativeSLData ;
+                                            
+            $( '#spark_sel' ).sparkline( $scope.selTotal.visibleSLData, {
+                type: 'bar',
+                barColor : 'green',
+                negBarColor : 'red' 
+            } ) ;
         }
     }
     
@@ -152,23 +241,19 @@ capitalystNgApp.controller( 'PortfolioController',
                     
                     var holding = response.data[i] ;
                     
-                    $scope.totalValueAtCost += holding.valueAtCost ;
-                    $scope.totalValueAtNav += holding.valueAtMktPrice ;
-                    $scope.totalPAT += holding.pat ;
-                    $scope.totalDayGain += holding.dayGain ;
-                    
                     // These are the extra attributes we are adding to the holding
                     holding.selected = false ;
                     holding.visible = holding.quantity > 0 ;
-                    holding.cumulativeSparklineData = getCumulativeSparklineData( holding ) ;
+                    holding.cumulativeSparklineData = getCumulativeSLData( holding.sparklineData ) ;
                     holding.visibleSparklineData = holding.sparklineData ;
                     
                     $scope.equityHoldings.push( holding ) ;
                 }
                 
-                $scope.totalPATPct = Math.ceil( ( $scope.totalPAT / 
-                                                  $scope.totalValueAtCost ) * 100 ) ;
-                                                  
+                $scope.allTotal.visibleSLData = $scope.allTotal.discreteSLData ;
+                $scope.selTotal.visibleSLData = $scope.selTotal.discreteSLData ;
+                
+                calculateTotals( false ) ;
                 setTimeout( paintSparklines, 100 ) ;
             }, 
             function(){
@@ -180,14 +265,14 @@ capitalystNgApp.controller( 'PortfolioController',
         }) ;
     }
     
-    function getCumulativeSparklineData( holding ) {
+    function getCumulativeSLData( discreteSLdata ) {
         
         var cumData = [] ;
         var lastData = 0 ;
         var curData = 0 ;
         
-        for( var i=holding.sparklineData.length-1; i>=0; i-- ) {
-            curData = lastData + holding.sparklineData[i] ;
+        for( var i=discreteSLdata.length-1; i>=0; i-- ) {
+            curData = lastData + discreteSLdata[i] ;
             cumData.push( curData ) ;
             lastData = curData ; 
         }
@@ -207,6 +292,18 @@ capitalystNgApp.controller( 'PortfolioController',
                 negBarColor : 'red' 
             } ) ;
         }
+        
+        $( '#spark_tot' ).sparkline( $scope.allTotal.visibleSLData, {
+            type: 'bar',
+            barColor : 'green',
+            negBarColor : 'red' 
+        } ) ;
+        
+        $( '#spark_sel' ).sparkline( $scope.selTotal.visibleSLData, {
+            type: 'bar',
+            barColor : 'green',
+            negBarColor : 'red' 
+        } ) ;
     }
     
     function triggerJob( jobName ) {
