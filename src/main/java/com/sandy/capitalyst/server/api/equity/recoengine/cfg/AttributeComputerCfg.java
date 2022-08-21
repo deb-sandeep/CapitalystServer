@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.api.equity.market.recoengine.cfg;
+package com.sandy.capitalyst.server.api.equity.recoengine.cfg;
 
 import lombok.Data ;
 import lombok.EqualsAndHashCode ;

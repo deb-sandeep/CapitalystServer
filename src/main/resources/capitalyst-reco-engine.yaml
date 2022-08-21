@@ -1,11 +1,22 @@
 
-filterCfgs:
-   - id : MarketCapFilter
+screenerCfgs:
+   - id : HoldingScreener
      priority : 100
-     range : 10:20
-     attributes:
-        lowerLimit : 100
-        upperLimit : 200
+     
+   - id : ManualInclusionScreener
+     priority : 99
+     attributes :
+        nseSymbols : LUPIN, ASHOKLEY, ISEC
+        
+   - id : IndicatorScreener
+     priority : 90
+     attributes :
+        includedMCInsights : MID RANGE, MID-RANGE, STRONG, WEAK
+        minMcEssentialScore : 50
+        minMarketCap : 20000
+        betaRange : 0.3:1.7
+        minCagrEbit : 5
+        minPiotroskiScore : 5
 
 attributeComputerCfgs:
    - id : TestAttributeComputer

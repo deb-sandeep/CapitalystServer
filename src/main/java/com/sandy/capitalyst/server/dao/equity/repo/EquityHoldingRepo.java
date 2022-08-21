@@ -28,6 +28,18 @@ public interface EquityHoldingRepo
     )
     List<EquityHolding> findNonZeroHoldings() ;
     
+    @Query( value =   
+            "SELECT "
+          + "    eh "
+          + "FROM "
+          + "    EquityHolding eh "
+          + "WHERE "
+          + "    eh.quantity >0 AND "
+          + "    eh.symbolNse = :symbolNse "
+    )
+    List<EquityHolding> findNonZeroHoldingsForNSESymbol( 
+                                      @Param( "symbolNse" ) String symbolNse ) ;
+
     @Transactional
     @Modifying( clearAutomatically = true )
     @Query( 

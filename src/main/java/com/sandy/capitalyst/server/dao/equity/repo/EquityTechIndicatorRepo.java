@@ -12,4 +12,6 @@ public interface EquityTechIndicatorRepo
     EquityTechIndicator findByIsinAndName( String isin, String name ) ;
 
     List<EquityTechIndicator> findByIsin( String isin ) ;
+    
+    List<EquityTechIndicator> findBySymbolNse( String symbolNse ) ;
 }

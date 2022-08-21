@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.api.equity.market.recoengine;
+package com.sandy.capitalyst.server.api.equity.recoengine;
 
 import lombok.Data ;
 

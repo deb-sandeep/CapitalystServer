@@ -8,4 +8,6 @@ public interface EquityIndicatorsRepo
     extends CrudRepository<EquityIndicators, Integer> {
  
     EquityIndicators findByIsin( String isin ) ;
+    
+    EquityIndicators findBySymbolNse( String symbolNse ) ;
 }
