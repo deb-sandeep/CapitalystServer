@@ -6,12 +6,12 @@ screenerCfgs:
    - id : ManualInclusionScreener
      priority : 99
      attributes :
-        nseSymbols : LUPIN, ASHOKLEY, ISEC
+        nseSymbols : ATGL, ADANIPORTS, ADANIPOWER, ADANITRANS, ADANIGREEN
         
    - id : IndicatorScreener
      priority : 90
      attributes :
-        includedMCInsights : MID RANGE, MID-RANGE, STRONG, WEAK
+        includedMCInsights : MID RANGE, MID-RANGE, STRONG
         minMcEssentialScore : 50
         minMarketCap : 20000
         betaRange : 0.3:1.7

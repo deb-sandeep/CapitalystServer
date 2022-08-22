@@ -13,18 +13,17 @@ import lombok.EqualsAndHashCode ;
 @EqualsAndHashCode(callSuper = false)
 public class IndividualEquityHoldingVO extends EquityHolding {
     
-    private float valueAtCost      = 0 ;
-    private float valueAtMktPrice  = 0 ;
-    private int   ltcgQty          = 0 ;
-    private float taxAmount        = 0 ;
-    private float sellBrokerage    = 0 ;
-    private float valuePostTax     = 0 ;
-    private float pat              = 0 ; // Profit after tax
-    private float patPct           = 0 ; // Profit after tax percentage
-    
+    private float  valueAtCost     = 0 ;
+    private float  valueAtMktPrice = 0 ;
+    private int    ltcgQty         = 0 ;
+    private float  taxAmount       = 0 ;
+    private float  sellBrokerage   = 0 ;
+    private float  valuePostTax    = 0 ;
+    private float  pat             = 0 ; // Profit after tax
+    private float  patPct          = 0 ; // Profit after tax percentage
     private String detailUrl       = null ;
     
-    private List<EquityTxnVO> txns = new ArrayList<>() ;
+    private List<EquityBuyTxnVO> buyTxnVOList = new ArrayList<>() ;
     
     private List<Integer> sparklineData = null ;
     
@@ -40,24 +39,24 @@ public class IndividualEquityHoldingVO extends EquityHolding {
         this.valueAtMktPrice = (int)(super.getCurrentMktPrice() * super.getQuantity()) ;
     }
 
-    public void addEquityTxnVO( EquityTxnVO txnVO ) {
+    public void addEquityBuyTxnVO( EquityBuyTxnVO txnVO ) {
         
-        EquityTxnVO dayAggTxn = getDayAggregateTxn( txnVO ) ;
+        EquityBuyTxnVO dayAggTxn = getDayAggregateTxn( txnVO ) ;
         if( dayAggTxn == null ) {
-            dayAggTxn = new EquityTxnVO( txnVO ) ;
-            this.txns.add( dayAggTxn ) ;
+            dayAggTxn = new EquityBuyTxnVO( txnVO ) ;
+            this.buyTxnVOList.add( dayAggTxn ) ;
         }
         else {
             dayAggTxn.aggregate( txnVO ) ;
         }
     }
     
-    private EquityTxnVO getDayAggregateTxn( EquityTxnVO vo ) {
+    private EquityBuyTxnVO getDayAggregateTxn( EquityBuyTxnVO vo ) {
         
         String voOwner = vo.getHolding().getOwnerName() ;
         String voScrip = vo.getHolding().getSymbolNse() ;
         
-        for( EquityTxnVO txn : txns ) {
+        for( EquityBuyTxnVO txn : buyTxnVOList ) {
             
             String txnOwner = txn.getHolding().getOwnerName() ;
             String txnScrip = txn.getHolding().getSymbolNse() ;
@@ -75,7 +74,7 @@ public class IndividualEquityHoldingVO extends EquityHolding {
         return null ;
     }
     
-    public void computeTax() {
+    public void computeTaxOnSell() {
         
         if( getQuantity() <= 0 ) {
             return ;
@@ -108,12 +107,12 @@ public class IndividualEquityHoldingVO extends EquityHolding {
         pat          = valuePostTax - valueAtCost ;
         patPct       = ( pat / valueAtCost ) * 100 ; 
         
-        computeTaxForIndividualTxns() ;
+        computeSellTaxForIndividualTxns() ;
     }
     
-    public void computeTaxForIndividualTxns() {
-        for( EquityTxnVO vo : txns ) {
-            vo.computeTax() ;
+    public void computeSellTaxForIndividualTxns() {
+        for( EquityBuyTxnVO vo : buyTxnVOList ) {
+            vo.computeSellTax() ;
         }
     }
 }

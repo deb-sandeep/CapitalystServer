@@ -10,7 +10,7 @@ import java.util.List ;
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.api.equity.vo.EquityTxnVO ;
+import com.sandy.capitalyst.server.api.equity.vo.EquityBuyTxnVO ;
 import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
@@ -19,18 +19,18 @@ import com.sandy.capitalyst.server.dao.equity.repo.EquityDailyGainRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 
-class EquityLot {
+class EquityBuyLot {
     
     private EquityTxn buyTxn = null ;
-    private EquityTxnVO buyTxnVO = null ;
+    private EquityBuyTxnVO buyTxnVO = null ;
     
-    public EquityLot( IndividualEquityHoldingVO holding, EquityTxn buyTxn ) {
-        this.buyTxn       = buyTxn ;
-        this.buyTxnVO     = new EquityTxnVO( holding, buyTxn ) ;
+    public EquityBuyLot( IndividualEquityHoldingVO holding, EquityTxn buyTxn ) {
+        this.buyTxn   = buyTxn ;
+        this.buyTxnVO = new EquityBuyTxnVO( holding, buyTxn ) ;
     }
     
     // Returns the number of units that COULD NOT be redeemed
-    public int redeemUnits( int qtyToBeRedeemed ) {
+    public int redeemUnits( int qtyToBeRedeemed, EquityTxn sellTxn ) {
         
         int unRedeemedQty = qtyToBeRedeemed ;
         int redeemedQty = 0 ;
@@ -44,7 +44,7 @@ class EquityLot {
                 redeemedQty = buyTxnVO.getQuantityLeft() ;
             }
             
-            buyTxnVO.redeemQuantity( redeemedQty ) ;
+            buyTxnVO.redeemQuantity( sellTxn, redeemedQty ) ;
             unRedeemedQty = qtyToBeRedeemed - redeemedQty ;
         }
         
@@ -55,7 +55,7 @@ class EquityLot {
         return this.buyTxnVO.getQuantityLeft() ;
     }
     
-    public EquityTxnVO getBuyTxnVO() {
+    public EquityBuyTxnVO getBuyTxnVO() {
         return this.buyTxnVO ;
     }
     
@@ -71,38 +71,43 @@ public class EquityHoldingVOBuilder {
     
     private EquityHolding holding = null ;
 
-    public IndividualEquityHoldingVO buildVO( EquityHolding holding, List<EquityTxn> txns ) {
+    public IndividualEquityHoldingVO buildVO( EquityHolding holding, 
+                                              List<EquityTxn> txns ) {
+        
+        EquityMaster              em        = null ;
+        EquityMasterRepo          emRepo    = null ;
+        EquityIndicatorsRepo      eiRepo    = null ;
+        List<EquityBuyLot>        buyLots   = null ;
+        IndividualEquityHoldingVO holdingVO = null ;
         
         this.holding = holding ;
         
-        IndividualEquityHoldingVO holdingVO = new IndividualEquityHoldingVO( holding ) ;
-        List<EquityLot> lots = processTxns( holdingVO, txns ) ;
-        
-        EquityMasterRepo        emRepo  = null ;
-        EquityIndicatorsRepo    eiRepo  = null ;
-        
         emRepo  = getBean( EquityMasterRepo.class ) ;
         eiRepo  = getBean( EquityIndicatorsRepo.class ) ;
+        
+        holdingVO = new IndividualEquityHoldingVO( holding ) ;
+        buyLots = buildBuyLots( holdingVO, txns ) ;
 
-        EquityMaster em = emRepo.findByIsin( holdingVO.getIsin() ) ;
+        em = emRepo.findByIsin( holdingVO.getIsin() ) ;
         
         int totalQuantityLeft = 0 ;
-        for( EquityLot lot : lots ) {
+        
+        for( EquityBuyLot lot : buyLots ) {
             if( lot.getQuantityLeft() > 0 ) {
-                holdingVO.addEquityTxnVO( lot.getBuyTxnVO() ) ;
+                holdingVO.addEquityBuyTxnVO( lot.getBuyTxnVO() ) ;
                 totalQuantityLeft += lot.getBuyTxnVO().getQuantityLeft() ;
             }
         }
         
-        holdingVO.setLtcgQty( computeLTCGQty( lots ) ) ;
-        holdingVO.computeTax() ;
+        holdingVO.setLtcgQty( computeLTCGQty( buyLots ) ) ;
+        holdingVO.computeTaxOnSell() ;
         holdingVO.setSparklineData( getSparklineData() ) ;
         holdingVO.setDetailUrl( em.getDetailUrl() ) ;
         holdingVO.setIndicators( eiRepo.findByIsin( holding.getIsin() ) ) ;
         
         if( totalQuantityLeft != holding.getQuantity() ) {
             // This implies some transactions are missing which needs to be
-            // manually added.
+            // manually added. This condition ideally should not arise.
             log.error( "Equity " + holding.getSymbolIcici() + 
                        " (" + holding.getOwnerName() + ")" +
                        " hId=" + holding.getId() + " " +
@@ -129,73 +134,76 @@ public class EquityHoldingVOBuilder {
     }
     
     // NOTE: The transactions are assumed to be in ascending order. Implying
-    // that the first transaction is assumed to be a buy transaction.
-    private List<EquityLot> processTxns( IndividualEquityHoldingVO holdingVO, 
-                                         List<EquityTxn> txns ) {
+    // that the first transaction is a buy transaction.
+    private List<EquityBuyLot> buildBuyLots( IndividualEquityHoldingVO holdingVO, 
+                                             List<EquityTxn> txns ) {
         
-        List<EquityLot> lots = new ArrayList<>() ;
+        List<EquityBuyLot> buyLots = new ArrayList<>() ;
         
-        if( txns != null && !txns.isEmpty() ) {
+        if( txns == null || txns.isEmpty() ) {
+            return buyLots ;
+        }
+        
+        for( int i=0; i<txns.size(); i++ ) {
             
-            int index = -1 ;
+            EquityTxn txn    = txns.get( i ) ;
+            String    action = txn.getAction() ;
             
-            for( EquityTxn txn : txns ) {
-                index++ ;
-                String action = txn.getAction() ;
+            if( i==0 && action.equalsIgnoreCase( "sell" ) ) {
+                // This situation should not arise. This check is for
+                // catching any data integrity issues.
+                log.error( "Equity " + holding.getSymbolIcici() + 
+                           " (" + holding.getOwnerName() + ")" +
+                           " hId=" + holding.getId() + " " +
+                           " has first transaction as a sell transaction." ) ;
+            }
+            
+            
+            if( action.equalsIgnoreCase( "buy" ) ) {
                 
-                if( action.equalsIgnoreCase( "buy" ) ) {
+                buyLots.add( new EquityBuyLot( holdingVO, txn ) ) ;
+            }
+            else if( action.equalsIgnoreCase( "sell" ) ) {
+                
+                // A sell transaction quantity can span across multiple 
+                // purchase lots. We keep eating away at all the lots
+                // till the time we have quenched the sell quantity. 
+                // It is assumed that the sell quantity will always be equal
+                // to or less than the remaining buy shares.
+                int unRedeemedUnits = txn.getQuantity() ;
+                
+                Iterator<EquityBuyLot> buyLotsIter = buyLots.iterator() ;
+                while( unRedeemedUnits > 0 && buyLotsIter.hasNext() ) {
                     
-                    lots.add( new EquityLot( holdingVO, txn ) ) ;
-                }
-                else if( action.equalsIgnoreCase( "sell" ) ) {
-                    
-                    if( index == 0 ) {
-                        // This situation should not arise. This check is for
-                        // a sanity check.
-                        log.error( "Equity " + holding.getSymbolIcici() + 
-                                   " (" + holding.getOwnerName() + ")" +
-                                   " hId=" + holding.getId() + " " +
-                                   " has first transaction as a sell transaction." ) ;
-                    }
-                    
-                    // A sell transaction quantity can span across multiple 
-                    // purchase lots. We keep eating away at all the lots
-                    // till the time we have quenched the sell quantity. 
-                    // It is assumed that the sell quantity will always be equal
-                    // to or less than the remaining buy shares.
-                    int unRedeemedUnits = txn.getQuantity() ;
-                    
-                    Iterator<EquityLot> allLotsIter = lots.iterator() ;
-                    while( unRedeemedUnits > 0 && allLotsIter.hasNext() ) {
-                        
-                        EquityLot lot = allLotsIter.next() ;
-                        if( lot.getQuantityLeft() > 0 ) {
-                            unRedeemedUnits = lot.redeemUnits( unRedeemedUnits ) ;
-                        }
-                    }
-                    
-                    if( unRedeemedUnits > 0 ) {
-                        
-                        // This situation should not arise. This check is for
-                        // a sanity check.
-                        log.error( "Equity " + holding.getSymbolIcici() + 
-                                   "(" + holding.getOwnerName() + ") " +
-                                   " hId=" + holding.getId() + " " +
-                                   " has more sell quantity than buy quantity." ) ;
+                    EquityBuyLot lot = buyLotsIter.next() ;
+                    if( lot.getQuantityLeft() > 0 ) {
+                        unRedeemedUnits = lot.redeemUnits( unRedeemedUnits,
+                                                           txn ) ;
                     }
                 }
-                else {
-                    throw new RuntimeException( "Unknown equity buyTxn action - " + action ) ;
+                
+                if( unRedeemedUnits > 0 ) {
+                    
+                    // This situation should not arise. This check is for
+                    // highlighting any data inconsistency issues.
+                    log.error( "Equity " + holding.getSymbolIcici() + 
+                               "(" + holding.getOwnerName() + ") " +
+                               " hId=" + holding.getId() + " " +
+                               " has more sell quantity than buy quantity." ) ;
                 }
             }
+            else {
+                throw new RuntimeException( "Unknown equity buyTxn action - " 
+                                            + action ) ;
+            }
         }
-        return lots ;
+        return buyLots ;
     }
 
-    private int computeLTCGQty( List<EquityLot> lots ) {
+    private int computeLTCGQty( List<EquityBuyLot> lots ) {
         
         int ltcgQty = 0 ;
-        for( EquityLot lot : lots ) {
+        for( EquityBuyLot lot : lots ) {
             if( lot.getQuantityLeft() > 0 ) {
                 if( lot.qualifiesForLTCG() ) {
                     ltcgQty += lot.getQuantityLeft() ;
@@ -204,5 +212,4 @@ public class EquityHoldingVOBuilder {
         }
         return ltcgQty ;
     }
-    
 }

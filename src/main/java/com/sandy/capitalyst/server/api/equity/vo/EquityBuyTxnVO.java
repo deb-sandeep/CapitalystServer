@@ -1,6 +1,8 @@
 package com.sandy.capitalyst.server.api.equity.vo;
 
+import java.util.ArrayList ;
 import java.util.Date ;
+import java.util.List ;
 
 import org.apache.commons.lang.time.DateUtils ;
 
@@ -12,8 +14,20 @@ import lombok.EqualsAndHashCode ;
 
 @Data
 @EqualsAndHashCode( callSuper = false )
-public class EquityTxnVO extends EquityTxn {
+public class EquityBuyTxnVO extends EquityTxn {
 
+    @Data
+    private static class AssociatedSellTxn {
+        
+        int redeemedQty = 0 ;
+        EquityTxn sellTxn = null ;
+        
+        public AssociatedSellTxn( EquityTxn sellTxn, int redeemedQty ) {
+            this.sellTxn = sellTxn ;
+            this.redeemedQty = redeemedQty ;
+        }
+    }
+    
     @JsonIgnore
     private IndividualEquityHoldingVO holding = null ;
     
@@ -29,18 +43,9 @@ public class EquityTxnVO extends EquityTxn {
     private float patPct           = 0 ; // Profit after tax percentage
     private int   durationInMonths = 0 ;
     
-    // LTCG qualified
+    private List<AssociatedSellTxn> sellTxns = new ArrayList<>() ;
     
-    public EquityTxnVO( IndividualEquityHoldingVO holding, EquityTxn txn ) {
-        super( txn ) ;
-        this.holding = holding ;
-        this.ltcgQuailifed = qualifiesForLTCG() ;
-        this.quantityLeft = txn.getQuantity() ;
-        
-        computeDerivedValues() ;
-    }
-    
-    public EquityTxnVO( EquityTxnVO vo ) {
+    public EquityBuyTxnVO( EquityBuyTxnVO vo ) {
         super( vo ) ;
         this.holding         = vo.holding ;
         this.quantityLeft    = vo.quantityLeft ;
@@ -53,14 +58,54 @@ public class EquityTxnVO extends EquityTxn {
         this.pat             = vo.pat ;
         this.patPct          = vo.patPct ;
         this.durationInMonths= vo.durationInMonths ;
+        
+        this.sellTxns.clear() ;
+        this.sellTxns.addAll( vo.getSellTxns() ) ;
     }
 
-    public void redeemQuantity( int redeemedQty ) {
-        this.quantityLeft -= redeemedQty ;
+    public EquityBuyTxnVO( IndividualEquityHoldingVO holding, EquityTxn txn ) {
+        
+        super( txn ) ;
+        this.holding = holding ;
+        this.ltcgQuailifed = qualifiesForLTCG() ;
+        this.quantityLeft = txn.getQuantity() ;
+        
         computeDerivedValues() ;
     }
     
-    public void computeTax() {
+    private boolean qualifiesForLTCG() {
+        Date oneYearPastDate = DateUtils.addYears( new Date(), -1 ) ;
+        return super.getTxnDate().before( oneYearPastDate ) ;
+    }
+
+    private void computeDerivedValues() {
+        this.valueAtCost = (int)((super.getTxnPrice() * quantityLeft) +
+                                  super.getBrokerage() + 
+                                  super.getTxnCharges() + 
+                                  super.getStampDuty() ) ;
+        this.valueAtMktPrice = (int)( holding.getCurrentMktPrice() * quantityLeft ) ;
+        this.durationInMonths = getDurationInMonths( super.getTxnDate() ) ;
+    }
+    
+    private int getDurationInMonths( Date startDate ) {
+        long now = new Date().getTime()/1000 ;
+        long then = startDate.getTime()/1000 ;
+        
+        long seconds = now - then ;
+        long hours   = seconds / 3600 ;
+        long days    = hours / 24 ;
+        int  months  = (int)days / 30 ;
+        
+        return months ;
+    }
+    
+    public void redeemQuantity( EquityTxn sellTxn, int redeemedQty ) {
+        this.quantityLeft -= redeemedQty ;
+        this.sellTxns.add( new AssociatedSellTxn( sellTxn, redeemedQty ) ) ;
+        computeDerivedValues() ;
+    }
+    
+    public void computeSellTax() {
         
         float cost = 0, value = 0, profit = 0 ;
         
@@ -87,33 +132,7 @@ public class EquityTxnVO extends EquityTxn {
         patPct       = ( pat / valueAtCost ) * 100 ; 
     }
 
-    private void computeDerivedValues() {
-        this.valueAtCost = (int)((super.getTxnPrice() * quantityLeft) +
-                                  super.getBrokerage() + 
-                                  super.getTxnCharges() + 
-                                  super.getStampDuty() ) ;
-        this.valueAtMktPrice = (int)( holding.getCurrentMktPrice() * quantityLeft ) ;
-        this.durationInMonths = getDurationInMonths( super.getTxnDate() ) ;
-    }
-    
-    private int getDurationInMonths( Date startDate ) {
-        long now = new Date().getTime()/1000 ;
-        long then = startDate.getTime()/1000 ;
-        
-        long seconds = now - then ;
-        long hours   = seconds / 3600 ;
-        long days    = hours / 24 ;
-        int  months  = (int)days / 30 ;
-        
-        return months ;
-    }
-    
-    private boolean qualifiesForLTCG() {
-        Date oneYearPastDate = DateUtils.addYears( new Date(), -1 ) ;
-        return super.getTxnDate().before( oneYearPastDate ) ;
-    }
-
-    public void aggregate( EquityTxnVO txnVO ) {
+    public void aggregate( EquityBuyTxnVO txnVO ) {
         
         super.setQuantity  ( super.getQuantity()   + txnVO.getQuantity()   ) ;
         super.setBrokerage ( super.getBrokerage()  + txnVO.getBrokerage()  ) ;
