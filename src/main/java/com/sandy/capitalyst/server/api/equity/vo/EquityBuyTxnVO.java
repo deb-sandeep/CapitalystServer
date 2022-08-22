@@ -132,7 +132,14 @@ public class EquityBuyTxnVO extends EquityTxn {
         patPct       = ( pat / valueAtCost ) * 100 ; 
     }
 
+    // If there is another buy transaction on the same date, this method will
+    // aggregate the given txn into this transaction. This is a way to merge
+    // multiple buy transactions on a day into one transaction.
     public void aggregate( EquityBuyTxnVO txnVO ) {
+        
+        if( !txnVO.getTxnDate().equals( this.getTxnDate() ) ) {
+            throw new IllegalArgumentException( "Txn date not same." ) ;
+        }
         
         super.setQuantity  ( super.getQuantity()   + txnVO.getQuantity()   ) ;
         super.setBrokerage ( super.getBrokerage()  + txnVO.getBrokerage()  ) ;
