@@ -1,10 +1,6 @@
 package com.sandy.capitalyst.server.api.equity ;
 
-import java.util.ArrayList ;
-import java.util.Comparator ;
-import java.util.HashMap ;
 import java.util.List ;
-import java.util.Map ;
 
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -15,11 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable ;
 import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVOBuilder ;
-import com.sandy.capitalyst.server.api.equity.vo.FamilyEquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
-import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
-import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
 
@@ -34,9 +26,11 @@ public class EquityTransactionsQueryController {
     private static final String SELL_TXN_TYPE = "Sell" ;
     private static final String BUY_TXN_TYPE = "Buy" ;
     
+    @SuppressWarnings( "unused" )
     @Autowired
     private EquityHoldingRepo ehRepo = null ;
     
+    @SuppressWarnings( "unused" )
     @Autowired
     private EquityTxnRepo etRepo = null ;
     

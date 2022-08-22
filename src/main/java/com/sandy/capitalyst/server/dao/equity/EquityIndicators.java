@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.dao.equity;
 
+import java.util.Date ;
+
 import javax.persistence.Column ;
 import javax.persistence.Entity ;
 import javax.persistence.GeneratedValue ;
@@ -36,6 +38,7 @@ public class EquityIndicators {
     private int    marketCap      = 0 ;
     private int    piotroskiScore = 0 ;
     private float  currentPrice   = 0 ;
+    private Date   asOnDate       = null ;
     
     private float sma5   = 0 ;
     private float sma10  = 0 ;
@@ -99,6 +102,7 @@ public class EquityIndicators {
         this.cagrEbit               = ind.getCagrEbit() ;
         this.marketCap              = ind.getMarketCap() ;
         this.piotroskiScore         = ind.getPiotroskiScore() ;
+        this.asOnDate               = ind.getAsOnDate() ;
         this.currentPrice           = ind.getCurrentPrice() ;
         this.sma5                   = ind.getSma5() ;
         this.sma10                  = ind.getSma10() ;

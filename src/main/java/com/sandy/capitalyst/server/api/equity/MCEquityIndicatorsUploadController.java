@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.api.equity ;
 
+import java.util.Date ;
+
 import org.apache.commons.lang.exception.ExceptionUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -73,8 +75,14 @@ public class MCEquityIndicatorsUploadController {
         }
         else {
             String prevTrend = eiDao.getTrend() ;
+            Date   prevEntryDate = eiDao.getAsOnDate() ;
+            Date   curEntryDate  = ind.getAsOnDate() ;
+            
             eiDao.copy( ind ) ;
-            eiDao.setPrevTrend( prevTrend ) ;
+            
+            if( prevEntryDate == null || curEntryDate.after( prevEntryDate ) ) {
+                eiDao.setPrevTrend( prevTrend ) ;
+            }
         }
         eiRepo.save( eiDao ) ;
         

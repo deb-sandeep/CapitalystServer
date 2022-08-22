@@ -98,12 +98,12 @@ capitalystNgApp.controller( 'TxnsDisplayDialogController', function( $scope ) {
         if( holdingType == 'Family' ) {
             for( var i=0; i<holding.holdings.length; i++ ) {
                 var indHolding = holding.holdings[i] ;
-                extractTxns( indHolding.ownerName, indHolding.txns ) ;
+                extractTxns( indHolding.ownerName, indHolding.buyTxnVOList ) ;
             }
             $scope.owner = "Family" ;
         }
         else {
-            extractTxns( holding.ownerName, holding.txns ) ;
+            extractTxns( holding.ownerName, holding.buyTxnVOList ) ;
             $scope.owner = holding.ownerName ;
         }
         
