@@ -3,6 +3,7 @@ package com.sandy.capitalyst.server.api.equity.vo;
 import java.util.ArrayList ;
 import java.util.List ;
 
+import com.fasterxml.jackson.annotation.JsonIgnore ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 
@@ -28,9 +29,13 @@ public class IndividualEquityHoldingVO extends EquityHolding {
     private List<Integer> sparklineData = null ;
     
     private EquityIndicators indicators = null ;
+    
+    @JsonIgnore
+    private EquityHolding baseHolding = null ;
 
     public IndividualEquityHoldingVO( EquityHolding holding ) {
         super( holding ) ;
+        this.baseHolding = holding ;
         initializeDerivedValues() ;
     }
 

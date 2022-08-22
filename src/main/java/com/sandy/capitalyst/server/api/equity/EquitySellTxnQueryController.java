@@ -64,6 +64,20 @@ public class EquitySellTxnQueryController {
         }
     }
     
+    private Date[] getDateRange( int fy ) {
+        
+        int financialYear = getFinancialYear( fy ) ;
+        
+        Calendar startCal = Calendar.getInstance() ;
+        startCal.set( financialYear, Calendar.APRIL, 1, 0, 0, 0 ) ;
+        
+        Calendar endCal = Calendar.getInstance() ;
+        endCal.set( financialYear+1, Calendar.MARCH, 31, 23, 59, 59 ) ;
+        
+        Date[] range = { startCal.getTime(), endCal.getTime() } ;
+        return range ;
+    }
+
     private int getFinancialYear( Integer fy ) {
         
         int financialYear = 0 ;
@@ -88,20 +102,6 @@ public class EquitySellTxnQueryController {
         return financialYear ;
     }
     
-    private Date[] getDateRange( int fy ) {
-        
-        int financialYear = getFinancialYear( fy ) ;
-        
-        Calendar startCal = Calendar.getInstance() ;
-        startCal.set( financialYear, Calendar.APRIL, 1 ) ;
-        
-        Calendar endCal = Calendar.getInstance() ;
-        startCal.set( financialYear+1, Calendar.MARCH, 31 ) ;
-        
-        Date[] range = { startCal.getTime(), endCal.getTime() } ;
-        return range ;
-    }
-
     private void collateSellTxns( Integer holdingId, 
                                   List<EquitySellTxnVO> sellTxns ) 
         throws Exception {

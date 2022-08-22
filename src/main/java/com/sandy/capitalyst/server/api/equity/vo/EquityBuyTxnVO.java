@@ -17,10 +17,10 @@ import lombok.EqualsAndHashCode ;
 public class EquityBuyTxnVO extends EquityTxn {
 
     @Data
-    private static class AssociatedSellTxn {
+    private class AssociatedSellTxn {
         
-        int redeemedQty = 0 ;
-        EquityTxn sellTxn = null ;
+        private int redeemedQty = 0 ;
+        private EquityTxn sellTxn = null ;
         
         public AssociatedSellTxn( EquityTxn sellTxn, int redeemedQty ) {
             this.sellTxn = sellTxn ;
@@ -30,6 +30,9 @@ public class EquityBuyTxnVO extends EquityTxn {
     
     @JsonIgnore
     private IndividualEquityHoldingVO holding = null ;
+    
+    @JsonIgnore
+    private EquityTxn baseTxn = null ;
     
     private int     quantityLeft   = 0 ;
     private boolean ltcgQuailifed  = false ;
@@ -45,32 +48,37 @@ public class EquityBuyTxnVO extends EquityTxn {
     
     private List<AssociatedSellTxn> sellTxns = new ArrayList<>() ;
     
-    public EquityBuyTxnVO( EquityBuyTxnVO vo ) {
-        super( vo ) ;
-        this.holding         = vo.holding ;
-        this.quantityLeft    = vo.quantityLeft ;
-        this.ltcgQuailifed   = vo.ltcgQuailifed ;
-        this.valueAtCost     = vo.valueAtCost ;
-        this.valueAtMktPrice = vo.valueAtMktPrice ;
-        this.taxAmount       = vo.taxAmount ;
-        this.sellBrokerage   = vo.sellBrokerage ;
-        this.valuePostTax    = vo.valuePostTax ;
-        this.pat             = vo.pat ;
-        this.patPct          = vo.patPct ;
-        this.durationInMonths= vo.durationInMonths ;
+    public EquityBuyTxnVO( EquityBuyTxnVO txn ) {
+        super( txn ) ;
+        this.holding         = txn.holding ;
+        this.quantityLeft    = txn.quantityLeft ;
+        this.ltcgQuailifed   = txn.ltcgQuailifed ;
+        this.valueAtCost     = txn.valueAtCost ;
+        this.valueAtMktPrice = txn.valueAtMktPrice ;
+        this.taxAmount       = txn.taxAmount ;
+        this.sellBrokerage   = txn.sellBrokerage ;
+        this.valuePostTax    = txn.valuePostTax ;
+        this.pat             = txn.pat ;
+        this.patPct          = txn.patPct ;
+        this.durationInMonths= txn.durationInMonths ;
         
         this.sellTxns.clear() ;
-        this.sellTxns.addAll( vo.getSellTxns() ) ;
+        this.sellTxns.addAll( txn.getSellTxns() ) ;
+        
+        this.baseTxn = txn.getBaseTxn() ;
     }
 
     public EquityBuyTxnVO( IndividualEquityHoldingVO holding, EquityTxn txn ) {
         
         super( txn ) ;
+        
+        this.baseTxn = txn ;
         this.holding = holding ;
         this.ltcgQuailifed = qualifiesForLTCG() ;
         this.quantityLeft = txn.getQuantity() ;
         
         computeDerivedValues() ;
+        
     }
     
     private boolean qualifiesForLTCG() {

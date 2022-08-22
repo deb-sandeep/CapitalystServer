@@ -109,11 +109,13 @@ public class EquitySellTxnVOListBuilder {
                 }
                 
                 buyTxn.redeemQuantity( sellTxn, redeemQty ) ;
-                sellTxn.associateBuyTxn( buyTxn, redeemQty ) ;
+                sellTxn.associateBuyTxn( buyTxn.getBaseTxn(), redeemQty ) ;
                 
                 if( buyTxn.getQuantityLeft() == 0 ) {
                     buyTxnVOList.remove() ;
                 }
+                
+                sellQtyLeft -= redeemQty ;
             }
         }
     }
