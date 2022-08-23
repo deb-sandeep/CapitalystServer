@@ -7,6 +7,7 @@ import java.util.List ;
 import org.apache.commons.lang.time.DateUtils ;
 
 import com.fasterxml.jackson.annotation.JsonIgnore ;
+import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 
 import lombok.Data ;
@@ -34,6 +35,8 @@ public class EquityBuyTxnVO extends EquityTxn {
     @JsonIgnore
     private EquityTxn baseTxn = null ;
     
+    private EquityHolding parentHolding = null ;
+    
     private int     quantityLeft   = 0 ;
     private boolean ltcgQuailifed  = false ;
     
@@ -51,6 +54,7 @@ public class EquityBuyTxnVO extends EquityTxn {
     public EquityBuyTxnVO( EquityBuyTxnVO txn ) {
         super( txn ) ;
         this.holding         = txn.holding ;
+        this.parentHolding   = txn.getParentHolding() ;
         this.quantityLeft    = txn.quantityLeft ;
         this.ltcgQuailifed   = txn.ltcgQuailifed ;
         this.valueAtCost     = txn.valueAtCost ;
@@ -74,6 +78,7 @@ public class EquityBuyTxnVO extends EquityTxn {
         
         this.baseTxn = txn ;
         this.holding = holding ;
+        this.parentHolding = holding.getBaseHolding() ;
         this.ltcgQuailifed = qualifiesForLTCG() ;
         this.quantityLeft = txn.getQuantity() ;
         

@@ -1,0 +1,67 @@
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="table table-bordered table-compact"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th></th>
+                <th>Owner</th>
+                <th>Date</th>
+                <th>Company</th>
+                <th style="width:50px;">Qty</th>
+                <th style="width:75px;">Txn Price</th>
+                <th style="width:75px;">Mkt Price</th>
+                <th style="width:100px;">Cost Price</th>
+            </tr>
+        </thead>
+        
+        <tbody ng-repeat="txn in buyTxns" style="border:none;">
+            <tr ng-class="getRowClass( txn )">
+               <td>
+                 <input type="checkbox" 
+                        ng-model="txn.selected"
+                        ng-change="txnSelectionChanged()"/>
+               </td>
+               <td ng-dblclick="selectAllHoldingsForOwner( txn.parentHolding.ownerName )">
+                    {{txn.parentHolding.ownerName}}
+               </td>
+               <td style="text-align:right;">
+                    {{txn.txnDate | date : "dd MMM" }}
+               </td>
+               <td style="font-size:12px;"
+                   ng-dblclick="selectAllHoldingsForSymbol( txn.parentHolding.symbolIcici )">
+                   <span data-toggle="tooltip" title="{{txn.parentHolding.companyName}}">
+                        {{txn.parentHolding.symbolIcici}}
+                   </span>
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.quantity}}
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.txnPrice | amt}}
+               </td>
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass( txn.parentHolding.currentMktPrice - txn.txnPrice)">
+                    {{txn.parentHolding.currentMktPrice | amt}}
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.valueAtCost | amt}}
+               </td>
+            </tr>
+        </tbody>
+        
+        <tfoot>
+            <tr class="success">
+                <th colspan="7"></th>
+                <th class="fixed-font amt">
+                    {{allTotal.costPrice | amt}}
+                </th>
+            </tr>
+            <tr class="info">
+                <th colspan="7"></th>
+                <th class="fixed-font amt">
+                    {{selTotal.costPrice | amt}}
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>

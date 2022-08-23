@@ -90,12 +90,9 @@ public class EquityHoldingVOBuilder {
 
         em = emRepo.findByIsin( holdingVO.getIsin() ) ;
         
-        int totalQuantityLeft = 0 ;
-        
         for( EquityBuyLot lot : buyLots ) {
             if( lot.getQuantityLeft() > 0 ) {
                 holdingVO.addEquityBuyTxnVO( lot.getBuyTxnVO() ) ;
-                totalQuantityLeft += lot.getBuyTxnVO().getQuantityLeft() ;
             }
         }
         
@@ -105,14 +102,6 @@ public class EquityHoldingVOBuilder {
         holdingVO.setDetailUrl( em.getDetailUrl() ) ;
         holdingVO.setIndicators( eiRepo.findByIsin( holding.getIsin() ) ) ;
         
-        if( totalQuantityLeft != holding.getQuantity() ) {
-            // This implies some transactions are missing which needs to be
-            // manually added. This condition ideally should not arise.
-            log.error( "Equity " + holding.getSymbolIcici() + 
-                       " (" + holding.getOwnerName() + ")" +
-                       " hId=" + holding.getId() + " " +
-                       " has missing transactions." ) ;
-        }
         return holdingVO ;
     }
     

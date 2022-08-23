@@ -5,6 +5,7 @@ import java.util.ArrayList ;
 import java.util.Calendar ;
 import java.util.Comparator ;
 import java.util.Date ;
+import java.util.Iterator ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.equity.helper.EquityBuyTxnVOListBuilder ;
 import com.sandy.capitalyst.server.api.equity.helper.EquitySellTxnVOListBuilder ;
+import com.sandy.capitalyst.server.api.equity.vo.EquityBuyTxnVO ;
 import com.sandy.capitalyst.server.api.equity.vo.EquitySellTxnVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
@@ -23,6 +26,7 @@ import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
 
 // @Get - /Equity/Transactions/Sell?fy=2022
+// @Get - /Equity/Transactions/Buy?fy=2022
 
 @RestController
 public class EquitySellTxnQueryController {
@@ -36,7 +40,7 @@ public class EquitySellTxnQueryController {
     private EquityHoldingRepo ehRepo = null ;
     
     @GetMapping( "/Equity/Transactions/Sell" ) 
-    public ResponseEntity<List<EquitySellTxnVO>> getEquityTxns( 
+    public ResponseEntity<List<EquitySellTxnVO>> getEquitySellTxns( 
                    @RequestParam( name = "fy", required = false ) Integer fy ) {
         
         log.debug( "Getting sell equity transactions." ) ;
@@ -47,21 +51,61 @@ public class EquitySellTxnQueryController {
         
         try {
             dateRange = getDateRange( fy ) ;
-            holdingsSold = etRepo.getHoldingsSold( dateRange[0], dateRange[1] ) ;
+            holdingsSold = ehRepo.getHoldingsSold( dateRange[0], dateRange[1] ) ;
             for( Integer holdingId : holdingsSold ) {
                 collateSellTxns( holdingId, sellTxns ) ;
             }
             
             sellTxns.sort( new Comparator<EquitySellTxnVO>() {
-
                 @Override
                 public int compare( EquitySellTxnVO s1, EquitySellTxnVO s2 ) {
                     return s2.getTxnDate().compareTo( s1.getTxnDate() ) ;
                 }
             } ) ;
             
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( sellTxns ) ;
+            Iterator<EquitySellTxnVO> iter = sellTxns.iterator() ;
+            while( iter.hasNext() ) {
+                EquitySellTxnVO txn = iter.next() ;
+                Date d = txn.getTxnDate() ;
+                if ( d.before( dateRange[0] ) || d.after( dateRange[1] ) ) {
+                    iter.remove() ;
+                }
+            }
+            
+            return ResponseEntity.status( HttpStatus.OK ).body( sellTxns ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Getting equity transactions.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
+    
+    @GetMapping( "/Equity/Transactions/Buy" ) 
+    public ResponseEntity<List<EquityBuyTxnVO>> getEquityBuyTxns( 
+                   @RequestParam( name = "fy", required = false ) Integer fy ) {
+        
+        log.debug( "Getting buy equity transactions." ) ;
+        
+        Date[] dateRange = null ;
+        List<Integer> holdingsBought = null ;
+        List<EquityBuyTxnVO> buyTxns = new ArrayList<>() ;
+        
+        try {
+            dateRange = getDateRange( fy ) ;
+            holdingsBought = ehRepo.getHoldingsBought( dateRange[0], dateRange[1] ) ;
+            for( Integer holdingId : holdingsBought ) {
+                collateBuyTxns( holdingId, buyTxns, dateRange[0], dateRange[1] ) ;
+            }
+            
+            buyTxns.sort( new Comparator<EquityBuyTxnVO>() {
+                @Override
+                public int compare( EquityBuyTxnVO b1, EquityBuyTxnVO b2 ) {
+                    return b2.getTxnDate().compareTo( b1.getTxnDate() ) ;
+                }
+            } ) ;
+            
+            return ResponseEntity.status( HttpStatus.OK ).body( buyTxns ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Getting equity transactions.", e ) ;
@@ -121,5 +165,21 @@ public class EquitySellTxnQueryController {
 
         helper = new EquitySellTxnVOListBuilder() ;
         sellTxns.addAll( helper.buildSellTxnVOList( eh, txnList ) ) ;
+    }
+
+    private void collateBuyTxns( Integer holdingId, 
+                                 List<EquityBuyTxnVO> buyTxns,
+                                 Date startDate, Date endDate ) 
+        throws Exception {
+        
+        EquityHolding eh = null ;
+        List<EquityTxn> txnList = null ;
+        EquityBuyTxnVOListBuilder helper = null ;
+        
+        eh = ehRepo.findById( holdingId ).get() ;
+        txnList = etRepo.findBuyTxns( holdingId, startDate, endDate ) ;
+
+        helper = new EquityBuyTxnVOListBuilder() ;
+        buyTxns.addAll( helper.buildBuyTxnVOList( eh, txnList ) ) ;
     }
 }

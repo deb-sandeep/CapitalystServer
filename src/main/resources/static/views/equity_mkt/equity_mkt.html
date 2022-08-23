@@ -51,6 +51,10 @@
     <link rel="stylesheet" href="/views/equity_mkt/route/profitloss/css/profitloss.css"/>
     <script src="/views/equity_mkt/route/profitloss/js/profitloss_controller.js"></script>
 
+    <!-- Buy route specific includes -->
+    <link rel="stylesheet" href="/views/equity_mkt/route/buy/css/buy.css"/>
+    <script src="/views/equity_mkt/route/buy/js/buy_controller.js"></script>
+
     <script>
         $(document).ready(function(){
           $('[data-toggle="tooltip"]').tooltip();   
@@ -89,6 +93,10 @@
       <a ng-class="getActiveClass('profitloss')" 
          href="#!/profitloss">
         <i class="fa-solid fa-hand-holding-dollar"></i>
+      </a>
+      <a ng-class="getActiveClass('buy')" 
+         href="#!/buy">
+        <i class="fa-solid fa-piggy-bank"></i>
       </a>
     </div>
     <div id="module-panel">

@@ -16,17 +16,21 @@ public interface EquityTxnRepo
     
     void deleteByHoldingId( Integer holdingId ) ;
     
-    @Query( nativeQuery = true,
-            value =   
-            "SELECT " +
-            "    distinct( txn.holding_id ) " +
-            "FROM  " +
-            "    equity_txn txn " +
-            "WHERE " +
-            "    txn.action = 'Sell' AND " +
-            "    txn.txn_date BETWEEN :startDate AND :endDate"
+    @Query( value =   
+            "SELECT "
+          + "    et "
+          + "FROM "
+          + "    EquityTxn et "
+          + "WHERE "
+          + "    et.action = 'Buy' AND "
+          + "    et.holdingId = :holdingId AND "
+          + "    et.txnDate BETWEEN :startDate AND :endDate "
+          + "ORDER BY "
+          + "    et.txnDate ASC "
     )
-    List<Integer> getHoldingsSold( @Param( "startDate" ) Date startDate,
-                                   @Param( "endDate"   ) Date endDate ) ;
+    List<EquityTxn> findBuyTxns( @Param( "holdingId" ) Integer holdingId,
+                                 @Param( "startDate" ) Date startDate,
+                                 @Param( "endDate"   ) Date endDate ) ;
+    
     
 }

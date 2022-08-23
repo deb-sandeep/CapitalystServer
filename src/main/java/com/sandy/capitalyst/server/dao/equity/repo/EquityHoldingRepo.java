@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.dao.equity.repo;
 
+import java.util.Date ;
 import java.util.List ;
 
 import org.springframework.data.jpa.repository.Modifying ;
@@ -64,4 +65,29 @@ public interface EquityHoldingRepo
     void updateSymbolNSE( @Param( "isin"      ) String isin, 
                           @Param( "symbolNse" ) String symbolNse ) ;
     
+    @Query( nativeQuery = true,
+            value =   
+            "SELECT " +
+            "    distinct( txn.holding_id ) " +
+            "FROM  " +
+            "    equity_txn txn " +
+            "WHERE " +
+            "    txn.action = 'Sell' AND " +
+            "    txn.txn_date BETWEEN :startDate AND :endDate"
+    )
+    List<Integer> getHoldingsSold( @Param( "startDate" ) Date startDate,
+                                   @Param( "endDate"   ) Date endDate ) ;
+    
+    @Query( nativeQuery = true,
+            value =   
+            "SELECT " +
+            "    distinct( txn.holding_id ) " +
+            "FROM  " +
+            "    equity_txn txn " +
+            "WHERE " +
+            "    txn.action = 'Buy' AND " +
+            "    txn.txn_date BETWEEN :startDate AND :endDate"
+    )
+    List<Integer> getHoldingsBought( @Param( "startDate" ) Date startDate,
+                                     @Param( "endDate"   ) Date endDate ) ;
 }
