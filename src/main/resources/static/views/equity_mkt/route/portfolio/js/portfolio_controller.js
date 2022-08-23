@@ -62,7 +62,7 @@ capitalystNgApp.controller( 'PortfolioController',
 
     $scope.getRowClass = function( holding ) {
         if( holding.selected ) {
-            return "selected_holding" ;
+            return "selected_row" ;
         }
         else if( holding.ltcgQualPct > 99 ) {
             return "full_ltcg" ;

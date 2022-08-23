@@ -8,4 +8,8 @@ capitalystNgApp.config( function( $routeProvider ) {
         templateUrl : "/views/equity_mkt/route/portfolio/portfolio.html",
         controller : "PortfolioController"
     })
+    .when( "/profitloss", {
+        templateUrl : "/views/equity_mkt/route/profitloss/profitloss.html",
+        controller : "ProfitLossController"
+    })
 });

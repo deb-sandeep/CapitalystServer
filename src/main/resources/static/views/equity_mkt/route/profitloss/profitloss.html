@@ -1,0 +1,98 @@
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="table table-bordered table-compact js-sort-table"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th></th>
+                <th>Owner</th>
+                <th>Date</th>
+                <th>Company</th>
+                <th class="js-sort-number">Qty</th>
+                <th class="js-sort-number">Txn Price</th>
+                <th class="js-sort-number">Cost Price</th>
+                <th class="js-sort-number">Sell Price</th>
+                <th class="js-sort-number">PAT</th>
+                <th class="js-sort-number">PAT %</th>
+            </tr>
+        </thead>
+        
+        <tbody ng-repeat="txn in sellTxns" style="border:none;">
+            <tr ng-class="getRowClass( txn )">
+               <td>
+                 <input type="checkbox" 
+                        ng-model="txn.selected"
+                        ng-change="txnSelectionChanged()"/>
+               </td>
+               <td ng-dblclick="selectAllHoldingsForOwner( txn.holding.ownerName )">
+                    {{txn.holding.ownerName}}
+               </td>
+               <td style="text-align:right;">
+                    {{txn.txnDate | date : "dd MMM" }}
+               </td>
+               <td style="font-size:11px;"
+                   ng-dblclick="selectAllHoldingsForSymbol( txn.holding.symbolIcici )">
+                   <span data-toggle="tooltip" title="{{txn.holding.companyName}}">
+                        {{txn.holding.symbolIcici}}
+                   </span>
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.quantity}}
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.txnPrice | amt}}
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.valueAtCostPrice | amt}}
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.valueAtMktPrice | amt}}
+               </td>
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass(txn.pat)">
+                    {{txn.pat | amt}}
+               </td>
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass(txn.patPct)">
+                    {{txn.patPct | amt}}%
+               </td>
+            </tr>
+        </tbody>
+        
+        <tfoot>
+            <tr class="success">
+                <th colspan="6"></th>
+                <th class="fixed-font amt">
+                    {{allTotal.costPrice | amt}}
+                </th>
+                <th class="fixed-font amt">
+                    {{allTotal.sellPrice | amt}}
+                </th>
+                <th class="fixed-font amt"
+                    ng-class="getAmtClass(allTotal.pat)">
+                    {{allTotal.pat | amt}}
+                </th>
+                <th class="fixed-font amt"
+                    ng-class="getAmtClass(allTotal.patPct)">
+                    {{allTotal.patPct | amt}}%
+                </th>
+            </tr>
+            <tr class="info">
+                <th colspan="6"></th>
+                <th class="fixed-font amt">
+                    {{selTotal.costPrice | amt}}
+                </th>
+                <th class="fixed-font amt">
+                    {{selTotal.sellPrice | amt}}
+                </th>
+                <th class="fixed-font amt"
+                    ng-class="getAmtClass(selTotal.pat)">
+                    {{selTotal.pat | amt}}
+                </th>
+                <th class="fixed-font amt"
+                    ng-class="getAmtClass(selTotal.patPct)">
+                    {{selTotal.patPct | amt}}%
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>

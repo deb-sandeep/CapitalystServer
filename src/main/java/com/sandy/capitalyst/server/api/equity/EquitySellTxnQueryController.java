@@ -3,6 +3,7 @@ package com.sandy.capitalyst.server.api.equity ;
 import java.time.Month ;
 import java.util.ArrayList ;
 import java.util.Calendar ;
+import java.util.Comparator ;
 import java.util.Date ;
 import java.util.List ;
 
@@ -36,7 +37,7 @@ public class EquitySellTxnQueryController {
     
     @GetMapping( "/Equity/Transactions/Sell" ) 
     public ResponseEntity<List<EquitySellTxnVO>> getEquityTxns( 
-                                            @RequestParam( "fy" ) Integer fy ) {
+                   @RequestParam( name = "fy", required = false ) Integer fy ) {
         
         log.debug( "Getting sell equity transactions." ) ;
         
@@ -46,13 +47,18 @@ public class EquitySellTxnQueryController {
         
         try {
             dateRange = getDateRange( fy ) ;
-            log.debug( "  Start date = " + dateRange[0] ) ;
-            log.debug( "  End date   = " + dateRange[1] ) ;
-            
             holdingsSold = etRepo.getHoldingsSold( dateRange[0], dateRange[1] ) ;
             for( Integer holdingId : holdingsSold ) {
                 collateSellTxns( holdingId, sellTxns ) ;
             }
+            
+            sellTxns.sort( new Comparator<EquitySellTxnVO>() {
+
+                @Override
+                public int compare( EquitySellTxnVO s1, EquitySellTxnVO s2 ) {
+                    return s2.getTxnDate().compareTo( s1.getTxnDate() ) ;
+                }
+            } ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( sellTxns ) ;
@@ -64,7 +70,7 @@ public class EquitySellTxnQueryController {
         }
     }
     
-    private Date[] getDateRange( int fy ) {
+    private Date[] getDateRange( Integer fy ) {
         
         int financialYear = getFinancialYear( fy ) ;
         

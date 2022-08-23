@@ -87,3 +87,17 @@ pre {
   width: auto !important;
   height: auto !important;
 }
+
+.neg_amt {
+    color:red;
+}
+
+.pos_amt {
+    color:#295f19;
+}
+
+.selected_row {
+    background-color: #fafaee ;
+}
+
+

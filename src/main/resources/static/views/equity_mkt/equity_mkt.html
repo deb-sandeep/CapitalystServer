@@ -42,10 +42,14 @@
     <script src="/views/equity_mkt/js/route.js"></script>
     <script src="/views/equity_mkt/js/filter.js"></script>
     
-    <!-- Route specific includes -->
+    <!-- Portfolio route specific includes -->
     <link rel="stylesheet" href="/views/equity_mkt/route/portfolio/css/portfolio.css"/>
     <script src="/views/equity_mkt/route/portfolio/js/portfolio_controller.js"></script>
     <script src="/views/equity_mkt/route/portfolio/js/txns_display_dialog_controller.js"></script>
+
+    <!-- Profitloss route specific includes -->
+    <link rel="stylesheet" href="/views/equity_mkt/route/profitloss/css/profitloss.css"/>
+    <script src="/views/equity_mkt/route/profitloss/js/profitloss_controller.js"></script>
 
     <script>
         $(document).ready(function(){
@@ -81,6 +85,10 @@
       <a ng-class="getActiveClass('portfolio')" 
          href="#!/portfolio">
         <i class="fa fa-chart-pie"></i>
+      </a>
+      <a ng-class="getActiveClass('profitloss')" 
+         href="#!/profitloss">
+        <i class="fa-solid fa-hand-holding-dollar"></i>
       </a>
     </div>
     <div id="module-panel">
