@@ -33,6 +33,20 @@ public interface EquityDailyGainRepo
     @Query( nativeQuery = true,
             value =   
             "SELECT "
+          + "    * "
+          + "FROM "
+          + "    equity_daily_gain edg "
+          + "WHERE "
+          + "    edg.holding_id = :holdingId "
+          + "ORDER BY "
+          + "    edg.date DESC "
+          + "LIMIT 1"
+    )
+    public EquityDailyGain getLastEDG( @Param( "holdingId" ) Integer id ) ;
+
+    @Query( nativeQuery = true,
+            value =   
+            "SELECT "
           + "    edg.day_change "
           + "FROM "
           + "    equity_daily_gain edg "

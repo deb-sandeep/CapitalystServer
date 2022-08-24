@@ -57,7 +57,7 @@ public class EquityDailyGainUpdater {
         edg.setProfit( profit ) ;
         
         populatePAT( vo, edg, c.getClose() ) ;
-        populateDayChange( edg ) ;
+        populateDayChange( h, edg ) ;
         
         edgRepo.save( edg ) ;
     }
@@ -103,20 +103,21 @@ public class EquityDailyGainUpdater {
         edg.setPatPct( ( edg.getPat() / valueAtCost ) * 100 ) ; 
     }
     
-    private void populateDayChange( EquityDailyGain edg ) {
+    private void populateDayChange( EquityHolding holding, 
+                                    EquityDailyGain todayEDG ) {
         
-        Float lastPAT = edgRepo.getLastPAT( edg.getHolding().getId() ) ;
+        EquityDailyGain lastEDG = edgRepo.getLastEDG( holding.getId() ) ;
         
-        if( lastPAT != null ) {
+        if( lastEDG != null ) {
             
             // How much did the holding earn or lose today as compared to the
             // market value yesterday.
-            float dayChange = edg.getPat() - lastPAT ;
+            float dayChange = todayEDG.getPat() - lastEDG.getPat() ;
             
-            edg.setDayChange( dayChange ) ;
-            edg.setDayChangePct( (dayChange/edg.getInvestmentValue())*100 ) ;
+            todayEDG.setDayChange( dayChange ) ;
+            todayEDG.setDayChangePct( (dayChange/todayEDG.getInvestmentValue())*100 ) ;
             
-            edg.getHolding().setDayGain( dayChange ) ;
+            todayEDG.getHolding().setDayGain( dayChange ) ;
         }
     }
 }
