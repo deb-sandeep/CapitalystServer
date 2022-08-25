@@ -2,7 +2,7 @@ package com.sandy.capitalyst.server.api.equity.recoengine.screener;
 
 import java.util.List ;
 
-import com.sandy.capitalyst.server.api.equity.recoengine.Recommendation ;
+import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco ;
 import com.sandy.capitalyst.server.api.equity.recoengine.Screener ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
@@ -23,7 +23,7 @@ public class HoldingScreener extends Screener {
     @Override
     public ScreenerResult screen( EquityIndicators ind,
                                 List<EquityTechIndicator> techInds, 
-                                Recommendation recos ) {
+                                EquityReco recos ) {
 
         EquityHoldingRepo ehRepo = getBean( EquityHoldingRepo.class ) ;
         

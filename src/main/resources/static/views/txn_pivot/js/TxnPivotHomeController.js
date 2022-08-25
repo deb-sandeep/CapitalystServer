@@ -226,7 +226,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
             var catRoot = ( tupule[0] == 'Income' ) ?
                                             $scope.categoryTreeForDisplay[0] :
                                             $scope.categoryTreeForDisplay[1] ;
-            
+                                            
             var l1Node = catRoot.getChild( tupule[1] ) ;
             if( typeof l1Node === 'undefined' ) {
                 filteredPivotSrcData.push( tupule ) ;

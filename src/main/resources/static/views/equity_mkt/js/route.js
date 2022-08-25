@@ -16,4 +16,8 @@ capitalystNgApp.config( function( $routeProvider ) {
         templateUrl : "/views/equity_mkt/route/buy/buy.html",
         controller : "BuyController"
     })
+    .when( "/reco", {
+        templateUrl : "/views/equity_mkt/route/reco/reco.html",
+        controller : "RecoController"
+    })
 });

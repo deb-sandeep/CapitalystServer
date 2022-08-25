@@ -23,7 +23,9 @@ import com.sandy.capitalyst.server.api.equity.recoengine.cfg.AttributeComputerCf
 import com.sandy.capitalyst.server.api.equity.recoengine.cfg.ScreenerCfg ;
 import com.sandy.capitalyst.server.api.equity.recoengine.cfg.RecoEngineCfg ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTechIndicatorRepo ;
 
 abstract class RecoEngineBase {
@@ -40,8 +42,10 @@ abstract class RecoEngineBase {
     private String lastConfigHash = null ;
     private long lastConfigLoadTime = 0 ;
     
-    protected EquityIndicatorsRepo eiRepo = null ;
+    protected EquityIndicatorsRepo    eiRepo  = null ;
     protected EquityTechIndicatorRepo etiRepo = null ;
+    protected EquityMasterRepo        emRepo  = null ;
+    protected EquityHoldingRepo       ehRepo  = null ;
     
     protected List<Screener> screeners = new ArrayList<>() ;
     protected List<AttributeComputer> computers = new ArrayList<>() ;
@@ -67,8 +71,10 @@ abstract class RecoEngineBase {
         
         refreshPipeline() ;
         
-        eiRepo = getBean( EquityIndicatorsRepo.class ) ;
+        eiRepo  = getBean( EquityIndicatorsRepo.class ) ;
         etiRepo = getBean( EquityTechIndicatorRepo.class ) ;
+        emRepo  = getBean( EquityMasterRepo.class ) ;
+        ehRepo  = getBean( EquityHoldingRepo.class ) ;
         
         lastConfigLoadTime = System.currentTimeMillis() ;
     }

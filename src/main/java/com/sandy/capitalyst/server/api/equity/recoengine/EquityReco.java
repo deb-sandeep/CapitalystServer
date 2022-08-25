@@ -1,47 +1,47 @@
 package com.sandy.capitalyst.server.api.equity.recoengine;
 
+import java.util.ArrayList ;
 import java.util.List ;
 
+import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
 
-import lombok.Getter ;
+import lombok.Data ;
 
-public class Recommendation {
+@Data
+public class EquityReco {
 
     public static enum Type {
-        ACCEPTANCE_CRITERIA_NOT_MET,
+        SCREENED_OUT,
         IGNORE,
-        BUY,
         STRONG_BUY,
+        BUY,
         HOLD,
-        SELL,
+        REDUCE,
         STRONG_SELL
     }
     
-    @Getter 
     private Type type = null ;
-    
-    @Getter 
     private String message = null ;
     
-    @Getter
-    private EquityIndicators indicators = null ;
-    
-    @Getter
+    private EquityMaster              equityMaster   = null ;
+    private EquityIndicators          indicators     = null ;
+    private List<EquityHolding>       holdings       = new ArrayList<>() ;
     private List<EquityTechIndicator> techIndicators = null ;
 
-    public void setReco( Type type, String msg,
-                         EquityIndicators indicators,
-                         List<EquityTechIndicator> techIndicators ) {
+    public void setReco( Type type, String msg ) {
         
         this.type = type ;
         this.message = msg ;
-        this.indicators = indicators ;
-        this.techIndicators = techIndicators ;
     }
     
     public String getSymbolNse() {
         return this.indicators.getSymbolNse() ;
+    }
+    
+    public boolean isInPortfolio() {
+        return !this.holdings.isEmpty() ;
     }
 }

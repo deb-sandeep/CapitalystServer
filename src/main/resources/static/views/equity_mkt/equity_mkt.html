@@ -55,6 +55,10 @@
     <link rel="stylesheet" href="/views/equity_mkt/route/buy/css/buy.css"/>
     <script src="/views/equity_mkt/route/buy/js/buy_controller.js"></script>
 
+    <!-- Recommendation route specific includes -->
+    <link rel="stylesheet" href="/views/equity_mkt/route/reco/css/reco.css"/>
+    <script src="/views/equity_mkt/route/reco/js/reco_controller.js"></script>
+
     <script>
         $(document).ready(function(){
           $('[data-toggle="tooltip"]').tooltip();   
@@ -97,6 +101,10 @@
       <a ng-class="getActiveClass('buy')" 
          href="#!/buy">
         <i class="fa-solid fa-piggy-bank"></i>
+      </a>
+      <a ng-class="getActiveClass('reco')" 
+         href="#!/reco">
+        <i class="fa-solid fa-lightbulb"></i>
       </a>
     </div>
     <div id="module-panel">

@@ -3,7 +3,7 @@ package com.sandy.capitalyst.server.api.equity.recoengine.screener;
 import java.util.ArrayList ;
 import java.util.List ;
 
-import com.sandy.capitalyst.server.api.equity.recoengine.Recommendation ;
+import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco ;
 import com.sandy.capitalyst.server.api.equity.recoengine.Screener ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
@@ -37,7 +37,7 @@ public class ManualInclusionScreener extends Screener {
     @Override
     public ScreenerResult screen( EquityIndicators ind,
                                 List<EquityTechIndicator> techInds, 
-                                Recommendation recos ) {
+                                EquityReco recos ) {
         
         if( nseSymbolsForInclusion.isEmpty() ) {
             throw new IllegalStateException( "nseSymbols not configured." ) ;

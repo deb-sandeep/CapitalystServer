@@ -65,5 +65,5 @@ public abstract class Screener {
     
     public abstract ScreenerResult screen( EquityIndicators ind,
                                            List<EquityTechIndicator> techInds, 
-                                           Recommendation recos ) ;
+                                           EquityReco recos ) ;
 }

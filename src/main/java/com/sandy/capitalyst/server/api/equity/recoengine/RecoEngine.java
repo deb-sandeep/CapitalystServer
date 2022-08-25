@@ -4,9 +4,11 @@ import java.util.List ;
 
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.api.equity.recoengine.Recommendation.Type ;
+import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco.Type ;
 import com.sandy.capitalyst.server.api.equity.recoengine.Screener.ScreenerResult ;
+import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
 
 class RecoEngine extends RecoEngineBase {
@@ -24,51 +26,61 @@ class RecoEngine extends RecoEngineBase {
 
     private RecoEngine() {}
     
-    public Recommendation getRecommendation( String symbolNse ) 
+    public EquityReco getRecommendation( String symbolNse ) 
         throws Exception {
         
-        EquityIndicators eIndicators = null ;
+        EquityReco                reco        = new EquityReco() ;
+        EquityMaster              em          = null ;
+        EquityIndicators          eIndicators = null ;
+        List<EquityHolding>       holdings    = null ;
         List<EquityTechIndicator> tIndicators = null ;
-        Recommendation reco = new Recommendation() ;
 
         log.debug( "Generating recommendations for " + symbolNse ) ; 
         
+        em          = emRepo.findBySymbol( symbolNse ) ;
         eIndicators = eiRepo.findBySymbolNse( symbolNse ) ;
         tIndicators = etiRepo.findBySymbolNse( symbolNse ) ;
         
+        holdings = ehRepo.findNonZeroHoldingsForNSESymbol( symbolNse ) ;
+        if( holdings != null && !holdings.isEmpty() ) {
+            reco.setHoldings( holdings ) ;
+        }
+        
+        reco.setEquityMaster( em ) ;
+        reco.setIndicators( eIndicators ) ;
+        reco.setTechIndicators( tIndicators ) ;
+        
         if( eIndicators == null ) {
-            reco.setReco( Type.ACCEPTANCE_CRITERIA_NOT_MET, 
-                           "Stock indicators not found for " + symbolNse,
-                           eIndicators, tIndicators ) ;
+            reco.setReco( Type.SCREENED_OUT, 
+                          "Stock indicators not found for " + symbolNse ) ;
             return reco ;
         }
         
-        applyFilters( eIndicators, tIndicators, reco ) ;
+        applyScreeners( eIndicators, tIndicators, reco ) ;
 
-        if( reco.getType() != Type.ACCEPTANCE_CRITERIA_NOT_MET ) {
+        if( reco.getType() != Type.SCREENED_OUT ) {
             
         }
         
         return reco ;
     }
     
-    private void applyFilters( EquityIndicators eInds, 
-                               List<EquityTechIndicator> tInds,
-                               Recommendation recos ) {
+    private void applyScreeners( EquityIndicators eInds, 
+                                 List<EquityTechIndicator> tInds,
+                                 EquityReco reco ) {
         
         ScreenerResult result = null ;
         
         for( Screener filter : screeners ) {
             
-            result = filter.screen( eInds, tInds, recos ) ;
+            result = filter.screen( eInds, tInds, reco ) ;
             
             if( result.getResult() == ScreenerResult.REJECT ) {
                 log.debug( "     REJECTED. " + filter.getId() + 
                            ". Msg = " + result.getDescription() ) ;
                 
-                recos.setReco( Type.ACCEPTANCE_CRITERIA_NOT_MET,
-                               result.getDescription(),
-                               eInds, tInds ) ;
+                reco.setReco( Type.SCREENED_OUT,
+                              result.getDescription() ) ;
                 break ;
             }
             else if( result.getResult() == ScreenerResult.ACCEPT ) {
