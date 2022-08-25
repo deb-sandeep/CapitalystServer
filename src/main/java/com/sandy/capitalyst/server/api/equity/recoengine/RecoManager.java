@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.api.equity.recoengine;
 
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 
+import java.io.StringWriter ;
 import java.util.ArrayList ;
 import java.util.List ;
 import java.util.Map ;
@@ -13,6 +14,8 @@ import org.apache.log4j.Logger ;
 import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco.Type ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
+import com.univocity.parsers.csv.CsvWriter ;
+import com.univocity.parsers.csv.CsvWriterSettings ;
 
 public class RecoManager {
 
@@ -28,6 +31,8 @@ public class RecoManager {
     private Map<String, EquityReco> recommendations = new TreeMap<>() ;
     private List<EquityReco> allRecos               = new ArrayList<>() ;
     private List<EquityReco> screenedRecos          = new ArrayList<>() ;
+    
+    private StatisticsManager statsMgr = new StatisticsManager() ;
     
     public static RecoManager instance() throws Exception {
         if( instance == null ) {
@@ -60,9 +65,14 @@ public class RecoManager {
     }
     
     private void initialize() throws Exception {
+        
         if( recoEngine.needsInitiaization() ) {
+            
             this.recoEngine.initialize() ;
-            this.eiRepo = getBean( EquityIndicatorsRepo.class ) ;
+            
+            this.eiRepo   = getBean( EquityIndicatorsRepo.class ) ;
+            this.statsMgr = new StatisticsManager() ;
+            
             refreshRecommendationsCache() ;
         }
     }
@@ -80,16 +90,23 @@ public class RecoManager {
         
         for( EquityIndicators ind : inds ) {
             
-            reco = recoEngine.getRecommendation( ind.getSymbolNse() ) ;
+            reco = recoEngine.screen( ind ) ;
+            
             recommendations.put( ind.getSymbolNse(), reco ) ;
-        }
-        
-        for( EquityReco r : recommendations.values() ) {
-            allRecos.add( r ) ;
-            if( r.getType() != Type.SCREENED_OUT ) {
-                screenedRecos.add( r ) ;
+            allRecos.add( reco ) ;
+            
+            if( reco.getType() != Type.SCREENED_OUT ) {
+                screenedRecos.add( reco ) ;
+                statsMgr.assimilate( reco ) ;
             }
         }
+        
+        statsMgr.printPercentiles() ;
+        
+        for( EquityReco r : screenedRecos ) {
+            recoEngine.applyEvaluators( r, statsMgr ) ;
+        }
+        
         printStats() ;
     }
     
@@ -106,6 +123,7 @@ public class RecoManager {
             }
             else {
                 screenedStocks.add( symbolNse ) ;
+                statsMgr.assimilate( reco ) ;
             }
         }
         
@@ -113,5 +131,37 @@ public class RecoManager {
         log.debug( "  - Num recommendations = " + recommendations.size() ) ;
         log.debug( "  - Screened stocks     = " + screenedStocks.size() ) ;
         log.debug( "  - Rejected stocks     = " + rejectedStocks.size() ) ;
+        
+        printGoodnessAttributes() ;
+    }
+    
+    private void printGoodnessAttributes() {
+        
+        StringWriter output = new StringWriter() ;
+        CsvWriter csvWriter = new CsvWriter( output, new CsvWriterSettings() ) ;
+        csvWriter.writeHeaders( 
+                "Symbol", "Market Cap", "Beta", "CAGR EBIT", "PE",
+                "PE Diff", "MC E Score", "MC Insight", "P Score" );
+        
+        for( EquityReco reco : screenedRecos ) {
+            
+            EquityIndicators ind = reco.getIndicators() ;
+            
+            csvWriter.addValue( reco.getSymbolNse() ) ;
+            csvWriter.addValue( ind.getMarketCap() ) ;
+            csvWriter.addValue( ind.getBeta() ) ;
+            csvWriter.addValue( ind.getCagrEbit() ) ;
+            csvWriter.addValue( ind.getPe() ) ;
+            csvWriter.addValue( ind.getPe() - ind.getSectorPE() ) ;
+            csvWriter.addValue( ind.getMcEssentialScore() ) ;
+            csvWriter.addValue( ind.getMcInsightShort() ) ;
+            csvWriter.addValue( ind.getPiotroskiScore() ) ;
+            
+            csvWriter.writeValuesToRow() ;
+        }
+        
+        csvWriter.close() ;
+        
+        log.debug( output.toString() ) ;
     }
 }

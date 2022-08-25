@@ -26,19 +26,17 @@ class RecoEngine extends RecoEngineBase {
 
     private RecoEngine() {}
     
-    public EquityReco getRecommendation( String symbolNse ) 
-        throws Exception {
+    public EquityReco screen( EquityIndicators eIndicators ) {
         
+        String                    symbolNse   = eIndicators.getSymbolNse() ;
         EquityReco                reco        = new EquityReco() ;
         EquityMaster              em          = null ;
-        EquityIndicators          eIndicators = null ;
         List<EquityHolding>       holdings    = null ;
         List<EquityTechIndicator> tIndicators = null ;
 
         log.debug( "Generating recommendations for " + symbolNse ) ; 
         
         em          = emRepo.findBySymbol( symbolNse ) ;
-        eIndicators = eiRepo.findBySymbolNse( symbolNse ) ;
         tIndicators = etiRepo.findBySymbolNse( symbolNse ) ;
         
         holdings = ehRepo.findNonZeroHoldingsForNSESymbol( symbolNse ) ;
@@ -50,18 +48,8 @@ class RecoEngine extends RecoEngineBase {
         reco.setIndicators( eIndicators ) ;
         reco.setTechIndicators( tIndicators ) ;
         
-        if( eIndicators == null ) {
-            reco.setReco( Type.SCREENED_OUT, 
-                          "Stock indicators not found for " + symbolNse ) ;
-            return reco ;
-        }
-        
         applyScreeners( eIndicators, tIndicators, reco ) ;
 
-        if( reco.getType() != Type.SCREENED_OUT ) {
-            
-        }
-        
         return reco ;
     }
     
@@ -90,6 +78,14 @@ class RecoEngine extends RecoEngineBase {
             else if( result.getResult() == ScreenerResult.NO_CARE ) {
                 continue ;
             }
+        }
+    }
+
+    public void applyEvaluators( EquityReco reco,
+                                 StatisticsManager statsMgr ) {
+        
+        for( RecoAttributeEvaluator eval : super.evaluators ) {
+            eval.evaluate( reco, statsMgr ) ;
         }
     }
 }

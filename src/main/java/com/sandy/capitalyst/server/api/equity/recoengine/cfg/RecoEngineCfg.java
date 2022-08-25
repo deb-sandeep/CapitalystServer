@@ -9,5 +9,5 @@ import lombok.Data ;
 public class RecoEngineCfg {
 
     private List<ScreenerCfg> screenerCfgs = new ArrayList<>() ;
-    private List<AttributeComputerCfg> attributeComputerCfgs = new ArrayList<>() ;
+    private List<AttributeEvaluatorCfg> attributeEvaluatorCfgs = new ArrayList<>() ;
 }

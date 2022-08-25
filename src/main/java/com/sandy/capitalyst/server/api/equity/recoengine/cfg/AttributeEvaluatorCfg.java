@@ -5,7 +5,5 @@ import lombok.EqualsAndHashCode ;
 
 @Data
 @EqualsAndHashCode( callSuper = true )
-public class AttributeComputerCfg extends AbstractCfg {
-
-    private int weight = 0 ;
+public class AttributeEvaluatorCfg extends AbstractCfg {
 }

@@ -18,8 +18,5 @@ screenerCfgs:
         minCagrEbit : 5
         minPiotroskiScore : 5
 
-attributeComputerCfgs:
-   - id : TestAttributeComputer
-     weight : 10
-     attributes:
-        name : Sandeep
+attributeEvaluatorCfgs:
+   - id : GoodnessEvaluator

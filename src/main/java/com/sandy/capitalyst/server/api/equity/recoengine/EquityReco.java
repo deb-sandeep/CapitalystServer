@@ -30,6 +30,8 @@ public class EquityReco {
     private EquityIndicators          indicators     = null ;
     private List<EquityHolding>       holdings       = new ArrayList<>() ;
     private List<EquityTechIndicator> techIndicators = null ;
+    
+    private float goodnessScore = 0 ;
 
     public void setReco( Type type, String msg ) {
         

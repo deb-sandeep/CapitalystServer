@@ -19,7 +19,7 @@ import org.springframework.util.StreamUtils ;
 
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory ;
-import com.sandy.capitalyst.server.api.equity.recoengine.cfg.AttributeComputerCfg ;
+import com.sandy.capitalyst.server.api.equity.recoengine.cfg.AttributeEvaluatorCfg ;
 import com.sandy.capitalyst.server.api.equity.recoengine.cfg.ScreenerCfg ;
 import com.sandy.capitalyst.server.api.equity.recoengine.cfg.RecoEngineCfg ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
@@ -32,9 +32,9 @@ abstract class RecoEngineBase {
     
     private static final Logger log = Logger.getLogger( RecoEngineBase.class ) ;
     
-    private static final String CFG_FILE_NAME = "capitalyst-reco-engine.yaml" ;
-    private static final String FILTER_PKG_PREFIX = "com.sandy.capitalyst.server.api.equity.recoengine.screener." ;
-    private static final String COMP_PKG_PREFIX = "com.sandy.capitalyst.server.api.equity.recoengine.attrcomputer." ;
+    private static final String CFG_FILE_NAME        = "capitalyst-reco-engine.yaml" ;
+    private static final String SCREENER_PKG_PREFIX  = "com.sandy.capitalyst.server.api.equity.recoengine.screener." ;
+    private static final String EVALUATOR_PKG_PREFIX = "com.sandy.capitalyst.server.api.equity.recoengine.evaluator." ;
     
     private static boolean ENABLE_CFG_LOADING_LOG = false ;
     
@@ -48,7 +48,7 @@ abstract class RecoEngineBase {
     protected EquityHoldingRepo       ehRepo  = null ;
     
     protected List<Screener> screeners = new ArrayList<>() ;
-    protected List<AttributeComputer> computers = new ArrayList<>() ;
+    protected List<RecoAttributeEvaluator> evaluators = new ArrayList<>() ;
 
     protected RecoEngineBase() {}
     
@@ -141,7 +141,7 @@ abstract class RecoEngineBase {
     private void refreshPipeline() throws Exception {
         
         this.screeners.clear() ;
-        this.computers.clear() ;
+        this.evaluators.clear() ;
         
         for( ScreenerCfg cfg : engineCfg.getScreenerCfgs() ) {
             screeners.add( buildScreener( cfg ) ) ;
@@ -155,14 +155,14 @@ abstract class RecoEngineBase {
             }
         } ) ;
         
-        for( AttributeComputerCfg cfg : engineCfg.getAttributeComputerCfgs() ) {
-            computers.add( buildComputer( cfg ) ) ;
+        for( AttributeEvaluatorCfg cfg : engineCfg.getAttributeEvaluatorCfgs() ) {
+            evaluators.add( buildComputer( cfg ) ) ;
         }
     }
     
     private Screener buildScreener( ScreenerCfg cfg ) throws Exception {
         
-        String className = FILTER_PKG_PREFIX + cfg.getId() ;
+        String className = SCREENER_PKG_PREFIX + cfg.getId() ;
         Screener screener = (Screener)Class.forName( className )
                                      .getDeclaredConstructor()
                                      .newInstance() ;
@@ -183,21 +183,19 @@ abstract class RecoEngineBase {
         return screener ;
     }
     
-    private AttributeComputer buildComputer( AttributeComputerCfg cfg ) 
+    private RecoAttributeEvaluator buildComputer( AttributeEvaluatorCfg cfg ) 
             throws Exception {
         
-        AttributeComputer computer = null ;
+        RecoAttributeEvaluator evaluator = null ;
         
-        String className = COMP_PKG_PREFIX + cfg.getId() ;
-        computer = ( AttributeComputer )Class.forName( className )
+        String className = EVALUATOR_PKG_PREFIX + cfg.getId() ;
+        evaluator = ( RecoAttributeEvaluator )Class.forName( className )
                                              .getDeclaredConstructor()
                                              .newInstance() ;
         
-        computer.setWeight( cfg.getWeight() ) ;
+        populateAttributes( cfg.getAttributes(), evaluator ) ;
         
-        populateAttributes( cfg.getAttributes(), computer ) ;
-        
-        return computer ;
+        return evaluator ;
     }
     
     private void populateAttributes( Map<String, String> attributes, Object obj ) 
