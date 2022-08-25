@@ -4,14 +4,14 @@ import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco ;
 import com.sandy.capitalyst.server.api.equity.recoengine.StatisticsManager ;
 import com.sandy.capitalyst.server.api.equity.recoengine.evaluator.Normalizer ;
 
-public class MarketCapNormalizer extends Normalizer {
+public class CAGRNormalizer extends Normalizer {
     
     private static final float MIN_NORM_VALUE = 0.0F ;
     private static final float AVG_NORM_VALUE = 0.5F ;
     private static final float MAX_NORM_VALUE = 1.0F ;
 
-    public MarketCapNormalizer( float weight ) {
-        super( "Market Cap", weight,
+    public CAGRNormalizer( float weight ) {
+        super( "CAGR EBIT", weight,
                MIN_NORM_VALUE, AVG_NORM_VALUE, MAX_NORM_VALUE ) ;
     }
     
@@ -22,7 +22,7 @@ public class MarketCapNormalizer extends Normalizer {
             return 1.00F ;
         }
 
-        return threePointNormalize( reco.getIndicators().getMarketCap(), 
-                                    statsMgr.getMktCapStats() ) ;
+        return threePointNormalize( reco.getIndicators().getCagrEbit(), 
+                                    statsMgr.getCagrStats() ) ;
     }
 }

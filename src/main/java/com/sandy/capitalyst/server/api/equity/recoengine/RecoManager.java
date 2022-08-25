@@ -101,8 +101,6 @@ public class RecoManager {
             }
         }
         
-        statsMgr.printPercentiles() ;
-        
         for( EquityReco r : screenedRecos ) {
             recoEngine.applyEvaluators( r, statsMgr ) ;
         }
