@@ -130,10 +130,10 @@ public class RecoManager {
         log.debug( "  - Screened stocks     = " + screenedStocks.size() ) ;
         log.debug( "  - Rejected stocks     = " + rejectedStocks.size() ) ;
         
-        printGoodnessAttributes() ;
+        //printGoodnessAttributes() ;
     }
     
-    private void printGoodnessAttributes() {
+    void printGoodnessAttributes() {
         
         StringWriter output = new StringWriter() ;
         CsvWriter csvWriter = new CsvWriter( output, new CsvWriterSettings() ) ;

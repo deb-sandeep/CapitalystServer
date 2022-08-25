@@ -1,1 +1,64 @@
-<h2>Equity Reco</h2>
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="table table-bordered table-compact"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th ng-click="sort('health')">
+                    Health
+                </th>
+                <th ng-click="sort('symbol')">
+                    Symbol
+                </th>
+                <th ng-click="sort('mktcap')">
+                    Market Cap
+                </th>
+                <th ng-click="sort('beta')">
+                    Beta
+                </th>
+                <th ng-click="sort('cagr')">
+                    CAGR
+                </th>
+                <th ng-click="sort('mc')">
+                    MC
+                </th>
+                <th ng-click="sort('pe')">
+                    PE
+                </th>
+                <th ng-click="sort('pscore')">
+                    P Score
+                </th>
+            </tr>
+        </thead>
+        
+        <tbody ng-repeat="reco in recommendations" style="border:none;">
+            <tr ng-class="getRowClass( reco )">
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.goodnessScore | amt}}
+               </td>
+               <td>
+                    <a ng-href="{{reco.equityMaster.detailUrl}}#advchart" target="_blank">
+                        {{reco.symbolNse}}
+                    </a>
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.marketCap | amt }}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.beta | number:1}}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.cagrEbit | number:2 }}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.mcEssentialScore | number:0 }}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.pe | number:0}}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.piotroskiScore | number:0}}
+               </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
