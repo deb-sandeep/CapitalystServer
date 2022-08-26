@@ -81,7 +81,7 @@ abstract class RecoEngineBase {
     
     boolean needsInitiaization() throws Exception {
         
-        if( secondsSinceLastConfigLoad() < 30 ) {
+        if( secondsSinceLastConfigLoad() < 60 ) {
             return false ;
         }
 

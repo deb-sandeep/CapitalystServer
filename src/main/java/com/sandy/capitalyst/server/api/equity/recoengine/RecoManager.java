@@ -34,11 +34,12 @@ public class RecoManager {
     
     private StatisticsManager statsMgr = new StatisticsManager() ;
     
+    private boolean equityDataUpdated = false ;
+    
     public static RecoManager instance() throws Exception {
         if( instance == null ) {
             instance = new RecoManager() ;
         }
-        instance.initialize() ;
         return instance ;
     }
     
@@ -46,16 +47,33 @@ public class RecoManager {
     // for the specified symbol does not exist. Recommendations are generated
     // for all symbols which have indicators associated with them (a row in 
     // the equity indicator table).
-    public EquityReco getReco( String symbolNse ) {
+    public EquityReco getReco( String symbolNse ) 
+        throws Exception {
+        
+        initialize() ;
         return recommendations.get( symbolNse ) ;
     }
     
-    public List<EquityReco> getAllRecos() {
+    public List<EquityReco> getAllRecos() 
+        throws Exception {
+        
+        initialize() ;
         return allRecos ;
     }
     
-    public List<EquityReco> getScreenedRecos() {
+    public List<EquityReco> getScreenedRecos()  
+        throws Exception {
+        
+        initialize() ;
         return screenedRecos ;
+    }
+    
+    public synchronized void setEquityDataUpdated( boolean status ) {
+        this.equityDataUpdated = status ;
+    }
+    
+    public synchronized boolean getEquityDataUpdated() {
+        return this.equityDataUpdated ;
     }
     
     // Private functions
@@ -66,7 +84,9 @@ public class RecoManager {
     
     private void initialize() throws Exception {
         
-        if( recoEngine.needsInitiaization() ) {
+        boolean dataUpdated = this.getEquityDataUpdated() ;
+        
+        if( dataUpdated || recoEngine.needsInitiaization() ) {
             
             this.recoEngine.initialize() ;
             

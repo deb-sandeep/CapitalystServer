@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
@@ -38,6 +39,9 @@ public class EquityHoldingsUploadController {
             for( EquityHolding holding : holdings ) {
                 saveHolding( holding ) ;
             }
+            
+            RecoManager.instance().setEquityDataUpdated( true ) ;
+            
             String msg = "Success. Updated " + holdings.size() + " records." ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( new APIResponse( msg ) ) ;

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators ;
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators.TechIndicator ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
@@ -45,6 +46,8 @@ public class MCEquityIndicatorsUploadController {
             
             saveIndicators( ind ) ;
             
+            RecoManager.instance().setEquityDataUpdated( true ) ;
+
             String msg = "Success. Updated indicators for " + ind.getSymbolNse() ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( new APIResponse( msg ) ) ;

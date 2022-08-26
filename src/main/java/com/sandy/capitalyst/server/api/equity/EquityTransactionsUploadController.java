@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.api.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.api.equity.vo.EquityTxnPostingVO ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
@@ -55,6 +56,8 @@ public class EquityTransactionsUploadController {
                 etRepo.saveAll( holdingTxnsMap.get( holdingId ) ) ;
             }
             
+            RecoManager.instance().setEquityDataUpdated( true ) ;
+
             String msg = "Success. Saved " + txnPostings.size() + " txns." ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( new APIResponse( msg ) ) ;
