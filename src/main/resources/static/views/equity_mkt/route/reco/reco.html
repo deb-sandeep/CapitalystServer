@@ -61,9 +61,9 @@
         </thead>
         
         <tbody>
-            <tr ng-class="getRowClass( reco )"
-                ng-repeat="reco in recommendations">
-               <td class="fixed-font" style="text-align:right;">
+            <tr ng-repeat="reco in recommendations">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'health', reco.goodnessScore )">
                     {{reco.goodnessScore | amt}}
                </td>
                <td>
@@ -95,22 +95,28 @@
                <td class="fixed-font" style="text-align:right;">
                     {{reco.indicators.piotroskiScore | number:0}}
                </td>
-               <td class="fixed-font" style="text-align:right;">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1W', reco.indicators.pricePerf1W )">
                     {{reco.indicators.pricePerf1W | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1M', reco.indicators.pricePerf1M )">
                     {{reco.indicators.pricePerf1M | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf3M', reco.indicators.pricePerf3M )">
                     {{reco.indicators.pricePerf3M | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perfYTD', reco.indicators.pricePerfYTD )">
                     {{reco.indicators.pricePerfYTD | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1Y', reco.indicators.pricePerf1Y )">
                     {{reco.indicators.pricePerf1Y | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf3Y', reco.indicators.pricePerf3Y )">
                     {{reco.indicators.pricePerf3Y | number:1}}
                </td>
             </tr>

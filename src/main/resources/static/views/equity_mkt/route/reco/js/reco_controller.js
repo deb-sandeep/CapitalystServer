@@ -2,8 +2,24 @@ capitalystNgApp.controller( 'RecoController',
     function( $scope, $http ) {
     
     // ---------------- Local variables --------------------------------------
+    var GREEN = [ 'green1', 'green2', 'green3', 'green4', 'green5', 
+                  'green6', 'green7', 'green8', 'green9', 'green10' ] ;
+                  
+    var RED_GREEN = [ 'red10' , 'red8',   'red6',   'red4',   'red2', 
+                      'green4', 'green4', 'green6', 'green8', 'green10' ] ;
+    
     var sortDir = {
-        health : 'asc',
+        health : 'asc'
+    } ;
+    
+    var gradientMgr = {
+       health  : new Gradient( GREEN ),
+       perf1W  : new Gradient( RED_GREEN ), 
+       perf1M  : new Gradient( RED_GREEN ), 
+       perf3M  : new Gradient( RED_GREEN ), 
+       perfYTD : new Gradient( RED_GREEN ), 
+       perf1Y  : new Gradient( RED_GREEN ), 
+       perf3Y  : new Gradient( RED_GREEN )
     } ;
     
     // ---------------- Scope variables --------------------------------------
@@ -29,8 +45,8 @@ capitalystNgApp.controller( 'RecoController',
         return ( value < 0 ) ? "neg_amt" : "pos_amt" ;
     }
     
-    $scope.getRowClass = function( row ) {
-        return  "" ;
+    $scope.getCellClass = function( attrName, val ) {
+        return gradientMgr[ attrName ].getColor( val ) ;
     }
     
     $scope.sort = function( field ) {
@@ -55,7 +71,17 @@ capitalystNgApp.controller( 'RecoController',
                 for( var i=0; i<response.data.length; i++ ) {
                     var reco = response.data[i] ;
                     $scope.recommendations.push( reco ) ;
+                    
+                    gradientMgr['health' ].addValue( reco.goodnessScore ) ;
+                    gradientMgr['perf1W' ].addValue( reco.indicators.pricePerf1W  ) ;
+                    gradientMgr['perf1M' ].addValue( reco.indicators.pricePerf1M  ) ;
+                    gradientMgr['perf3M' ].addValue( reco.indicators.pricePerf3M  ) ;
+                    gradientMgr['perfYTD'].addValue( reco.indicators.pricePerfYTD ) ;
+                    gradientMgr['perf1Y' ].addValue( reco.indicators.pricePerf1Y  ) ;
+                    gradientMgr['perf3Y' ].addValue( reco.indicators.pricePerf3Y  ) ;
                 }
+                
+                initializeGradientMgrs() ;
                 
                 sortTable( "health" ) ;
             }, 
@@ -66,6 +92,14 @@ capitalystNgApp.controller( 'RecoController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function initializeGradientMgrs() {
+        for( var key in gradientMgr ) {
+            if( gradientMgr.hasOwnProperty( key ) ) {
+                gradientMgr[ key ].initialize() ;
+            }
+        }
     }
     
     function sortTable( field ) {
