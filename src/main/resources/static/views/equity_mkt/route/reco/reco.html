@@ -60,14 +60,15 @@
             </tr>
         </thead>
         
-        <tbody ng-repeat="reco in recommendations" style="border:none;">
-            <tr ng-class="getRowClass( reco )">
+        <tbody>
+            <tr ng-class="getRowClass( reco )"
+                ng-repeat="reco in recommendations">
                <td class="fixed-font" style="text-align:right;">
-                    {{reco.goodnessScore | amt}}&nbsp;&nbsp;
+                    {{reco.goodnessScore | amt}}
                </td>
                <td>
                     <a ng-href="{{reco.equityMaster.detailUrl}}#advchart" target="_blank">
-                        {{reco.symbolNse}}
+                        {{reco.symbolNse}}&nbsp;&nbsp;
                     </a>
                     <i ng-if="reco.inPortfolio" 
                        class="fa-solid fa-map-pin"

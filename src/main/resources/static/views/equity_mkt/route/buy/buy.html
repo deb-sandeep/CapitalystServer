@@ -14,8 +14,9 @@
             </tr>
         </thead>
         
-        <tbody ng-repeat="txn in buyTxns" style="border:none;">
-            <tr ng-class="getRowClass( txn )">
+        <tbody>
+            <tr ng-class="getRowClass( txn )"
+                ng-repeat="txn in buyTxns">
                <td>
                  <input type="checkbox" 
                         ng-model="txn.selected"
