@@ -10,8 +10,8 @@ public class CAGRNormalizer extends Normalizer {
     private static final float AVG_NORM_VALUE = 0.5F ;
     private static final float MAX_NORM_VALUE = 1.0F ;
 
-    public CAGRNormalizer( float weight ) {
-        super( "CAGR EBIT", weight,
+    public CAGRNormalizer() {
+        super( "CAGR EBIT",
                MIN_NORM_VALUE, AVG_NORM_VALUE, MAX_NORM_VALUE ) ;
     }
     

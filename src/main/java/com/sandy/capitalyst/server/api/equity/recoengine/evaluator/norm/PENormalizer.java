@@ -10,8 +10,8 @@ public class PENormalizer extends Normalizer {
     private static final float AVG_NORM_VALUE = 1.0F ;
     private static final float MAX_NORM_VALUE = 0.5F ;
 
-    public PENormalizer( float weight ) {
-        super( "PE", weight,
+    public PENormalizer() {
+        super( "PE",
                MIN_NORM_VALUE, AVG_NORM_VALUE, MAX_NORM_VALUE ) ;
     }
     

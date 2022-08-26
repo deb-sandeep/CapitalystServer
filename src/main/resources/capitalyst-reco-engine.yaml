@@ -20,3 +20,10 @@ screenerCfgs:
 
 attributeEvaluatorCfgs:
    - id : GoodnessEvaluator
+     attributes :
+        betaWt : 5
+        piotroskiScoreWt : 10
+        mktCapWt : 10
+        mcEssentialScoreWt : 20
+        peWt : 25
+        cagrWt : 30        

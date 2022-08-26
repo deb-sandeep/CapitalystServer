@@ -81,8 +81,8 @@ abstract class RecoEngineBase {
     
     boolean needsInitiaization() throws Exception {
         
-        if( secondsSinceLastConfigLoad() > 15 ) {
-            return true ;
+        if( secondsSinceLastConfigLoad() < 30 ) {
+            return false ;
         }
 
         InputStream is = getRecoEngineConfigStream() ;
@@ -148,7 +148,6 @@ abstract class RecoEngineBase {
         }
         
         screeners.sort( new Comparator<Screener>() {
-
             @Override
             public int compare( Screener s1, Screener s2 ) {
                 return s2.getPriority() - s1.getPriority() ;
@@ -179,6 +178,7 @@ abstract class RecoEngineBase {
         }
         
         populateAttributes( cfg.getAttributes(), screener ) ;
+        screener.initialize() ;
 
         return screener ;
     }
@@ -194,6 +194,7 @@ abstract class RecoEngineBase {
                                              .newInstance() ;
         
         populateAttributes( cfg.getAttributes(), evaluator ) ;
+        evaluator.initialize() ;
         
         return evaluator ;
     }

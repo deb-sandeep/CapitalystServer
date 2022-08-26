@@ -3,17 +3,29 @@
            style="width: auto !important;">
         <thead>
             <tr class="success">
+                <th colspan="3"></th>
+                <th colspan="6" style="text-align:center;">
+                    Health Attributes
+                </th>
+                <th colspan="6" style="text-align:center;">
+                    Performance %
+                </th>
+            </tr>
+            <tr class="success">
                 <th ng-click="sort('health')">
-                    Health
+                    <i class="fa-solid fa-hand-holding-medical"></i>
                 </th>
                 <th ng-click="sort('symbol')">
                     Symbol
+                </th>
+                <th ng-click="sort('price')">
+                    Price
                 </th>
                 <th ng-click="sort('mktcap')">
                     Market Cap
                 </th>
                 <th ng-click="sort('beta')">
-                    Beta
+                    &#x3B2;
                 </th>
                 <th ng-click="sort('cagr')">
                     CAGR
@@ -25,7 +37,25 @@
                     PE
                 </th>
                 <th ng-click="sort('pscore')">
-                    P Score
+                    P
+                </th>
+                <th ng-click="sort('perf1W')" style="width:50px;">
+                    1W
+                </th>
+                <th ng-click="sort('perf1M')" style="width:50px;">
+                    1M
+                </th>
+                <th ng-click="sort('perf3M')" style="width:50px;">
+                    3M
+                </th>
+                <th ng-click="sort('perfYTD')" style="width:50px;">
+                    YTD
+                </th>
+                <th ng-click="sort('perf1Y')" style="width:50px;">
+                    1Y
+                </th>
+                <th ng-click="sort('perf3Y')" style="width:50px;">
+                    3Y
                 </th>
             </tr>
         </thead>
@@ -33,12 +63,18 @@
         <tbody ng-repeat="reco in recommendations" style="border:none;">
             <tr ng-class="getRowClass( reco )">
                <td class="fixed-font" style="text-align:right;">
-                    {{reco.goodnessScore | amt}}
+                    {{reco.goodnessScore | amt}}&nbsp;&nbsp;
                </td>
                <td>
                     <a ng-href="{{reco.equityMaster.detailUrl}}#advchart" target="_blank">
                         {{reco.symbolNse}}
                     </a>
+                    <i ng-if="reco.inPortfolio" 
+                       class="fa-solid fa-map-pin"
+                       style="color:red;"></i>
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.currentPrice | amt }}
                </td>
                <td class="fixed-font" style="text-align:right;">
                     {{reco.indicators.marketCap | amt }}
@@ -57,6 +93,24 @@
                </td>
                <td class="fixed-font" style="text-align:right;">
                     {{reco.indicators.piotroskiScore | number:0}}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.pricePerf1W | number:1}}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.pricePerf1M | number:1}}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.pricePerf3M | number:1}}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.pricePerfYTD | number:1}}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.pricePerf1Y | number:1}}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.pricePerf3Y | number:1}}
                </td>
             </tr>
         </tbody>

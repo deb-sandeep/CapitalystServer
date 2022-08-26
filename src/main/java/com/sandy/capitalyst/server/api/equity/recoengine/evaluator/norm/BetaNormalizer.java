@@ -10,8 +10,8 @@ public class BetaNormalizer extends Normalizer {
     private static final float AVG_NORM_VALUE = 1.0F ;
     private static final float MAX_NORM_VALUE = 0.6F ;
 
-    public BetaNormalizer( float weight ) {
-        super( "Beta", weight,
+    public BetaNormalizer() {
+        super( "Beta",
                MIN_NORM_VALUE, AVG_NORM_VALUE, MAX_NORM_VALUE ) ;
     }
     

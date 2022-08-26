@@ -10,8 +10,8 @@ public class PiotroskiNormalizer extends Normalizer {
     private static final float AVG_NORM_VALUE = 0.5F ;
     private static final float MAX_NORM_VALUE = 1.0F ;
 
-    public PiotroskiNormalizer( float weight ) {
-        super( "Piotroski", weight,
+    public PiotroskiNormalizer() {
+        super( "Piotroski",
                MIN_NORM_VALUE, AVG_NORM_VALUE, MAX_NORM_VALUE ) ;
     }
     

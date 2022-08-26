@@ -10,8 +10,8 @@ public class MCEssentialsNormalizer extends Normalizer {
     private static final float AVG_NORM_VALUE = 0.5F ;
     private static final float MAX_NORM_VALUE = 1.0F ;
 
-    public MCEssentialsNormalizer( float weight ) {
-        super( "MC Essentials", weight,
+    public MCEssentialsNormalizer() {
+        super( "MC Essentials",
                MIN_NORM_VALUE, AVG_NORM_VALUE, MAX_NORM_VALUE ) ;
     }
     

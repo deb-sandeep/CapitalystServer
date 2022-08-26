@@ -6,10 +6,11 @@ import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco ;
 import com.sandy.capitalyst.server.api.equity.recoengine.StatisticsManager ;
 
 import lombok.Getter ;
+import lombok.Setter ;
 
 public abstract class Normalizer {
     
-    @Getter 
+    @Getter @Setter
     private float weight = 0 ;
     
     @Getter
@@ -19,10 +20,9 @@ public abstract class Normalizer {
     @Getter private float avgNormVal = 0F ;
     @Getter private float maxNormVal = 0F ;
     
-    public Normalizer( String name, float weight,
-                       float minNormVal, float avgNormVal, float maxNormVal ) {
+    public Normalizer( String name, float minNormVal, 
+                       float avgNormVal, float maxNormVal ) {
         this.name = name ;
-        this.weight = weight ;
         this.minNormVal = minNormVal ;
         this.avgNormVal = avgNormVal ;
         this.maxNormVal = maxNormVal ;

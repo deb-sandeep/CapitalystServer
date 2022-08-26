@@ -80,6 +80,9 @@ capitalystNgApp.controller( 'RecoController',
         else if( field == "symbol" ) {
             $scope.recommendations.sort( symbolSort ) ;
         }
+        else if( field == "price" ) {
+            $scope.recommendations.sort( priceSort ) ;
+        }
         else if( field == "mktcap" ) {
             $scope.recommendations.sort( mktcapSort ) ;
         }
@@ -98,6 +101,24 @@ capitalystNgApp.controller( 'RecoController',
         else if( field == "pscore" ) {
             $scope.recommendations.sort( pscoreSort ) ;
         }    
+        else if( field == "perf1W" ) {
+            $scope.recommendations.sort( perf1WSort ) ;
+        }
+        else if( field == "perf1M" ) {
+            $scope.recommendations.sort( perf1MSort ) ;
+        }
+        else if( field == "perf3M" ) {
+            $scope.recommendations.sort( perf3MSort ) ;
+        }
+        else if( field == "perfYTD" ) {
+            $scope.recommendations.sort( perfYTDSort ) ;
+        }
+        else if( field == "perf1Y" ) {
+            $scope.recommendations.sort( perf1YSort ) ;
+        }
+        else if( field == "perf3Y" ) {
+            $scope.recommendations.sort( perf3YSort ) ;
+        }
     }
     
     function healthSort( r1, r2 ) {
@@ -110,6 +131,12 @@ capitalystNgApp.controller( 'RecoController',
         return sortDir[ "symbol"] == "asc" ?
             ( r1.symbolNse.localeCompare( r2.symbolNse ) ) :
             ( r2.symbolNse.localeCompare( r1.symbolNse ) ) ;
+    }
+    
+    function priceSort( r1, r2 ) {
+        return sortDir[ "price"] == "asc" ?
+            ( r1.indicators.currentPrice - r2.indicators.currentPrice ) :
+            ( r2.indicators.currentPrice - r1.indicators.currentPrice ) ;
     }
     
     function mktcapSort( r1, r2 ) {
@@ -148,4 +175,39 @@ capitalystNgApp.controller( 'RecoController',
             ( r2.indicators.piotroskiScore - r1.indicators.piotroskiScore ) ;
     }
         
+    function perf1WSort( r1, r2 ) {
+        return sortDir["perf1W"] == "asc" ?
+            ( r1.indicators.pricePerf1W - r2.indicators.pricePerf1W ) :
+            ( r2.indicators.pricePerf1W - r1.indicators.pricePerf1W ) ;
+    }
+    
+    function perf1MSort( r1, r2 ) {
+        return sortDir["perf1M"] == "asc" ?
+            ( r1.indicators.pricePerf1M - r2.indicators.pricePerf1M ) :
+            ( r2.indicators.pricePerf1M - r1.indicators.pricePerf1M ) ;
+    }
+    
+    function perf3MSort( r1, r2 ) {
+        return sortDir["perf3M"] == "asc" ?
+            ( r1.indicators.pricePerf3M - r2.indicators.pricePerf3M ) :
+            ( r2.indicators.pricePerf3M - r1.indicators.pricePerf3M ) ;
+    }
+    
+    function perfYTDSort( r1, r2 ) {
+        return sortDir["perfYTD"] == "asc" ?
+            ( r1.indicators.pricePerfYTD - r2.indicators.pricePerfYTD ) :
+            ( r2.indicators.pricePerfYTD - r1.indicators.pricePerfYTD ) ;
+    }
+    
+    function perf1YSort( r1, r2 ) {
+        return sortDir["perf1Y"] == "asc" ?
+            ( r1.indicators.pricePerf1Y - r2.indicators.pricePerf1Y ) :
+            ( r2.indicators.pricePerf1Y - r1.indicators.pricePerf1Y ) ;
+    }
+    
+    function perf3YSort( r1, r2 ) {
+        return sortDir["perf3Y"] == "asc" ?
+            ( r1.indicators.pricePerf3Y - r2.indicators.pricePerf3Y ) :
+            ( r2.indicators.pricePerf3Y - r1.indicators.pricePerf3Y ) ;
+    }
 } ) ;

@@ -10,8 +10,8 @@ public class MarketCapNormalizer extends Normalizer {
     private static final float AVG_NORM_VALUE = 0.5F ;
     private static final float MAX_NORM_VALUE = 1.0F ;
 
-    public MarketCapNormalizer( float weight ) {
-        super( "Market Cap", weight,
+    public MarketCapNormalizer() {
+        super( "Market Cap", 
                MIN_NORM_VALUE, AVG_NORM_VALUE, MAX_NORM_VALUE ) ;
     }
     

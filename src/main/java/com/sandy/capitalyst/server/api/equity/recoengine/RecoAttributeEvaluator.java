@@ -7,4 +7,6 @@ public abstract class RecoAttributeEvaluator {
     
     public abstract void evaluate( EquityReco reco, 
                                    StatisticsManager statsMgr ) ;
+    
+    public void initialize() throws Exception {}
 }
