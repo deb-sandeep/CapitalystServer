@@ -26,20 +26,19 @@ class RecoEngine extends RecoEngineBase {
 
     private RecoEngine() {}
     
-    public EquityReco screen( EquityIndicators eIndicators ) {
+    public EquityReco screen( EquityMaster em,
+                              EquityIndicators eIndicators ) {
         
         String                    symbolNse   = eIndicators.getSymbolNse() ;
         EquityReco                reco        = new EquityReco() ;
-        EquityMaster              em          = null ;
         List<EquityHolding>       holdings    = null ;
         List<EquityTechIndicator> tIndicators = null ;
 
         log.debug( "Generating recommendations for " + symbolNse ) ; 
         
-        em          = emRepo.findBySymbol( symbolNse ) ;
         tIndicators = etiRepo.findBySymbolNse( symbolNse ) ;
-        
         holdings = ehRepo.findNonZeroHoldingsForNSESymbol( symbolNse ) ;
+        
         if( holdings != null && !holdings.isEmpty() ) {
             reco.setHoldings( holdings ) ;
         }

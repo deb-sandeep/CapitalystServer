@@ -13,7 +13,9 @@ import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco.Type ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.univocity.parsers.csv.CsvWriter ;
 import com.univocity.parsers.csv.CsvWriterSettings ;
 
@@ -25,6 +27,7 @@ public class RecoManager {
     
     private RecoEngine recoEngine = null ;
     private EquityIndicatorsRepo eiRepo = null ;
+    private EquityMasterRepo emRepo = null ;
 
     // Key is the NSE symbol. The values are pre-sorted based on the natural 
     // ordering of the NSE symbols.
@@ -91,6 +94,7 @@ public class RecoManager {
             this.recoEngine.initialize() ;
             
             this.eiRepo   = getBean( EquityIndicatorsRepo.class ) ;
+            this.emRepo   = getBean( EquityMasterRepo.class ) ;
             this.statsMgr = new StatisticsManager() ;
             
             refreshRecommendationsCache() ;
@@ -101,23 +105,29 @@ public class RecoManager {
         
         log.debug( "Refreshing recommendation manager cache" ) ;
         
-        Iterable<EquityIndicators> inds = eiRepo.findAll() ;
         EquityReco reco = null ;
+        EquityIndicators ind = null ;
         
         recommendations.clear() ;
         allRecos.clear() ;
         screenedRecos.clear() ;
         
-        for( EquityIndicators ind : inds ) {
+        Iterable<EquityMaster> allStocks = emRepo.findAll() ;
+        
+        for( EquityMaster em : allStocks ) {
             
-            reco = recoEngine.screen( ind ) ;
-            
-            recommendations.put( ind.getSymbolNse(), reco ) ;
-            allRecos.add( reco ) ;
-            
-            if( reco.getType() != Type.SCREENED_OUT ) {
-                screenedRecos.add( reco ) ;
-                statsMgr.assimilate( reco ) ;
+            ind = eiRepo.findByIsin( em.getIsin() ) ;
+            if( ind != null ) {
+                
+                reco = recoEngine.screen( em, ind ) ;
+                
+                recommendations.put( ind.getSymbolNse(), reco ) ;
+                allRecos.add( reco ) ;
+                
+                if( reco.getType() != Type.SCREENED_OUT ) {
+                    screenedRecos.add( reco ) ;
+                    statsMgr.assimilate( reco ) ;
+                }
             }
         }
         

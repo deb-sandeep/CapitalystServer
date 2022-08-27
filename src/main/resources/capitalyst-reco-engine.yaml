@@ -8,6 +8,11 @@ screenerCfgs:
      attributes :
         nseSymbols : ATGL, ADANIPORTS, ADANIPOWER, ADANITRANS, ADANIGREEN
         
+   - id : IndexScreener
+     priority : 98
+     attributes :
+        includedIndexes : Nifty 200
+        
    - id : IndicatorScreener
      priority : 90
      attributes :

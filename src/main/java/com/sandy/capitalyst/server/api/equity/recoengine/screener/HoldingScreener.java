@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.api.equity.recoengine.screener;
 
+import java.util.ArrayList ;
 import java.util.List ;
 
 import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco ;
@@ -19,22 +20,28 @@ import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 public class HoldingScreener extends Screener {
     
     private static final String TEMPLATE = "{id} - Including {0}." ;
+    
+    private List<String> holdingNseSymbols = new ArrayList<>() ;
+    
+    public void initialize() throws Exception {
+        
+        EquityHoldingRepo ehRepo = getBean( EquityHoldingRepo.class ) ;
+        List<EquityHolding> ehList = ehRepo.findNonZeroHoldings() ;
+        
+        for( EquityHolding eh : ehList ) {
+            holdingNseSymbols.add( eh.getSymbolNse() ) ;
+        }
+    }
 
     @Override
     public ScreenerResult screen( EquityIndicators ind,
-                                List<EquityTechIndicator> techInds, 
-                                EquityReco recos ) {
+                                  List<EquityTechIndicator> techInds, 
+                                  EquityReco recos ) {
 
-        EquityHoldingRepo ehRepo = getBean( EquityHoldingRepo.class ) ;
-        
-        List<EquityHolding> ehList = null ;
-        ehList = ehRepo.findNonZeroHoldingsForNSESymbol( ind.getSymbolNse() ) ;
-        
-        if( ehList != null && !ehList.isEmpty() ) {
+        if( holdingNseSymbols.contains( ind.getSymbolNse() ) ) {
             return accept( msg( TEMPLATE, ind.getSymbolNse() ) ) ;
         }
         
         return nocare() ;
     }
-
 }
