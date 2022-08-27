@@ -28,4 +28,6 @@ public class EquityMaster {
     
     private String industry = null ;
     private String detailUrl = null ;
+    
+    private String description = null ;
 }

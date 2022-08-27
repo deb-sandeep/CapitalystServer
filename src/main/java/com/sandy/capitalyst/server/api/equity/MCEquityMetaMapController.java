@@ -1,7 +1,5 @@
 package com.sandy.capitalyst.server.api.equity ;
 
-import java.util.List ;
-
 import org.apache.commons.lang.exception.ExceptionUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -29,17 +27,14 @@ public class MCEquityMetaMapController {
     
     @PostMapping( "/Equity/Master/MCStockMeta" ) 
     public ResponseEntity<APIResponse> updateMCNameISINMapping(
-                                @RequestBody List<MCStockMeta> mappings ) {
+                                @RequestBody MCStockMeta meta ) {
         try {
             log.debug( "Updating equity master with MC Name ISIN mappings" ) ;
             
-            for( MCStockMeta mapping : mappings ) {
-                saveMapping( mapping ) ;
-            }
-            
+            saveMapping( meta ) ;
             RecoManager.instance().setEquityDataUpdated( true ) ;
 
-            String msg = "Success. Updated " + mappings.size() + " records." ;
+            String msg = "Success. Updated meta for " + meta.getSymbolNSE() ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( new APIResponse( msg ) ) ;
         }
@@ -51,14 +46,15 @@ public class MCEquityMetaMapController {
         }
     }
     
-    private void saveMapping( MCStockMeta mapping )
+    private void saveMapping( MCStockMeta meta )
         throws Exception {
         
-        EquityMaster em = emRepo.findByIsin( mapping.getIsin() ) ;
+        EquityMaster em = emRepo.findByIsin( meta.getIsin() ) ;
         
         if( em != null ) {
-            em.setMcName( mapping.getMcName() ) ;
-            em.setDetailUrl( mapping.getDetailURL() ) ;
+            em.setMcName( meta.getMcName() ) ;
+            em.setDetailUrl( meta.getDetailURL() ) ;
+            em.setDescription( meta.getDescription() ) ;
             emRepo.save( em ) ;
         }
     }
