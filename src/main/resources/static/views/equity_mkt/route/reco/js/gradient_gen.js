@@ -10,13 +10,13 @@ function UniformGradient( gradientMap ) {
     
     this.generateGradient = function( values, colorValues ) {
         
-        var numGradientSteps = gradientMap.length ;
-        var numValues = values.length ;
-        var numValuesPerStep = numValues/numGradientSteps ;
-        
         if( gradientMap == null ) {
             gradientMap = G_GRADIENT ;
         }
+        
+        var numGradientSteps = gradientMap.length ;
+        var numValues = values.length ;
+        var numValuesPerStep = numValues/numGradientSteps ;
         
         for( var i=0; i<numGradientSteps; i++ ) {
             for( j=0; j<numValuesPerStep; j++ ) {

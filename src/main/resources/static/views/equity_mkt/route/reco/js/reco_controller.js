@@ -7,7 +7,8 @@ capitalystNgApp.controller( 'RecoController',
     } ;
     
     var gradientMgr = {
-       health  : new Gradient( new UniformGradient( G_GRADIENT ) ),
+       health  : new Gradient( new UniformGradient() ),
+       mc      : new Gradient( new UniformGradient() ),
        perf1W  : new Gradient( new ThresholdGradient() ), 
        perf1M  : new Gradient( new ThresholdGradient() ), 
        perf3M  : new Gradient( new ThresholdGradient() ), 
@@ -69,6 +70,7 @@ capitalystNgApp.controller( 'RecoController',
                     $scope.recommendations.push( reco ) ;
                     
                     gradientMgr['health' ].addValue( reco.goodnessScore ) ;
+                    gradientMgr['mc'     ].addValue( reco.indicators.mcEssentialScore ) ;
                     gradientMgr['cagr'   ].addValue( reco.indicators.cagrEbit ) ;
                     gradientMgr['perf1W' ].addValue( reco.indicators.pricePerf1W  ) ;
                     gradientMgr['perf1M' ].addValue( reco.indicators.pricePerf1M  ) ;
