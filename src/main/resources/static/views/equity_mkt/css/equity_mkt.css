@@ -100,4 +100,9 @@ pre {
     background-color: #fafaee ;
 }
 
-
+td {
+    padding-left : 5px !important;
+    padding-right : 5px !important;
+    padding-top : 3px !important;
+    padding-bottom : 3px !important;
+}

@@ -2,24 +2,20 @@ capitalystNgApp.controller( 'RecoController',
     function( $scope, $http ) {
     
     // ---------------- Local variables --------------------------------------
-    var GREEN = [ 'green1', 'green2', 'green3', 'green4', 'green5', 
-                  'green6', 'green7', 'green8', 'green9', 'green10' ] ;
-                  
-    var RED_GREEN = [ 'red10' , 'red8',   'red6',   'red4',   'red2', 
-                      'green4', 'green4', 'green6', 'green8', 'green10' ] ;
-    
     var sortDir = {
         health : 'asc'
     } ;
     
     var gradientMgr = {
-       health  : new Gradient( GREEN ),
-       perf1W  : new Gradient( RED_GREEN ), 
-       perf1M  : new Gradient( RED_GREEN ), 
-       perf3M  : new Gradient( RED_GREEN ), 
-       perfYTD : new Gradient( RED_GREEN ), 
-       perf1Y  : new Gradient( RED_GREEN ), 
-       perf3Y  : new Gradient( RED_GREEN )
+       health  : new Gradient( new UniformGradient( G_GRADIENT ) ),
+       perf1W  : new Gradient( new ThresholdGradient() ), 
+       perf1M  : new Gradient( new ThresholdGradient() ), 
+       perf3M  : new Gradient( new ThresholdGradient() ), 
+       perfYTD : new Gradient( new ThresholdGradient() ), 
+       perf1Y  : new Gradient( new ThresholdGradient() ), 
+       perf3Y  : new Gradient( new ThresholdGradient() ),
+       
+       cagr    : new Gradient( new ThresholdGradient( 5 ) ),
     } ;
     
     // ---------------- Scope variables --------------------------------------
@@ -73,6 +69,7 @@ capitalystNgApp.controller( 'RecoController',
                     $scope.recommendations.push( reco ) ;
                     
                     gradientMgr['health' ].addValue( reco.goodnessScore ) ;
+                    gradientMgr['cagr'   ].addValue( reco.indicators.cagrEbit ) ;
                     gradientMgr['perf1W' ].addValue( reco.indicators.pricePerf1W  ) ;
                     gradientMgr['perf1M' ].addValue( reco.indicators.pricePerf1M  ) ;
                     gradientMgr['perf3M' ].addValue( reco.indicators.pricePerf3M  ) ;

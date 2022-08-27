@@ -1,3 +1,7 @@
+.green0 {
+    background-color: white;
+}
+
 .green1 {
 	background-color: #f7fff7;
 }
@@ -36,6 +40,10 @@
 
 .green10 {
     background-color: #b2ffb2;
+}
+
+.red0 {
+    background-color: white;
 }
 
 .red1 {

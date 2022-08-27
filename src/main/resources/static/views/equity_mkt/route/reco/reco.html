@@ -83,7 +83,8 @@
                <td class="fixed-font" style="text-align:right;">
                     {{reco.indicators.beta | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'cagr', reco.indicators.cagrEbit )">
                     {{reco.indicators.cagrEbit | number:2 }}
                </td>
                <td class="fixed-font" style="text-align:right;">
