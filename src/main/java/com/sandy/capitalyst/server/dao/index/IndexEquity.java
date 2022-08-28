@@ -29,5 +29,6 @@ public class IndexEquity {
     @JoinColumn( name="equity_id" )
     private EquityMaster eqMaster = null ;
     
-    private Float weight = 0F ;
+    private String idxName = null ;
+    private String equitySymbol = null ;
 }

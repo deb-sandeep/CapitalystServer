@@ -101,6 +101,8 @@ public class IndexRefresher {
             IndexEquity ie = new IndexEquity() ;
             ie.setIdxMaster( idx ) ;
             ie.setEqMaster( em ) ;
+            ie.setIdxName( idx.getName() ) ;
+            ie.setEquitySymbol( em.getSymbol() ) ;
             ieRepo.save( ie ) ;
             
             em.setIndustry( industry ) ;
