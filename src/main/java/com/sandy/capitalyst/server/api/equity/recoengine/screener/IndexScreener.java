@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.api.equity.recoengine.screener;
 
+import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+
 import java.util.ArrayList ;
 import java.util.List ;
 
@@ -8,12 +10,9 @@ import org.apache.log4j.Logger ;
 import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco ;
 import com.sandy.capitalyst.server.api.equity.recoengine.Screener ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
-import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
 import com.sandy.capitalyst.server.dao.index.repo.IndexEquityRepo ;
 import com.sandy.common.util.StringUtil ;
-
-import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 
 /**
  * Excludes any equity which is not a part of the indexes specified.
@@ -30,7 +29,7 @@ public class IndexScreener extends Screener {
     private static final String TEMPLATE = "{id} - Rejecting {0}." ;
     
     private List<String> indexesForInclusion = new ArrayList<>() ;
-    private List<String> nseSymbolsForInclusion = new ArrayList<>() ;
+    private List<String> eqForInclusion = new ArrayList<>() ;
     
     // This is populated through the yaml configuration
     public void setIncludedIndexes( String indexNames ) {
@@ -46,15 +45,9 @@ public class IndexScreener extends Screener {
     public void initialize() throws Exception {
         
         IndexEquityRepo ieRepo = getBean( IndexEquityRepo.class ) ;
-        List<EquityMaster> equities = null ;
         
-        for( String indexName : indexesForInclusion ) {
-            equities = ieRepo.findByIndex( indexName ) ;
-            if( equities != null ) {
-                for( EquityMaster em : equities ) {
-                    nseSymbolsForInclusion.add( em.getSymbol() ) ;
-                }
-            }
+        for( String idxName : indexesForInclusion ) {
+            eqForInclusion.addAll( ieRepo.findEquitiesForIndex( idxName ) ) ;
         }
     }
     
@@ -63,7 +56,7 @@ public class IndexScreener extends Screener {
                                   List<EquityTechIndicator> techInds, 
                                   EquityReco recos ) {
         
-        if( nseSymbolsForInclusion.contains( ind.getSymbolNse() ) ) {
+        if( eqForInclusion.contains( ind.getSymbolNse() ) ) {
             return nocare() ;
         }
         return reject( msg( TEMPLATE, ind.getSymbolNse() ) ) ;

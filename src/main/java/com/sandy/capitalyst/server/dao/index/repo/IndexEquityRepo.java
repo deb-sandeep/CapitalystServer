@@ -33,4 +33,17 @@ public interface IndexEquityRepo
           + "    ie.eqMaster.symbol ASC "
     )
     public List<EquityMaster> findByIndex( @Param( "idxName" ) String idxName ) ;
+
+    @Query( nativeQuery = true,
+            value =   
+            "SELECT "
+          + "    ie.equity_symbol "
+          + "FROM "
+          + "    index_equities ie "
+          + "WHERE "
+          + "    ie.idx_name = :idxName "
+          + "ORDER BY "
+          + "    ie.equity_symbol ASC "
+    )
+    public List<String> findEquitiesForIndex( @Param( "idxName" ) String idxName ) ;
 }
