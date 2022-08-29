@@ -12,7 +12,7 @@ import lombok.Data ;
 @Entity
 @Table( name = "index_master" )
 public class IndexMaster {
-
+    
     @Id
     @GeneratedValue( strategy=GenerationType.AUTO )
     private Integer id = null ;

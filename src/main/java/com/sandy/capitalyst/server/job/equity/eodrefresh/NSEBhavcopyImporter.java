@@ -17,26 +17,35 @@ import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
+import com.sandy.capitalyst.server.dao.index.repo.IndexEquityRepo ;
 import com.sandy.common.util.StringUtil ;
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;
 
 public class NSEBhavcopyImporter {
     
-    static final Logger log = Logger.getLogger( NSEBhavcopyImporter.class ) ;
+    private static final Logger log = Logger.getLogger( NSEBhavcopyImporter.class ) ;
+
+    private static final String NIFTY_200_IDX_NAME = "Nifty 200" ;
     
     private HistoricEQDataRepo ecRepo = null ;
     private EquityMasterRepo emRepo = null ;
     private EquityHoldingRepo ehRepo = null ;
-    
+    private IndexEquityRepo ieRepo = null ;
+
     private EquityDailyGainUpdater dgUpdater = null ;
+    
+    private List<String> nifty200Stocks = new ArrayList<>() ;
     
     public NSEBhavcopyImporter() {
         ecRepo  = getBean( HistoricEQDataRepo.class ) ;
         emRepo  = getBean( EquityMasterRepo.class ) ;
         ehRepo  = getBean( EquityHoldingRepo.class ) ;
+        ieRepo  = getBean( IndexEquityRepo.class ) ;
         
         dgUpdater = new EquityDailyGainUpdater() ;
+        
+        nifty200Stocks.addAll( ieRepo.findEquitiesForIndex( NIFTY_200_IDX_NAME ) ) ;
     }
 
     public Date importBhavcopy( Date lastImportDate ) 
@@ -57,9 +66,11 @@ public class NSEBhavcopyImporter {
         return latestAvailableBhavcopyDate ;
     }
     
-    private void importBhavcopyFile( File bhavcopyFile, Date date ) {
+    private void importBhavcopyFile( File bhavcopyFile, Date date ) 
+        throws Exception {
         
         Map<String, List<EquityHolding>> holdingsMap = loadHoldingsMap() ;
+        EquityTTMPerfUpdater ttmPerfUpdater = new EquityTTMPerfUpdater() ;
         
         CsvParserSettings settings = new CsvParserSettings() ;
         settings.detectFormatAutomatically() ;
@@ -85,10 +96,13 @@ public class NSEBhavcopyImporter {
                     
                     if( StringUtil.isNotEmptyOrNull( em.getIndustry() ) || 
                         em.isEtf() || 
-                        holdingsMap.containsKey( symbol ) ) {
+                        holdingsMap.containsKey( symbol ) || 
+                        nifty200Stocks.contains( em.getSymbol() ) ) {
                         
                         ecRepo.save( candle ) ;
                         updateEquityISINMapping( symbol, isin ) ;
+                        
+                        ttmPerfUpdater.addTodayEODCandle( candle ) ;
                     }
                     
                     if( holdingsMap.containsKey( symbol ) ) {
@@ -105,6 +119,8 @@ public class NSEBhavcopyImporter {
                 }
             }
         }
+        
+        ttmPerfUpdater.updateTTMPerfMeasures() ;
     }
     
     private Map<String, List<EquityHolding>> loadHoldingsMap() {
@@ -123,7 +139,6 @@ public class NSEBhavcopyImporter {
                 holdingList.add( holding ) ;
             }
         }
-        
         return holdingsMap ;
     }
 
@@ -165,16 +180,32 @@ public class NSEBhavcopyImporter {
 
     private HistoricEQData buildEquityCandle( String[] record, Date date ) {
         
-        HistoricEQData candle = new HistoricEQData() ;
-        candle.setSymbol( record[0] ) ;
-        candle.setOpen( Float.parseFloat( record[2] ) ) ;
-        candle.setHigh( Float.parseFloat( record[3] ) ) ;
-        candle.setLow( Float.parseFloat( record[4] ) ) ;
-        candle.setClose( Float.parseFloat( record[5] ) ) ;
-        candle.setTotalTradeQty( Long.parseLong( record[8] ) ) ;
-        candle.setTotalTradeVal( Float.parseFloat( record[9] ) ) ;
-        candle.setTotalTrades( Long.parseLong( record[11] ) ) ;
-        candle.setDate( date ) ;
+        List<HistoricEQData> candles = null ;
+        HistoricEQData candle = null ;
+        
+        candles = ecRepo.findBySymbolAndDate( record[0], date ) ;
+        
+        if( candles == null || candles.isEmpty() ) {
+            candle = new HistoricEQData() ;
+        }
+        else {
+            candle = candles.get( 0 ) ;
+            for( int i=1; i<candles.size(); i++ ) {
+                candle = candles.get( i ) ;
+                ecRepo.delete( candle ) ;
+            }
+        }
+        
+        candle.setSymbol       ( record[0] ) ;
+        candle.setOpen         ( Float.parseFloat( record[ 2] ) ) ;
+        candle.setHigh         ( Float.parseFloat( record[ 3] ) ) ;
+        candle.setLow          ( Float.parseFloat( record[ 4] ) ) ;
+        candle.setClose        ( Float.parseFloat( record[ 5] ) ) ;
+        candle.setTotalTradeQty( Long.parseLong  ( record[ 8] ) ) ;
+        candle.setTotalTradeVal( Float.parseFloat( record[ 9] ) ) ;
+        candle.setTotalTrades  ( Long.parseLong  ( record[11] ) ) ;
+        candle.setDate         ( date ) ;
+        
         return candle ;
     }
 }
