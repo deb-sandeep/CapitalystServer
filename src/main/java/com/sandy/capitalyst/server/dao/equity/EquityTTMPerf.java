@@ -79,7 +79,7 @@ public class EquityTTMPerf {
         if( getNumGaps() > 0 ) {
             Date firstGapDate = getFirstMilestoneGapDate() ;
             if( firstGapDate != null ) {
-                if( !gapsFilled ) {
+                if( gapsFilled == null || !gapsFilled ) {
                     return true ;
                 }
             }

@@ -289,19 +289,19 @@ public class EquityTTMPerfUpdater {
         histRows = histRepo.findBySymbolAndDate( symbol, date ) ;
         if( histRows == null || histRows.isEmpty() ) {
             
-            HistoricEQData histRow = new HistoricEQData() ;
+            eodData = new HistoricEQData() ;
             
-            histRow.setSymbol( symbol ) ;
-            histRow.setDate( date ) ;
-            histRow.setOpen( open ) ;
-            histRow.setHigh( high ) ;
-            histRow.setLow( low ) ;
-            histRow.setClose( close ) ;
-            histRow.setTotalTradeQty( totalTradeQty ) ;
-            histRow.setTotalTradeVal( totalTradeVal ) ;
-            histRow.setTotalTrades( totalTrades ) ;
+            eodData.setSymbol( symbol ) ;
+            eodData.setDate( date ) ;
+            eodData.setOpen( open ) ;
+            eodData.setHigh( high ) ;
+            eodData.setLow( low ) ;
+            eodData.setClose( close ) ;
+            eodData.setTotalTradeQty( totalTradeQty ) ;
+            eodData.setTotalTradeVal( totalTradeVal ) ;
+            eodData.setTotalTrades( totalTrades ) ;
             
-            histRepo.saveAndFlush( histRow ) ;
+            histRepo.saveAndFlush( eodData ) ;
         }
         else {
             deleteDuplicateHistoricData( histRows ) ;
