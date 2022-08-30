@@ -9,6 +9,7 @@ import com.sandy.capitalyst.server.api.equity.recoengine.Screener.ScreenerResult
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
+import com.sandy.capitalyst.server.dao.equity.EquityTTMPerf ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
 
 class RecoEngine extends RecoEngineBase {
@@ -27,7 +28,8 @@ class RecoEngine extends RecoEngineBase {
     private RecoEngine() {}
     
     public EquityReco screen( EquityMaster em,
-                              EquityIndicators eIndicators ) {
+                              EquityIndicators eIndicators,
+                              EquityTTMPerf ttmPerf ) {
         
         String                    symbolNse   = eIndicators.getSymbolNse() ;
         EquityReco                reco        = new EquityReco() ;
@@ -46,6 +48,7 @@ class RecoEngine extends RecoEngineBase {
         reco.setEquityMaster( em ) ;
         reco.setIndicators( eIndicators ) ;
         reco.setTechIndicators( tIndicators ) ;
+        reco.setTtmPerf( ttmPerf ) ;
         
         applyScreeners( eIndicators, tIndicators, reco ) ;
 

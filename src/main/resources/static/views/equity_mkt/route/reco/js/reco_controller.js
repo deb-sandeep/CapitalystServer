@@ -9,10 +9,14 @@ capitalystNgApp.controller( 'RecoController',
     var gradientMgr = {
        health  : new Gradient( new UniformGradient() ),
        mc      : new Gradient( new UniformGradient() ),
+       
        perf1W  : new Gradient( new ThresholdGradient() ), 
+       perf2W  : new Gradient( new ThresholdGradient() ), 
        perf1M  : new Gradient( new ThresholdGradient() ), 
+       perf2M  : new Gradient( new ThresholdGradient() ), 
        perf3M  : new Gradient( new ThresholdGradient() ), 
-       perfYTD : new Gradient( new ThresholdGradient() ), 
+       perf6M  : new Gradient( new ThresholdGradient() ), 
+       perf9M  : new Gradient( new ThresholdGradient() ), 
        perf1Y  : new Gradient( new ThresholdGradient() ), 
        perf3Y  : new Gradient( new ThresholdGradient() ),
        
@@ -72,11 +76,15 @@ capitalystNgApp.controller( 'RecoController',
                     gradientMgr['health' ].addValue( reco.goodnessScore ) ;
                     gradientMgr['mc'     ].addValue( reco.indicators.mcEssentialScore ) ;
                     gradientMgr['cagr'   ].addValue( reco.indicators.cagrEbit ) ;
-                    gradientMgr['perf1W' ].addValue( reco.indicators.pricePerf1W  ) ;
-                    gradientMgr['perf1M' ].addValue( reco.indicators.pricePerf1M  ) ;
-                    gradientMgr['perf3M' ].addValue( reco.indicators.pricePerf3M  ) ;
-                    gradientMgr['perfYTD'].addValue( reco.indicators.pricePerfYTD ) ;
-                    gradientMgr['perf1Y' ].addValue( reco.indicators.pricePerf1Y  ) ;
+                    
+                    gradientMgr['perf1W' ].addValue( reco.ttmPerf.perf1w  ) ;
+                    gradientMgr['perf2W' ].addValue( reco.ttmPerf.perf2w  ) ;
+                    gradientMgr['perf1M' ].addValue( reco.ttmPerf.perf1m  ) ;
+                    gradientMgr['perf2M' ].addValue( reco.ttmPerf.perf2m  ) ;
+                    gradientMgr['perf3M' ].addValue( reco.ttmPerf.perf3m  ) ;
+                    gradientMgr['perf6M' ].addValue( reco.ttmPerf.perf6m  ) ;
+                    gradientMgr['perf9M' ].addValue( reco.ttmPerf.perf9m  ) ;
+                    gradientMgr['perf1Y' ].addValue( reco.ttmPerf.perf12m  ) ;
                     gradientMgr['perf3Y' ].addValue( reco.indicators.pricePerf3Y  ) ;
                 }
                 
@@ -137,14 +145,23 @@ capitalystNgApp.controller( 'RecoController',
         else if( field == "perf1W" ) {
             $scope.recommendations.sort( perf1WSort ) ;
         }
+        else if( field == "perf2W" ) {
+            $scope.recommendations.sort( perf2WSort ) ;
+        }
         else if( field == "perf1M" ) {
             $scope.recommendations.sort( perf1MSort ) ;
+        }
+        else if( field == "perf2M" ) {
+            $scope.recommendations.sort( perf2MSort ) ;
         }
         else if( field == "perf3M" ) {
             $scope.recommendations.sort( perf3MSort ) ;
         }
-        else if( field == "perfYTD" ) {
-            $scope.recommendations.sort( perfYTDSort ) ;
+        else if( field == "perf6M" ) {
+            $scope.recommendations.sort( perf6MSort ) ;
+        }
+        else if( field == "perf9M" ) {
+            $scope.recommendations.sort( perf9MSort ) ;
         }
         else if( field == "perf1Y" ) {
             $scope.recommendations.sort( perf1YSort ) ;
@@ -210,32 +227,50 @@ capitalystNgApp.controller( 'RecoController',
         
     function perf1WSort( r1, r2 ) {
         return sortDir["perf1W"] == "asc" ?
-            ( r1.indicators.pricePerf1W - r2.indicators.pricePerf1W ) :
-            ( r2.indicators.pricePerf1W - r1.indicators.pricePerf1W ) ;
+            ( r1.ttmPerf.perf1w - r2.ttmPerf.perf1w ) :
+            ( r2.ttmPerf.perf1w - r1.ttmPerf.perf1w ) ;
+    }
+    
+    function perf2WSort( r1, r2 ) {
+        return sortDir["perf2W"] == "asc" ?
+            ( r1.ttmPerf.perf2w - r2.ttmPerf.perf2w ) :
+            ( r2.ttmPerf.perf2w - r1.ttmPerf.perf2w ) ;
     }
     
     function perf1MSort( r1, r2 ) {
         return sortDir["perf1M"] == "asc" ?
-            ( r1.indicators.pricePerf1M - r2.indicators.pricePerf1M ) :
-            ( r2.indicators.pricePerf1M - r1.indicators.pricePerf1M ) ;
+            ( r1.ttmPerf.perf1m - r2.ttmPerf.perf1m ) :
+            ( r2.ttmPerf.perf1m - r1.ttmPerf.perf1m ) ;
+    }
+    
+    function perf2MSort( r1, r2 ) {
+        return sortDir["perf2M"] == "asc" ?
+            ( r1.ttmPerf.perf2m - r2.ttmPerf.perf2m ) :
+            ( r2.ttmPerf.perf2m - r1.ttmPerf.perf2m ) ;
     }
     
     function perf3MSort( r1, r2 ) {
         return sortDir["perf3M"] == "asc" ?
-            ( r1.indicators.pricePerf3M - r2.indicators.pricePerf3M ) :
-            ( r2.indicators.pricePerf3M - r1.indicators.pricePerf3M ) ;
+            ( r1.ttmPerf.perf3m - r2.ttmPerf.perf3m ) :
+            ( r2.ttmPerf.perf3m - r1.ttmPerf.perf3m ) ;
     }
     
-    function perfYTDSort( r1, r2 ) {
-        return sortDir["perfYTD"] == "asc" ?
-            ( r1.indicators.pricePerfYTD - r2.indicators.pricePerfYTD ) :
-            ( r2.indicators.pricePerfYTD - r1.indicators.pricePerfYTD ) ;
+    function perf6MSort( r1, r2 ) {
+        return sortDir["perf6M"] == "asc" ?
+            ( r1.ttmPerf.perf6m - r2.ttmPerf.perf6m ) :
+            ( r2.ttmPerf.perf6m - r1.ttmPerf.perf6m ) ;
+    }
+    
+    function perf9MSort( r1, r2 ) {
+        return sortDir["perf9M"] == "asc" ?
+            ( r1.ttmPerf.perf9m - r2.ttmPerf.perf9m ) :
+            ( r2.ttmPerf.perf9m - r1.ttmPerf.perf9m ) ;
     }
     
     function perf1YSort( r1, r2 ) {
         return sortDir["perf1Y"] == "asc" ?
-            ( r1.indicators.pricePerf1Y - r2.indicators.pricePerf1Y ) :
-            ( r2.indicators.pricePerf1Y - r1.indicators.pricePerf1Y ) ;
+            ( r1.ttmPerf.perf12m - r2.ttmPerf.perf12m ) :
+            ( r2.ttmPerf.perf12m - r1.ttmPerf.perf12m ) ;
     }
     
     function perf3YSort( r1, r2 ) {

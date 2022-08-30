@@ -7,7 +7,7 @@
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
-                <th colspan="6" style="text-align:center;">
+                <th colspan="9" style="text-align:center;">
                     Performance %
                 </th>
             </tr>
@@ -36,22 +36,31 @@
                 <th ng-click="sort('pe')">
                     PE
                 </th>
-                <th ng-click="sort('perf1W')" style="width:50px;">
+                <th ng-click="sort('perf1W')" style="width:40px;">
                     1W
                 </th>
-                <th ng-click="sort('perf1M')" style="width:50px;">
+                <th ng-click="sort('perf2W')" style="width:40px;">
+                    2W
+                </th>
+                <th ng-click="sort('perf1M')" style="width:40px;">
                     1M
                 </th>
-                <th ng-click="sort('perf3M')" style="width:50px;">
+                <th ng-click="sort('perf2M')" style="width:40px;">
+                    2M
+                </th>
+                <th ng-click="sort('perf3M')" style="width:40px;">
                     3M
                 </th>
-                <th ng-click="sort('perfYTD')" style="width:50px;">
-                    YTD
+                <th ng-click="sort('perf6M')" style="width:40px;">
+                    6M
                 </th>
-                <th ng-click="sort('perf1Y')" style="width:50px;">
+                <th ng-click="sort('perf9M')" style="width:40px;">
+                    9M
+                </th>
+                <th ng-click="sort('perf1Y')" style="width:40px;">
                     1Y
                 </th>
-                <th ng-click="sort('perf3Y')" style="width:50px;">
+                <th ng-click="sort('perf3Y')" style="width:40px;">
                     3Y
                 </th>
             </tr>
@@ -91,27 +100,39 @@
                <td class="fixed-font" style="text-align:right;">
                     {{reco.indicators.pe | number:0}}
                </td>
-               <td class="fixed-font" style="text-align:right;"
-                   ng-class="getCellClass( 'perf1W', reco.indicators.pricePerf1W )">
-                    {{reco.indicators.pricePerf1W | number:1}}
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1W', reco.ttmPerf.perf1w )">
+                    {{reco.ttmPerf.perf1w | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;"
-                   ng-class="getCellClass( 'perf1M', reco.indicators.pricePerf1M )">
-                    {{reco.indicators.pricePerf1M | number:1}}
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf2W', reco.ttmPerf.perf2w )">
+                    {{reco.ttmPerf.perf2w | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;"
-                   ng-class="getCellClass( 'perf3M', reco.indicators.pricePerf3M )">
-                    {{reco.indicators.pricePerf3M | number:1}}
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1M', reco.ttmPerf.perf1m )">
+                    {{reco.ttmPerf.perf1m | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;"
-                   ng-class="getCellClass( 'perfYTD', reco.indicators.pricePerfYTD )">
-                    {{reco.indicators.pricePerfYTD | number:1}}
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf2M', reco.ttmPerf.perf2m )">
+                    {{reco.ttmPerf.perf2m | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;"
-                   ng-class="getCellClass( 'perf1Y', reco.indicators.pricePerf1Y )">
-                    {{reco.indicators.pricePerf1Y | number:1}}
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf3M', reco.ttmPerf.perf3m )">
+                    {{reco.ttmPerf.perf3m | number:1}}
                </td>
-               <td class="fixed-font" style="text-align:right;"
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf6M', reco.ttmPerf.perf6m )">
+                    {{reco.ttmPerf.perf6m | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf9M', reco.ttmPerf.perf9m )">
+                    {{reco.ttmPerf.perf9m | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1Y', reco.ttmPerf.perf12m )">
+                    {{reco.ttmPerf.perf12m | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
                    ng-class="getCellClass( 'perf3Y', reco.indicators.pricePerf3Y )">
                     {{reco.indicators.pricePerf3Y | number:1}}
                </td>

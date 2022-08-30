@@ -14,8 +14,10 @@ import org.apache.log4j.Logger ;
 import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco.Type ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
+import com.sandy.capitalyst.server.dao.equity.EquityTTMPerf ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityTTMPerfRepo ;
 import com.univocity.parsers.csv.CsvWriter ;
 import com.univocity.parsers.csv.CsvWriterSettings ;
 
@@ -26,8 +28,10 @@ public class RecoManager {
     private static RecoManager instance = null ;
     
     private RecoEngine recoEngine = null ;
-    private EquityIndicatorsRepo eiRepo = null ;
-    private EquityMasterRepo emRepo = null ;
+    
+    private EquityIndicatorsRepo eiRepo  = null ;
+    private EquityMasterRepo     emRepo  = null ;
+    private EquityTTMPerfRepo    ttmRepo = null ;
 
     // Key is the NSE symbol. The values are pre-sorted based on the natural 
     // ordering of the NSE symbols.
@@ -95,6 +99,8 @@ public class RecoManager {
             
             this.eiRepo   = getBean( EquityIndicatorsRepo.class ) ;
             this.emRepo   = getBean( EquityMasterRepo.class ) ;
+            this.ttmRepo  = getBean( EquityTTMPerfRepo.class ) ;
+            
             this.statsMgr = new StatisticsManager() ;
             
             refreshRecommendationsCache() ;
@@ -107,6 +113,7 @@ public class RecoManager {
         
         EquityReco reco = null ;
         EquityIndicators ind = null ;
+        EquityTTMPerf ttmPerf = null ;
         
         recommendations.clear() ;
         allRecos.clear() ;
@@ -117,9 +124,11 @@ public class RecoManager {
         for( EquityMaster em : allStocks ) {
             
             ind = eiRepo.findByIsin( em.getIsin() ) ;
+            ttmPerf = ttmRepo.findBySymbolNse( em.getSymbol() ) ;
+            
             if( ind != null ) {
                 
-                reco = recoEngine.screen( em, ind ) ;
+                reco = recoEngine.screen( em, ind, ttmPerf ) ;
                 
                 recommendations.put( ind.getSymbolNse(), reco ) ;
                 allRecos.add( reco ) ;

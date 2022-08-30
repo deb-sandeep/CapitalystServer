@@ -6,6 +6,7 @@ import java.util.List ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
+import com.sandy.capitalyst.server.dao.equity.EquityTTMPerf ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
 
 import lombok.Data ;
@@ -30,6 +31,7 @@ public class EquityReco {
     private EquityIndicators          indicators     = null ;
     private List<EquityHolding>       holdings       = new ArrayList<>() ;
     private List<EquityTechIndicator> techIndicators = null ;
+    private EquityTTMPerf             ttmPerf        = null ;
     
     private float goodnessScore = 0 ;
 
