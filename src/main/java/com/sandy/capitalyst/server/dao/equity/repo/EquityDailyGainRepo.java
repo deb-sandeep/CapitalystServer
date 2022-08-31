@@ -13,6 +13,12 @@ import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 public interface EquityDailyGainRepo 
     extends CrudRepository<EquityDailyGain, Integer> {
     
+    public static interface SparklineData {
+        public Integer getHoldingId() ;
+        public Date getDate() ;
+        public Float getDayChange() ;
+    }
+    
     public EquityDailyGain findByHoldingAndDate( EquityHolding holding, 
                                                  Date date ) ;
 
@@ -47,7 +53,9 @@ public interface EquityDailyGainRepo
     @Query( nativeQuery = true,
             value =   
             "SELECT "
-          + "    edg.day_change "
+          + "    edg.holding_id as holdingId, "
+          + "    edg.date as date, "
+          + "    edg.day_change as dayChange "
           + "FROM "
           + "    equity_daily_gain edg "
           + "WHERE "
@@ -56,7 +64,8 @@ public interface EquityDailyGainRepo
           + "ORDER BY "
           + "    edg.date DESC "
     )
-    List<Float> getSparklineData( @Param( "holdingId" ) Integer holdingId,
+    List<SparklineData> getSparklineData( 
+                                  @Param( "holdingId" ) Integer holdingId,
                                   @Param( "startDate" ) Date startDate,
                                   @Param( "endDate"   ) Date endDate ) ;
 }

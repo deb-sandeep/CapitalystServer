@@ -58,13 +58,13 @@ public class IndividualEquityHoldingVO extends EquityHolding {
     
     private EquityBuyTxnVO getDayAggregateTxn( EquityBuyTxnVO vo ) {
         
-        String voOwner = vo.getHolding().getOwnerName() ;
-        String voScrip = vo.getHolding().getSymbolNse() ;
+        String voOwner = vo.getParentHolding().getOwnerName() ;
+        String voScrip = vo.getParentHolding().getSymbolNse() ;
         
         for( EquityBuyTxnVO txn : buyTxnVOList ) {
             
-            String txnOwner = txn.getHolding().getOwnerName() ;
-            String txnScrip = txn.getHolding().getSymbolNse() ;
+            String txnOwner = txn.getParentHolding().getOwnerName() ;
+            String txnScrip = txn.getParentHolding().getSymbolNse() ;
             
             if( voOwner.equals( txnOwner ) ) {
                 if( vo.getAction().equals( txn.getAction() ) ) {

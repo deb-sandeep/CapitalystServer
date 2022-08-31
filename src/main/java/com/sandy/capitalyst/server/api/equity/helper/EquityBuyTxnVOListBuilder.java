@@ -4,29 +4,18 @@ import java.util.ArrayList ;
 import java.util.List ;
 
 import com.sandy.capitalyst.server.api.equity.vo.EquityBuyTxnVO ;
-import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 
 public class EquityBuyTxnVOListBuilder {
     
-    private List<EquityBuyTxnVO> buyTxnVOList = new ArrayList<>() ;
     
-    private IndividualEquityHoldingVO holding   = null ;
-
-    public List<EquityBuyTxnVO> buildBuyTxnVOList( EquityHolding eh,
+    public List<EquityBuyTxnVO> buildBuyTxnVOList( EquityHolding holding,
                                                    List<EquityTxn> txnList ) {
         
-        holding = new EquityHoldingVOBuilder().buildVO( eh, txnList ) ;
+        List<EquityBuyTxnVO> buyTxnVOList = new ArrayList<>() ;
         
-        aggregateBuyDayTxns( txnList ) ;
-        
-        return buyTxnVOList ;
-    }
-
-    private void aggregateBuyDayTxns( List<EquityTxn> buyTxns ) {
-        
-        for( EquityTxn buyTxn : buyTxns ) {
+        for( EquityTxn buyTxn : txnList ) {
             
             EquityBuyTxnVO txnVO =  new EquityBuyTxnVO( holding, buyTxn ) ;
             boolean sameDateTxnFound = false ;
@@ -43,5 +32,7 @@ public class EquityBuyTxnVOListBuilder {
                 buyTxnVOList.add( txnVO ) ;
             }
         }
+        
+        return buyTxnVOList ;
     }
 }

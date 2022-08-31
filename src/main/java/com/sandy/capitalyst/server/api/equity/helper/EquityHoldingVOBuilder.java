@@ -4,18 +4,22 @@ import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 
 import java.util.ArrayList ;
 import java.util.Date ;
+import java.util.HashMap ;
 import java.util.Iterator ;
 import java.util.List ;
+import java.util.Map ;
 
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.api.equity.vo.EquityBuyTxnVO ;
+import com.sandy.capitalyst.server.api.equity.vo.EquitySellTxnVO ;
 import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityDailyGainRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityDailyGainRepo.SparklineData ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 
@@ -24,7 +28,7 @@ class EquityBuyLot {
     private EquityTxn buyTxn = null ;
     private EquityBuyTxnVO buyTxnVO = null ;
     
-    public EquityBuyLot( IndividualEquityHoldingVO holding, EquityTxn buyTxn ) {
+    public EquityBuyLot( EquityHolding holding, EquityTxn buyTxn ) {
         this.buyTxn   = buyTxn ;
         this.buyTxnVO = new EquityBuyTxnVO( holding, buyTxn ) ;
     }
@@ -108,15 +112,34 @@ public class EquityHoldingVOBuilder {
     private List<Integer> getSparklineData() {
         
         EquityDailyGainRepo edgRepo = getBean( EquityDailyGainRepo.class ) ;
+        
+        List<Integer> list = new ArrayList<>() ;
+        List<EquitySellTxnVO> sellTxns = null ;
+        List<SparklineData> slData = null ;
+        Map<Date, EquitySellTxnVO> sellTxnMap = new HashMap<>() ;
+        
+        EquitySellTxnVOListBuilder helper = new EquitySellTxnVOListBuilder() ;
+        
         Date today = new Date() ;
         Date startDate = DateUtils.addDays( today, -15 ) ;
         
-        List<Integer> list = new ArrayList<>() ;
-        List<Float> dbData = null ;
+        slData = edgRepo.getSparklineData( holding.getId(), startDate, today ) ;
+        sellTxns = helper.builtSellTxnVOList( holding, startDate, today ) ;
         
-        dbData = edgRepo.getSparklineData( holding.getId(), startDate, today ) ;
-        for( Float f : dbData ) {
-            list.add( f.intValue() ) ;
+        for( EquitySellTxnVO sellTxn : sellTxns ) {
+            sellTxnMap.put( sellTxn.getTxnDate(), sellTxn ) ;
+        }
+        
+        for( SparklineData sl : slData ) {
+            Date    date      = sl.getDate() ;
+            Float   dayChange = sl.getDayChange() ;
+            
+            EquitySellTxnVO sellTxn = sellTxnMap.get( date ) ;
+            if( sellTxn != null ) {
+                dayChange += sellTxn.getPat() ;
+            }
+            
+            list.add( dayChange.intValue() ) ;
         }
         
         return list ;
@@ -150,7 +173,7 @@ public class EquityHoldingVOBuilder {
             
             if( action.equalsIgnoreCase( "buy" ) ) {
                 
-                buyLots.add( new EquityBuyLot( holdingVO, txn ) ) ;
+                buyLots.add( new EquityBuyLot( holdingVO.getBaseHolding(), txn ) ) ;
             }
             else if( action.equalsIgnoreCase( "sell" ) ) {
                 

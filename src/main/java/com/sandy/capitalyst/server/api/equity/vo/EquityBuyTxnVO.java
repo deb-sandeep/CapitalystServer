@@ -30,9 +30,6 @@ public class EquityBuyTxnVO extends EquityTxn {
     }
     
     @JsonIgnore
-    private IndividualEquityHoldingVO holding = null ;
-    
-    @JsonIgnore
     private EquityTxn baseTxn = null ;
     
     private EquityHolding parentHolding = null ;
@@ -49,11 +46,11 @@ public class EquityBuyTxnVO extends EquityTxn {
     private float patPct           = 0 ; // Profit after tax percentage
     private int   durationInMonths = 0 ;
     
+    @JsonIgnore
     private List<AssociatedSellTxn> sellTxns = new ArrayList<>() ;
     
     public EquityBuyTxnVO( EquityBuyTxnVO txn ) {
         super( txn ) ;
-        this.holding         = txn.holding ;
         this.parentHolding   = txn.getParentHolding() ;
         this.quantityLeft    = txn.quantityLeft ;
         this.ltcgQuailifed   = txn.ltcgQuailifed ;
@@ -72,13 +69,16 @@ public class EquityBuyTxnVO extends EquityTxn {
         this.baseTxn = txn.getBaseTxn() ;
     }
 
-    public EquityBuyTxnVO( IndividualEquityHoldingVO holding, EquityTxn txn ) {
+    public EquityBuyTxnVO( EquityHolding holding, EquityTxn txn ) {
         
         super( txn ) ;
         
+        if( !holding.getClass().getName().equals( EquityHolding.class.getName() ) ) {
+            throw new IllegalStateException( "Wrong holding is being populated." ) ;
+        }
+        
         this.baseTxn = txn ;
-        this.holding = holding ;
-        this.parentHolding = holding.getBaseHolding() ;
+        this.parentHolding = holding ;
         this.ltcgQuailifed = qualifiesForLTCG() ;
         this.quantityLeft = txn.getQuantity() ;
         
@@ -96,7 +96,7 @@ public class EquityBuyTxnVO extends EquityTxn {
                                   super.getBrokerage() + 
                                   super.getTxnCharges() + 
                                   super.getStampDuty() ) ;
-        this.valueAtMktPrice = (int)( holding.getCurrentMktPrice() * quantityLeft ) ;
+        this.valueAtMktPrice = (int)( parentHolding.getCurrentMktPrice() * quantityLeft ) ;
         this.durationInMonths = getDurationInMonths( super.getTxnDate() ) ;
     }
     
@@ -122,7 +122,7 @@ public class EquityBuyTxnVO extends EquityTxn {
         
         float cost = 0, value = 0, profit = 0 ;
         
-        if( holding.getOwnerName().equals( "Sandeep" ) ) {
+        if( parentHolding.getOwnerName().equals( "Sandeep" ) ) {
             sellBrokerage = (float)( valueAtMktPrice * (0.24/100)) ;
         }
         else {
@@ -134,7 +134,7 @@ public class EquityBuyTxnVO extends EquityTxn {
                super.getTxnCharges() + 
                super.getStampDuty() ;
         
-        value  = quantityLeft * holding.getCurrentMktPrice() ;
+        value  = quantityLeft * parentHolding.getCurrentMktPrice() ;
         profit = value - cost ;
         if( profit > 0 ) {
             taxAmount = ltcgQuailifed ? 0.1f * profit : 0.3f * profit ;

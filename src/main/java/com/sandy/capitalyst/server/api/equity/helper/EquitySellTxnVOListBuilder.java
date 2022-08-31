@@ -1,15 +1,18 @@
 package com.sandy.capitalyst.server.api.equity.helper;
 
+import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+
 import java.util.ArrayList ;
+import java.util.Date ;
 import java.util.LinkedList ;
 import java.util.List ;
 import java.util.Queue ;
 
 import com.sandy.capitalyst.server.api.equity.vo.EquityBuyTxnVO ;
 import com.sandy.capitalyst.server.api.equity.vo.EquitySellTxnVO ;
-import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
 
 public class EquitySellTxnVOListBuilder {
     
@@ -19,16 +22,26 @@ public class EquitySellTxnVOListBuilder {
     private Queue<EquityBuyTxnVO> buyTxnVOList  = new LinkedList<>() ;
     private List<EquitySellTxnVO> sellTxnVOList = new ArrayList<>() ;
     
-    private IndividualEquityHoldingVO holding   = null ;
+    public List<EquitySellTxnVO> builtSellTxnVOList( EquityHolding eh,
+                                                     Date startDate, 
+                                                     Date endDate ) {
+        
+        List<EquityTxn> txnList = null ;
+        EquityTxnRepo etRepo = getBean( EquityTxnRepo.class ) ;
+        List<EquitySellTxnVO> sellTxns = new ArrayList<>() ;
+        
+        txnList = etRepo.findByHoldingIdOrderByTxnDateAscActionAsc( eh.getId() ) ;
+        sellTxns.addAll( buildSellTxnVOList( eh, txnList ) ) ;
+        
+        return sellTxns ;
+    }
 
     public List<EquitySellTxnVO> buildSellTxnVOList( EquityHolding eh,
                                                      List<EquityTxn> txnList ) {
         
-        holding = new EquityHoldingVOBuilder().buildVO( eh, txnList ) ;
-        
         separateBuyAndSellTxns( txnList ) ;
-        aggregateBuyDayTxns() ;
-        aggregateSellDayTxns() ;
+        aggregateBuyDayTxns( eh ) ;
+        aggregateSellDayTxns( eh ) ;
         associateBuyTxnsWithSellTxns() ;
         
         return sellTxnVOList ;
@@ -46,7 +59,7 @@ public class EquitySellTxnVOListBuilder {
         }
     }
     
-    private void aggregateBuyDayTxns() {
+    private void aggregateBuyDayTxns( EquityHolding holding ) {
         
         for( EquityTxn buyTxn : buyTxns ) {
             
@@ -67,7 +80,7 @@ public class EquitySellTxnVOListBuilder {
         }
     }
 
-    private void aggregateSellDayTxns() {
+    private void aggregateSellDayTxns( EquityHolding holding ) {
         
         for( EquityTxn sellTxn : sellTxns ) {
             

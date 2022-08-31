@@ -6,6 +6,7 @@ import java.util.List ;
 
 import org.apache.commons.lang.time.DateUtils ;
 
+import com.fasterxml.jackson.annotation.JsonIgnore ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 
@@ -16,8 +17,9 @@ import lombok.EqualsAndHashCode ;
 @EqualsAndHashCode( callSuper = false )
 public class EquitySellTxnVO extends EquityTxn {
     
-    private EquityHolding holding = null ;
+    private EquityHolding parentHolding = null ;
     
+    @JsonIgnore
     private List<AssociatedBuyTxn> buyTxns = new ArrayList<>() ;
 
     float valueAtCostPrice = 0 ;
@@ -67,7 +69,7 @@ public class EquitySellTxnVO extends EquityTxn {
         
         public void computeSellTax() {
             
-            if( holding.getOwnerName().equals( "Sandeep" ) ) {
+            if( parentHolding.getOwnerName().equals( "Sandeep" ) ) {
                 sellBrokerage = (float)( valueAtMktPrice * (0.24/100)) ;
             }
             else {
@@ -93,14 +95,13 @@ public class EquitySellTxnVO extends EquityTxn {
     
     public EquitySellTxnVO( EquitySellTxnVO vo ) {
         super( vo ) ;
-        this.holding = vo.getHolding()  ;
+        this.parentHolding = vo.getParentHolding()  ;
     }
 
-    public EquitySellTxnVO( IndividualEquityHoldingVO holding, 
-                            EquityTxn sellTxn ) {
+    public EquitySellTxnVO( EquityHolding holding, EquityTxn sellTxn ) {
         
         super( sellTxn ) ;
-        this.holding = holding.getBaseHolding() ;
+        this.parentHolding = holding ;
     }
     
     // If there is another sell transaction on the same date, this method will
