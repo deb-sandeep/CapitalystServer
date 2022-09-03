@@ -31,4 +31,5 @@ attributeEvaluatorCfgs:
         mktCapWt : 10
         mcEssentialScoreWt : 20
         peWt : 25
-        cagrWt : 30        
+        cagrWt : 30
+   - id : TrendEvaluator

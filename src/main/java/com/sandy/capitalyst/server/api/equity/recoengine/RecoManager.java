@@ -104,6 +104,7 @@ public class RecoManager {
             this.statsMgr = new StatisticsManager() ;
             
             refreshRecommendationsCache() ;
+            setEquityDataUpdated( false ) ;
         }
     }
     
