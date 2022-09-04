@@ -12,6 +12,9 @@ capitalystNgApp.controller( 'ProfitLossController',
     $scope.allTotal = {
         costPrice : 0,
         sellPrice : 0,
+        sellTxnCharges : 0,
+        amountRecd : 0,
+        taxAmount : 0,
         pat : 0,
         patPct : 0
     } ;
@@ -19,6 +22,9 @@ capitalystNgApp.controller( 'ProfitLossController',
     $scope.selTotal = {
         costPrice : 0,
         sellPrice : 0,
+        sellTxnCharges : 0,
+        amountRecd : 0,
+        taxAmount : 0,
         pat : 0,
         patPct : 0
     } ;
@@ -30,10 +36,13 @@ capitalystNgApp.controller( 'ProfitLossController',
     } ;
     
     function resetTotal( total ) {
-        total.costPrice = 0 ;
-        total.sellPrice = 0 ;
-        total.pat = 0 ;
-        total.patPct = 0 ;
+        total.costPrice      = 0 ;
+        total.sellPrice      = 0 ;
+        total.sellTxnCharges = 0 ;
+        total.amountRecd     = 0 ;
+        total.taxAmount      = 0 ;
+        total.pat            = 0 ;
+        total.patPct         = 0 ;
     }
     
     // -----------------------------------------------------------------------
@@ -89,9 +98,12 @@ capitalystNgApp.controller( 'ProfitLossController',
             var txn = $scope.sellTxns[i] ;
             if( txn.selected ) {
                 
-                $scope.selTotal.costPrice += txn.valueAtCostPrice ;
-                $scope.selTotal.sellPrice += txn.valueAtMktPrice ;
-                $scope.selTotal.pat       += txn.pat ;
+                $scope.selTotal.costPrice      += txn.valueAtCostPrice ;
+                $scope.selTotal.sellPrice      += txn.valueAtMktPrice ;
+                $scope.selTotal.sellTxnCharges += txn.sellTxnCharges ;
+                $scope.selTotal.amountRecd     += ( txn.valueAtMktPrice - txn.sellTxnCharges ) ;
+                $scope.selTotal.taxAmount      += txn.taxAmount ;
+                $scope.selTotal.pat            += txn.pat ;
                 
                 if( $scope.selTotal.costPrice != 0 ) {
                     $scope.selTotal.patPct = ( $scope.selTotal.pat /
@@ -119,9 +131,12 @@ capitalystNgApp.controller( 'ProfitLossController',
                     
                     $scope.sellTxns.push( txn ) ;
                     
-                    $scope.allTotal.costPrice += txn.valueAtCostPrice ;
-                    $scope.allTotal.sellPrice += txn.valueAtMktPrice ;
-                    $scope.allTotal.pat       += txn.pat ;
+                    $scope.allTotal.costPrice      += txn.valueAtCostPrice ;
+                    $scope.allTotal.sellPrice      += txn.valueAtMktPrice ;
+                    $scope.allTotal.sellTxnCharges += txn.sellTxnCharges ;
+                    $scope.allTotal.amountRecd     += ( txn.valueAtMktPrice - txn.sellTxnCharges ) ;
+                    $scope.allTotal.taxAmount      += txn.taxAmount ;
+                    $scope.allTotal.pat            += txn.pat ;
                     
                     if( $scope.allTotal.costPrice != 0 ) {
                         $scope.allTotal.patPct = ( $scope.allTotal.pat /

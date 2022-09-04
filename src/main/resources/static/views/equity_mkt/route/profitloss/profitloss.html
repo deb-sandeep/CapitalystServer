@@ -11,6 +11,9 @@
                 <th class="js-sort-number">Txn Price</th>
                 <th class="js-sort-number">Cost Price</th>
                 <th class="js-sort-number">Sell Price</th>
+                <th class="js-sort-number">Txn Chgs</th>
+                <th class="js-sort-number">Amt Recd</th>
+                <th class="js-sort-number">Tax</th>
                 <th class="js-sort-number">PAT</th>
                 <th class="js-sort-number">PAT %</th>
             </tr>
@@ -48,6 +51,15 @@
                <td class="fixed-font amt">
                     {{txn.valueAtMktPrice | amt}}
                </td>
+               <td class="fixed-font amt">
+                    {{txn.sellTxnCharges | amt}}
+               </td>
+               <td class="fixed-font amt">
+                    {{( txn.valueAtMktPrice - txn.sellTxnCharges ) | amt}}
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.taxAmount | amt}}
+               </td>
                <td class="fixed-font amt"
                    ng-class="getAmtClass(txn.pat)">
                     {{txn.pat | amt}}
@@ -68,6 +80,15 @@
                 <th class="fixed-font amt">
                     {{allTotal.sellPrice | amt}}
                 </th>
+                <th class="fixed-font amt">
+                    {{allTotal.sellTxnCharges | amt}}
+                </th>
+                <th class="fixed-font amt">
+                    {{allTotal.amountRecd | amt}}
+                </th>
+                <th class="fixed-font amt">
+                    {{allTotal.taxAmount | amt}}
+                </th>
                 <th class="fixed-font amt"
                     ng-class="getAmtClass(allTotal.pat)">
                     {{allTotal.pat | amt}}
@@ -84,6 +105,15 @@
                 </th>
                 <th class="fixed-font amt">
                     {{selTotal.sellPrice | amt}}
+                </th>
+                <th class="fixed-font amt">
+                    {{selTotal.sellTxnCharges | amt}}
+                </th>
+                <th class="fixed-font amt">
+                    {{selTotal.taxAmount | amt}}
+                </th>
+                <th class="fixed-font amt">
+                    {{selTotal.amountRecd | amt}}
                 </th>
                 <th class="fixed-font amt"
                     ng-class="getAmtClass(selTotal.pat)">

@@ -1,11 +1,15 @@
 package com.sandy.capitalyst.server.api.equity.vo;
 
+import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+
 import java.util.ArrayList ;
 import java.util.List ;
 
 import com.fasterxml.jackson.annotation.JsonIgnore ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 
 import lombok.Data ;
 import lombok.EqualsAndHashCode ;
@@ -14,15 +18,23 @@ import lombok.EqualsAndHashCode ;
 @EqualsAndHashCode(callSuper = false)
 public class IndividualEquityHoldingVO extends EquityHolding {
     
+    private boolean isETF = false ;
+    
     private float  valueAtCost     = 0 ;
     private float  valueAtMktPrice = 0 ;
     private int    ltcgQty         = 0 ;
     private float  taxAmount       = 0 ;
-    private float  sellBrokerage   = 0 ;
     private float  valuePostTax    = 0 ;
     private float  pat             = 0 ; // Profit after tax
     private float  patPct          = 0 ; // Profit after tax percentage
     private String detailUrl       = null ;
+    
+    private float sellBrokerage           = 0 ;
+    private float sellExchangeTxnCharges  = 0 ;
+    private float sellSEBITurnoverCharges = 0 ;
+    private float sellGST                 = 0 ;
+    private float sellSTT                 = 0 ;
+    private float sellTotalTxnCharges     = 0 ;
     
     private List<EquityBuyTxnVO> buyTxnVOList = new ArrayList<>() ;
     
@@ -31,17 +43,21 @@ public class IndividualEquityHoldingVO extends EquityHolding {
     private EquityIndicators indicators = null ;
     
     @JsonIgnore
-    private EquityHolding baseHolding = null ;
+    private EquityHolding parentHolding = null ;
 
     public IndividualEquityHoldingVO( EquityHolding holding ) {
         super( holding ) ;
-        this.baseHolding = holding ;
+        this.parentHolding = holding ;
         initializeDerivedValues() ;
     }
 
     private void initializeDerivedValues() {
         this.valueAtCost = (int)(super.getAvgCostPrice() * super.getQuantity()) ;
         this.valueAtMktPrice = (int)(super.getCurrentMktPrice() * super.getQuantity()) ;
+        
+        EquityMasterRepo emRepo = getBean( EquityMasterRepo.class ) ; 
+        EquityMaster em = emRepo.findByIsin( super.getIsin() ) ;
+        this.isETF = em.isEtf() ;
     }
 
     public void addEquityBuyTxnVO( EquityBuyTxnVO txnVO ) {
@@ -79,23 +95,54 @@ public class IndividualEquityHoldingVO extends EquityHolding {
         return null ;
     }
     
+    private void computeSellTxnCharges() {
+        
+        // This is dependent upon the brokerage plan.
+        if( parentHolding.getOwnerName().equals( "Sandeep" ) ) {
+            sellBrokerage = (float)( valueAtMktPrice * (0.1/100)) ;
+        }
+        else {
+            sellBrokerage = (float)( valueAtMktPrice * (0.55/100)) ;
+        }
+        
+        // Exchange transaction charges are at 0.0032% of the transaction value
+        sellExchangeTxnCharges = (float)( valueAtMktPrice * (0.0032/100) ) ;
+        
+        // SEBI turnover charges at 0.0001% of the transaction value
+        sellSEBITurnoverCharges = (float)( valueAtMktPrice * (0.0001/100) ) ;
+        
+        // GST is 18% of the sum of brokerage, exchange txn chgs and SEBI turnover charges
+        sellGST = ( sellBrokerage + sellExchangeTxnCharges + sellSEBITurnoverCharges ) *
+                  ( 18F/100F ) ;
+        
+        // STT is 0.001% if the stock is a ETF, else it is 0.1% of the 
+        // transaction value
+        if( isETF ) {
+            sellSTT = (float)( valueAtMktPrice * (0.001/100) ) ;
+        }
+        else {
+            sellSTT = (float)( valueAtMktPrice * (0.1/100) ) ;
+        }
+        
+        sellTotalTxnCharges = sellBrokerage + 
+                              sellExchangeTxnCharges + 
+                              sellSEBITurnoverCharges + 
+                              sellGST + 
+                              sellSTT ;
+    }
+    
     public void computeTaxOnSell() {
         
         if( getQuantity() <= 0 ) {
             return ;
         }
         
+        computeSellTxnCharges() ;
+        
         int stcgQty = super.getQuantity() - ltcgQty ;
         
         float ltcgCost = 0, ltcgValue = 0, ltcgProfit = 0, ltcgTax = 0 ;
         float stcgCost = 0, stcgValue = 0, stcgProfit = 0, stcgTax = 0 ;
-        
-        if( super.getOwnerName().equals( "Sandeep" ) ) {
-            sellBrokerage = (float)( valueAtMktPrice * (0.24/100)) ;
-        }
-        else {
-            sellBrokerage = (float)( valueAtMktPrice * (0.77/100)) ;
-        }
         
         ltcgCost   = ltcgQty * super.getAvgCostPrice() ;
         ltcgValue  = ltcgQty * super.getCurrentMktPrice() ;
@@ -108,7 +155,7 @@ public class IndividualEquityHoldingVO extends EquityHolding {
         stcgTax    = stcgProfit > 0 ? 0.3f * stcgProfit : 0 ;
         
         taxAmount    = ltcgTax + stcgTax ;
-        valuePostTax = valueAtMktPrice - taxAmount - sellBrokerage ;
+        valuePostTax = valueAtMktPrice - taxAmount - sellTotalTxnCharges ;
         pat          = valuePostTax - valueAtCost ;
         patPct       = ( pat / valueAtCost ) * 100 ; 
         

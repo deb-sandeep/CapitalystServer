@@ -173,7 +173,7 @@ public class EquityHoldingVOBuilder {
             
             if( action.equalsIgnoreCase( "buy" ) ) {
                 
-                buyLots.add( new EquityBuyLot( holdingVO.getBaseHolding(), txn ) ) ;
+                buyLots.add( new EquityBuyLot( holdingVO.getParentHolding(), txn ) ) ;
             }
             else if( action.equalsIgnoreCase( "sell" ) ) {
                 

@@ -1,14 +1,19 @@
 package com.sandy.capitalyst.server.api.equity.vo;
 
+import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+
 import java.util.ArrayList ;
 import java.util.Date ;
 import java.util.List ;
 
 import org.apache.commons.lang.time.DateUtils ;
+import org.apache.log4j.Logger ;
 
 import com.fasterxml.jackson.annotation.JsonIgnore ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 
 import lombok.Data ;
 import lombok.EqualsAndHashCode ;
@@ -17,7 +22,10 @@ import lombok.EqualsAndHashCode ;
 @EqualsAndHashCode( callSuper = false )
 public class EquitySellTxnVO extends EquityTxn {
     
+    static final Logger log = Logger.getLogger( EquitySellTxnVO.class ) ;
+    
     private EquityHolding parentHolding = null ;
+    private boolean isETF = false ;
     
     @JsonIgnore
     private List<AssociatedBuyTxn> buyTxns = new ArrayList<>() ;
@@ -27,7 +35,7 @@ public class EquitySellTxnVO extends EquityTxn {
     float profit           = 0 ;
     float taxAmount        = 0 ;
     float valuePostTax     = 0 ;
-    float sellBrokerage    = 0 ;
+    float sellTxnCharges   = 0 ;
     float pat              = 0 ;
     float patPct           = 0 ;
 
@@ -42,9 +50,15 @@ public class EquitySellTxnVO extends EquityTxn {
         float profit           = 0 ;
         float taxAmount        = 0 ;
         float valuePostTax     = 0 ;
-        float sellBrokerage    = 0 ;
         float pat              = 0 ;
         float patPct           = 0 ;
+        
+        float sellBrokerage           = 0 ;
+        float sellExchangeTxnCharges  = 0 ;
+        float sellSEBITurnoverCharges = 0 ;
+        float sellGST                 = 0 ;
+        float sellSTT                 = 0 ;
+        float sellTotalTxnCharges     = 0 ;
         
         public AssociatedBuyTxn( EquityTxn buyTxn, int redeemedQty ) {
             this.buyTxn = buyTxn ;
@@ -64,25 +78,56 @@ public class EquitySellTxnVO extends EquityTxn {
             valueAtCostPrice = ( redeemedQty * buyTxn.getTxnPrice() ) + overhead ;
             valueAtMktPrice  = redeemedQty * sellTxnPrice ;
             
+            computeSellTxnCharges() ;
             computeSellTax() ;
         }
         
-        public void computeSellTax() {
+        private void computeSellTxnCharges() {
             
+            // This is dependent upon the brokerage plan.
             if( parentHolding.getOwnerName().equals( "Sandeep" ) ) {
-                sellBrokerage = (float)( valueAtMktPrice * (0.24/100)) ;
+                sellBrokerage = (float)( valueAtMktPrice * (0.1/100)) ;
             }
             else {
-                sellBrokerage = (float)( valueAtMktPrice * (0.77/100)) ;
+                sellBrokerage = (float)( valueAtMktPrice * (0.55/100)) ;
             }
             
-            profit = valueAtMktPrice - valueAtCostPrice ;
+            // Exchange transaction charges are at 0.0032% of the transaction value
+            sellExchangeTxnCharges = (float)( valueAtMktPrice * (0.0032/100) ) ;
+            
+            // SEBI turnover charges at 0.0001% of the transaction value
+            sellSEBITurnoverCharges = (float)( valueAtMktPrice * (0.0001/100) ) ;
+            
+            // GST is 18% of the sum of brokerage, exchange txn chgs and SEBI turnover charges
+            sellGST = ( sellBrokerage + sellExchangeTxnCharges + sellSEBITurnoverCharges ) *
+                      ( 18F/100F ) ;
+            
+            // STT is 0.001% if the stock is a ETF, else it is 0.1% of the 
+            // transaction value
+            if( isETF ) {
+                sellSTT = (float)( valueAtMktPrice * (0.001/100) ) ;
+            }
+            else {
+                sellSTT = (float)( valueAtMktPrice * (0.1/100) ) ;
+            }
+            
+            sellTotalTxnCharges = sellBrokerage + 
+                                  sellExchangeTxnCharges + 
+                                  sellSEBITurnoverCharges + 
+                                  sellGST + 
+                                  sellSTT ;
+        }
+        
+        private void computeSellTax() {
+            
+            profit = valueAtMktPrice - valueAtCostPrice - sellTotalTxnCharges ;
             if( profit > 0 ) {
                 boolean ltcgQualified = qualifiesForLTCG() ;
-                taxAmount = ltcgQualified ? 0.1f * profit : 0.3f * profit ;
+                taxAmount = ltcgQualified ? 0.1f * profit : 
+                                            0.3f * profit ;
             }
             
-            valuePostTax = valueAtMktPrice - taxAmount - sellBrokerage ;
+            valuePostTax = valueAtMktPrice - taxAmount - sellTotalTxnCharges ;
             pat          = valuePostTax - valueAtCostPrice ;
             patPct       = ( pat / valueAtCostPrice ) * 100 ; 
         }
@@ -96,12 +141,21 @@ public class EquitySellTxnVO extends EquityTxn {
     public EquitySellTxnVO( EquitySellTxnVO vo ) {
         super( vo ) ;
         this.parentHolding = vo.getParentHolding()  ;
+        setETFFlag( this.parentHolding.getIsin() ) ;
     }
 
     public EquitySellTxnVO( EquityHolding holding, EquityTxn sellTxn ) {
         
         super( sellTxn ) ;
         this.parentHolding = holding ;
+        setETFFlag( this.parentHolding.getIsin() ) ;
+    }
+    
+    private void setETFFlag( String isin ) {
+        
+        EquityMasterRepo emRepo = getBean( EquityMasterRepo.class ) ; 
+        EquityMaster em = emRepo.findByIsin( isin ) ;
+        this.isETF = em.isEtf() ;
     }
     
     // If there is another sell transaction on the same date, this method will
@@ -128,12 +182,12 @@ public class EquitySellTxnVO extends EquityTxn {
         AssociatedBuyTxn abt = new AssociatedBuyTxn( buyTxn, redeemQty ) ;
         buyTxns.add( abt ) ;
         
-        this.valueAtCostPrice += abt.valueAtCostPrice ;
-        this.valueAtMktPrice  += abt.valueAtMktPrice  ;
-        this.profit           += abt.profit           ;
-        this.taxAmount        += abt.taxAmount        ;
-        this.valuePostTax     += abt.valuePostTax     ;
-        this.sellBrokerage    += abt.sellBrokerage    ;
+        this.valueAtCostPrice += abt.valueAtCostPrice    ;
+        this.valueAtMktPrice  += abt.valueAtMktPrice     ;
+        this.profit           += abt.profit              ;
+        this.taxAmount        += abt.taxAmount           ;
+        this.valuePostTax     += abt.valuePostTax        ;
+        this.sellTxnCharges   += abt.sellTotalTxnCharges ;
         
         this.pat    = this.valuePostTax - this.valueAtCostPrice ;
         this.patPct = ( this.pat / this.valueAtCostPrice ) * 100 ; 
