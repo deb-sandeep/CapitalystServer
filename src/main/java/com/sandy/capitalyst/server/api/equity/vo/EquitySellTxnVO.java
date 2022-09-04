@@ -73,7 +73,7 @@ public class EquitySellTxnVO extends EquityTxn {
             float overhead     = ( buyTxn.getBrokerage() + 
                                    buyTxn.getStampDuty() + 
                                    buyTxn.getTxnCharges() ) * 
-                                 ( redeemedQty / buyTxn.getQuantity() ) ;
+                                 ( ((float)redeemedQty) / ((float)buyTxn.getQuantity()) ) ;
             
             valueAtCostPrice = ( redeemedQty * buyTxn.getTxnPrice() ) + overhead ;
             valueAtMktPrice  = redeemedQty * sellTxnPrice ;
