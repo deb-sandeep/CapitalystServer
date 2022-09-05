@@ -28,6 +28,7 @@ capitalystNgApp.controller( 'RecoController',
     $scope.$parent.activeModuleId = "reco" ;
     
     $scope.recommendations = [] ;
+    $scope.selectedStock = null ;
     
     function resetState() {
         $scope.recommendations.length = 0 ;
@@ -54,6 +55,15 @@ capitalystNgApp.controller( 'RecoController',
         sortTable( field ) ;
     }
     
+    $scope.showStockDetails = function( reco ) {
+        $scope.selectedStock = reco.equityMaster ;
+        $( '#stockDetailDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.hideStockDetails = function() {
+        $scope.selectedStock = null ;
+        $( '#stockDetailDialog' ).modal( 'hide' ) ;
+    }
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

@@ -21,8 +21,6 @@ public class EquityRecommendationsController {
     @GetMapping( "/Equity/Recommendations" ) 
     public ResponseEntity<List<EquityReco>> getRecommendations() {
         
-        log.debug( "Getting equity recommendations." ) ;
-
         List<EquityReco> recommendations = null ;
         
         try {
