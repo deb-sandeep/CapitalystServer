@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContextAware ;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry ;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
+import com.sandy.capitalyst.server.api.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
@@ -88,6 +89,20 @@ public class CapitalystServer
         else {
             log.debug( "Skipping scheduler initialization" ) ;
         }
+        
+        Thread t = new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep( 1000 ) ;
+                    RecoManager.instance().getAllRecos() ;
+                    log.debug( "Reco manager initialized" ) ;
+                }
+                catch( Exception e ) {
+                    log.error( "Reco manager initialization failed.", e ) ;
+                }
+            }
+        } ;
+        t.start() ;
     }
     
     private void updateAccountBalanceOnStartup() {

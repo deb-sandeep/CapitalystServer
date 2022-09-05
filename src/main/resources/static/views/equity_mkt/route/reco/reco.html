@@ -3,7 +3,7 @@
            style="width: auto !important;">
         <thead>
             <tr class="success">
-                <th colspan="4"></th>
+                <th colspan="5"></th>
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
@@ -20,6 +20,9 @@
                 </th>
                 <th ng-click="sort('symbol')">
                     Symbol
+                </th>
+                <th ng-click="sort('holding')">
+                    <i class="fa-solid fa-map-pin"></i>
                 </th>
                 <th></th>
                 <th ng-click="sort('price')">
@@ -84,6 +87,8 @@
                     <a ng-href="{{reco.equityMaster.detailUrl}}#advchart" target="_blank">
                         {{reco.symbolNse}}&nbsp;&nbsp;
                     </a>
+               </td>
+               <td>
                     <i ng-if="reco.inPortfolio" 
                        class="fa-solid fa-map-pin"
                        style="color:red;"></i>

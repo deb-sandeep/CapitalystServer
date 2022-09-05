@@ -139,6 +139,9 @@ capitalystNgApp.controller( 'RecoController',
         else if( field == "symbol" ) {
             $scope.recommendations.sort( symbolSort ) ;
         }
+        else if( field == "holding" ) {
+            $scope.recommendations.sort( holdingSort ) ;
+        }
         else if( field == "price" ) {
             $scope.recommendations.sort( priceSort ) ;
         }
@@ -202,6 +205,15 @@ capitalystNgApp.controller( 'RecoController',
         return sortDir[ "symbol"] == "asc" ?
             ( r1.symbolNse.localeCompare( r2.symbolNse ) ) :
             ( r2.symbolNse.localeCompare( r1.symbolNse ) ) ;
+    }
+    
+    function holdingSort( r1, r2 ) {
+        var r1Holding = r1.inPortfolio ? 1 : 0 ;
+        var r2Holding = r2.inPortfolio ? 1 : 0 ;
+        
+        return sortDir[ "holding"] == "asc" ?
+            ( r2Holding - r1Holding ) :
+            ( r1Holding - r2Holding ) ;
     }
     
     function priceSort( r1, r2 ) {
