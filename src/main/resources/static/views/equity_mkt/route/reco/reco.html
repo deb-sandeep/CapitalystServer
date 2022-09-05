@@ -7,7 +7,7 @@
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
-                <th colspan="9" style="text-align:center;">
+                <th colspan="10" style="text-align:center;">
                     Performance %
                 </th>
             </tr>
@@ -36,6 +36,9 @@
                 </th>
                 <th ng-click="sort('pe')">
                     PE
+                </th>
+                <th ng-click="sort('trend')">
+                    <i class="fa-solid fa-chart-line"></i>
                 </th>
                 <th ng-click="sort('perf1W')" style="width:40px;">
                     1W
@@ -105,6 +108,34 @@
                </td>
                <td class="fixed-font" style="text-align:right;">
                     {{reco.indicators.pe | number:0}}
+               </td>
+               <td style="text-align:center;font-size:10px;">
+                   <span ng-if="reco.indicators.trend == 'VERY BULLISH'"
+                         class="glyphicon glyphicon-arrow-up"
+                         style="color:green;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'VERY BULLISH'"
+                         class="glyphicon glyphicon-arrow-up"
+                         style="color:green;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'BULLISH'"
+                         class="glyphicon glyphicon-arrow-up"
+                         style="color:green;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'NEUTRAL'"
+                         class="glyphicon glyphicon-resize-horizontal"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'BEARISH'"
+                         class="glyphicon glyphicon-arrow-down"
+                         style="color:red;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'VERY BEARISH'"
+                         class="glyphicon glyphicon-arrow-down"
+                         style="color:red;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'VERY BEARISH'"
+                         class="glyphicon glyphicon-arrow-down"
+                         style="color:red;"></span>
                </td>
                <td class="fixed-font small-font" style="text-align:right;"
                    ng-class="getCellClass( 'perf1W', reco.ttmPerf.perf1w )">

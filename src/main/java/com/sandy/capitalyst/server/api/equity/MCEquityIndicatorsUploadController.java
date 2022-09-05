@@ -16,10 +16,14 @@ import com.sandy.capitalyst.server.api.equity.vo.StockIndicators ;
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators.TechIndicator ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
+import com.sandy.capitalyst.server.dao.equity.EquityIndicatorsHist ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
+import com.sandy.capitalyst.server.dao.equity.EquityTechIndicatorHist ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsHistRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityTechIndicatorHistRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTechIndicatorRepo ;
 
 // @Post - /Equity/Master/MCStockIndicators
@@ -37,6 +41,12 @@ public class MCEquityIndicatorsUploadController {
     
     @Autowired
     private EquityTechIndicatorRepo etiRepo = null ;
+    
+    @Autowired
+    private EquityIndicatorsHistRepo eihRepo = null ;
+    
+    @Autowired
+    private EquityTechIndicatorHistRepo etihRepo = null ;
     
     @PostMapping( "/Equity/Master/MCStockIndicators" ) 
     public ResponseEntity<APIResponse> updateMCStockIndicators(
@@ -71,6 +81,8 @@ public class MCEquityIndicatorsUploadController {
         
         EquityIndicators eiDao = null ;
         EquityTechIndicator etiDao = null ;
+        EquityIndicatorsHist eihDao = null ;
+        EquityTechIndicatorHist etihDao = null ;
         
         eiDao = eiRepo.findByIsin( ind.getIsin() ) ;
         if( eiDao == null ) {
@@ -87,7 +99,17 @@ public class MCEquityIndicatorsUploadController {
                 eiDao.setPrevTrend( prevTrend ) ;
             }
         }
+        
+        eihDao = eihRepo.findByIsinAndAsOnDate( ind.getIsin(), eiDao.getAsOnDate() ) ;
+        if( eihDao == null ) {
+            eihDao = new EquityIndicatorsHist( eiDao ) ;
+        }
+        else {
+            eihDao.copy( eiDao ) ;
+        }
+        
         eiRepo.save( eiDao ) ;
+        eihRepo.save( eihDao ) ;
         
         for( TechIndicator ti : ind.getIndicators() ) {
             etiDao = etiRepo.findByIsinAndName( ind.getIsin(), ti.getName() ) ;
@@ -97,7 +119,19 @@ public class MCEquityIndicatorsUploadController {
             else {
                 etiDao.copy( ind, ti ) ;
             }
+            
+            etihDao = etihRepo.findByIsinAndNameAndAsOnDate( ind.getIsin(),
+                                                             ti.getName(),
+                                                             ind.getAsOnDate() ) ;
+            if( etihDao == null ) {
+                etihDao = new EquityTechIndicatorHist( etiDao ) ;
+            }
+            else {
+                etihDao.copy( etiDao ) ;
+            }
+            
             etiRepo.save( etiDao ) ;
+            etihRepo.save( etihDao ) ;
         }
     }
 }

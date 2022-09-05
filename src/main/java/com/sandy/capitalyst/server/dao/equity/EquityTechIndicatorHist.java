@@ -8,15 +8,12 @@ import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
 
-import com.sandy.capitalyst.server.api.equity.vo.StockIndicators ;
-import com.sandy.capitalyst.server.api.equity.vo.StockIndicators.TechIndicator ;
-
 import lombok.Data ;
 
 @Data
 @Entity
-@Table( name = "equity_tech_indicator" )
-public class EquityTechIndicator {
+@Table( name = "equity_tech_indicator_hist" )
+public class EquityTechIndicatorHist {
 
     @Id
     @GeneratedValue( strategy=GenerationType.AUTO )
@@ -29,18 +26,18 @@ public class EquityTechIndicator {
     private float  level          = 0 ;
     private String indication     = null ;
 
-    public EquityTechIndicator() {}
+    public EquityTechIndicatorHist() {}
     
-    public EquityTechIndicator( StockIndicators ind, TechIndicator ti ) {
-        copy( ind, ti ) ;
+    public EquityTechIndicatorHist( EquityTechIndicator ind ) {
+        copy( ind ) ;
     }
     
-    public void copy( StockIndicators ind, TechIndicator ti ) {
+    public void copy( EquityTechIndicator ind ) {
         this.isin       = ind.getIsin() ;
         this.symbolNse  = ind.getSymbolNse() ;
         this.asOnDate   = ind.getAsOnDate() ;
-        this.name       = ti.getName() ;
-        this.level      = ti.getLevel() ;
-        this.indication = ti.getIndication() ;
+        this.name       = ind.getName() ;
+        this.level      = ind.getLevel() ;
+        this.indication = ind.getIndication() ;
     }
 }

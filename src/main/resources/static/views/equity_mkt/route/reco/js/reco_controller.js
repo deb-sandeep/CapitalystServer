@@ -23,6 +23,14 @@ capitalystNgApp.controller( 'RecoController',
        cagr    : new Gradient( new ThresholdGradient( 5 ) ),
     } ;
     
+    var trendScore = {
+        'VERY BULLISH' : 5,
+        'BULLISH'      : 4,
+        'NEUTRAL'      : 3,
+        'BEARISH'      : 2,
+        'VERY BEARISH' : 1        
+    } ;
+    
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Equity Recommendations" ;
     $scope.$parent.activeModuleId = "reco" ;
@@ -152,6 +160,9 @@ capitalystNgApp.controller( 'RecoController',
         else if( field == "pscore" ) {
             $scope.recommendations.sort( pscoreSort ) ;
         }    
+        else if( field == "trend" ) {
+            $scope.recommendations.sort( trendSort ) ;
+        }    
         else if( field == "perf1W" ) {
             $scope.recommendations.sort( perf1WSort ) ;
         }
@@ -233,6 +244,13 @@ capitalystNgApp.controller( 'RecoController',
         return sortDir[ "pscore"] == "asc" ?
             ( r1.indicators.piotroskiScore - r2.indicators.piotroskiScore ) :
             ( r2.indicators.piotroskiScore - r1.indicators.piotroskiScore ) ;
+    }
+        
+    function trendSort( r1, r2 ) {
+        
+        return sortDir[ "trend"] == "asc" ?
+            ( trendScore[r1.indicators.trend] - trendScore[r2.indicators.trend] ) :
+            ( trendScore[r2.indicators.trend] - trendScore[r1.indicators.trend] ) ;
     }
         
     function perf1WSort( r1, r2 ) {
