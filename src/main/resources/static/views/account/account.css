@@ -33,3 +33,11 @@
    border: 1px solid #ddd;
    border-bottom-color: transparent
 }
+
+.table>tbody>tr>td {
+	padding-top: 4px ;
+	padding-bottom: 4px ;
+	padding-left: 8px ;
+	padding-right: 8px ;
+	font-size: 12px;
+}

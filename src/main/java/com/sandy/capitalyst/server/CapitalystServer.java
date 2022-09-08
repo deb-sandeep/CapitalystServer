@@ -90,12 +90,20 @@ public class CapitalystServer
             log.debug( "Skipping scheduler initialization" ) ;
         }
         
+        if( cfg.isInitializeRecoMgrOnStart() ) {
+            log.debug( "Initilizaing recommendation manager." ) ;
+            initializeRecoManager() ;
+        }
+    }
+    
+    private void initializeRecoManager() {
+        
         Thread t = new Thread() {
             public void run() {
                 try {
                     Thread.sleep( 1000 ) ;
                     RecoManager.instance().getAllRecos() ;
-                    log.debug( "Reco manager initialized" ) ;
+                    log.debug( "Recommendation manager initialized" ) ;
                 }
                 catch( Exception e ) {
                     log.error( "Reco manager initialization failed.", e ) ;
