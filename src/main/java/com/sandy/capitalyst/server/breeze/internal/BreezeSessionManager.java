@@ -24,6 +24,8 @@ import org.jsoup.select.Elements ;
 
 import com.fasterxml.jackson.databind.JsonNode ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
+import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.core.util.RSACipher ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 
@@ -34,130 +36,164 @@ import okhttp3.Request ;
 import okhttp3.RequestBody ;
 import okhttp3.Response ;
 
-public class BreezeSession {
+public class BreezeSessionManager {
 
-    private static final Logger log = Logger.getLogger( BreezeSession.class ) ;
+    private static final Logger log = Logger.getLogger( BreezeSessionManager.class ) ;
     
     private static final String API_USER_BASEURL = "https://api.icicidirect.com/apiuser" ;
-    public  static final String BRZ_API_BASEURL  = "https://api.icicidirect.com/breezeapi/api/v1" ;
     
     private static final MediaType FORM_DATA = MediaType.parse( "application/x-www-form-urlencoded" ) ;
     
     @Data
-    public static class Session implements Serializable {
+    public static class BreezeSession implements Serializable {
+        
         private static final long serialVersionUID = -1427026265072334302L ;
-        private String sessionId = null ;
+
+        // If this flag is set, it implies that the session has been 
+        // invalidated and the session would need to be initialized/created
+        // again. 
+        private boolean valid = false ;
+        
+        private String userId       = null ;
+        private String sessionId    = null ;
         private String sessionToken = null ;
-        private Date creationTime = null ;
+        private Date   creationTime = null ;
+        
+        private BreezeCred cred = null ;
+        
+        private boolean initializationRequired() {
+            
+            if( !this.valid ) {
+                return true ;
+            }
+            else if( StringUtil.isEmptyOrNull( this.sessionToken ) ) {
+                return true ;
+            } 
+            else {
+                Date todayStart = new Date() ;
+                todayStart = DateUtils.truncate( todayStart, Calendar.DAY_OF_MONTH ) ;
+                if( this.creationTime.before( todayStart ) ) {
+                    log.debug( "  New session id required. Old one expired." ) ;
+                    return true ;
+                }
+            }
+            return false ;
+        }
     }
     
     private static final String FAKE_HDRS[][] = {
         { "User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" }
     } ;
     
-    private static BreezeSession instance = null ;
+    private static BreezeSessionManager instance = null ;
     
     private OkHttpClient client = null ;
     
-    private String appKey      = null ;
-    private String userId      = null ;
-    private String password    = null ;
-    private String dob         = null ;
-    private String secretKey   = null ;
-    private File   persistDir  = null ;
-    private File   persistFile = null ;
+    private Map<String, BreezeSession> sessionMap = new HashMap<>() ;
     
-    private Session session = null ;
-    
-    public static BreezeSession instance() throws Exception {
+    public static BreezeSessionManager instance() {
         if( instance == null ) {
-            instance = new BreezeSession() ;
-        }
-        
-        if( instance.appKey != null ) { 
-            // Implies that the instance has been initialized
-            if( instance.sessionGenerationRequired() ) {
-                instance.generateSessionToken() ;
-            }
+            instance = new BreezeSessionManager() ;
         }
         return instance ;
     }
     
-    private BreezeSession() {}
-    
-    public void initialize( String appKey, String userId, 
-                            String password, String dob,
-                            String secretKey,
-                            File persistenceDir ) 
-        throws Exception {
-        
-        log.debug( "\nInitializing BreezeSession" ) ;
-        
-        this.appKey     = appKey ;
-        this.userId     = userId ;
-        this.password   = password ;
-        this.secretKey  = secretKey ;
-        this.dob        = dob ;
-        this.persistDir = persistenceDir ;
-        
-        this.persistFile = new File( this.persistDir, "breeze-session.key" ) ;
-        
+    private BreezeSessionManager() {
         this.client = new OkHttpClient.Builder()
-                                      .connectTimeout( 60, TimeUnit.SECONDS )
-                                      .readTimeout( 60, TimeUnit.SECONDS )
-                                      .writeTimeout( 60, TimeUnit.SECONDS )
-                                      .build() ;
-        
-        loadPersistedSession() ;
-        
-        if( sessionGenerationRequired() ) {
-            generateSessionToken() ;
+                        .connectTimeout( 60, TimeUnit.SECONDS )
+                        .readTimeout( 60, TimeUnit.SECONDS )
+                        .writeTimeout( 60, TimeUnit.SECONDS )
+                        .build() ;
+    }
+    
+    public void setCredentialsUpdated() {
+        // Invalidate all the sessions
+        for( BreezeSession session : sessionMap.values() ) {
+            session.setValid( false ) ;
         }
     }
     
-    public Session getSession() {
-        return this.session ;
+    /**
+     * Returns a valid BreezeSession or null if a valid session could not 
+     * be created.
+     */
+    public BreezeSession getSession( BreezeCred cred ) {
+        
+        String uid = cred.getUserId() ;
+        
+        log.debug( "Getting Breeze session for " + uid ) ;
+        
+        // First we try to see if we have an in-memory instance.
+        // If not found, we try to load a serialized instance.
+        // If still not found, we create an empty session
+        //
+        // The session is initialized, cached and serialized if needed.
+        BreezeSession session = sessionMap.get( uid ) ;
+        
+        if( session == null ) {
+            log.debug( "  No live session found. Checking serialized session" ) ;
+            session = deserializeSession( uid ) ;
+            if( session == null ) {
+                log.debug( "  No serialized session found." ) ;
+            }
+        }
+        
+        if( session == null ) {
+            log.debug( "  Creating an empty session." ) ;
+            session = new BreezeSession() ;
+            session.userId = uid ;
+            session.cred = cred ;
+        }
+        
+        if( session.initializationRequired() ) {
+            try {
+                log.debug( "  Creating new session." ) ;
+                generateNewSession( session ) ;
+                
+                sessionMap.put( uid, session ) ;
+                
+                log.debug( "  Serializing session." ) ;
+                serializeSession( session ) ;
+            }
+            catch( Exception e ) {
+                log.error( "BreezeSession initialization failed.", e ) ;
+            }
+        }
+        
+        return session ;
     }
     
-    public String getSecretKey() {
-        return this.secretKey ;
-    }
-    
-    public String getAppKey() {
-        return this.appKey ;
-    }
-    
-    private void generateSessionToken() throws Exception {
+    private void generateNewSession( BreezeSession session ) 
+        throws Exception {
         
         Map<String, String> loginFormKVPS      = null ;
         Map<String, String> tradeLoginFormKVPS = null ;
         
-        String apiSessionId = null ;
+        String sessionId = null ;
         String sessionToken = null ;
         
-        log.debug( "\nGenerating BreezeSession session id" ) ;
+        log.debug( "\nGenerating session" ) ;
         
-        loginFormKVPS      = getLoginPageNameValueMap() ;
+        loginFormKVPS      = getLoginPageNameValueMap( session.cred ) ;
         tradeLoginFormKVPS = getTradeLoginIdValueMap( loginFormKVPS ) ;
-        apiSessionId       = getSessionId( tradeLoginFormKVPS ) ;
-        sessionToken       = getSessionToken( apiSessionId ) ;
+        sessionId          = getSessionId( session.cred, tradeLoginFormKVPS ) ;
+        sessionToken       = getSessionToken( session.cred, sessionId ) ;
         
-        log.debug( "  API session id = " + apiSessionId ) ;
-        log.debug( "  Session Token  = " + sessionToken ) ;
-        
-        this.session = new Session() ;
-        this.session.setSessionId( apiSessionId ) ;
-        this.session.setSessionToken( sessionToken ) ;
-        this.session.setCreationTime( new Date() ) ;
-        
-        persistSession() ;
+        log.debug( "    API session id = " + sessionId ) ;
+        log.debug( "    Session Token  = " + sessionToken ) ;
+
+        session.setSessionId( sessionId ) ;
+        session.setSessionToken( sessionToken ) ;
+        session.setCreationTime( new Date() ) ;
+        session.setValid( true ) ;
     }
     
-    private Map<String, String> getLoginPageNameValueMap() throws Exception {
+    private Map<String, String> getLoginPageNameValueMap( BreezeCred cred ) 
+            throws Exception {
         
         log.debug( "  Getting the login page" ) ;
         
-        String url = API_USER_BASEURL + "/login?api_key=" + this.appKey  ;
+        String url = API_USER_BASEURL + "/login?api_key=" + cred.getAppKey()  ;
         
         Request  request        = null ;
         Response response       = null ;
@@ -171,6 +207,10 @@ public class BreezeSession {
             
             response = client.newCall( request ).execute() ;
             log.debug( "    Server response - " + response.code() ) ;
+            if( response.code() != 200 ) {
+                throw new Exception( "Server error getting login page. " + 
+                                     "Msg = " + resBodyContent ) ;
+            }
             
             resBodyContent = response.body().string() ;
             
@@ -210,6 +250,10 @@ public class BreezeSession {
             response = client.newCall( request ).execute() ;
             resBodyContent = response.body().string() ;
             log.debug( "    Server response - " + response.code() ) ;
+            if( response.code() != 200 ) {
+                throw new Exception( "Server error providing trade login page. " + 
+                                     "Msg = " + resBodyContent ) ;
+            }
         
             idValMap = getInputAttrValuePairs( resBodyContent, "id" ) ;
         }
@@ -222,7 +266,8 @@ public class BreezeSession {
         return idValMap ;
     }
     
-    private String getSessionId( Map<String, String> formFields )
+    private String getSessionId( BreezeCred cred, 
+                                 Map<String, String> formFields )
         throws Exception {
         
         log.debug( "  Validating the user" ) ;
@@ -242,8 +287,8 @@ public class BreezeSession {
         try {
             rsaCipher = createCipher( formFields.get( "hidenc" ) ) ;
             
-            byte[] dobBytes = this.dob.getBytes( "UTF-8" ) ;
-            byte[] pwdBytes = this.password.getBytes( "UTF-8" ) ;
+            byte[] dobBytes = cred.getDob().getBytes( "UTF-8" ) ;
+            byte[] pwdBytes = cred.getPassword().getBytes( "UTF-8" ) ;
             
             byte[] encDob = rsaCipher.encrypt( dobBytes ) ;
             byte[] encPwd = rsaCipher.encrypt( pwdBytes ) ;
@@ -251,7 +296,7 @@ public class BreezeSession {
             String hexEncDob = Hex.encodeHexString( encDob ) ;
             String hexEncPwd = Hex.encodeHexString( encPwd ) ;
             
-            formFields.put( "txtuid",  this.userId ) ;
+            formFields.put( "txtuid",  cred.getUserId() ) ;
             formFields.put( "txtPass", "************" ) ;
             formFields.put( "txtdob",  "************" ) ;
             formFields.put( "hiddob",  hexEncDob ) ;
@@ -267,6 +312,10 @@ public class BreezeSession {
             response = client.newCall( request ).execute() ;
             resBodyContent = response.body().string() ;
             log.debug( "    Server response - " + response.code() ) ;
+            if( response.code() != 200 ) {
+                throw new Exception( "Server error validating the user. " + 
+                                     "Msg = " + resBodyContent ) ;
+            }
             
             idValMap = getInputAttrValuePairs( resBodyContent, "id" ) ;
             sessionKey = idValMap.get( "API_Session" ) ;
@@ -280,19 +329,20 @@ public class BreezeSession {
         return sessionKey ;
     }
     
-    private String getSessionToken( String apiSessionId ) 
+    // Redirect URL : http://127.0.0.1:8080/BreezeAuthCallback?userName=<userName>
+    private String getSessionToken( BreezeCred cred, String apiSessionId ) 
         throws Exception {
 
         log.debug( "  Generating session token" ) ;
 
-        String url = BRZ_API_BASEURL + "/customerdetails" ;
+        String url = Breeze.BRZ_API_BASEURL + "/customerdetails" ;
         BreezeNetworkClient netClient = BreezeNetworkClient.instance() ;
         
-        Map<String, Object> params = new HashMap<>() ;
+        Map<String, String> params = new HashMap<>() ;
         params.put( "SessionToken", apiSessionId ) ;
-        params.put( "AppKey", this.appKey ) ;
+        params.put( "AppKey", cred.getAppKey() ) ;
         
-        String resBody = netClient.get( url, params ) ;
+        String resBody = netClient.get( url, params, null ) ;
         
         ObjectMapper mapper = new ObjectMapper() ;
         JsonNode root = mapper.readTree( resBody ) ;
@@ -304,7 +354,7 @@ public class BreezeSession {
             sessionToken = tokenNode.asText() ;
         }
         
-        log.debug( "    Session Token = " + sessionToken ) ;        
+        log.debug( "    BreezeSession Token = " + sessionToken ) ;        
         
         return sessionToken ;
     }
@@ -356,22 +406,24 @@ public class BreezeSession {
         return kvps ;
     }
 
-    private void loadPersistedSession() {
+    private BreezeSession deserializeSession( String userId ) {
         
+        File serFile = getSessionSerFile( userId ) ;
         FileInputStream fIs = null ;
         ObjectInputStream oIs = null ;
+        BreezeSession session = null ;
         
         try {
-            if( this.persistFile.exists() ) {
+            if( serFile.exists() ) {
                 log.debug( "  Loading persistent session id state" ) ;
-                fIs = new FileInputStream( this.persistFile ) ;
+                fIs = new FileInputStream( serFile ) ;
                 oIs = new ObjectInputStream( fIs ) ;
                 
-                session = ( Session )oIs.readObject() ; 
+                session = ( BreezeSession )oIs.readObject() ; 
             }
         }
         catch( Exception e ) {
-            log.error( "Error saving session key.", e ) ;
+            log.error( "Error serializing session.", e ) ;
         }
         finally {
             if( oIs != null ) {
@@ -383,24 +435,27 @@ public class BreezeSession {
                 }
             }
         }
+        
+        return session ;
     }
     
-    private void persistSession() {
+    private void serializeSession( BreezeSession session ) {
         
+        File serFile = getSessionSerFile( session.userId ) ;
         ObjectOutputStream oOs = null ;
         FileOutputStream fOs = null ;
         
         try {
-            if( this.session != null ) {
+            if( session != null ) {
                 log.debug( "  Persisting session id" ) ;
-                fOs = new FileOutputStream( persistFile ) ;
+                fOs = new FileOutputStream( serFile ) ;
                 oOs = new ObjectOutputStream( fOs ) ;
                 
                 oOs.writeObject( session ) ;
             }
         }
         catch( Exception e ) {
-            log.error( "Error loading session key.", e ) ;
+            log.error( "Error deserializing session.", e ) ;
         }
         finally {
             if( oOs != null ) {
@@ -412,25 +467,16 @@ public class BreezeSession {
                     log.error( "Error closing streams.", e ) ;
                 }
             }
-        }
+        }    
     }
+    
+    private File getSessionSerFile( String userId ) {
+        
+        String fileName = "session-" + userId.toLowerCase() + ".ser" ;
+        File   serDir   = Breeze.instance().getSerializationDir() ;
+        File   serFile  = new File( serDir, fileName ) ;
 
-    private boolean sessionGenerationRequired() {
-        if( this.session == null ) {
-            log.debug( "  New session id required." ) ;
-            return true ;
-        }
-        else if( StringUtil.isEmptyOrNull( this.session.sessionToken ) ) {
-            return true ;
-        } 
-        else {
-            Date todayStart = new Date() ;
-            todayStart = DateUtils.truncate( todayStart, Calendar.DAY_OF_MONTH ) ;
-            if( session.creationTime.before( todayStart ) ) {
-                log.debug( "  New session id required. Old one expired." ) ;
-                return true ;
-            }
-        }
-        return false ;
+        log.debug( "    Ser file - " + serFile.getAbsolutePath() ) ;
+        return serFile ;
     }
 }

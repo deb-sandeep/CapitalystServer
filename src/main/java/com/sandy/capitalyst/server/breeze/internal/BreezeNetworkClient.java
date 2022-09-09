@@ -22,14 +22,14 @@ import org.apache.http.impl.client.HttpClientBuilder ;
 import org.apache.log4j.Logger ;
 
 import com.fasterxml.jackson.databind.ObjectMapper ;
-import com.sandy.capitalyst.server.core.util.StringUtil ;
+import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
 
 public class BreezeNetworkClient {
 
     private static final Logger log = Logger.getLogger( BreezeNetworkClient.class ) ;
     
-    private static final boolean LOG_ENABLED = true ;
-    private static String ISO8601_FMT = "yyyy-MM-dd'T'HH:mm:ss.000'Z'";
+    private static final boolean LOG_ENABLED = false ;
     
     public static class HttpGetWithEntity extends HttpEntityEnclosingRequestBase {
         public final static String METHOD_NAME = "GET";
@@ -39,7 +39,7 @@ public class BreezeNetworkClient {
     }
     
     private static BreezeNetworkClient instance = null ;
-    private static SimpleDateFormat SDF = new SimpleDateFormat( ISO8601_FMT ) ;
+    private static SimpleDateFormat SDF = new SimpleDateFormat( Breeze.ISO8601_FMT ) ;
     
     static {
         SDF.setTimeZone( TimeZone.getTimeZone( "GMT" ) ) ;
@@ -56,7 +56,6 @@ public class BreezeNetworkClient {
     private Map<String, String> standardHeaders = new HashMap<>() ;
     private ObjectMapper objMapper = null ;
 
-    
     private BreezeNetworkClient() {
         
         httpClient = HttpClientBuilder.create().build() ;
@@ -71,20 +70,22 @@ public class BreezeNetworkClient {
         standardHeaders.put( "Connection",      "keep-alive" ) ;
     }
     
-    public String get( String urlStr ) throws Exception {
-        return get( urlStr, null, null ) ;
+    public String get( String urlStr, BreezeSession session ) 
+            throws Exception {
+        
+        return get( urlStr, null, null, session ) ;
     }
         
-    public String get( String urlStr, String body ) throws Exception {
-        return get( urlStr, null, body ) ;
-    }
-    
-    public String get( String urlStr, Map<String, Object> bodyMap ) throws Exception {
+    public String get( String urlStr, Map<String, String> bodyMap, 
+                       BreezeSession session ) 
+            throws Exception {
+        
         String body = objMapper.writeValueAsString( bodyMap ) ;
-        return get( urlStr, null, body ) ;
+        return get( urlStr, null, body, session ) ;
     }
     
-    public String get( String urlStr, Map<String, String> headers, String body )
+    private String get( String urlStr, Map<String, String> customHdrs, 
+                       String body, BreezeSession session )
         throws Exception {
         
         if( LOG_ENABLED ) {
@@ -95,37 +96,47 @@ public class BreezeNetworkClient {
         HttpResponse      response = null ;
         HttpEntity        responseEntity = null ;
         
-        if( StringUtil.isEmptyOrNull( body ) ) { body = "{}" ; }
         if( LOG_ENABLED ) {
             log.debug( "  Body:" ) ;
             log.debug( body ) ;
         }
         
-        request.setURI( new URI( urlStr ) ) ;
-        request.setEntity( new StringEntity( body, APPLICATION_JSON ) ) ;
-        
-        setHeaders( request, headers, body ) ;
-        
-        response = httpClient.execute( request ) ;
-        
-        String responseStr = null ;
-        responseEntity = response.getEntity() ;
-        
-        if( LOG_ENABLED ) {
-            log.debug( "  Response:" ) ;
-            log.debug( "    Status = " + response.getStatusLine().getStatusCode() );
-        }
-        
-        if( responseEntity != null ) {
-            int    len     = (int)responseEntity.getContentLength() ;
-            byte[] content = new byte[len] ;
-            IOUtils.readFully( responseEntity.getContent(), content );
+        String responseStr ;
+        try {
+            request.setURI( new URI( urlStr ) ) ;
+            request.setEntity( new StringEntity( body, APPLICATION_JSON ) ) ;
             
-            responseStr = new String( content ) ;
+            setHeaders( request, customHdrs, body, session ) ;
+            
+            response = httpClient.execute( request ) ;
+            
+            responseStr = null ;
+            responseEntity = response.getEntity() ;
+            
             if( LOG_ENABLED ) {
-                log.debug( "  Response body:" ) ; 
-                log.debug( "    " + responseStr ) ;
+                log.debug( "  Response:" ) ;
+                log.debug( "    Status = " + response.getStatusLine().getStatusCode() );
             }
+            
+            if( response.getStatusLine().getStatusCode() != 200 ) {
+                throw new Exception( "Server error validating the user. " + 
+                                     "Msg = " + responseEntity ) ;
+            }
+            
+            if( responseEntity != null ) {
+                int    len     = (int)responseEntity.getContentLength() ;
+                byte[] content = new byte[len] ;
+                IOUtils.readFully( responseEntity.getContent(), content );
+                
+                responseStr = new String( content ) ;
+                if( LOG_ENABLED ) {
+                    log.debug( "  Response body:" ) ; 
+                    log.debug( "    " + responseStr ) ;
+                }
+            }
+        }
+        finally {
+            request.releaseConnection() ;
         }
         
         return responseStr ;
@@ -133,7 +144,7 @@ public class BreezeNetworkClient {
     
     private void setHeaders( HttpRequestBase req, 
                              Map<String, String> headers,
-                             String body ) 
+                             String body, BreezeSession session ) 
         throws Exception {
         
         if( LOG_ENABLED ) {
@@ -158,25 +169,23 @@ public class BreezeNetworkClient {
             }
         }
 
-        String reqUri = req.getRequestLine().getUri() ;
-        if( !reqUri.endsWith( "/customerdetails" ) ) {
-            addChecksumHeaders( req, body ) ;
+        if( session != null ) {
+            addChecksumHeaders( req, body, session ) ;
         }
     }
     
-    private void addChecksumHeaders( HttpRequestBase req, String body ) 
+    private void addChecksumHeaders( HttpRequestBase req, String body, 
+                                     BreezeSession session ) 
         throws Exception {
         
-        BreezeSession s = BreezeSession.instance() ;
-
         String timestamp = SDF.format( new Date() ) ;
         String checksum  = generateChecksum( timestamp, body, 
-                                             s.getSecretKey() ) ;
+                                             session.getCred().getSecretKey() ) ;
         
         req.addHeader( "X-Checksum",     "token " + checksum ) ;
         req.addHeader( "X-Timestamp",    timestamp ) ;
-        req.addHeader( "X-AppKey",       s.getAppKey() ) ;
-        req.addHeader( "X-SessionToken", s.getSession().getSessionToken() ) ;    
+        req.addHeader( "X-AppKey",       session.getCred().getAppKey() ) ;
+        req.addHeader( "X-SessionToken", session.getSessionToken() ) ;    
     }
     
     private String generateChecksum( String timestamp, String body,

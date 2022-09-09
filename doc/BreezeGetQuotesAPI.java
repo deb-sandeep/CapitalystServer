@@ -1,16 +1,21 @@
-package com.sandy.capitalyst.server.breeze;
+package com.sandy.capitalyst.server.breeze.api;
 
 import java.util.HashMap ;
 import java.util.Map ;
 
-import com.sandy.capitalyst.server.breeze.internal.BreezeNetworkClient ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeSession ;
+import org.apache.log4j.Logger ;
 
-public class BreezeGetQuotesAPI {
+import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeNetworkClient ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager ;
+
+public class BreezeGetQuotesAPI extends BreezeAPI {
+
+    private static final Logger log = Logger.getLogger( BreezeGetQuotesAPI.class ) ;
 
     public void getQuotes() throws Exception {
         
-        String url = BreezeSession.BRZ_API_BASEURL + "/quotes" ;
+        String url = BreezeSessionManager.BRZ_API_BASEURL + "/quotes" ;
         
         //"BAAUTO,BAFINS,BANBAR,YESBAN,HINAER,LARTOU,LTINFO,MINLIM,TATELX,TATSTE,NIFBEE,ADAGRE,ADATRA,ADAGAS,ADAPOR"
         

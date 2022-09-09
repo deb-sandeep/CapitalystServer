@@ -2,16 +2,13 @@ package com.sandy.capitalyst.server.test.breeze;
 
 import java.io.File ;
 import java.lang.reflect.Method ;
+import java.util.List ;
 
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.breeze.BreezeDmatHoldingsAPI ;
-import com.sandy.capitalyst.server.breeze.BreezeGetPortfolioHoldingsAPI ;
-import com.sandy.capitalyst.server.breeze.BreezeGetQuotesAPI ;
-import com.sandy.capitalyst.server.breeze.BreezeGetTradeDetailAPI ;
-import com.sandy.capitalyst.server.breeze.BreezeGetTradeListAPI ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeSession ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeSession.Session ;
+import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.BreezeCred ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI ;
 import com.sandy.common.util.ReflectionUtil ;
 
 public class BreezeTester {
@@ -23,84 +20,40 @@ public class BreezeTester {
         tester.test() ;
     }
     
-    private String appKey = null ;
-    private String userId = null ;
-    private String passwd = null ;
-    private String dob    = null ;
-    private String secret = null ;
-    private String ucId   = "getTradeDetail" ;
+    private String ucId   = "getDmatHoldings" ;
     
     public BreezeTester( String[] args ) {
         
-        this.appKey = args[0] ;
-        this.userId = args[1] ;
-        this.passwd = args[2] ;
-        this.dob    = args[3] ;
-        this.secret = args[4] ;
-        
-        log.debug( "----------------= BreezeSession Test =--------------------" ) ;
-        log.debug( "Command line parameters:" ) ;
-        log.debug( "   AppKey = " + appKey ) ;
-        log.debug( "   userId = " + userId ) ;
-        log.debug( "   passwd = " + passwd ) ;
-        log.debug( "   dob    = " + dob ) ;
-        log.debug( "   secret = " + secret ) ;
+        log.debug( "----------------= BreezeSessionManager Test =--------------------" ) ;
         log.debug( "   ucId   = " + ucId ) ;
     }
     
     public void test() throws Exception {
         
-        File persistDir = new File( System.getProperty( "user.home" ), "temp" ) ;
-        BreezeSession breeze = BreezeSession.instance() ;
-        breeze.initialize( appKey, userId, passwd, dob, secret, persistDir ) ;
+        File configFile = new File( "/Users/sandeep/projects/workspace/capitalyst/breeze/config/breeze-config.yaml" ) ;
+        Breeze breeze = Breeze.instance() ;
+        breeze.initialize( configFile ) ;
         
         if( ucId != null ) {
             log.debug( "\nInvoking use case - " + ucId ) ;
+            log.debug( "-------------------------------------------" ) ;
+            
             Method method =  ReflectionUtil.findMethod( BreezeTester.class, ucId, null ) ;
             method.invoke( this ) ;
         }
     }
     
     @SuppressWarnings( "unused" )
-    private void generateSessionId() throws Exception {
-        
-        Session session = BreezeSession.instance().getSession() ;
-        log.debug( "Session id    = " + session.getSessionId() ) ;
-        log.debug( "Session token = " + session.getSessionToken() ) ;
-    }
-    
-    @SuppressWarnings( "unused" )
     private void getDmatHoldings() throws Exception {
         
-        BreezeDmatHoldingsAPI api = new BreezeDmatHoldingsAPI() ;
-        api.getDmatHoldings() ;
-    }
-    
-    @SuppressWarnings( "unused" )
-    private void getPortfolioHoldings() throws Exception {
-        
-        BreezeGetPortfolioHoldingsAPI api = new BreezeGetPortfolioHoldingsAPI() ;
-        api.getPortfolioHoldings() ;
-    }
-
-    @SuppressWarnings( "unused" )
-    private void getQuotes() throws Exception {
-        
-        BreezeGetQuotesAPI api = new BreezeGetQuotesAPI() ;
-        api.getQuotes() ;
-    }
-
-    @SuppressWarnings( "unused" )
-    private void getTradeList() throws Exception {
-        
-        BreezeGetTradeListAPI api = new BreezeGetTradeListAPI() ;
-        api.getTradeList() ;
-    }
-
-    @SuppressWarnings( "unused" )
-    private void getTradeDetail() throws Exception {
-        
-        BreezeGetTradeDetailAPI api = new BreezeGetTradeDetailAPI() ;
-        api.getTradeDetail() ;
+        BreezeGetDmatHoldingsAPI api = new BreezeGetDmatHoldingsAPI() ;
+        List<BreezeCred> creds = Breeze.instance().getAllCreds() ;
+        for( BreezeCred cred : creds ) {
+            api.execute( cred ) ;
+        }
+        /*
+        BreezeCred cred = Breeze.instance().getCred( "sovadeb" ) ;
+        api.execute( cred ) ;
+        */
     }
 }
