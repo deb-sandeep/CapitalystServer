@@ -9,8 +9,7 @@ import lombok.Data ;
 
 @Data
 @Configuration( "config" )
-@PropertySource( { "classpath:capitalyst.properties",
-                   "file:${user.home}/capitalyst-local.properties" } )
+@PropertySource( { "classpath:capitalyst.properties" } )
 @ConfigurationProperties( "capitalyst" )
 public class CapitalystConfig {
 
@@ -19,9 +18,4 @@ public class CapitalystConfig {
     private File    workspaceDir = null ;
     private boolean batchDaemonEnabled = false ;
     private boolean initializeRecoMgrOnStart = true ;
-    
-    // These are properties loaded from capitalyst-local.properties
-    private String breezeAppName = null ;
-    private String breezeAppKey = null ;
-    private String breezeSecretKey = null ;
 }
