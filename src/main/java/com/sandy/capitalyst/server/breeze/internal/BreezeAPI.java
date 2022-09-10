@@ -32,15 +32,17 @@ public abstract class BreezeAPI<T> {
     private String apiEndpointUrl = null ;
     private String endpointId = null ;
     private BreezeNetworkClient netClient = null ;
-    private ObjectMapper jsonPrinter = null ;
+    private ObjectMapper jsonParser = null ;
+    private Class<T> entityClass = null ;
     
     protected Map<String, String> params = new HashMap<>() ;
     
-    protected BreezeAPI( String apiURL ) {
+    protected BreezeAPI( String apiURL, Class<T> entityClass ) {
         this.apiEndpointUrl = apiURL ;
+        this.entityClass = entityClass ;
         this.endpointId = apiEndpointUrl.substring( Breeze.BRZ_API_BASEURL.length() ) ;
         this.netClient = BreezeNetworkClient.instance() ;
-        this.jsonPrinter = new ObjectMapper().enable( INDENT_OUTPUT ) ;
+        this.jsonParser = new ObjectMapper().enable( INDENT_OUTPUT ) ;
     }
     
     public void clearParams() {
@@ -55,26 +57,56 @@ public abstract class BreezeAPI<T> {
         this.params.put( key, ISO_8601_FMT.format( date ) ) ;
     }
     
-    public T execute( BreezeCred cred ) throws Exception {
+    public BreezeAPIResponse<T> execute( BreezeCred cred ) throws Exception {
         
-        T response = null ;
+        BreezeAPIResponse<T> response = null ;
         
         log.debug( "\nExecuting BreezeAPI " + endpointId + "\n" ) ;
         
         BreezeSession session = BreezeSessionManager.instance().getSession( cred ) ;
         if( session != null ) {
+            
             String responseStr = netClient.get( apiEndpointUrl, params, session ) ;
+            JsonNode json = jsonParser.readTree( responseStr ) ;
             
             if( PRINT_RESPONSE ) {
-                JsonNode json = jsonPrinter.readTree( responseStr ) ;
                 log.debug( "API response:" ) ;
-                log.debug( jsonPrinter.writeValueAsString( json ) ) ;
+                log.debug( jsonParser.writeValueAsString( json ) ) ;
             }
-            return response ;
+            
+            response = createResponse( json ) ;
         }
         else {
             throw new IllegalStateException( "Active session for " + 
                                      cred.getUserName() + " does not exist." ) ;
         }
-    } 
+        return response ;
+    }
+    
+    public BreezeAPIResponse<T> createResponse( JsonNode rootNode ) 
+        throws Exception {
+        
+        @SuppressWarnings( "unchecked" )
+        BreezeAPIResponse<T> response = BreezeAPIResponse.class.getConstructor().newInstance() ;
+        
+        int      statusCode  = rootNode.get( "Status" ).asInt() ;
+        String   errorMsg    = rootNode.get( "Error" ).asText() ;
+        JsonNode resultsNode = rootNode.get( "Success" ) ;
+        
+        response.setStatus( statusCode ) ;
+        response.setError( errorMsg ) ;
+        
+        if( resultsNode != null ) {
+            
+            int numChildren = resultsNode.size() ;
+            for( int i=0; i<numChildren; i++ ) {
+                
+                JsonNode entityNode = resultsNode.get( i ) ;
+                T t = jsonParser.treeToValue( entityNode, entityClass ) ;
+                response.addEntity( t ) ;
+            }
+        }
+        
+        return response ;
+    }
 }

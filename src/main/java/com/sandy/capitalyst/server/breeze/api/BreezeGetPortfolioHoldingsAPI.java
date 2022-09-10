@@ -2,10 +2,13 @@ package com.sandy.capitalyst.server.breeze.api;
 
 import java.util.Date ;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties ;
+import com.fasterxml.jackson.annotation.JsonProperty ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
-import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHoldingsAPIResponse ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
+
+import lombok.Data ;
 
 /**
  * Parameter        Data       Mandatory  Description
@@ -16,15 +19,29 @@ import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
  * stockCode        String      No         "AXIBAN", "TATMOT"
  */
 public class BreezeGetPortfolioHoldingsAPI 
-    extends BreezeAPI<PortfolioHoldingsAPIResponse> {
+    extends BreezeAPI<PortfolioHolding> {
 
     private static final String API_URL = Breeze.BRZ_API_BASEURL + "/portfolioholdings" ;
 
-    public static class PortfolioHoldingsAPIResponse extends BreezeAPIResponse {
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PortfolioHolding {
+        
+        @JsonProperty( "stock_code" )
+        private String symbol = null ;
+
+        @JsonProperty( "quantity" )
+        private int quantity = 0 ;
+
+        @JsonProperty( "average_price" )
+        private float averagePrice = 0.0F ;
+
+        @JsonProperty( "current_market_price" )
+        private float currentMktPrice = 0.0F ;
     }
     
-    protected BreezeGetPortfolioHoldingsAPI() {
-        super( API_URL ) ;
+    public BreezeGetPortfolioHoldingsAPI() {
+        super( API_URL, PortfolioHolding.class ) ;
         super.addParam( "exchange_code", "NSE" ) ;
     }
     

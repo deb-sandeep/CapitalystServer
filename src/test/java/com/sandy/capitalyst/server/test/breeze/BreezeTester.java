@@ -9,6 +9,9 @@ import org.apache.log4j.Logger ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
 import com.sandy.common.util.ReflectionUtil ;
 
 public class BreezeTester {
@@ -20,7 +23,7 @@ public class BreezeTester {
         tester.test() ;
     }
     
-    private String ucId   = "getDmatHoldings" ;
+    private String ucId   = "getPortfolioHoldings" ;
     
     public BreezeTester( String[] args ) {
         
@@ -55,5 +58,23 @@ public class BreezeTester {
         BreezeCred cred = Breeze.instance().getCred( "sovadeb" ) ;
         api.execute( cred ) ;
         */
+    }
+
+    @SuppressWarnings( "unused" )
+    private void getPortfolioHoldings() throws Exception {
+        
+        BreezeGetPortfolioHoldingsAPI api = new BreezeGetPortfolioHoldingsAPI() ;
+        /*
+        List<BreezeCred> creds = Breeze.instance().getAllCreds() ;
+        for( BreezeCred cred : creds ) {
+            api.execute( cred ) ;
+        }
+         */
+        BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
+        BreezeAPIResponse<PortfolioHolding> response = api.execute( cred ) ;
+        
+        for( PortfolioHolding h : response.getEntities() ) {
+            log.debug( h.getSymbol() + " :: " + h.getQuantity() + " :: " + h.getAveragePrice() ) ;
+        }
     }
 }

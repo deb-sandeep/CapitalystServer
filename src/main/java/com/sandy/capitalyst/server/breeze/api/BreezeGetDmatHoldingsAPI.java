@@ -2,28 +2,35 @@ package com.sandy.capitalyst.server.breeze.api;
 
 import org.apache.log4j.Logger ;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties ;
+import com.fasterxml.jackson.annotation.JsonProperty ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
-import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI.DmatHoldingsAPIResponse ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI.DmatHolding ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
 
-public class BreezeGetDmatHoldingsAPI extends BreezeAPI<DmatHoldingsAPIResponse> {
+import lombok.Data ;
+
+public class BreezeGetDmatHoldingsAPI extends BreezeAPI<DmatHolding> {
     
     static final Logger log = Logger.getLogger( BreezeGetDmatHoldingsAPI.class ) ;
     
     private static final String API_URL = Breeze.BRZ_API_BASEURL + "/dematholdings" ;
 
-//    "stock_code" : "LARTOU",
-//    "stock_ISIN" : "INE018A01030",
-//    "quantity" : "120",
-//    "demat_total_bulk_quantity" : "120",
-//    "demat_avail_quantity" : "0",
-//    "blocked_quantity" : "0",
-//    "demat_allocated_quantity" : "120"
-    public static class DmatHoldingsAPIResponse extends BreezeAPIResponse {
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class DmatHolding {
+        
+        @JsonProperty( "stock_code" )
+        private String symbol = null ;
+        
+        @JsonProperty( "stock_ISIN" )
+        private String isin = null ;
+        
+        @JsonProperty( "quantity" )
+        private int quantity = 0 ;
     }
     
     public BreezeGetDmatHoldingsAPI() {
-        super( API_URL ) ;
+        super( API_URL, DmatHolding.class ) ;
     }
 }
