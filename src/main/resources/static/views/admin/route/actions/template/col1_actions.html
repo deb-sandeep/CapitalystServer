@@ -8,13 +8,30 @@
         </a>
       </h4>
     </div>
-    <div id="equityMaster" class="panel-collapse form action-div"
-         ng-init="ota=$parent.otaStat[ 'RefreshEquityMaster' ]">
+    <div id="equityMaster" class="panel-collapse form action-div">
         <div class="explanation">
             Refreshes the NSE equity master table by populating equity 
             symbol, company name and ISIN. 
         </div>
-        <div ng-include="'route/actions/template/action.html'"></div>
+        <div ng-repeat="ota in [$parent.otaStat[ 'RefreshEquityMaster' ]]" 
+             ng-include="'route/actions/template/action.html'"></div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-target="#idirectMapping" data-toggle="collapse" data-parent="#acc">
+        ICICI Direct Symbol Mapping
+        </a>
+      </h4>
+    </div>
+    <div id="#idirectMapping" class="panel-collapse form action-div">
+        <div class="explanation">
+            Refreshes the mapping of NSE and ICICIDirect stock symbols 
+        </div>
+        <div ng-repeat="ota in [$parent.otaStat[ 'MapICICIDirectSymbols' ]]" 
+             ng-include="'route/actions/template/action.html'"></div>
     </div>
   </div>
 

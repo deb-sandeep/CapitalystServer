@@ -13,3 +13,10 @@ jobConfigs:
      className : ${basePackageName}.mf.eodrefresh.MFEODNAVRefreshJob
      description : Refreshes latest NAV for MF
      cronSchedule : 0 0 */6 * * ?
+
+   - identity : IDirectSymbolMappingJob
+     active : true
+     className : ${basePackageName}.equity.idirectmap.ICICIDirectSymbolMappingJob
+     description : Refreshes ICICI Direct symbol mapping
+     cronSchedule : 0 0 9 * * ?
+     

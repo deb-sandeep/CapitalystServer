@@ -17,6 +17,8 @@ public interface EquityHoldingRepo
     EquityHolding findByOwnerNameAndSymbolIcici( String ownerName, 
                                                  String symbolIcici ) ;
     
+    List<EquityHolding> findByIsin( String isin ) ;
+    
     List<EquityHolding> findBySymbolNse( String symbolNse ) ;
 
     @Query( value =   

@@ -8,13 +8,14 @@
         </a>
       </h4>
     </div>
-    <div id="indexMaster" class="panel-collapse form action-div"
-         ng-init="ota=$parent.otaStat[ 'RefreshIndexMaster' ]">
+    <div id="indexMaster" class="panel-collapse form action-div">
         <div class="explanation">
             Refreshes the NSE index master table by refreshing index, stock
             associations.
         </div>
-        <div ng-include="'route/actions/template/action.html'"></div>
+        <div ng-repeat="ota in [$parent.otaStat[ 'RefreshIndexMaster' ]]" 
+             ng-include="'route/actions/template/action.html'"></div>
+        
     </div>
   </div>
 

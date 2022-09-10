@@ -18,8 +18,9 @@ public class EquityMaster {
     @GeneratedValue( strategy=GenerationType.AUTO )
     private Integer id = null ;
     
-    private String symbol = null ;
     private String isin = null ;
+    private String symbol = null ;
+    private String symbolIcici = null ;
     private String name = null ;
     private String mcName = null ;
     
