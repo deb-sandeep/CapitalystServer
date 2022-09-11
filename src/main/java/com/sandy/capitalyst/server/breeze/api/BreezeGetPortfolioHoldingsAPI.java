@@ -5,6 +5,7 @@ import java.util.Date ;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties ;
 import com.fasterxml.jackson.annotation.JsonProperty ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.BreezeConstants.ExchangeCode ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
 
@@ -38,15 +39,18 @@ public class BreezeGetPortfolioHoldingsAPI
 
         @JsonProperty( "current_market_price" )
         private float currentMktPrice = 0.0F ;
+        
+        @JsonProperty( "change_percentage" ) 
+        private float changePercentage = 0.0F ;
     }
     
     public BreezeGetPortfolioHoldingsAPI() {
         super( API_URL, PortfolioHolding.class ) ;
-        super.addParam( "exchange_code", "NSE" ) ;
+        setExchangeCode( ExchangeCode.NSE ) ;
     }
     
-    public void setExchangeCode( String code ) {
-        super.addParam( "exchange_code", code ) ;
+    public void setExchangeCode( ExchangeCode code ) {
+        super.addParam( "exchange_code", code.toString() ) ;
     }
     
     public void setFromDate( Date date ) {

@@ -24,7 +24,6 @@ public abstract class BreezeAPI<T> {
     
     protected static SimpleDateFormat ISO_8601_FMT = new SimpleDateFormat( Breeze.ISO8601_FMT ) ;
     
-    
     static {
         ISO_8601_FMT.setTimeZone( TimeZone.getTimeZone( "GMT" ) ) ;
     }

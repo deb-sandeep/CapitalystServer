@@ -10,7 +10,9 @@ import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI.Trade ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
 import com.sandy.common.util.ReflectionUtil ;
 
@@ -23,7 +25,7 @@ public class BreezeTester {
         tester.test() ;
     }
     
-    private String ucId   = "getPortfolioHoldings" ;
+    private String ucId   = "getTrades" ;
     
     public BreezeTester( String[] args ) {
         
@@ -76,5 +78,14 @@ public class BreezeTester {
         for( PortfolioHolding h : response.getEntities() ) {
             log.debug( h.getSymbol() + " :: " + h.getQuantity() + " :: " + h.getAveragePrice() ) ;
         }
+    }
+
+    @SuppressWarnings( "unused" )
+    private void getTrades() throws Exception {
+        
+        BreezeGetTradeListAPI api = new BreezeGetTradeListAPI() ;
+        BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
+        BreezeAPIResponse<Trade> response = api.execute( cred ) ;
+        
     }
 }
