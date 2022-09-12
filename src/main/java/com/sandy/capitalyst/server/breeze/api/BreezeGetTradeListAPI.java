@@ -4,7 +4,9 @@ import java.util.Date ;
 
 import org.apache.commons.lang.time.DateUtils ;
 
+import com.fasterxml.jackson.annotation.JsonFormat ;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties ;
+import com.fasterxml.jackson.annotation.JsonProperty ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeConstants.Action ;
 import com.sandy.capitalyst.server.breeze.BreezeConstants.ExchangeCode ;
@@ -32,11 +34,37 @@ public class BreezeGetTradeListAPI
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Trade {
+        
+        @JsonProperty( "trade_date" )
+        @JsonFormat( shape = JsonFormat.Shape.STRING, pattern = "dd-MMM-yyyy" )
+        private Date tradeDate = null ;
+        
+        @JsonProperty( "stock_code" )
+        private String stockCode = null ;
+
+        @JsonProperty( "action" )
+        private String action = null ;
+
+        @JsonProperty( "quantity" )
+        private int quantity = 0 ;
+
+        @JsonProperty( "average_cost" )
+        private float valueAtCost = 0F ;
+
+        @JsonProperty( "brokerage_amount" )
+        private float brokerageAmount = 0F ;
+
+        @JsonProperty( "total_taxes" )
+        private float totalTaxes = 0F ;
+
+        @JsonProperty( "order_id" )
+        private String orderId = null ;        
     }
     
     public BreezeGetTradeListAPI() {
         super( API_URL, Trade.class ) ;
         setExchangeCode( ExchangeCode.NSE ) ;
+        addMandatoryParameter( "from_date", "to_date" ) ;
         populateDefaultDateRange() ;
     }
     

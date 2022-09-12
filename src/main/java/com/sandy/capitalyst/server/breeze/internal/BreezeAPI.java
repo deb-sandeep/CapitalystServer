@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat ;
 import java.util.Date ;
 import java.util.HashMap ;
 import java.util.Map ;
+import java.util.Set ;
 import java.util.TimeZone ;
+import java.util.TreeSet ;
 
 import org.apache.log4j.Logger ;
 
@@ -34,6 +36,7 @@ public abstract class BreezeAPI<T> {
     private ObjectMapper jsonParser = null ;
     private Class<T> entityClass = null ;
     
+    private Set<String> mandatoryParameters = new TreeSet<>() ;
     protected Map<String, String> params = new HashMap<>() ;
     
     protected BreezeAPI( String apiURL, Class<T> entityClass ) {
@@ -56,11 +59,22 @@ public abstract class BreezeAPI<T> {
         this.params.put( key, ISO_8601_FMT.format( date ) ) ;
     }
     
-    public BreezeAPIResponse<T> execute( BreezeCred cred ) throws Exception {
+    public void addMandatoryParameter( String... parameters ) {
+        if( parameters != null ) {
+            for( String p : parameters ) {
+                mandatoryParameters.add( p ) ;
+            }
+        }
+    }
+    
+    public BreezeAPIResponse<T> execute( BreezeCred cred ) 
+            throws Exception {
         
         BreezeAPIResponse<T> response = null ;
         
         log.debug( "\nExecuting BreezeAPI " + endpointId + "\n" ) ;
+        
+        checkMandatoryParameters() ;
         
         BreezeSession session = BreezeSessionManager.instance().getSession( cred ) ;
         if( session != null ) {
@@ -80,6 +94,17 @@ public abstract class BreezeAPI<T> {
                                      cred.getUserName() + " does not exist." ) ;
         }
         return response ;
+    }
+    
+    private void checkMandatoryParameters() {
+        if( !mandatoryParameters.isEmpty() ) {
+            for( String param : mandatoryParameters ) {
+                if( !params.containsKey( param ) ) {
+                    throw new IllegalStateException( 
+                            "Mandatory parameter " + param + " missing." ) ;
+                }
+            }
+        }
     }
     
     public BreezeAPIResponse<T> createResponse( JsonNode rootNode ) 

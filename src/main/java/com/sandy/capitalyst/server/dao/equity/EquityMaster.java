@@ -24,6 +24,18 @@ public class EquityMaster {
     private String name = null ;
     private String mcName = null ;
     
+    @Column( precision=16, scale=2 )
+    private Float close = 0F ;
+
+    @Column( precision=16, scale=2 )
+    private Float prevClose = 0F ;
+
+    @Column( name = "high_52w", precision=16, scale=2 )
+    private Float high52w = 0F ;
+
+    @Column( name = "low_52w", precision=16, scale=2 )
+    private Float low52w = 0F ;
+    
     @Column( name = "is_etf" )
     private boolean etf = false ;
     

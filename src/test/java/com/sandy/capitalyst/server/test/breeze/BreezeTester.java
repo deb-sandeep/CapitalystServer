@@ -1,17 +1,25 @@
 package com.sandy.capitalyst.server.test.breeze;
 
+import static org.apache.commons.lang.StringUtils.leftPad;
+import static org.apache.commons.lang.StringUtils.rightPad;
+
 import java.io.File ;
 import java.lang.reflect.Method ;
+import java.text.SimpleDateFormat ;
+import java.util.Date ;
 import java.util.List ;
 
+import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
-import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI.TradeDetail ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI.Trade ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
 import com.sandy.common.util.ReflectionUtil ;
@@ -25,7 +33,7 @@ public class BreezeTester {
         tester.test() ;
     }
     
-    private String ucId   = "getTrades" ;
+    private String ucId   = "getPortfolioHoldings" ;
     
     public BreezeTester( String[] args ) {
         
@@ -84,8 +92,29 @@ public class BreezeTester {
     private void getTrades() throws Exception {
         
         BreezeGetTradeListAPI api = new BreezeGetTradeListAPI() ;
+        api.setFromDate( DateUtils.addYears( new Date(), -20 ) ) ;
+        
         BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
         BreezeAPIResponse<Trade> response = api.execute( cred ) ;
         
+        SimpleDateFormat sdf = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
+        
+        for( Trade trade : response.getEntities() ) {
+            log.debug( sdf.format( trade.getTradeDate() ) + " | " + 
+                       rightPad( trade.getStockCode(), 7) + " | " +
+                       rightPad( trade.getAction(), 5) + " | " + 
+                       leftPad( "" + trade.getQuantity(), 4) + " | " + 
+                       trade.getOrderId() ) ;
+        }
+    }
+
+    @SuppressWarnings( "unused" )
+    private void getTradeDetail() throws Exception {
+        
+        BreezeGetTradeDetailAPI api = new BreezeGetTradeDetailAPI() ;
+        api.setOrderId( "20220905N800027142" ) ;
+        
+        BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
+        BreezeAPIResponse<TradeDetail> response = api.execute( cred ) ;
     }
 }

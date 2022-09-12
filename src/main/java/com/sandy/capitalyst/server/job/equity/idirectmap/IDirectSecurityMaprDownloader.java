@@ -24,9 +24,11 @@ public class IDirectSecurityMaprDownloader {
     
     @Data
     public static class SecMapping {
-        private String isin = null ;
+        private String isin        = null ;
         private String symbolICICI = null ;
-        private String symbolNSE = null ;
+        private String symbolNSE   = null ;
+        private float  high52w     = 0F ;
+        private float  low52w      = 0F ;
     }
     
     private HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
@@ -88,6 +90,8 @@ public class IDirectSecurityMaprDownloader {
             String symbolICICI = record[1] ;
             String series      = record[2] ;
             String isin        = record[10] ;
+            float  high52      = Float.parseFloat( record[11] ) ;
+            float  low52       = Float.parseFloat( record[12] ) ;
             String symbolNSE   = record[60] ;
             
             if( series.equals( "EQ" ) ) {
@@ -96,6 +100,8 @@ public class IDirectSecurityMaprDownloader {
                 mapping.setIsin( isin ) ;
                 mapping.setSymbolICICI( symbolICICI ) ;
                 mapping.setSymbolNSE( symbolNSE ) ;
+                mapping.setHigh52w( high52 ) ;
+                mapping.setLow52w( low52 ) ;
                 
                 mappings.add( mapping ) ;
             }

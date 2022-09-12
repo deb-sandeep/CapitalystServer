@@ -58,19 +58,19 @@ public class ICICIDirectSymbolMappingJob extends CapitalystJob {
             EquityMaster em = emRepo.findByIsin( map.getIsin() ) ;
             
             if( em != null ) {
-                if( StringUtil.isEmptyOrNull( em.getSymbolIcici() ) || 
-                    !em.getSymbolIcici().equals( map.getSymbolICICI() ) ) {
-                    
-                    em.setSymbolIcici( map.getSymbolICICI() ) ;
-                    emRepo.save( em ) ;
-                    numEquityMastersUpdated++ ;
-                    
-                    String msg = "EquityMaster updated with " + map.getSymbolICICI() ;
-                    
-                    log.debug( msg ) ;
-                    if( ota != null ) {
-                        ota.addResult( msg ) ;
-                    }
+                em.setSymbolIcici( map.getSymbolICICI() ) ;
+                em.setHigh52w( map.getHigh52w() ) ;
+                em.setLow52w( map.getLow52w() ) ;
+                
+                emRepo.save( em ) ;
+                
+                numEquityMastersUpdated++ ;
+                
+                String msg = "EquityMaster updated with " + map.getSymbolICICI() ;
+                
+                log.debug( msg ) ;
+                if( ota != null ) {
+                    ota.addResult( msg ) ;
                 }
             }
             

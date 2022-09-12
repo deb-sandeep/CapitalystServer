@@ -90,9 +90,14 @@ public class NSEBhavcopyImporter {
             if( series.equals( "EQ" ) ) {
                 
                 EquityMaster em = emRepo.findBySymbol( symbol ) ;
+                
                 if( em != null ) {
                     
                     HistoricEQData candle = buildEquityCandle( record, date ) ;
+                    
+                    em.setClose( candle.getClose() ) ;
+                    em.setPrevClose( candle.getPrevClose() ) ;
+                    emRepo.save( em ) ;
                     
                     if( StringUtil.isNotEmptyOrNull( em.getIndustry() ) || 
                         em.isEtf() || 
@@ -201,6 +206,7 @@ public class NSEBhavcopyImporter {
         candle.setHigh         ( Float.parseFloat( record[ 3] ) ) ;
         candle.setLow          ( Float.parseFloat( record[ 4] ) ) ;
         candle.setClose        ( Float.parseFloat( record[ 5] ) ) ;
+        candle.setPrevClose    ( Float.parseFloat( record[ 7] ) ) ;
         candle.setTotalTradeQty( Long.parseLong  ( record[ 8] ) ) ;
         candle.setTotalTradeVal( Float.parseFloat( record[ 9] ) ) ;
         candle.setTotalTrades  ( Long.parseLong  ( record[11] ) ) ;

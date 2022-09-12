@@ -26,17 +26,20 @@ public class HistoricEQData {
     private Date   date = null ;
     
     @Column( precision=16, scale=2 )
-    private float  open = 0.0F ;
+    private float open = 0.0F ;
     
     @Column( precision=16, scale=2 )
-    private float  high = 0.0F ;
+    private float high = 0.0F ;
     
     @Column( precision=16, scale=2 )
-    private float  low = 0.0F ;
+    private float low = 0.0F ;
     
     @Column( precision=16, scale=2 )
-    private float  close = 0.0F ;
+    private float close = 0.0F ;
     
     @Column( precision=16, scale=2 )
-    private float  totalTradeVal = 0.0F ;
+    private Float prevClose = 0.0F ;
+    
+    @Column( precision=16, scale=2 )
+    private float totalTradeVal = 0.0F ;
 }
