@@ -10,10 +10,10 @@ import org.springframework.context.ApplicationContextAware ;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry ;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
-import com.sandy.capitalyst.server.api.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
+import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;

@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity ;
 import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.api.equity.recoengine.RecoManager ;
-import com.sandy.capitalyst.server.api.equity.recoengine.EquityReco ;
+import com.sandy.capitalyst.server.daemon.equity.recoengine.EquityReco ;
+import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 
 // @Get - /Equity/Recommendations
 
