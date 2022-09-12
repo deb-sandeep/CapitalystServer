@@ -44,6 +44,25 @@ public interface HistoricEQDataRepo
     
     @Query( nativeQuery = true,
             value = 
+              "SELECT "
+            + "    * "
+            + "FROM "
+            + "    historic_eq_data "
+            + "WHERE "
+            + "    date = ( "
+            + "       SELECT date "
+            + "       FROM historic_eq_data "
+            + "       WHERE date > :date "
+            + "       ORDER BY date ASC "
+            + "       LIMIT 1 "
+            + "    ) "
+            + "ORDER BY "
+            + "    symbol ASC"
+    )
+    List<HistoricEQData> getHistoricDataClosestInFutureToDate( @Param("date") Date date ) ;
+    
+    @Query( nativeQuery = true,
+            value = 
             "SELECT * "
           + "FROM historic_eq_data "
           + "WHERE symbol = :symbol "

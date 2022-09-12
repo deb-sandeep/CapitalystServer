@@ -19,6 +19,7 @@ capitalystNgApp.controller( 'OneTimeActionsController',
         'RefreshEquityMaster'   : new OTAStat( 'RefreshEquityMaster' ),
         'RefreshIndexMaster'    : new OTAStat( 'RefreshIndexMaster' ), 
         'MapICICIDirectSymbols' : new OTAStat( 'MapICICIDirectSymbols' ), 
+        'HistPrevCloseUpdater'  : new OTAStat( 'HistPrevCloseUpdater' )
     } ;
     
     // -----------------------------------------------------------------------
