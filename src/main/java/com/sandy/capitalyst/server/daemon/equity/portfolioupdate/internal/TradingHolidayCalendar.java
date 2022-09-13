@@ -41,7 +41,7 @@ public class TradingHolidayCalendar {
 
         InputStream  holidayCfg = null ;
         
-        holidayCfg = this.getClass().getResourceAsStream( "/nse-holidays.yaml" ) ;
+        holidayCfg = this.getClass().getResourceAsStream( "/config/nse-holidays.yaml" ) ;
         
         yamlParser.findAndRegisterModules() ;
         JsonNode rootNode = yamlParser.readTree( holidayCfg ) ;

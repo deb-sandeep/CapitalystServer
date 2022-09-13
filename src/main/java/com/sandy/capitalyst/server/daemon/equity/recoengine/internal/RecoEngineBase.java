@@ -129,7 +129,7 @@ public abstract class RecoEngineBase {
             is = new FileInputStream( file ) ;
         }
         else {
-            is = RecoEngineBase.class.getResourceAsStream( "/" + CFG_FILE_NAME ) ;
+            is = RecoEngineBase.class.getResourceAsStream( "/config/" + CFG_FILE_NAME ) ;
             if( is != null && ENABLE_CFG_LOADING_LOG ) {
                 log.debug( "Reco engine cfg found in config classpath." ) ;
             }

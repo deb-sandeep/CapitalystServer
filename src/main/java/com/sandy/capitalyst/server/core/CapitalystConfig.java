@@ -9,7 +9,7 @@ import lombok.Data ;
 
 @Data
 @Configuration( "config" )
-@PropertySource( { "classpath:capitalyst.properties" } )
+@PropertySource( { "classpath:config/capitalyst.properties" } )
 @ConfigurationProperties( "capitalyst" )
 public class CapitalystConfig {
 

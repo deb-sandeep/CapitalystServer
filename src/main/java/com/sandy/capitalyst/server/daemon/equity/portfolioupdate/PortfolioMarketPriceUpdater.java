@@ -47,9 +47,10 @@ public class PortfolioMarketPriceUpdater extends Thread {
             try {
                 if( holidayCalendar.isMarketOpenNow() ) {
                     updateCurrentMktPriceInPortfolio() ;
-                    // 10 seconds gap implies ~2500 calls in a full trading day
-                    //  5 seconds gap, implies 5040.
-                    Thread.sleep( 15*1000 ) ;
+                    // 15 seconds gap -> 1680 calls per trading day
+                    // 10 seconds gap -> 2500 calls
+                    //  5 seconds gap -> 5040 calls
+                    Thread.sleep( 10*1000 ) ;
                 }
                 else {
                     Thread.sleep( 2*60*1000 ) ;

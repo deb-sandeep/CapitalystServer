@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
 import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.listener.InvStatsPersistListener ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
@@ -105,7 +106,10 @@ public class CapitalystServer
     private void initializeBreeze( File cfgPath ) throws Exception {
         
         log.debug( "Initilizaing Breeze." ) ;
+        InvStatsPersistListener statPersist = new InvStatsPersistListener() ;
+        
         Breeze breeze = Breeze.instance() ;
+        breeze.addInvocationListener( statPersist ) ;
         breeze.initialize( cfgPath ) ;
         
         log.debug( "Initilizaing Portfolio CMP updater." ) ;
@@ -113,6 +117,8 @@ public class CapitalystServer
         pmpUpdater = PortfolioMarketPriceUpdater.instance() ;
         pmpUpdater.initialize() ;
         pmpUpdater.start() ;
+        
+        log.debug( "  Breeze initialized." ) ;
     }
     
     private void initializeRecoManager() {

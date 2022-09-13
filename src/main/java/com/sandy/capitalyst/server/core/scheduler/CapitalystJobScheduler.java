@@ -78,7 +78,7 @@ public class CapitalystJobScheduler {
     
     private SchedulerConfig loadConfig() throws Exception {
         SchedulerConfig config =  null ;
-        InputStream is = getClass().getResourceAsStream( "/scheduler-config.yaml" ) ;
+        InputStream is = getClass().getResourceAsStream( "/config/scheduler-config.yaml" ) ;
         config = mapper.readValue( is, SchedulerConfig.class ) ;
         config.enrichValues() ;
         return config ;
