@@ -36,6 +36,8 @@ public class FamilyEquityHoldingVO {
     private float  valuePostTax     = 0 ;
     private float  pat              = 0 ; // Profit after tax
     private float  patPct           = 0 ; // Profit after tax percentage
+    private String uniqueId         = null ;
+    private String holdingType      = "Family" ;
     
     private List<IndividualEquityHoldingVO> holdings = new ArrayList<>() ;
 
@@ -54,9 +56,11 @@ public class FamilyEquityHoldingVO {
         this.detailUrl       = holding.getDetailUrl() ;
         this.indicators      = holding.getIndicators() ;
         
+        this.uniqueId = "FamilyHolding" + this.isin ;
+        
         addIndividualHoldingVO( holding ) ;
     }
-
+    
     public void addIndividualHoldingVO( IndividualEquityHoldingVO holding ) {
         
         this.holdings.add( holding ) ;

@@ -38,7 +38,6 @@ public class EquityHoldingsQueryController {
     public ResponseEntity<List<IndividualEquityHoldingVO>> 
     getIndividualEquityHoldings() {
         
-        log.debug( "Getting equity portfolio" ) ;
         EquityHoldingVOBuilder voBuilder = new EquityHoldingVOBuilder() ;
 
         List<IndividualEquityHoldingVO> holdings = new ArrayList<>() ;
@@ -78,7 +77,6 @@ public class EquityHoldingsQueryController {
     public ResponseEntity<List<FamilyEquityHoldingVO>> 
     getFamilyEquityHoldings() {
         
-        log.debug( "Getting equity portfolio" ) ;
         EquityHoldingVOBuilder voBuilder = new EquityHoldingVOBuilder() ;
         
         List<FamilyEquityHoldingVO> holdings = new ArrayList<>() ;

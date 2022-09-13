@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server ;
 
+import java.io.File ;
+
 import org.apache.log4j.Logger ;
 import org.springframework.beans.BeansException ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -10,9 +12,11 @@ import org.springframework.context.ApplicationContextAware ;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry ;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
+import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
+import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.PortfolioMarketPriceUpdater ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
@@ -94,6 +98,21 @@ public class CapitalystServer
             log.debug( "Initilizaing recommendation manager." ) ;
             initializeRecoManager() ;
         }
+        
+        initializeBreeze( cfg.getBreezeCfgFile() ) ;
+    }
+    
+    private void initializeBreeze( File cfgPath ) throws Exception {
+        
+        log.debug( "Initilizaing Breeze." ) ;
+        Breeze breeze = Breeze.instance() ;
+        breeze.initialize( cfgPath ) ;
+        
+        log.debug( "Initilizaing Portfolio CMP updater." ) ;
+        PortfolioMarketPriceUpdater pmpUpdater = null ;
+        pmpUpdater = PortfolioMarketPriceUpdater.instance() ;
+        pmpUpdater.initialize() ;
+        pmpUpdater.start() ;
     }
     
     private void initializeRecoManager() {

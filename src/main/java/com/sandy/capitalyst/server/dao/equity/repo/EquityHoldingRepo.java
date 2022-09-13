@@ -21,6 +21,8 @@ public interface EquityHoldingRepo
     
     List<EquityHolding> findBySymbolNse( String symbolNse ) ;
 
+    List<EquityHolding> findBySymbolIcici( String symbolIcici ) ;
+    
     @Query( value =   
             "SELECT "
           + "    eh "

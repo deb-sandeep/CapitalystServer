@@ -121,8 +121,6 @@ public class BreezeSessionManager {
         
         String uid = cred.getUserId() ;
         
-        log.debug( "Getting Breeze session for " + uid ) ;
-        
         // First we try to see if we have an in-memory instance.
         // If not found, we try to load a serialized instance.
         // If still not found, we create an empty session
@@ -145,11 +143,14 @@ public class BreezeSessionManager {
             session.cred = cred ;
         }
         
+        sessionMap.put( uid, session ) ;
+        
         if( session.initializationRequired() ) {
             try {
                 log.debug( "  Creating new session." ) ;
                 generateNewSession( session ) ;
                 
+                // Replace the existing session in the map
                 sessionMap.put( uid, session ) ;
                 
                 log.debug( "  Serializing session." ) ;
@@ -420,6 +421,7 @@ public class BreezeSessionManager {
                 oIs = new ObjectInputStream( fIs ) ;
                 
                 session = ( BreezeSession )oIs.readObject() ; 
+                log.debug( "    Read state" ) ;
             }
         }
         catch( Exception e ) {

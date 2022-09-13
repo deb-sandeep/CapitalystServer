@@ -25,7 +25,7 @@ public class BreezeGetTradeDetailAPI
     }
     
     public BreezeGetTradeDetailAPI() {
-        super( API_URL, TradeDetail.class ) ;
+        super( "TradeDetail", API_URL, TradeDetail.class ) ;
         setExchangeCode( ExchangeCode.NSE ) ;
         addMandatoryParameter( "order_id" ) ;
     }

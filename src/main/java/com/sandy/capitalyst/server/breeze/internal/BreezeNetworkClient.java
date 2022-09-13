@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
 
+import lombok.Getter ;
+
 public class BreezeNetworkClient {
 
     private static final Logger log = Logger.getLogger( BreezeNetworkClient.class ) ;
@@ -35,6 +37,19 @@ public class BreezeNetworkClient {
         public final static String METHOD_NAME = "GET";
         public String getMethod() {
             return METHOD_NAME;
+        }
+    }
+    
+    public static class BreezeAPIException extends Exception {
+        
+        private static final long serialVersionUID = 1L ;
+        
+        @Getter private int status = 0 ;
+        @Getter private String errorMsg = null ;
+        
+        private BreezeAPIException( int status, String msg ) {
+            this.status = status ;
+            this.errorMsg = msg ;
         }
     }
     
@@ -119,8 +134,8 @@ public class BreezeNetworkClient {
             }
             
             if( response.getStatusLine().getStatusCode() != 200 ) {
-                throw new Exception( "Server error validating the user. " + 
-                                     "Msg = " + responseEntity ) ;
+                throw new BreezeAPIException( response.getStatusLine().getStatusCode(),
+                                              response.getEntity().toString() ) ;
             }
             
             if( responseEntity != null ) {

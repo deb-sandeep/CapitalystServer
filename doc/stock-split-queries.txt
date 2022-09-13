@@ -1,0 +1,60 @@
+UPDATE equity_holding
+SET
+    quantity = quantity*10,
+    avg_cost_price = avg_cost_price/10
+WHERE 
+    id in ( 109210, 109214, 109219 ) ;    
+
+----------------------
+
+UPDATE equity_txn
+SET
+    quantity = quantity*10,
+    txn_price = txn_price/10
+WHERE 
+    holding_id in ( 109210, 109214, 109219 ) ;    
+
+-----------------
+
+UPDATE equity_daily_gain
+SET 
+    quantity = quantity*10, 
+    closing_unit_price = closing_unit_price/10
+WHERE 
+    holding_id in ( 109210, 109214, 109219 ) ;
+
+----------------------
+
+UPDATE equity_indicators_hist
+SET current_price = current_price/10
+WHERE symbol_nse = 'BAJAJFINSV' ;
+
+----------------
+
+UPDATE historic_eq_data
+SET
+    open            = open/10,
+    high            = high/10,
+    low             = low/10,
+    close           = close/10,
+    prev_close      = prev_close/10,
+    total_trade_qty = total_trade_qty*10 
+WHERE 
+    symbol='BAJAJFINSV' ;
+    
+-----------------------
+
+SELECT * 
+FROM equity_holding
+WHERE id in ( 109210, 109214, 109219 ) ;
+
+-------------------------
+
+UPDATE equity_master
+SET
+    close = close/10,
+    prev_close = prev_close/10,
+    high_52w = high_52w/10,
+    low_52w = low_52w/10
+WHERE
+    symbol = 'BAJAJFINSV' ;

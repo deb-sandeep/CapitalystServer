@@ -13,6 +13,7 @@ import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.BreezeAPIInvocationListener ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
@@ -33,7 +34,20 @@ public class BreezeTester {
         tester.test() ;
     }
     
-    private String ucId   = "getPortfolioHoldings" ;
+    public class BreezeListener implements BreezeAPIInvocationListener {
+
+        @Override
+        public void preBreezeCall( APIInvocationInfo info ) {
+            log.debug( info ) ;
+        }
+
+        @Override
+        public void postBreezeCall( APIInvocationInfo info ) {
+            log.debug( info ) ;
+        }
+    }
+    
+    private String ucId   = "getTradeDetail" ;
     
     public BreezeTester( String[] args ) {
         
@@ -46,6 +60,7 @@ public class BreezeTester {
         File configFile = new File( "/Users/sandeep/projects/workspace/capitalyst/breeze/config/breeze-config.yaml" ) ;
         Breeze breeze = Breeze.instance() ;
         breeze.initialize( configFile ) ;
+        breeze.addInvocationListener( new BreezeListener() ) ;
         
         if( ucId != null ) {
             log.debug( "\nInvoking use case - " + ucId ) ;
@@ -92,7 +107,8 @@ public class BreezeTester {
     private void getTrades() throws Exception {
         
         BreezeGetTradeListAPI api = new BreezeGetTradeListAPI() ;
-        api.setFromDate( DateUtils.addYears( new Date(), -20 ) ) ;
+        //api.setFromDate( DateUtils.addYears( new Date(), -20 ) ) ;
+        api.setFromDate( DateUtils.addDays( new Date(), -5 ) ) ;
         
         BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
         BreezeAPIResponse<Trade> response = api.execute( cred ) ;
@@ -112,7 +128,7 @@ public class BreezeTester {
     private void getTradeDetail() throws Exception {
         
         BreezeGetTradeDetailAPI api = new BreezeGetTradeDetailAPI() ;
-        api.setOrderId( "20220905N800027142" ) ;
+        api.setOrderId( "20220913N800016669" ) ;
         
         BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
         BreezeAPIResponse<TradeDetail> response = api.execute( cred ) ;

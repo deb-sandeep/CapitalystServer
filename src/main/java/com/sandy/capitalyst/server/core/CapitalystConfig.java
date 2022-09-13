@@ -18,4 +18,5 @@ public class CapitalystConfig {
     private File    workspaceDir = null ;
     private boolean batchDaemonEnabled = false ;
     private boolean initializeRecoMgrOnStart = true ;
+    private File    breezeCfgFile = null ;
 }

@@ -36,11 +36,12 @@ capitalystNgApp.controller( 'PortfolioController',
     
     $scope.holdingType = "Family" ;
     $scope.holdingForTxnsDisplay = null ;
+    $scope.inbetweenServerCall = false ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading EquityController" ) ;
-    fetchEquityHoldingsFromServer() ;
+    fetchEquityHoldingsFromServer( true ) ;
     
     // --- [END] Controller initialization -----------------------------------
     
@@ -53,7 +54,7 @@ capitalystNgApp.controller( 'PortfolioController',
         resetSelTotals() ;
         resetAllTotals() ;
 
-        fetchEquityHoldingsFromServer() ;
+        fetchEquityHoldingsFromServer( false ) ;
     }
     
     $scope.getAmtClass = function( value ) {
@@ -106,7 +107,17 @@ capitalystNgApp.controller( 'PortfolioController',
         
         curSparklineView = ( curSparklineView == "Discrete" ) ? 
                            "Cumulative" : "Discrete" ;
+        setVisibleSLData() ;
+        paintSparklines() ;
+    }
+    
+    // --- [END] Scope functions
 
+    // -----------------------------------------------------------------------
+    // --- [START] Local functions -------------------------------------------
+    
+    function setVisibleSLData() {
+        
         for( var i=0; i<$scope.equityHoldings.length; i++ ) {
             var eh = $scope.equityHoldings[i] ;
             
@@ -125,25 +136,14 @@ capitalystNgApp.controller( 'PortfolioController',
         $scope.selTotal.visibleSLData = ( curSparklineView == "Discrete" ) ?
                                         $scope.selTotal.discreteSLData :
                                         $scope.selTotal.cumulativeSLData ;
-
-        paintSparklines() ;
     }
-    
-    // --- [END] Scope functions
-
-    // -----------------------------------------------------------------------
-    // --- [START] Local functions -------------------------------------------
     
     function resetState() {
         
-        $scope.holdingType           = "Family" ;
         $scope.holdingForTxnsDisplay = null ;
         
         resetAllTotals() ;
         resetSelTotals() ;
-        
-        $scope.allTotal.visibleSLData = $scope.selTotal.discreteSLData ;
-        $scope.selTotal.visibleSLData = $scope.selTotal.discreteSLData ;
     }
     
     function resetSelTotals() {
@@ -172,7 +172,9 @@ capitalystNgApp.controller( 'PortfolioController',
     
     function calculateTotals( selected ) {
         
-        resetSelTotals() ;
+        if( selected ) {
+            resetSelTotals() ;
+        }
         
         var total = selected ? $scope.selTotal : $scope.allTotal ;
         
@@ -225,44 +227,113 @@ capitalystNgApp.controller( 'PortfolioController',
     }
     
     // ------------------- Server comm functions -----------------------------
-    function fetchEquityHoldingsFromServer() {
+    function fetchEquityHoldingsFromServer( scheduleNextFetch ) {
         
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
-        
+        $scope.inbetweenServerCall = true ;
         $http.get( '/Equity/' + $scope.holdingType + 'Holding' )
         .then ( 
             function( response ){
                 
                 console.log( response.data ) ;
                 
-                $scope.equityHoldings.length = 0 ;
+                // Save any old state that we want to resurrect post response
+                var oldSparklineView = curSparklineView ; 
                 
-                for( var i=0; i<response.data.length; i++ ) {
-                    
-                    var holding = response.data[i] ;
-                    
-                    // These are the extra attributes we are adding to the holding
-                    holding.selected = false ;
-                    holding.visible = holding.quantity > 0 ;
-                    holding.cumulativeSparklineData = getCumulativeSLData( holding.sparklineData ) ;
-                    holding.visibleSparklineData = holding.sparklineData ;
-                    
-                    $scope.equityHoldings.push( holding ) ;
+                resetState() ;
+                
+                // Reinstate any old state
+                curSparklineView = oldSparklineView ; 
+                
+                if( isFullRefreshRequired( response ) ) {
+                    doFullRefresh( response ) ;
+                    setTimeout( paintSparklines, 100 ) ;
+                }
+                else {
+                    doDeltaRefresh( response ) ;
                 }
                 
-                $scope.allTotal.visibleSLData = $scope.allTotal.discreteSLData ;
-                $scope.selTotal.visibleSLData = $scope.selTotal.discreteSLData ;
-                
+                calculateTotals( true  ) ;
                 calculateTotals( false ) ;
-                setTimeout( paintSparklines, 100 ) ;
-            }, 
-            function(){
-                $scope.$parent.addErrorAlert( "Error fetching MF portfolio." ) ;
+                
+                setVisibleSLData() ;
+                
+                if( scheduleNextFetch ) {
+                    setTimeout( function(){
+                        fetchEquityHoldingsFromServer( scheduleNextFetch )
+                    }, 5*1000 ) ;
+                }
             }
         )
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+            $scope.inbetweenServerCall = false ;
         }) ;
+    }
+    
+    function isFullRefreshRequired( response ) {
+        
+        var fullRefreshRequired = true ;
+        
+        if( response.data.length != 0 ) {
+            if( $scope.equityHoldings.length == response.data.length ) {
+                var sampleLocalHolding  = $scope.equityHoldings[0] ;
+                var sampleServerHolding = response.data[0] ;
+                
+                if( sampleLocalHolding.holdingType == 
+                    sampleServerHolding.holdingType ) {
+                
+                    fullRefreshRequired = false ;                    
+                }                       
+            }
+        }
+        return fullRefreshRequired ;  
+    }
+    
+    function doFullRefresh( response ) {
+        
+        $scope.equityHoldings.length = 0 ;
+        for( var i=0; i<response.data.length; i++ ) {
+            
+            var holding = response.data[i] ;
+            
+            // These are the extra attributes we are adding to the holding
+            holding.selected = false ;
+            holding.visible = holding.quantity > 0 ;
+            holding.cumulativeSparklineData = getCumulativeSLData( holding.sparklineData ) ;
+            holding.visibleSparklineData = holding.sparklineData ;
+            
+            $scope.equityHoldings.push( holding ) ;
+        }
+    }
+    
+    function doDeltaRefresh( response ) {
+        
+        for( var i=0; i<response.data.length; i++ ) {
+            
+            var serverHolding = response.data[i] ;
+            var localHolding  = getHoldingWithUniqueId( serverHolding.uniqueId ) ;
+
+            localHolding.currentMktPrice = serverHolding.currentMktPrice ;
+            localHolding.valueAtMktPrice = serverHolding.valueAtMktPrice ;
+            localHolding.pat             = serverHolding.pat ;            
+            localHolding.patPct          = serverHolding.patPct ;            
+            localHolding.dayGain         = serverHolding.dayGain ;            
+            localHolding.lastUpdate      = serverHolding.lastUpdate ;
+            
+            localHolding.dayGain += Math.floor( Math.random()*100 ) ;
+        }
+    }
+    
+    function getHoldingWithUniqueId( uid ) {
+        
+        for( var i=0; i<$scope.equityHoldings.length; i++ ) {
+            
+            var holding = $scope.equityHoldings[i] ;
+            if( holding.uniqueId == uid ) {
+                return holding ;
+            }
+        }
+        return null ;
     }
     
     function getCumulativeSLData( discreteSLdata ) {

@@ -36,6 +36,9 @@ public class IndividualEquityHoldingVO extends EquityHolding {
     private float sellSTT                 = 0 ;
     private float sellTotalTxnCharges     = 0 ;
     
+    private String uniqueId         = null ;
+    private String holdingType      = "Individual" ;
+    
     private List<EquityBuyTxnVO> buyTxnVOList = new ArrayList<>() ;
     
     private List<Integer> sparklineData = null ;
@@ -58,6 +61,7 @@ public class IndividualEquityHoldingVO extends EquityHolding {
         EquityMasterRepo emRepo = getBean( EquityMasterRepo.class ) ; 
         EquityMaster em = emRepo.findByIsin( super.getIsin() ) ;
         this.isETF = em.isEtf() ;
+        this.uniqueId = "IndHolding-" + getOwnerName() + "-" + getIsin() ;
     }
 
     public void addEquityBuyTxnVO( EquityBuyTxnVO txnVO ) {

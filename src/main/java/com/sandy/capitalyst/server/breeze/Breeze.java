@@ -17,8 +17,9 @@ public class Breeze {
 
     private static final Logger log = Logger.getLogger( Breeze.class ) ;
     
-    public static String ISO8601_FMT = "yyyy-MM-dd'T'HH:mm:ss.000'Z'";
-    public static final String BRZ_API_BASEURL  = "https://api.icicidirect.com/breezeapi/api/v1" ;
+    public static String ISO8601_FMT_WITH_MILLIS = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static String ISO8601_FMT             = "yyyy-MM-dd'T'HH:mm:ss.000'Z'";
+    public static final String BRZ_API_BASEURL   = "https://api.icicidirect.com/breezeapi/api/v1" ;
     
     private static Breeze instance = null ;
     
@@ -33,6 +34,9 @@ public class Breeze {
     private Map<String, BreezeCred> credMap = new HashMap<>() ;
     private BreezeSessionManager sessionMgr = BreezeSessionManager.instance() ;
     private BreezeConfig config = null ;
+    private List<BreezeAPIInvocationListener> listeners = new ArrayList<>() ;
+    
+    private boolean initialized = false ;
     
     private Breeze() {}
     
@@ -42,23 +46,7 @@ public class Breeze {
         
         resetState() ;
         configure( cfgFile ) ;
-    }
-    
-    private void resetState() {
-        this.creds.clear() ; 
-        this.credMap.clear() ;
-    }
-    
-    public File getSerializationDir() {
-        return this.config.getSerializationDir() ;
-    }
-    
-    public List<BreezeCred> getAllCreds() {
-        return this.creds ;
-    }
-    
-    public BreezeCred getCred( String userId ) {
-        return this.credMap.get( userId ) ;
+        initialized = true ;
     }
     
     private void configure( File file ) throws Exception {
@@ -75,5 +63,39 @@ public class Breeze {
         }
         
         this.sessionMgr.setCredentialsUpdated() ;
+    }
+    
+    private void assertInitializedState() throws IllegalStateException {
+        if( !initialized ) {
+            throw new IllegalStateException( "Breeze not initialized." ) ;
+        }
+    }
+    
+    private void resetState() {
+        this.creds.clear() ; 
+        this.credMap.clear() ;
+    }
+    
+    public void addInvocationListener( BreezeAPIInvocationListener l ) {
+        this.listeners.add( l ) ;
+    }
+    
+    public List<BreezeAPIInvocationListener> getListeners() {
+        return this.listeners ;
+    }
+    
+    public File getSerializationDir() {
+        assertInitializedState() ;
+        return this.config.getSerializationDir() ;
+    }
+    
+    public List<BreezeCred> getAllCreds() {
+        assertInitializedState() ;
+        return this.creds ;
+    }
+    
+    public BreezeCred getCred( String userId ) {
+        assertInitializedState() ;
+        return this.credMap.get( userId ) ;
     }
 }

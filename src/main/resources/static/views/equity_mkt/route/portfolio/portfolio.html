@@ -35,6 +35,11 @@
                     <span class="glyphicon glyphicon-refresh"
                           ng-click="triggerJob()">
                     </span>
+                    &nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-flash"
+                          style="color:red;font-size:13px;"
+                          ng-show="inbetweenServerCall">
+                    </span>
                 </th>
             </tr>
         </thead>
@@ -145,7 +150,7 @@
                          class="glyphicon glyphicon-arrow-down"
                          style="color:red;"></span>
                </td>
-               <td>{{holding.lastUpdate | date : "dd MMM" }}</td>
+               <td>{{holding.lastUpdate | date : "dd MMM HH:mm:ss" }}</td>
             </tr>
         </tbody>
         

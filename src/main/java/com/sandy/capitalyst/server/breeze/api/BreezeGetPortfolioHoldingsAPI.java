@@ -42,10 +42,15 @@ public class BreezeGetPortfolioHoldingsAPI
         
         @JsonProperty( "change_percentage" ) 
         private float changePercentage = 0.0F ;
+        
+        public float getChange() {
+            float prevClose = ( 100 * currentMktPrice )/( 100 + changePercentage ) ;
+            return currentMktPrice - prevClose ;
+        }
     }
     
     public BreezeGetPortfolioHoldingsAPI() {
-        super( API_URL, PortfolioHolding.class ) ;
+        super( "GetPortfolioHoldings", API_URL, PortfolioHolding.class ) ;
         setExchangeCode( ExchangeCode.NSE ) ;
     }
     

@@ -31,6 +31,6 @@ public class BreezeGetDmatHoldingsAPI extends BreezeAPI<DmatHolding> {
     }
     
     public BreezeGetDmatHoldingsAPI() {
-        super( API_URL, DmatHolding.class ) ;
+        super( "GetDmatHoldings", API_URL, DmatHolding.class ) ;
     }
 }

@@ -62,7 +62,7 @@ public class BreezeGetTradeListAPI
     }
     
     public BreezeGetTradeListAPI() {
-        super( API_URL, Trade.class ) ;
+        super( "TradeList", API_URL, Trade.class ) ;
         setExchangeCode( ExchangeCode.NSE ) ;
         addMandatoryParameter( "from_date", "to_date" ) ;
         populateDefaultDateRange() ;
