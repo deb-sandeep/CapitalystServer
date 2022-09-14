@@ -73,6 +73,7 @@ capitalystNgApp.controller( 'PortfolioController',
     
     $scope.holdingSelectionChanged = function( holding ) {
         calculateTotals( true ) ;
+        redrawSelSparkline() ;
     }
     
     $scope.selectAllHoldingsForOwner = function( ownerName ) {
@@ -81,6 +82,7 @@ capitalystNgApp.controller( 'PortfolioController',
             holding.selected = ( holding.ownerName == ownerName ) ;
         }
         calculateTotals( true ) ;
+        redrawSelSparkline() ;
     }
     
     $scope.selectAllHoldingsForSymbol = function( symbolIcici ) {
@@ -89,6 +91,7 @@ capitalystNgApp.controller( 'PortfolioController',
             holding.selected = ( holding.symbolIcici == symbolIcici ) ;
         }
         calculateTotals( true ) ;
+        redrawSelSparkline() ;
     }
     
     $scope.triggerJob = function() {
@@ -115,6 +118,14 @@ capitalystNgApp.controller( 'PortfolioController',
 
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
+    
+    function redrawSelSparkline() {
+        $( '#spark_sel' ).sparkline( $scope.selTotal.visibleSLData, {
+            type: 'bar',
+            barColor : 'green',
+            negBarColor : 'red' 
+        } ) ;
+    }
     
     function setVisibleSLData() {
         
@@ -217,12 +228,6 @@ capitalystNgApp.controller( 'PortfolioController',
             $scope.selTotal.visibleSLData = ( curSparklineView == "Discrete" ) ?
                                             $scope.selTotal.discreteSLData :
                                             $scope.selTotal.cumulativeSLData ;
-                                            
-            $( '#spark_sel' ).sparkline( $scope.selTotal.visibleSLData, {
-                type: 'bar',
-                barColor : 'green',
-                negBarColor : 'red' 
-            } ) ;
         }
     }
     

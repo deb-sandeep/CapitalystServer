@@ -61,7 +61,7 @@ public class NSEBhavcopyImporter {
         }
         
         File bhavcopyFile = downloader.downloadBhavcopy() ;
-        importBhavcopyFile( bhavcopyFile, latestAvailableBhavcopyDate ) ;
+        importBhavcopyFile( bhavcopyFile, new Date() ) ;
         
         return latestAvailableBhavcopyDate ;
     }
