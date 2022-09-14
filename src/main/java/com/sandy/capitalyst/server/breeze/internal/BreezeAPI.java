@@ -29,6 +29,7 @@ public abstract class BreezeAPI<T> {
     static final Logger log = Logger.getLogger( BreezeAPI.class ) ;
     
     private static final boolean PRINT_RESPONSE = false ;
+    private static final boolean PRINT_INVOCATION_LOG = false ;
     
     protected static SimpleDateFormat ISO_8601_FMT = 
                                     new SimpleDateFormat( Breeze.ISO8601_FMT ) ;
@@ -82,8 +83,10 @@ public abstract class BreezeAPI<T> {
         
         BreezeAPIResponse<T> response = null ;
         
-        log.debug( "Executing BreezeAPI " + endpointId + 
-                   " for " + cred.getUserName() ) ;
+        if( PRINT_INVOCATION_LOG ) {
+            log.debug( "Executing BreezeAPI " + endpointId + 
+                    " for " + cred.getUserName() ) ;
+        }
         
         checkMandatoryParameters() ;
         
@@ -124,14 +127,18 @@ public abstract class BreezeAPI<T> {
                 response.setError( e.getErrorMsg() ) ;
             }
             finally {
-                response.setCredential( cred ) ;
+                if( response != null ) {
+                    response.setCredential( cred ) ;
+                }
                 
                 long endTime = System.currentTimeMillis() ;
                 int timeTaken = (int)(endTime - startTime) ;
                 
                 invInfo.setCallDurationInMillis( timeTaken ) ;
-                log.debug( "  Status = " + invInfo.getCallStatus() + 
-                           ". Latency = " + timeTaken + " ms." ) ;
+                if( PRINT_INVOCATION_LOG ) {
+                    log.debug( "  Status = " + invInfo.getCallStatus() + 
+                               ". Latency = " + timeTaken + " ms." ) ;
+                }
 
                 notifyListeners( "postBreezeCall", invInfo ) ;
             }

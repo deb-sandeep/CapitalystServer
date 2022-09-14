@@ -319,8 +319,6 @@ capitalystNgApp.controller( 'PortfolioController',
             localHolding.patPct          = serverHolding.patPct ;            
             localHolding.dayGain         = serverHolding.dayGain ;            
             localHolding.lastUpdate      = serverHolding.lastUpdate ;
-            
-            localHolding.dayGain += Math.floor( Math.random()*100 ) ;
         }
     }
     
