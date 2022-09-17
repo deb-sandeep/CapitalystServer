@@ -10,6 +10,7 @@ capitalystNgApp.controller( 'RecoController',
        health  : new Gradient( new UniformGradient() ),
        mc      : new Gradient( new UniformGradient() ),
        
+       perf1D  : new Gradient( new ThresholdGradient() ), 
        perf1W  : new Gradient( new ThresholdGradient() ), 
        perf2W  : new Gradient( new ThresholdGradient() ), 
        perf1M  : new Gradient( new ThresholdGradient() ), 
@@ -88,13 +89,19 @@ capitalystNgApp.controller( 'RecoController',
                 console.log( response.data ) ;
                 resetState() ;
                 for( var i=0; i<response.data.length; i++ ) {
+                    
                     var reco = response.data[i] ;
+
+                    // This is temp for 16th Sep. Can be removed on 19th EOD                    
+                    reco.ttmPerf.perf1d = computePerf1d( reco.equityMaster ) ;
+                    
                     $scope.recommendations.push( reco ) ;
                     
                     gradientMgr['health' ].addValue( reco.goodnessScore ) ;
                     gradientMgr['mc'     ].addValue( reco.indicators.mcEssentialScore ) ;
                     gradientMgr['cagr'   ].addValue( reco.indicators.cagrEbit ) ;
                     
+                    gradientMgr['perf1D' ].addValue( reco.ttmPerf.perf1d  ) ;
                     gradientMgr['perf1W' ].addValue( reco.ttmPerf.perf1w  ) ;
                     gradientMgr['perf2W' ].addValue( reco.ttmPerf.perf2w  ) ;
                     gradientMgr['perf1M' ].addValue( reco.ttmPerf.perf1m  ) ;
@@ -117,6 +124,10 @@ capitalystNgApp.controller( 'RecoController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function computePerf1d( em ) {
+        return ( (em.close - em.prevClose )/em.prevClose )*100 ;
     }
     
     function initializeGradientMgrs() {
@@ -166,6 +177,9 @@ capitalystNgApp.controller( 'RecoController',
         else if( field == "trend" ) {
             $scope.recommendations.sort( trendSort ) ;
         }    
+        else if( field == "perf1D" ) {
+            $scope.recommendations.sort( perf1DSort ) ;
+        }
         else if( field == "perf1W" ) {
             $scope.recommendations.sort( perf1WSort ) ;
         }
@@ -265,6 +279,12 @@ capitalystNgApp.controller( 'RecoController',
             ( trendScore[r2.indicators.trend] - trendScore[r1.indicators.trend] ) ;
     }
         
+    function perf1DSort( r1, r2 ) {
+        return sortDir["perf1D"] == "asc" ?
+            ( r1.ttmPerf.perf1d - r2.ttmPerf.perf1d ) :
+            ( r2.ttmPerf.perf1d - r1.ttmPerf.perf1d ) ;
+    }
+    
     function perf1WSort( r1, r2 ) {
         return sortDir["perf1W"] == "asc" ?
             ( r1.ttmPerf.perf1w - r2.ttmPerf.perf1w ) :

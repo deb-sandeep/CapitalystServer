@@ -7,7 +7,7 @@
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
-                <th colspan="10" style="text-align:center;">
+                <th colspan="11" style="text-align:center;">
                     Performance %
                 </th>
             </tr>
@@ -42,6 +42,9 @@
                 </th>
                 <th ng-click="sort('trend')">
                     <i class="fa-solid fa-chart-line"></i>
+                </th>
+                <th ng-click="sort('perf1D')" style="width:40px;">
+                    1D
                 </th>
                 <th ng-click="sort('perf1W')" style="width:40px;">
                     1W
@@ -141,6 +144,10 @@
                    <span ng-if="reco.indicators.trend == 'VERY BEARISH'"
                          class="glyphicon glyphicon-arrow-down"
                          style="color:red;"></span>
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1D', reco.ttmPerf.perf1d )">
+                    {{reco.ttmPerf.perf1d | number:1}}
                </td>
                <td class="fixed-font small-font" style="text-align:right;"
                    ng-class="getCellClass( 'perf1W', reco.ttmPerf.perf1w )">

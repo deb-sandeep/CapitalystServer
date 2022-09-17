@@ -50,6 +50,9 @@ public class EquityIndicators {
     @Column( name = "sector_pe" )
     private float sectorPE = 0 ;
 
+    @Column( name = "price_perf_1d" )
+    private Float pricePerf1D = null ;
+
     @Column( name = "price_perf_1w" )
     private float pricePerf1W = 0 ;
 
@@ -110,6 +113,7 @@ public class EquityIndicators {
         this.sma50                  = ind.getSma50() ;
         this.sma100                 = ind.getSma100() ;
         this.sma200                 = ind.getSma200() ;
+        this.pricePerf1D            = ind.getPricePerf1D() ;
         this.pricePerf1W            = ind.getPricePerf1W() ;
         this.pricePerf1M            = ind.getPricePerf1M() ;
         this.pricePerf3M            = ind.getPricePerf3M() ;

@@ -43,6 +43,7 @@ public class StockIndicators {
     private float sma100 = 0 ;
     private float sma200 = 0 ;
     
+    private float pricePerf1D  = 0 ;
     private float pricePerf1W  = 0 ;
     private float pricePerf1M  = 0 ;
     private float pricePerf3M  = 0 ;

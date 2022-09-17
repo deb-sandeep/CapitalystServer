@@ -30,6 +30,9 @@ public class EquityTTMPerf {
     @Column( precision=16, scale=2, name="current_price" )
     private float currentPrice = 0.0F ;
 
+    @Column( precision=16, scale=2, name="perf_1d" )
+    private Float perf1d = null ;
+
     @Column( precision=16, scale=2, name="perf_1w" )
     private float perf1w = 0.0F ;
 

@@ -60,6 +60,7 @@ public class EquityTTMPerfUpdater {
         
         Date today   = new Date() ;
         
+        Date back1D  = DateUtils.addDays  ( today, -1  ) ;
         Date back1W  = DateUtils.addDays  ( today, -7  ) ;
         Date back2W  = DateUtils.addDays  ( today, -14 ) ;
         Date back1M  = DateUtils.addMonths( today, -1  ) ;
@@ -76,22 +77,23 @@ public class EquityTTMPerfUpdater {
         Date back12M = DateUtils.addMonths( today, -12 ) ;
         Date fyStart = getFYStartDate() ;
         
-        ttmTimeMarkers     = new Object[15][] ;
-        ttmTimeMarkers[ 0] = new Object[]{ "perf1w" , back1W  } ;     
-        ttmTimeMarkers[ 1] = new Object[]{ "perf2w" , back2W  } ;     
-        ttmTimeMarkers[ 2] = new Object[]{ "perf1m" , back1M  } ;     
-        ttmTimeMarkers[ 3] = new Object[]{ "perf2m" , back2M  } ;     
-        ttmTimeMarkers[ 4] = new Object[]{ "perf3m" , back3M  } ;     
-        ttmTimeMarkers[ 5] = new Object[]{ "perf4m" , back4M  } ;     
-        ttmTimeMarkers[ 6] = new Object[]{ "perf5m" , back5M  } ;     
-        ttmTimeMarkers[ 7] = new Object[]{ "perf6m" , back6M  } ;     
-        ttmTimeMarkers[ 8] = new Object[]{ "perf7m" , back7M  } ;     
-        ttmTimeMarkers[ 9] = new Object[]{ "perf8m" , back8M  } ;     
-        ttmTimeMarkers[10] = new Object[]{ "perf9m" , back9M  } ;     
-        ttmTimeMarkers[11] = new Object[]{ "perf10m", back10M } ;     
-        ttmTimeMarkers[12] = new Object[]{ "perf11m", back11M } ;     
-        ttmTimeMarkers[13] = new Object[]{ "perf12m", back12M } ;     
-        ttmTimeMarkers[14] = new Object[]{ "perfFy" , fyStart } ;     
+        ttmTimeMarkers     = new Object[16][] ;
+        ttmTimeMarkers[ 0] = new Object[]{ "perf1d" , back1D  } ;     
+        ttmTimeMarkers[ 1] = new Object[]{ "perf1w" , back1W  } ;     
+        ttmTimeMarkers[ 2] = new Object[]{ "perf2w" , back2W  } ;     
+        ttmTimeMarkers[ 3] = new Object[]{ "perf1m" , back1M  } ;     
+        ttmTimeMarkers[ 4] = new Object[]{ "perf2m" , back2M  } ;     
+        ttmTimeMarkers[ 5] = new Object[]{ "perf3m" , back3M  } ;     
+        ttmTimeMarkers[ 6] = new Object[]{ "perf4m" , back4M  } ;     
+        ttmTimeMarkers[ 7] = new Object[]{ "perf5m" , back5M  } ;     
+        ttmTimeMarkers[ 8] = new Object[]{ "perf6m" , back6M  } ;     
+        ttmTimeMarkers[ 9] = new Object[]{ "perf7m" , back7M  } ;     
+        ttmTimeMarkers[10] = new Object[]{ "perf8m" , back8M  } ;     
+        ttmTimeMarkers[11] = new Object[]{ "perf9m" , back9M  } ;     
+        ttmTimeMarkers[12] = new Object[]{ "perf10m", back10M } ;     
+        ttmTimeMarkers[13] = new Object[]{ "perf11m", back11M } ;     
+        ttmTimeMarkers[14] = new Object[]{ "perf12m", back12M } ;     
+        ttmTimeMarkers[15] = new Object[]{ "perfFy" , fyStart } ;     
     }
     
     private Date getFYStartDate() {
