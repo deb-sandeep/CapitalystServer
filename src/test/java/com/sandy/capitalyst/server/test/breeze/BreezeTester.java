@@ -47,7 +47,7 @@ public class BreezeTester {
         }
     }
     
-    private String ucId   = "getTradeDetail" ;
+    private String ucId   = "getTrades" ;
     
     public BreezeTester( String[] args ) {
         
@@ -107,8 +107,8 @@ public class BreezeTester {
     private void getTrades() throws Exception {
         
         BreezeGetTradeListAPI api = new BreezeGetTradeListAPI() ;
-        //api.setFromDate( DateUtils.addYears( new Date(), -20 ) ) ;
-        api.setFromDate( DateUtils.addDays( new Date(), -5 ) ) ;
+        api.setFromDate( DateUtils.addYears( new Date(), -20 ) ) ;
+        //api.setFromDate( DateUtils.addDays( new Date(), -5 ) ) ;
         
         BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
         BreezeAPIResponse<Trade> response = api.execute( cred ) ;
@@ -117,7 +117,7 @@ public class BreezeTester {
         
         for( Trade trade : response.getEntities() ) {
             log.debug( sdf.format( trade.getTradeDate() ) + " | " + 
-                       rightPad( trade.getStockCode(), 7) + " | " +
+                       rightPad( trade.getSymbolIcici(), 7) + " | " +
                        rightPad( trade.getAction(), 5) + " | " + 
                        leftPad( "" + trade.getQuantity(), 4) + " | " + 
                        trade.getOrderId() ) ;

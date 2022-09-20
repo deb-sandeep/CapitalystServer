@@ -40,7 +40,7 @@ public class BreezeGetTradeListAPI
         private Date tradeDate = null ;
         
         @JsonProperty( "stock_code" )
-        private String stockCode = null ;
+        private String symbolIcici = null ;
 
         @JsonProperty( "action" )
         private String action = null ;
@@ -52,10 +52,10 @@ public class BreezeGetTradeListAPI
         private float valueAtCost = 0F ;
 
         @JsonProperty( "brokerage_amount" )
-        private float brokerageAmount = 0F ;
+        private float brokerage = 0F ;
 
         @JsonProperty( "total_taxes" )
-        private float totalTaxes = 0F ;
+        private float tax = 0F ;
 
         @JsonProperty( "order_id" )
         private String orderId = null ;        

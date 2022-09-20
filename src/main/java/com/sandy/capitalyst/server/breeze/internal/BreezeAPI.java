@@ -28,7 +28,7 @@ public abstract class BreezeAPI<T> {
 
     static final Logger log = Logger.getLogger( BreezeAPI.class ) ;
     
-    private static final boolean PRINT_RESPONSE = false ;
+    private static final boolean PRINT_RESPONSE = true ;
     private static final boolean PRINT_INVOCATION_LOG = false ;
     
     protected static SimpleDateFormat ISO_8601_FMT = 
