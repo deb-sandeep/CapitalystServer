@@ -1,6 +1,7 @@
 package com.sandy.capitalyst.server.api.equity.vo;
 
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+import static com.sandy.capitalyst.server.core.util.BrokerageUtil.computeBrokerage ;
 
 import java.util.ArrayList ;
 import java.util.Date ;
@@ -84,13 +85,8 @@ public class EquitySellTxnVO extends EquityTxn {
         
         private void computeSellTxnCharges() {
             
-            // This is dependent upon the brokerage plan.
-            if( parentHolding.getOwnerName().equals( "Sandeep" ) ) {
-                sellBrokerage = (float)( valueAtMktPrice * (0.1/100)) ;
-            }
-            else {
-                sellBrokerage = (float)( valueAtMktPrice * (0.55/100)) ;
-            }
+            sellBrokerage = computeBrokerage( valueAtMktPrice, 
+                                              parentHolding.getOwnerName() ) ;
             
             // Exchange transaction charges are at 0.0032% of the transaction value
             sellExchangeTxnCharges = (float)( valueAtMktPrice * (0.0032/100) ) ;

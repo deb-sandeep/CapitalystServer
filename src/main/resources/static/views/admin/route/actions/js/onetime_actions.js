@@ -16,10 +16,11 @@ capitalystNgApp.controller( 'OneTimeActionsController',
     $scope.$parent.activeModuleId = "onetime_actions" ;
     
     $scope.otaStat = {
-        'RefreshEquityMaster'   : new OTAStat( 'RefreshEquityMaster' ),
-        'RefreshIndexMaster'    : new OTAStat( 'RefreshIndexMaster' ), 
+        'RefreshEquityMaster'   : new OTAStat( 'RefreshEquityMaster'   ),
+        'RefreshIndexMaster'    : new OTAStat( 'RefreshIndexMaster'    ), 
         'MapICICIDirectSymbols' : new OTAStat( 'MapICICIDirectSymbols' ), 
-        'HistPrevCloseUpdater'  : new OTAStat( 'HistPrevCloseUpdater' )
+        'HistPrevCloseUpdater'  : new OTAStat( 'HistPrevCloseUpdater'  ),
+        'EquityTradeUpdater'    : new OTAStat( 'EquityTradeUpdater'  )
     } ;
     
     // -----------------------------------------------------------------------

@@ -36,5 +36,20 @@
     </div>
   </div>
    -->
-
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-target="#tradeUpdater" data-toggle="collapse" data-parent="#acc">
+        Equity Trade Updater
+        </a>
+      </h4>
+    </div>
+    <div id="#tradeUpdater" class="panel-collapse form action-div">
+        <div class="explanation">
+            Updates trades and trade details
+        </div>
+        <div ng-repeat="ota in [$parent.otaStat[ 'EquityTradeUpdater' ]]" 
+             ng-include="'route/actions/template/action.html'"></div>
+    </div>
+  </div>
 </div>

@@ -22,6 +22,7 @@ import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI.TradeDetail ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI.Trade ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
 import com.sandy.common.util.ReflectionUtil ;
 
@@ -50,6 +51,8 @@ public class BreezeTester {
     private String ucId   = "getTrades" ;
     
     public BreezeTester( String[] args ) {
+        
+        BreezeAPI.PRINT_RESPONSE = true ;
         
         log.debug( "----------------= BreezeSessionManager Test =--------------------" ) ;
         log.debug( "   ucId   = " + ucId ) ;
@@ -89,6 +92,7 @@ public class BreezeTester {
     private void getPortfolioHoldings() throws Exception {
         
         BreezeGetPortfolioHoldingsAPI api = new BreezeGetPortfolioHoldingsAPI() ;
+        api.setStockCode( "ADAPOR" ) ;
         /*
         List<BreezeCred> creds = Breeze.instance().getAllCreds() ;
         for( BreezeCred cred : creds ) {
@@ -110,7 +114,7 @@ public class BreezeTester {
         api.setFromDate( DateUtils.addYears( new Date(), -20 ) ) ;
         //api.setFromDate( DateUtils.addDays( new Date(), -5 ) ) ;
         
-        BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
+        BreezeCred cred = Breeze.instance().getCred( "sovadeb" ) ;
         BreezeAPIResponse<Trade> response = api.execute( cred ) ;
         
         SimpleDateFormat sdf = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
@@ -128,9 +132,18 @@ public class BreezeTester {
     private void getTradeDetail() throws Exception {
         
         BreezeGetTradeDetailAPI api = new BreezeGetTradeDetailAPI() ;
-        api.setOrderId( "20220913N800016669" ) ;
+        api.setOrderId( "20220919N800053166" ) ;
         
         BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
         BreezeAPIResponse<TradeDetail> response = api.execute( cred ) ;
+        
+        SimpleDateFormat sdf = new SimpleDateFormat( "dd-MMM-yyyy HH:mm:ss" ) ;
+        
+        for( TradeDetail detail : response.getEntities() ) {
+            log.debug( sdf.format( detail.getTxnDate() ) + " | " + 
+                       leftPad( "" + detail.getQuantity(), 5) + " | " +
+                       leftPad( "" + detail.getTxnPrice(), 6) + " | " + 
+                       leftPad( "" + detail.getBrokerage(), 4) + " | " ) ;
+        }
     }
 }

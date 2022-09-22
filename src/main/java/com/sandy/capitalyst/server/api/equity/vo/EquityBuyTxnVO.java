@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.api.equity.vo;
 
+import static com.sandy.capitalyst.server.core.util.BrokerageUtil.computeBrokerage ;
+
 import java.util.ArrayList ;
 import java.util.Date ;
 import java.util.List ;
@@ -122,13 +124,9 @@ public class EquityBuyTxnVO extends EquityTxn {
         
         float cost = 0, value = 0, profit = 0 ;
         
-        if( parentHolding.getOwnerName().equals( "Sandeep" ) ) {
-            sellBrokerage = (float)( valueAtMktPrice * (0.24/100)) ;
-        }
-        else {
-            sellBrokerage = (float)( valueAtMktPrice * (0.77/100)) ;
-        }
-        
+        sellBrokerage = computeBrokerage( valueAtMktPrice, 
+                                          parentHolding.getOwnerName() ) ;
+
         cost = ( quantityLeft * super.getTxnPrice() ) + 
                super.getBrokerage() + 
                super.getTxnCharges() + 

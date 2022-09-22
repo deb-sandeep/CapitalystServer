@@ -23,13 +23,19 @@ public class NVP {
     @GeneratedValue( strategy=GenerationType.AUTO )
     private Integer id = null ;
     
-    private String name = null ;
+    private String group = null ;
+    private String name  = null ;
     private String value = null ;
     
     public NVP() {}
     
     public NVP( String name, String value ) {
-        this.name = name ;
+        this( null, name, value ) ;
+    }
+    
+    public NVP( String group, String name, String value ) {
+        this.group = group ;
+        this.name  = name ;
         this.value = value ;
     }
     

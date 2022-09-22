@@ -22,6 +22,7 @@ import com.sandy.capitalyst.server.api.ota.action.emrefresh.EquityMasterRefreshO
 import com.sandy.capitalyst.server.api.ota.action.idirectmap.IDirectSymbolMappingOTA ;
 import com.sandy.capitalyst.server.api.ota.action.idxrefresh.IndexMasterRefreshOTA ;
 import com.sandy.capitalyst.server.api.ota.action.prevcloseupdater.HistPrevCloseUpdater ;
+import com.sandy.capitalyst.server.api.ota.action.tradeupdater.EquityTradeUpdater ;
 import com.sandy.capitalyst.server.api.ota.vo.PartResult ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 
@@ -41,6 +42,7 @@ public class OnetimeActionController {
         otaMap.put( IndexMasterRefreshOTA.NAME,   IndexMasterRefreshOTA.class   ) ;
         otaMap.put( IDirectSymbolMappingOTA.NAME, IDirectSymbolMappingOTA.class ) ;
         otaMap.put( HistPrevCloseUpdater.NAME,    HistPrevCloseUpdater.class    ) ;
+        otaMap.put( EquityTradeUpdater.NAME,      EquityTradeUpdater.class      ) ;
         
         executorService = Executors.newFixedThreadPool( 5 ) ;
     }

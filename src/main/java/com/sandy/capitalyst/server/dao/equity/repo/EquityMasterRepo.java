@@ -8,5 +8,8 @@ public interface EquityMasterRepo
     extends CrudRepository<EquityMaster, Integer> {
     
     public EquityMaster findByIsin( String isin ) ;
+    
     public EquityMaster findBySymbol( String symbol ) ;
+    
+    public EquityMaster findBySymbolIcici( String symbolIcici ) ;
 }

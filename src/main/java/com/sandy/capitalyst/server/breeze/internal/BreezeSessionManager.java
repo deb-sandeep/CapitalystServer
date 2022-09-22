@@ -194,7 +194,9 @@ public class BreezeSessionManager {
         
         log.debug( "  Getting the login page" ) ;
         
-        String url = API_USER_BASEURL + "/login?api_key=" + cred.getAppKey()  ;
+        String url = API_USER_BASEURL + 
+                     "/login?api_key=" + 
+                     URLEncoder.encode( cred.getAppKey(), "UTF-8" ) ;
         
         Request  request        = null ;
         Response response       = null ;

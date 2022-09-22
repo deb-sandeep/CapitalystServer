@@ -1,6 +1,7 @@
 package com.sandy.capitalyst.server.job.equity.eodrefresh;
 
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+import static com.sandy.capitalyst.server.core.util.BrokerageUtil.computeBrokerage ;
 
 import java.util.List ;
 
@@ -77,12 +78,7 @@ public class EquityDailyGainUpdater {
         
         float valueAtMktPrice = h.getQuantity() * latestPrice ;
         
-        if( h.getOwnerName().equals( "Sandeep" ) ) {
-            sellBrokerage = (float)( valueAtMktPrice * (0.24/100)) ;
-        }
-        else {
-            sellBrokerage = (float)( valueAtMktPrice * (0.77/100)) ;
-        }
+        sellBrokerage = computeBrokerage( valueAtMktPrice, h.getOwnerName() ) ;
         
         ltcgCost   = h.getLtcgQty() * h.getAvgCostPrice() ;
         ltcgValue  = h.getLtcgQty() * latestPrice ;

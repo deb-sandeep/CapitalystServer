@@ -16,7 +16,7 @@ import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 
 public class HistPrevCloseUpdater extends OTA {
     
-    public static final String NAME = "HistPrevCloseUpdater" ;
+    public static final String NAME = "EquityTradeUpdater" ;
     
     private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
     
