@@ -16,7 +16,6 @@ public class CapitalystConfig {
     private boolean runClassificationOnStartup = false ;
     private boolean classifyOnlyUnclassifiedEntries = false ;
     private File    workspaceDir = null ;
-    private boolean batchDaemonEnabled = false ;
     private boolean initializeRecoMgrOnStart = true ;
     private File    breezeCfgFile = null ;
 }

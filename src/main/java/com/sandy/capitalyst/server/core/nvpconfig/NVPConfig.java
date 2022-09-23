@@ -36,6 +36,10 @@ public class NVPConfig {
         return nvp.getBooleanValue() ;
     }
     
+    public boolean isTrue() {
+        return getBooleanValue() ;
+    }
+    
     public Date getDateValue() {
         return nvp.getDateValue() ;
     }

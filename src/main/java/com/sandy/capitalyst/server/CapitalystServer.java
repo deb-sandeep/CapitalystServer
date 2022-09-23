@@ -16,6 +16,8 @@ import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.listener.InvStatsPersistListener ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
 import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.PortfolioMarketPriceUpdater ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
@@ -34,6 +36,11 @@ public class CapitalystServer
     private static CapitalystServer   APP       = null ;
     
     public static EventBus GLOBAL_EVENT_BUS = new EventBus() ;
+    
+    public static String CFG_GRP_APP = "Capitalyst" ;
+    
+    public static String CFG_RUN_CMP_DAEMON   = "run_portfolio_cmp_updater" ;
+    public static String CFG_RUN_BATCH_DAEMON = "run_batch_daemon" ;
     
     public static ApplicationContext getAppContext() {
         return APP_CTX ;
@@ -61,6 +68,8 @@ public class CapitalystServer
     
     @Autowired
     private CapitalystJobScheduler scheduler = null ;
+    
+    private NVPManager nvpManger = null ;
 
     public CapitalystServer() {
         APP = this ;
@@ -72,7 +81,10 @@ public class CapitalystServer
     
     public void initialize() throws Exception {
         
+        this.nvpManger = NVPManager.instance() ;
+
         CapitalystConfig cfg = CapitalystServer.getConfig() ;
+        NVPConfigGroup   nvpCfg = nvpManger.getConfigGroup( CFG_GRP_APP ) ;
         
         if( cfg.isRunClassificationOnStartup() ) {
             
@@ -86,8 +98,15 @@ public class CapitalystServer
         
         log.debug( "Updating account balances" ) ;
         updateAccountBalanceOnStartup() ;
-
-        if( cfg.isBatchDaemonEnabled() ) {
+        
+        if( cfg.isInitializeRecoMgrOnStart() ) {
+            log.debug( "Initilizaing recommendation manager." ) ;
+            initializeRecoManager() ;
+        }
+        
+        boolean startBatchDaemon = true ;
+        startBatchDaemon = nvpCfg.getBoolValue( CFG_RUN_BATCH_DAEMON, true ) ;
+        if( startBatchDaemon ) {
             log.debug( "Initializing scheduler" ) ;
             scheduler.initialize() ;
         }
@@ -95,28 +114,27 @@ public class CapitalystServer
             log.debug( "Skipping scheduler initialization" ) ;
         }
         
-        if( cfg.isInitializeRecoMgrOnStart() ) {
-            log.debug( "Initilizaing recommendation manager." ) ;
-            initializeRecoManager() ;
-        }
-        
-        initializeBreeze( cfg.getBreezeCfgFile() ) ;
+        boolean runCMPUpdateDaemon = true ;
+        runCMPUpdateDaemon = nvpCfg.getBoolValue( CFG_RUN_CMP_DAEMON, true ) ;
+        initializeBreeze( cfg.getBreezeCfgFile(), runCMPUpdateDaemon ) ;
     }
     
-    private void initializeBreeze( File cfgPath ) throws Exception {
+    private void initializeBreeze( File cfgPath, boolean runDaemon ) 
+            throws Exception {
         
-        log.debug( "Initilizaing Breeze." ) ;
         InvStatsPersistListener statPersist = new InvStatsPersistListener() ;
         
         Breeze breeze = Breeze.instance() ;
         breeze.addInvocationListener( statPersist ) ;
         breeze.initialize( cfgPath ) ;
         
-        log.debug( "Initilizaing Portfolio CMP updater." ) ;
-        PortfolioMarketPriceUpdater pmpUpdater = null ;
-        pmpUpdater = PortfolioMarketPriceUpdater.instance() ;
-        pmpUpdater.initialize() ;
-        pmpUpdater.start() ;
+        if( runDaemon ) {
+            log.debug( "Initilizaing Portfolio CMP updater." ) ;
+            PortfolioMarketPriceUpdater pmpUpdater = null ;
+            pmpUpdater = PortfolioMarketPriceUpdater.instance() ;
+            pmpUpdater.initialize() ;
+            pmpUpdater.start() ;
+        }
         
         log.debug( "  Breeze initialized." ) ;
     }

@@ -18,7 +18,7 @@
 	       <tr>
 	           <th width="30px"></th>
 	           <th width="150px">Group</th>
-	           <th width="150px">Config Name</th>
+	           <th width="250px">Config Name</th>
 	           <th width="300px">Config Value</th>
                <th class="cfg-description">Description</th>
                <th width="30px"></th>
@@ -37,8 +37,8 @@
                           style="color:red;"></span>
                  </a>              
                </td>
-	           <td>{{cfg.groupName}}</td>
-	           <td>{{cfg.configName}}</td>
+	           <td class="fixed-font">{{cfg.groupName}}</td>
+	           <td class="fixed-font">{{cfg.configName}}</td>
 	           <td>
 	               <div ng-if="!cfg.editing"
 	                    ng-dblclick="editConfig( cfg )">

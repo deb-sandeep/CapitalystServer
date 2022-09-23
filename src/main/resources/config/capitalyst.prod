@@ -1,6 +1,5 @@
 capitalyst.runClassificationOnStartup=true
 capitalyst.classifyOnlyUnclassifiedEntries=true
 capitalyst.workspaceDir=/home/pi/projects/workspace/capitalyst
-capitalyst.batchDaemonEnabled=true
 capitalyst.initializeRecoMgrOnStart=true
 capitalyst.breezeCfgFile=/home/pi/projects/workspace/capitalyst/breeze/config/breeze-config.yaml
