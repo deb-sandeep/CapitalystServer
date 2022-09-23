@@ -10,6 +10,8 @@ import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
 
+import com.fasterxml.jackson.annotation.JsonIgnore ;
+
 import lombok.Data ;
 
 @Data
@@ -26,6 +28,7 @@ public class NVP {
     private String group = null ;
     private String name  = null ;
     private String value = null ;
+    private String description = null ;
     
     public NVP() {}
     
@@ -39,10 +42,12 @@ public class NVP {
         this.value = value ;
     }
     
+    @JsonIgnore
     public Integer getIntValue() {
         return Integer.valueOf( value ) ;
     }
     
+    @JsonIgnore
     public Boolean getBooleanValue() {
         return Boolean.valueOf( value ) ;
     }
@@ -55,6 +60,7 @@ public class NVP {
         this.value = b.toString() ;
     }
     
+    @JsonIgnore
     public Date getDateValue() {
         try {
             return SDF.parse( value ) ;
@@ -73,6 +79,7 @@ public class NVP {
         this.value = String.join( ",", values ) ;
     }
     
+    @JsonIgnore
     public String[] getArrayValue() {
         return this.value.split( "," ) ;
     }

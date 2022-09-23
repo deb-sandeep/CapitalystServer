@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="/css/app/form.css"/>
     <link rel="stylesheet" href="/css/pure/tables.css"/>
     <link rel="stylesheet" href="/views/admin/css/admin.css"/>
+    <link rel="stylesheet" href="/views/admin/route/config/css/manage_config.css"/>
     
     <script src="/js/app/app-ng-non-fu.js"></script>
     <script src="/js/app/filter.js"></script>
@@ -39,6 +40,7 @@
     <script src="/views/admin/route/rules/js/manage_classification_rules_controller.js"></script>
     <script src="/views/admin/route/idx/js/manage_index_controller.js"></script>
     <script src="/views/admin/route/actions/js/onetime_actions.js"></script>
+    <script src="/views/admin/route/config/js/manage_config_controller.js"></script>
 </head>
 
 <body ng-controller="AdminLandingController"
@@ -80,6 +82,10 @@
       <a ng-class="getActiveClass('onetime_actions')" 
          href="#!/onetime_actions">
         <i class="fa fa-bolt"></i>
+      </a>
+      <a ng-class="getActiveClass('manage_config')" 
+         href="#!/manage_config">
+        <i class="fa-solid fa-code"></i>
       </a>
     </div>
     <div id="module-panel">

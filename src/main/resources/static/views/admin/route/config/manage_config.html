@@ -1,0 +1,40 @@
+<div id="cfg-ctlr-controls">
+	<select id="select-group-name"
+	        ng-model="selectedCfgGroup"
+	        ng-options="item for item in cfgGroupNames"
+	        ng-change="groupChanged()">
+	</select>
+    <button class="btn btn-info btn-sm"
+            ng-click="showDebitEntries()">
+      New Group
+    </button>
+    
+    <button class="btn btn-info btn-sm"
+            ng-click="showCreditEntries()">
+      New Config
+    </button>
+</div>
+
+<div id="cfg-listing">
+
+	<table id="cfg-listing-table"
+	       class="pure-table pure-table-bordered">
+	   <thead>
+	       <tr>
+	           <th width="150px">Group</th>
+	           <th width="150px">Config Name</th>
+	           <th width="400px">Config Value</th>
+               <th class="cfg-description">Description</th>
+	       </tr>
+	   </thead>
+	   <tbody>
+	       <tr ng-repeat="cfg in groupedCfgs">
+	           <td>{{cfg.group}}</td>
+	           <td>{{cfg.name}}</td>
+	           <td>{{cfg.value}}</td>
+               <td>{{cfg.description}}</td>
+	       </tr>
+	   </tbody>
+	</table>
+
+</div>

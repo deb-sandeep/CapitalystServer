@@ -19,6 +19,10 @@ public class NVPConfig {
         return this.nvp.getName() ;
     }
     
+    public String getDescription() {
+        return this.nvp.getDescription() ;
+    }
+    
     public String getGroupName() {
         return this.nvp.getGroup() ;
     }

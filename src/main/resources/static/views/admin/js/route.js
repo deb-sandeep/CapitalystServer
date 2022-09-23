@@ -20,4 +20,8 @@ capitalystNgApp.config( function( $routeProvider ) {
         templateUrl : "/views/admin/route/idx/manage_index.html",
         controller : "ManageIndexController"
     })
+    .when( "/manage_config", {
+        templateUrl : "/views/admin/route/config/manage_config.html",
+        controller : "ManageConfigController"
+    })
 });
