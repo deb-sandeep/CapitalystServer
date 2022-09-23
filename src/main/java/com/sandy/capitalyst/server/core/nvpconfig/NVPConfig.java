@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.core.nvpconfig;
 
 import java.util.Date ;
 
+import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.dao.nvp.NVP ;
 import com.sandy.capitalyst.server.dao.nvp.repo.NVPRepo ;
 
@@ -10,13 +11,13 @@ public class NVPConfig {
     private NVP nvp = null ;
     private NVPRepo nvpRepo = null ;
     
-    NVPConfig( NVP nvp, NVPRepo nvpRepo ) {
+    NVPConfig( NVP nvp ) {
         this.nvp = nvp ;
-        this.nvpRepo = nvpRepo ;
+        this.nvpRepo = CapitalystServer.getBean( NVPRepo.class ) ;
     }
     
-    public String getCfgKey() {
-        return this.nvp.getName() ;
+    public String getConfigName() {
+        return this.nvp.getConfigName() ;
     }
     
     public String getDescription() {
@@ -24,7 +25,7 @@ public class NVPConfig {
     }
     
     public String getGroupName() {
-        return this.nvp.getGroup() ;
+        return this.nvp.getGroupName() ;
     }
 
     public Integer getIntValue() {

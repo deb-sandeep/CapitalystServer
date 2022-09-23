@@ -8,9 +8,10 @@ import com.sandy.capitalyst.server.dao.nvp.NVP ;
 
 public interface NVPRepo extends CrudRepository<NVP, Integer> {
     
-    public List<NVP> findByGroup( String groupName ) ;
+    public List<NVP> findByGroupName( String groupName ) ;
     
-    public List<NVP> findByName( String keyName ) ;
+    public List<NVP> findByConfigName( String configName ) ;
 
-    public NVP findByGroupAndName( String groupName, String keyName ) ;
+    public NVP findByGroupNameAndConfigName( String groupName, 
+                                             String configName ) ;
 }

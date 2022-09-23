@@ -11,6 +11,7 @@ import javax.persistence.Id ;
 import javax.persistence.Table ;
 
 import com.fasterxml.jackson.annotation.JsonIgnore ;
+import com.sandy.capitalyst.server.api.config.NVPVO ;
 
 import lombok.Data ;
 
@@ -19,14 +20,14 @@ import lombok.Data ;
 @Table( name = "nvp" )
 public class NVP {
     
-    private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MM-yyyy hh:mm:ss" ) ;
+    public static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MM-yyyy hh:mm:ss" ) ;
 
     @Id
     @GeneratedValue( strategy=GenerationType.AUTO )
     private Integer id = null ;
     
-    private String group = null ;
-    private String name  = null ;
+    private String groupName = null ;
+    private String configName  = null ;
     private String value = null ;
     private String description = null ;
     
@@ -37,9 +38,16 @@ public class NVP {
     }
     
     public NVP( String group, String name, String value ) {
-        this.group = group ;
-        this.name  = name ;
-        this.value = value ;
+        this.groupName  = group ;
+        this.configName = name ;
+        this.value      = value ;
+    }
+    
+    public void inherit( NVPVO nvpVo ) {
+        this.groupName   = nvpVo.getGroupName() ;
+        this.configName  = nvpVo.getConfigName() ;
+        this.value       = nvpVo.getValue() ;
+        this.description = nvpVo.getDescription() ;
     }
     
     @JsonIgnore
@@ -86,8 +94,10 @@ public class NVP {
 
     public String toString() {
         StringBuilder builder = new StringBuilder( "NVP [\n" ) ; 
-        builder.append( "   name  = " + this.name  + "\n" ) ;
-        builder.append( "   value = " + this.value + "\n" ) ;
+        builder.append( "   group = " + this.groupName   + "\n" ) ;
+        builder.append( "   name  = " + this.configName  + "\n" ) ;
+        builder.append( "   value = " + this.value       + "\n" ) ;
+        builder.append( "   desc  = " + this.description + "\n" ) ;
         builder.append( "]" ) ;
         return builder.toString() ;
     }

@@ -4,37 +4,80 @@
 	        ng-options="item for item in cfgGroupNames"
 	        ng-change="groupChanged()">
 	</select>
+	
     <button class="btn btn-info btn-sm"
-            ng-click="showDebitEntries()">
+            ng-click="showNewGroupDialog()">
       New Group
-    </button>
-    
-    <button class="btn btn-info btn-sm"
-            ng-click="showCreditEntries()">
-      New Config
     </button>
 </div>
 
 <div id="cfg-listing">
-
 	<table id="cfg-listing-table"
 	       class="pure-table pure-table-bordered">
 	   <thead>
 	       <tr>
+	           <th width="30px"></th>
 	           <th width="150px">Group</th>
 	           <th width="150px">Config Name</th>
-	           <th width="400px">Config Value</th>
+	           <th width="300px">Config Value</th>
                <th class="cfg-description">Description</th>
+               <th width="30px"></th>
 	       </tr>
 	   </thead>
 	   <tbody>
 	       <tr ng-repeat="cfg in groupedCfgs">
-	           <td>{{cfg.group}}</td>
-	           <td>{{cfg.name}}</td>
-	           <td>{{cfg.value}}</td>
-               <td>{{cfg.description}}</td>
+	           <td>
+                 <a ng-if="!isEditing"
+                    ng-click="editConfig( cfg )">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                 </a>	           
+                 <a ng-if="cfg.editing"
+                    ng-click="cancelEditing()">
+                    <span class="glyphicon glyphicon-remove-circle"
+                          style="color:red;"></span>
+                 </a>              
+               </td>
+	           <td>{{cfg.groupName}}</td>
+	           <td>{{cfg.configName}}</td>
+	           <td>
+	               <div ng-if="!cfg.editing"
+	                    ng-dblclick="editConfig( cfg )">
+		               {{cfg.value}}
+	               </div>
+                   <div ng-if="cfg.editing" style="width:100%">
+                       <input type="text"
+                              ng-enter="saveConfig( cfg )"
+                              ng-escape="cancelEditing()"
+                              ng-model="tempEditValues.value"
+                              style="width:100%;"/>
+                   </div>
+	           </td>
+               <td>
+                   <div ng-if="!cfg.editing">
+                       {{cfg.description}}
+                   </div>
+                   <div ng-if="cfg.editing" style="width:100%">
+                       <input type="text"
+                              ng-enter="saveConfig( cfg )"
+                              ng-escape="cancelEditing()"
+                              ng-model="tempEditValues.description"
+                              style="width:100%;"/>
+                   </div>
+               </td>
+               <td>
+                 <a ng-click="saveConfig( cfg )"
+                    ng-if="cfg.editing">
+                    <span class="glyphicon glyphicon-floppy-disk"></span>
+                 </a>              
+               </td>
 	       </tr>
 	   </tbody>
 	</table>
+</div>
 
+<div id="newGroupDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/config/dialog/new_group_dialog.html'">
 </div>

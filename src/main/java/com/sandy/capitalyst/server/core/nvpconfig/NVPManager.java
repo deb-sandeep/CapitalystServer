@@ -26,19 +26,23 @@ public class NVPManager {
     public NVPConfigGroup getConfigGroup( String groupName ) {
         
         NVPConfigGroup group = new NVPConfigGroup( groupName ) ;
-        List<NVP> nvps = nvpRepo.findByGroup( groupName ) ;
+        List<NVP> nvps = nvpRepo.findByGroupName( groupName ) ;
         for( NVP nvp : nvps ) {
-            group.addNVPConfig( new NVPConfig( nvp, nvpRepo ) ) ;
+            group.addNVPConfig( new NVPConfig( nvp ) ) ;
         }
         return group ;
     }
     
-    public NVPConfig getConfig( String groupName, String keyName ) {
+    public NVPConfig getConfig( String groupName, String keyName, 
+                                String defaultValue ) {
         
-        NVP nvp = nvpRepo.findByGroupAndName( groupName, keyName ) ;
-        if( nvp != null ) {
-            return new NVPConfig( nvp, nvpRepo ) ;
+        NVP nvp = nvpRepo.findByGroupNameAndConfigName( groupName, keyName ) ;
+        
+        if( nvp == null ) {
+            nvp = new NVP( keyName, defaultValue ) ;
+            nvp.setGroupName( groupName ) ;
+            nvp = nvpRepo.save( nvp ) ;
         }
-        return null ;
+        return new NVPConfig( nvp ) ;
     }
 }

@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
 import org.springframework.web.bind.annotation.GetMapping ;
+import org.springframework.web.bind.annotation.PostMapping ;
+import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.nvp.NVP ;
 import com.sandy.capitalyst.server.dao.nvp.repo.NVPRepo ;
 
@@ -32,8 +35,8 @@ public class ConfigController {
             cfgMap.put( NO_GROUP, new ArrayList<>() ) ;
             
             for( NVP nvp : nvpRepo.findAll() ) {
-                String groupName = nvp.getGroup() == null ? 
-                                   NO_GROUP : nvp.getGroup() ;
+                String groupName = nvp.getGroupName() == null ? 
+                                   NO_GROUP : nvp.getGroupName() ;
                 
                 List<NVP> groupedCfgs = cfgMap.get( groupName ) ;
                 if( groupedCfgs == null ) {
@@ -50,6 +53,29 @@ public class ConfigController {
             log.error( "Error :: Getting reference data.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( null ) ;
+        }
+    }
+
+    @PostMapping( "/Config" ) 
+    public ResponseEntity<APIResponse> execute( @RequestBody NVPVO nvpVo ) {
+        try {
+            log.debug( "Saving " + nvpVo ) ;
+            
+            NVP nvp = nvpRepo.findById( nvpVo.getId() ).get() ;
+            nvp.inherit( nvpVo ) ;
+            
+            // Note: We don't need to return the saved NVP because we are
+            // not letting the user create a new NVP, so the client does 
+            // not need the autogeneraed ID information.
+            nvpRepo.save( nvp ) ;
+            
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( APIResponse.SUCCESS ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving nvp.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( new APIResponse( e.getMessage() ) ) ;
         }
     }
 }
