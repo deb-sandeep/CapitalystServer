@@ -4,6 +4,7 @@ import java.text.ParseException ;
 import java.text.SimpleDateFormat ;
 import java.util.Date ;
 import java.util.HashMap ;
+import java.util.List ;
 import java.util.Map ;
 
 import org.apache.commons.validator.GenericValidator ;
@@ -85,6 +86,11 @@ public class NVPConfigGroup {
     public String[] getArrayValue( String cfgKey, String defaultValue ) {
         NVPConfig cfg = getNVPConfig( cfgKey, defaultValue ) ;
         return cfg.getArrayValue() ;
+    }
+
+    public List<String> getListValue( String cfgKey, String defaultValue ) {
+        NVPConfig cfg = getNVPConfig( cfgKey, defaultValue ) ;
+        return cfg.getListValue() ;
     }
 
     public void setValue( String cfgKey, int i ) {

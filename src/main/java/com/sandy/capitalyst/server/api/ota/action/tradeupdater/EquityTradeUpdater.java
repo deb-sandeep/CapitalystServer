@@ -6,6 +6,7 @@ import static org.apache.commons.lang.StringUtils.leftPad ;
 import static org.apache.commons.lang.StringUtils.rightPad ;
 
 import java.text.SimpleDateFormat ;
+import java.util.ArrayList ;
 import java.util.Collections ;
 import java.util.Date ;
 import java.util.HashMap ;
@@ -44,6 +45,9 @@ public class EquityTradeUpdater extends OTA {
     public static final String CFG_LAST_UPDATE_DATE = "last_update_date" ;
     public static final String CFG_ITER_DUR_IN_MTHS = "iteration_duration_mths" ;
     
+    public static final String CFG_INCL_PORTFOLIO_STOCKS = "incl_portfolio_stocks" ;
+    public static final String CFG_EXCL_PORTFOLIO_STOCKS = "excl_portfolio_stocks" ;
+    
     public static final String CFG_DEF_LAST_UPDATE_DATE = "01-01-2014" ;
     public static final int    CFG_DEF_ITER_DUR_IN_MTHS = 3 ;
 
@@ -60,6 +64,9 @@ public class EquityTradeUpdater extends OTA {
     private Date lastUpdateDate = null ;
     private Date iterToDate = null ;
     private int  iterDurationMths = CFG_DEF_ITER_DUR_IN_MTHS ;
+    
+    private List<String> inclPortfolioStocks = new ArrayList<>() ;
+    private List<String> exclPortfolioStocks = new ArrayList<>() ;
     
     public EquityTradeUpdater() {
         
@@ -78,7 +85,13 @@ public class EquityTradeUpdater extends OTA {
         iterDurationMths = cfg.getIntValue( CFG_ITER_DUR_IN_MTHS, 
                                             CFG_DEF_ITER_DUR_IN_MTHS ) ;
         
+        inclPortfolioStocks = cfg.getListValue( CFG_INCL_PORTFOLIO_STOCKS, "" ) ;
+        
+        exclPortfolioStocks = cfg.getListValue( CFG_EXCL_PORTFOLIO_STOCKS, "" ) ;
+
         iterToDate = DateUtils.addMonths( lastUpdateDate, iterDurationMths ) ;
+        
+        
     }
 
     @Override
@@ -357,6 +370,11 @@ public class EquityTradeUpdater extends OTA {
         
         for( String symbolIcici : localHoldingsMap.keySet() ) {
             
+            if( !shouldProcessHolding( symbolIcici ) ) {
+                addResult( "    Ignoring " + symbolIcici + " based on config." ) ;
+                continue ;
+            }
+            
             capitalystHolding = localHoldingsMap.get( symbolIcici ) ;
             breezeHolding     = breezeHoldingsMap.get( symbolIcici ) ;
 
@@ -395,6 +413,27 @@ public class EquityTradeUpdater extends OTA {
                 }
             }
         }
+    }
+    
+    private boolean shouldProcessHolding( String symbol ) {
+        
+        // If no include stocks are specified, we include all, else any 
+        // stock not in the include list is ignored.
+        if( !inclPortfolioStocks.isEmpty() ) {
+            if( !inclPortfolioStocks.contains( symbol ) ) {
+                return false ;
+            }
+        }
+        
+        // If no exclude stocks are specified, we include all, else any
+        // stock in the exclude stock is rejected
+        if( !exclPortfolioStocks.isEmpty() ) {
+            if( exclPortfolioStocks.contains( symbol ) ) {
+                return false ;
+            }
+        }
+        
+        return true ;
     }
     
     private void setCapitalystHoldingQuantityToZero( EquityHolding eh ) {

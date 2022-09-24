@@ -1,6 +1,8 @@
 package com.sandy.capitalyst.server.core.nvpconfig;
 
+import java.util.Arrays ;
 import java.util.Date ;
+import java.util.List ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.dao.nvp.NVP ;
@@ -46,6 +48,10 @@ public class NVPConfig {
     
     public String[] getArrayValue() {
         return nvp.getArrayValue() ;
+    }
+    
+    public List<String> getListValue() {
+        return Arrays.asList( getArrayValue() ) ;
     }
     
     public void setValue( Integer i ) {
