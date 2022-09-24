@@ -68,13 +68,16 @@ public class BreezeNetworkClient {
     private HttpClient httpClient = null ;
     private Map<String, String> standardHeaders = new HashMap<>() ;
     private ObjectMapper objMapper = null ;
+    private BreezeNetworkRateLimiter rateLimiter = null ;
     
     private boolean netLogEnabled = false ;
 
     private BreezeNetworkClient() {
         
-        httpClient = HttpClientBuilder.create().build() ;
-        objMapper = new ObjectMapper() ;
+        httpClient  = HttpClientBuilder.create().build() ;
+        objMapper   = new ObjectMapper() ;
+        rateLimiter = new BreezeNetworkRateLimiter() ;
+        
         SDF.setTimeZone( TimeZone.getTimeZone( "GMT" ) ) ;
         
         standardHeaders.put( "User-Agent",      "Custom HTTP Client" ) ;
@@ -83,6 +86,7 @@ public class BreezeNetworkClient {
         standardHeaders.put( "Host",            "api.icicidirect.com" ) ;
         standardHeaders.put( "Accept-Encoding", "gzip, deflate, br" ) ;
         standardHeaders.put( "Connection",      "keep-alive" ) ;
+        
     }
     
     public String get( String urlStr, BreezeSession session ) 
@@ -100,7 +104,7 @@ public class BreezeNetworkClient {
     }
     
     private String get( String urlStr, Map<String, String> customHdrs, 
-                       String body, BreezeSession session )
+                        String body, BreezeSession session )
         throws Exception {
         
         netLogEnabled = Breeze.instance()
@@ -126,6 +130,14 @@ public class BreezeNetworkClient {
             request.setEntity( new StringEntity( body, APPLICATION_JSON ) ) ;
             
             setHeaders( request, customHdrs, body, session ) ;
+            
+            int delay = rateLimiter.getDelay( session.getUserId() ) ;
+            if( delay > 0 ) {
+                if( netLogEnabled ) {
+                    log.debug( "Introducing rate delay of " + delay + " ms." ) ;
+                }
+                Thread.sleep( delay ) ;
+            }
             
             response = httpClient.execute( request ) ;
             
