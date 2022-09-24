@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.dao.nvp.NVP ;
 import com.sandy.capitalyst.server.dao.nvp.repo.NVPRepo ;
 
@@ -68,6 +69,8 @@ public class ConfigController {
             // not letting the user create a new NVP, so the client does 
             // not need the autogeneraed ID information.
             nvpRepo.save( nvp ) ;
+            
+            NVPManager.instance().notifyConfigChange( nvp ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( APIResponse.SUCCESS ) ;

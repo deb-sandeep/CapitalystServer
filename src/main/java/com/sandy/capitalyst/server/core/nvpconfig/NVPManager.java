@@ -45,4 +45,7 @@ public class NVPManager {
         }
         return new NVPConfig( nvp ) ;
     }
+
+    public void notifyConfigChange( NVP nvp ) {
+    }
 }
