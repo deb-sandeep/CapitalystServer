@@ -68,6 +68,13 @@ public class EquityTradeUpdater extends OTA {
     private List<String> inclPortfolioStocks = new ArrayList<>() ;
     private List<String> exclPortfolioStocks = new ArrayList<>() ;
     
+    private int numHoldingsCreated = 0 ;
+    private int numHoldingsUpdated = 0 ;
+    private int numTradesCreated   = 0 ;
+    private int numTradesProcessed = 0 ;
+    private int numTxnCreated      = 0 ;
+    private int numTxnUpdated      = 0 ;
+    
     public EquityTradeUpdater() {
         
         super( CFG_GRP_NAME ) ;
@@ -90,8 +97,6 @@ public class EquityTradeUpdater extends OTA {
         exclPortfolioStocks = cfg.getListValue( CFG_EXCL_PORTFOLIO_STOCKS, "" ) ;
 
         iterToDate = DateUtils.addMonths( lastUpdateDate, iterDurationMths ) ;
-        
-        
     }
 
     @Override
@@ -115,6 +120,14 @@ public class EquityTradeUpdater extends OTA {
                 addResult( "  Updating holdings" ) ;
                 updateEquityHoldings( cred ) ;
             }
+            
+            addResult( "  Statistics:" ) ;
+            addResult( "    numHoldingsCreated = " + numHoldingsCreated ) ;
+            addResult( "    numHoldingsUpdated = " + numHoldingsUpdated ) ;
+            addResult( "    numTradesCreated   = " + numTradesCreated   ) ;
+            addResult( "    numTradesProcessed = " + numTradesProcessed ) ;
+            addResult( "    numTxnCreated      = " + numTxnCreated      ) ;
+            addResult( "    numTxnUpdated      = " + numTxnUpdated      ) ;
             
             addResult( "  Updating last update timestamp." ) ;
             cfg.setValue( CFG_LAST_UPDATE_DATE, iterToDate ) ;
@@ -155,6 +168,8 @@ public class EquityTradeUpdater extends OTA {
             // The trades returned by Breeze are in reverse chronological
             // order. We reverse the list to start with the oldest trade first.
             Collections.reverse( trades ) ;
+            
+            numTradesProcessed = trades.size() ;
             
             for( Trade trade : trades ) {
                 
@@ -218,6 +233,8 @@ public class EquityTradeUpdater extends OTA {
         et.setTax        ( trade.getTax()         ) ;
         
         et = etrdRepo.save( et ) ;
+        
+        numTradesCreated++ ;
         
         return et ;
     }
@@ -299,6 +316,8 @@ public class EquityTradeUpdater extends OTA {
         txn.setTxnCharges      ( breezeTxn.getTxnCharges()      ) ;
         txn.setStampDuty       ( breezeTxn.getStampDuty()       ) ;
         
+        numTxnCreated++ ;
+        
         return txn ;
     }
     
@@ -312,6 +331,8 @@ public class EquityTradeUpdater extends OTA {
         txn.setTxnDate         ( breezeTxn.getTxnDate()         ) ;
         txn.setSettlementId    ( breezeTxn.getSettlementId()    ) ;
         txn.setExchangeTradeId ( breezeTxn.getExchangeTradeId() ) ;
+        
+        numTxnUpdated++ ;
     }
     
     private EquityTxn findClosestMatchingTxn( TradeDetail breezeTxn, EquityHolding eh ) {
@@ -446,6 +467,8 @@ public class EquityTradeUpdater extends OTA {
         eh.setDayGain( 0 ) ;
         // We don't care about the current market price for zero holdings.
         
+        numHoldingsUpdated++ ;
+
         ehRepo.save( eh ) ;
     }
 
@@ -469,6 +492,8 @@ public class EquityTradeUpdater extends OTA {
          eh.setCurrentMktPrice ( curPrice   ) ;
          eh.setDayGain         ( dayGain    ) ;
          eh.setLastUpdate      ( new Date() ) ;
+         
+         numHoldingsUpdated++ ;
          
          ehRepo.save( eh ) ;
     }
@@ -505,6 +530,8 @@ public class EquityTradeUpdater extends OTA {
         
         eh = ehRepo.save( eh ) ;
 
+        numHoldingsCreated++ ;
+        
         return eh ;
     }    
 }
