@@ -27,7 +27,6 @@ import com.sandy.common.util.StringUtil ;
 public abstract class BreezeAPI<T> {
 
     public static final Logger log = Logger.getLogger( BreezeAPI.class ) ;
-    public static boolean PRINT_RESPONSE = false ;
     
     private static final boolean PRINT_INVOCATION_LOG = false ;
     
@@ -41,21 +40,24 @@ public abstract class BreezeAPI<T> {
         ISO_8601_FMT.setTimeZone( TimeZone.getTimeZone( "GMT" ) ) ;
     }
 
-    private String apiEndpointUrl = null ;
-    private String endpointId = null ;
-    private BreezeNetworkClient netClient = null ;
-    private ObjectMapper jsonParser = null ;
-    private Class<T> entityClass = null ;
+    private BreezeNVPConfig     breezeCfg      = null ;
+    private BreezeNetworkClient netClient      = null ;
+    private String              endpointId     = null ;
+    private ObjectMapper        jsonParser     = null ;
+    private Class<T>            entityClass    = null ;
+    private String              apiEndpointUrl = null ;
     
     private Set<String> mandatoryParameters = new TreeSet<>() ;
     protected Map<String, String> params = new HashMap<>() ;
     
     protected BreezeAPI( String apiId, String apiURL, Class<T> entityClass ) {
-        this.endpointId = apiId ;
+        
+        this.endpointId     = apiId ;
         this.apiEndpointUrl = apiURL ;
-        this.entityClass = entityClass ;
-        this.netClient = BreezeNetworkClient.instance() ;
-        this.jsonParser = new ObjectMapper().enable( INDENT_OUTPUT ) ;
+        this.entityClass    = entityClass ;
+        this.netClient      = BreezeNetworkClient.instance() ;
+        this.jsonParser     = new ObjectMapper().enable( INDENT_OUTPUT ) ;
+        this.breezeCfg      = Breeze.instance().getNVPCfg() ;
     }
     
     public void clearParams() {
@@ -106,7 +108,7 @@ public abstract class BreezeAPI<T> {
                 
                 JsonNode json = jsonParser.readTree( responseStr ) ;
                 
-                if( PRINT_RESPONSE ) {
+                if( breezeCfg.isPrintAPIResponse() ) {
                     log.debug( "API response:" ) ;
                     log.debug( jsonParser.writeValueAsString( json ) ) ;
                 }

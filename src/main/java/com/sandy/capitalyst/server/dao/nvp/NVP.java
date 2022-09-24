@@ -6,6 +6,7 @@ import java.util.ArrayList ;
 import java.util.Date ;
 
 import javax.persistence.Entity ;
+import javax.persistence.EntityListeners ;
 import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
@@ -13,12 +14,14 @@ import javax.persistence.Table ;
 
 import com.fasterxml.jackson.annotation.JsonIgnore ;
 import com.sandy.capitalyst.server.api.config.NVPVO ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPManager.NVPPersistCallback ;
 import com.sandy.common.util.StringUtil ;
 
 import lombok.Data ;
 
 @Data
 @Entity
+@EntityListeners( NVPPersistCallback.class )
 @Table( name = "nvp" )
 public class NVP {
     

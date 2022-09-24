@@ -9,7 +9,7 @@ import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import lombok.Data ;
 
 @Data
-public class BreezeConfig {
+public class BreezeExternalConfig {
 
     private File serializationDir = null ;
     private List<BreezeCred> credentials = new ArrayList<>() ;

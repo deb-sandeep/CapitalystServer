@@ -10,7 +10,8 @@ import org.apache.log4j.Logger ;
 
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeConfig ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeExternalConfig ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeNVPConfig ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager ;
 
 public class Breeze {
@@ -20,6 +21,9 @@ public class Breeze {
     public static String ISO8601_FMT_WITH_MILLIS = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static String ISO8601_FMT             = "yyyy-MM-dd'T'HH:mm:ss.000'Z'";
     public static final String BRZ_API_BASEURL   = "https://api.icicidirect.com/breezeapi/api/v1" ;
+    
+    public static String CFG_RUN_CMP_DAEMON   = "run_portfolio_cmp_updater" ;
+    public static String CFG_RUN_BATCH_DAEMON = "run_batch_daemon" ;
     
     private static Breeze instance = null ;
     
@@ -31,21 +35,31 @@ public class Breeze {
     }
     
     private List<BreezeCred> creds = new ArrayList<>() ;
+    
     private Map<String, BreezeCred> credMap = new HashMap<>() ;
+    
     private BreezeSessionManager sessionMgr = BreezeSessionManager.instance() ;
-    private BreezeConfig config = null ;
+    
+    private BreezeExternalConfig config = null ;
+    
     private List<BreezeAPIInvocationListener> listeners = new ArrayList<>() ;
+    
+    private BreezeNVPConfig nvpCfg = null ;
     
     private boolean initialized = false ;
     
     private Breeze() {}
     
     public void initialize( File cfgFile ) throws Exception {
+        
         log.debug( "Initializing Breeze" ) ;
         log.debug( "  Cfg path - " + cfgFile.getAbsolutePath() ) ;
         
         resetState() ;
         configure( cfgFile ) ;
+        
+        nvpCfg = new BreezeNVPConfig() ;
+        
         initialized = true ;
     }
     
@@ -56,7 +70,7 @@ public class Breeze {
         mapper = new ObjectMapper( new YAMLFactory() ) ; 
         mapper.findAndRegisterModules() ;
         
-        this.config = mapper.readValue( file, BreezeConfig.class ) ;
+        this.config = mapper.readValue( file, BreezeExternalConfig.class ) ;
         for( BreezeCred cred : this.config.getCredentials() ) {
             this.creds.add( cred ) ;
             this.credMap.put( cred.getUserId(), cred ) ;
@@ -97,5 +111,9 @@ public class Breeze {
     public BreezeCred getCred( String userId ) {
         assertInitializedState() ;
         return this.credMap.get( userId ) ;
+    }
+    
+    public BreezeNVPConfig getNVPCfg() {
+        return this.nvpCfg ;
     }
 }

@@ -31,8 +31,6 @@ public class BreezeNetworkClient {
 
     private static final Logger log = Logger.getLogger( BreezeNetworkClient.class ) ;
     
-    private static final boolean LOG_ENABLED = false ;
-    
     public static class HttpGetWithEntity extends HttpEntityEnclosingRequestBase {
         public final static String METHOD_NAME = "GET";
         public String getMethod() {
@@ -70,6 +68,8 @@ public class BreezeNetworkClient {
     private HttpClient httpClient = null ;
     private Map<String, String> standardHeaders = new HashMap<>() ;
     private ObjectMapper objMapper = null ;
+    
+    private boolean netLogEnabled = false ;
 
     private BreezeNetworkClient() {
         
@@ -103,7 +103,11 @@ public class BreezeNetworkClient {
                        String body, BreezeSession session )
         throws Exception {
         
-        if( LOG_ENABLED ) {
+        netLogEnabled = Breeze.instance()
+                              .getNVPCfg()
+                              .isNetworkLoggingEnabled() ;
+        
+        if( netLogEnabled ) {
             log.debug( "GET " + urlStr ) ;
         }
         
@@ -111,7 +115,7 @@ public class BreezeNetworkClient {
         HttpResponse      response = null ;
         HttpEntity        responseEntity = null ;
         
-        if( LOG_ENABLED ) {
+        if( netLogEnabled ) {
             log.debug( "  Body:" ) ;
             log.debug( body ) ;
         }
@@ -128,7 +132,7 @@ public class BreezeNetworkClient {
             responseStr = null ;
             responseEntity = response.getEntity() ;
             
-            if( LOG_ENABLED ) {
+            if( netLogEnabled ) {
                 log.debug( "  Response:" ) ;
                 log.debug( "    Status = " + response.getStatusLine().getStatusCode() );
             }
@@ -144,7 +148,7 @@ public class BreezeNetworkClient {
                 IOUtils.readFully( responseEntity.getContent(), content );
                 
                 responseStr = new String( content ) ;
-                if( LOG_ENABLED ) {
+                if( netLogEnabled ) {
                     log.debug( "  Response body:" ) ; 
                     log.debug( "    " + responseStr ) ;
                 }
@@ -162,7 +166,7 @@ public class BreezeNetworkClient {
                              String body, BreezeSession session ) 
         throws Exception {
         
-        if( LOG_ENABLED ) {
+        if( netLogEnabled ) {
             log.debug( "  Headers:" ) ;
         }
         
@@ -170,7 +174,7 @@ public class BreezeNetworkClient {
             for( String header : headers.keySet() ) {
                 String val = headers.get( header ) ;
                 req.addHeader( header, val ) ;
-                if( LOG_ENABLED ) {
+                if( netLogEnabled ) {
                     log.debug( "    " + header + " = " + val ) ;
                 }
             }
@@ -179,7 +183,7 @@ public class BreezeNetworkClient {
         for( String header : standardHeaders.keySet() ) {
             String val = standardHeaders.get( header ) ;
             req.addHeader( header, val ) ;
-            if( LOG_ENABLED ) {
+            if( netLogEnabled ) {
                 log.debug( "    " + header + " = " + val ) ;
             }
         }

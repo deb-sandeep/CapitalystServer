@@ -2,7 +2,6 @@ capitalystNgApp.controller( 'ManageConfigController',
     function( $scope, $http, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
-    const NO_GROUP = "-- NO GROUP --" ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Manage system configuration" ;
@@ -10,7 +9,7 @@ capitalystNgApp.controller( 'ManageConfigController',
     
     $scope.allCfgs = {} ;
     $scope.cfgGroupNames = [] ;
-    $scope.selectedCfgGroup = NO_GROUP ;
+    $scope.selectedCfgGroup = null ;
     $scope.groupedCfgs = null ;
     
     $scope.tempEditValues = {
@@ -82,7 +81,6 @@ capitalystNgApp.controller( 'ManageConfigController',
                 console.log( response.data ) ;
                 
                 $scope.cfgGroupNames.length = 0 ;
-                $scope.selectedCfgGroup = NO_GROUP ;
                 
                 $scope.allCfgs = response.data ;
                 for( const groupName in $scope.allCfgs ) {
@@ -90,6 +88,7 @@ capitalystNgApp.controller( 'ManageConfigController',
                     $scope.allCfgs[ groupName ].forEach( cfg => {
                         cfg.editing = false ;
                     }) ;
+                    $scope.selectedCfgGroup = groupName ;
                 }
                 
                 $scope.groupChanged() ;

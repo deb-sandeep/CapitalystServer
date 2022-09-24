@@ -54,6 +54,10 @@ public class NVPConfig {
         return Arrays.asList( getArrayValue() ) ;
     }
     
+    public String getValue() {
+        return this.nvp.getValue() ;
+    }
+    
     public void setValue( Integer i ) {
         nvp.setValue( i ) ;
         save() ;

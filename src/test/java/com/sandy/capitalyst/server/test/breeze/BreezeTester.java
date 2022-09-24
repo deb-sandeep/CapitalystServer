@@ -22,7 +22,6 @@ import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI.TradeDetail ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI.Trade ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
 import com.sandy.common.util.ReflectionUtil ;
 
@@ -51,8 +50,6 @@ public class BreezeTester {
     private String ucId = "getTrades" ;
     
     public BreezeTester( String[] args ) {
-        
-        BreezeAPI.PRINT_RESPONSE = true ;
         
         log.debug( "----------------= BreezeSessionManager Test =--------------------" ) ;
         log.debug( "   ucId   = " + ucId ) ;
