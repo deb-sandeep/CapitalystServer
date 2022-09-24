@@ -38,11 +38,11 @@ public class OnetimeActionController {
     
     public OnetimeActionController() {
         
-        otaMap.put( EquityMasterRefreshOTA.NAME,  EquityMasterRefreshOTA.class  ) ;
-        otaMap.put( IndexMasterRefreshOTA.NAME,   IndexMasterRefreshOTA.class   ) ;
-        otaMap.put( IDirectSymbolMappingOTA.NAME, IDirectSymbolMappingOTA.class ) ;
-        otaMap.put( HistPrevCloseUpdater.NAME,    HistPrevCloseUpdater.class    ) ;
         otaMap.put( EquityTradeUpdater.NAME,      EquityTradeUpdater.class      ) ;
+        otaMap.put( HistPrevCloseUpdater.NAME,    HistPrevCloseUpdater.class    ) ;
+        otaMap.put( IndexMasterRefreshOTA.NAME,   IndexMasterRefreshOTA.class   ) ;
+        otaMap.put( EquityMasterRefreshOTA.NAME,  EquityMasterRefreshOTA.class  ) ;
+        otaMap.put( IDirectSymbolMappingOTA.NAME, IDirectSymbolMappingOTA.class ) ;
         
         executorService = Executors.newFixedThreadPool( 5 ) ;
     }
