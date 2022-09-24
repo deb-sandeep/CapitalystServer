@@ -135,6 +135,8 @@ public abstract class BreezeAPI<T> {
                 int timeTaken = (int)(endTime - startTime) ;
                 
                 invInfo.setCallDurationInMillis( timeTaken ) ;
+                response.setTimeTakenInMillis( timeTaken ) ;
+                
                 if( PRINT_INVOCATION_LOG ) {
                     log.debug( "  Status = " + invInfo.getCallStatus() + 
                                ". Latency = " + timeTaken + " ms." ) ;

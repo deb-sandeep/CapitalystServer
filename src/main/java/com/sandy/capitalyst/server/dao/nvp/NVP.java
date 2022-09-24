@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.dao.nvp;
 
 import java.text.ParseException ;
 import java.text.SimpleDateFormat ;
+import java.util.ArrayList ;
 import java.util.Date ;
 
 import javax.persistence.Entity ;
@@ -12,6 +13,7 @@ import javax.persistence.Table ;
 
 import com.fasterxml.jackson.annotation.JsonIgnore ;
 import com.sandy.capitalyst.server.api.config.NVPVO ;
+import com.sandy.common.util.StringUtil ;
 
 import lombok.Data ;
 
@@ -89,7 +91,14 @@ public class NVP {
     
     @JsonIgnore
     public String[] getArrayValue() {
-        return this.value.split( "," ) ;
+        
+        ArrayList<String> valuesList = new ArrayList<>() ;
+        for( String val : this.value.split( "," ) ) {
+            if( StringUtil.isNotEmptyOrNull( val ) ) {
+                valuesList.add( val.trim() ) ;
+            }
+        }
+        return valuesList.toArray( new String[valuesList.size()] ) ;
     }
 
     public String toString() {

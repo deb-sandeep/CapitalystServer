@@ -4,11 +4,6 @@
 	        ng-options="item for item in cfgGroupNames"
 	        ng-change="groupChanged()">
 	</select>
-	
-    <button class="btn btn-info btn-sm"
-            ng-click="showNewGroupDialog()">
-      New Group
-    </button>
 </div>
 
 <div id="cfg-listing">
@@ -17,7 +12,7 @@
 	   <thead>
 	       <tr>
 	           <th width="30px"></th>
-	           <th width="150px">Group</th>
+	           <th width="200px">Group</th>
 	           <th width="250px">Config Name</th>
 	           <th width="300px">Config Value</th>
                <th class="cfg-description">Description</th>
@@ -41,7 +36,8 @@
 	           <td class="fixed-font">{{cfg.configName}}</td>
 	           <td>
 	               <div ng-if="!cfg.editing"
-	                    ng-dblclick="editConfig( cfg )">
+	                    ng-dblclick="editConfig( cfg )"
+	                    class="fixed-font">
 		               {{cfg.value}}
 	               </div>
                    <div ng-if="cfg.editing" style="width:100%">
@@ -73,11 +69,4 @@
 	       </tr>
 	   </tbody>
 	</table>
-</div>
-
-<div id="newGroupDialog" 
-     class="modal" 
-     role="dialog"
-     data-backdrop="static"
-     ng-include="'route/config/dialog/new_group_dialog.html'">
 </div>

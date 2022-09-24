@@ -13,5 +13,9 @@ java -Djava.awt.headless=false \
      -Dcom.sun.management.jmxremote.authenticate=false \
      -Dcom.sun.management.jmxremote.ssl=false \
      -Djava.rmi.server.hostname=192.168.0.116 \
-     -classpath $CP com.sandy.capitalyst.server.CapitalystServer 
+     --add-opens=java.base/java.lang=ALL-UNNAMED \
+     --add-opens=java.base/java.lang.invoke=ALL-UNNAMED \
+     --illegal-access=warn \
+     -classpath $CP \
+     com.sandy.capitalyst.server.CapitalystServer 
 

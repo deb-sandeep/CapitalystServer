@@ -12,6 +12,7 @@ public class BreezeAPIResponse<T> {
 
     private int status = 0 ;
     private String error = null ;
+    private long timeTakenInMillis = 0 ;
     private List<T> entities = new ArrayList<>() ;
     
     private BreezeCred credential = null ;

@@ -48,7 +48,7 @@ public class BreezeTester {
         }
     }
     
-    private String ucId   = "getTrades" ;
+    private String ucId = "getTrades" ;
     
     public BreezeTester( String[] args ) {
         

@@ -35,6 +35,7 @@ import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTradeRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
+import com.sandy.common.util.StringUtil ;
 
 public class EquityTradeUpdater extends OTA {
     
@@ -86,7 +87,7 @@ public class EquityTradeUpdater extends OTA {
         
         cfg = NVPManager.instance().getConfigGroup( CFG_GRP_NAME ) ;
         
-        lastUpdateDate = cfg.getDateValue( CFG_DEF_LAST_UPDATE_DATE, 
+        lastUpdateDate = cfg.getDateValue( CFG_LAST_UPDATE_DATE, 
                                            CFG_DEF_LAST_UPDATE_DATE ) ;
         
         iterDurationMths = cfg.getIntValue( CFG_ITER_DUR_IN_MTHS, 
@@ -142,12 +143,14 @@ public class EquityTradeUpdater extends OTA {
         localHoldingsMap.clear() ;
         breezeHoldingsMap.clear() ;
         
+        addResult( "    Loading DB holdings" ) ;
         List<EquityHolding> lHoldings = ehRepo.findByOwnerName( cred.getUserName() ) ;
         for( EquityHolding h : lHoldings ) {
             localHoldingsMap.put( h.getSymbolIcici(), h ) ;
         }
-        addResult( "    DB holdings loaded" ) ;
+        addResult( "      DB holdings loaded" ) ;
         
+        addResult( "    Loading Breeze holdings" ) ;
         BreezeGetPortfolioHoldingsAPI api = new BreezeGetPortfolioHoldingsAPI() ;
         BreezeAPIResponse<PortfolioHolding> response = api.execute( cred ) ;
         List<PortfolioHolding> bHoldings = response.getEntities() ;
@@ -155,13 +158,15 @@ public class EquityTradeUpdater extends OTA {
         for( PortfolioHolding ph : bHoldings ) {
             this.breezeHoldingsMap.put( ph.getSymbol(), ph ) ;
         }
-        addResult( "    Breeze holdings loaded" ) ;
+        addResult( "      Breeze holdings loaded" ) ;
     }
     
     private void updateTrades( BreezeCred cred, Date fromDate, Date toDate ) 
             throws Exception {
         
+        addResult( "    Getting breeze trades" ) ;
         List<Trade> trades = getBreezeTrades( cred, fromDate, toDate ) ;
+        addResult( "      Breze trades obtained. " + trades.size() + " trades." ) ;
         
         if( trades != null && !trades.isEmpty() ) {
             
@@ -175,10 +180,11 @@ public class EquityTradeUpdater extends OTA {
                 
                 String symbolIcici = trade.getSymbolIcici() ;
                 
-                String msg = SDF.format  ( trade.getTradeDate()        ) + 
+                String msg = "> " + SDF.format  ( trade.getTradeDate()        ) + 
                         " | " + rightPad ( symbolIcici,              6 ) + 
                         " | " + rightPad ( trade.getAction(),        4 ) + 
-                        " | " + leftPad  ( "" + trade.getQuantity(), 4 ) ;
+                        " | " + leftPad  ( "" + trade.getQuantity(), 4 ) + 
+                        " | " + trade.getOrderId() ;
                 
                 addResult( "    " + msg ) ;
                 
@@ -251,17 +257,18 @@ public class EquityTradeUpdater extends OTA {
         BreezeGetTradeDetailAPI        api        = null ;
         BreezeAPIResponse<TradeDetail> response   = null ;
         
+        addResult( "    Loading breeze transactions" ) ;
         api = new BreezeGetTradeDetailAPI() ;
         api.setOrderId( trade.getOrderId() ) ;
         
         response = api.execute( cred ) ;
         breezeTxns = response.getEntities() ;
         
-        addResult( "     " + breezeTxns.size() + " trades found." ) ;
+        addResult( "     " + breezeTxns.size() + " breeze txns found." ) ;
 
         for( TradeDetail breezeTxn : breezeTxns ) {
             
-            addResult( "      Processing txn " + breezeTxn.getTradeId() ) ;
+            addResult( "     Processing txn " + breezeTxn.getTradeId() ) ;
             
             EquityTxn txn = etxnRepo.findByOrderIdAndTradeId( 
                                   trade.getOrderId(), breezeTxn.getTradeId() ) ;
@@ -275,7 +282,7 @@ public class EquityTradeUpdater extends OTA {
             // tradeId, settlement details etc.
             if( txn == null ) {
                 txn = findClosestMatchingTxn( breezeTxn, eh ) ;
-                if( txn == null ) {
+                if( txn != null ) {
                     addResult( "       closest match exists." ) ;
                 }
             }
@@ -283,16 +290,24 @@ public class EquityTradeUpdater extends OTA {
                 addResult( "       txn exists." ) ;
             }
             
+            boolean txnNeedsSaving = false ;
+            
             if( txn == null ) {
                 addResult( "       creating new txn." ) ;
                 txn = createNewEquityTxn( trade, breezeTxn, eh ) ;
+                txnNeedsSaving = true ;
             }
             else {
-                addResult( "       updating existing txn." ) ;
-                updateExistingTxn( trade, breezeTxn, txn ) ;
+                if( StringUtil.isEmptyOrNull( txn.getOrderId() ) ) {
+                    addResult( "       updating existing txn." ) ;
+                    updateExistingTxn( trade, breezeTxn, txn ) ;
+                    txnNeedsSaving = true ;
+                }
             }
-            
-            etxnRepo.save( txn ) ;
+
+            if( txnNeedsSaving ) {
+                etxnRepo.save( txn ) ;
+            }
         }
     }
     
@@ -393,6 +408,7 @@ public class EquityTradeUpdater extends OTA {
             
             if( !shouldProcessHolding( symbolIcici ) ) {
                 addResult( "    Ignoring " + symbolIcici + " based on config." ) ;
+                breezeHoldingsMap.remove( symbolIcici ) ;
                 continue ;
             }
             
@@ -405,7 +421,9 @@ public class EquityTradeUpdater extends OTA {
             if( breezeHolding == null ) {
                 // A Capitalyst holding exists, but a breeze holding does 
                 // not exist. This implies that the DMAT quantity is zero.
-                setCapitalystHoldingQuantityToZero( capitalystHolding ) ;
+                if( capitalystHolding.getQuantity() != 0 ) {
+                    setCapitalystHoldingQuantityToZero( capitalystHolding ) ;
+                }
             }
             else {
                 // If both capitalyst and breeze holdings exist, we check
@@ -418,20 +436,20 @@ public class EquityTradeUpdater extends OTA {
                 // Remove the breeze holding
                 breezeHoldingsMap.remove( symbolIcici ) ;
             }
+        }
+
+        // After the bidirectional matching if there are still some
+        // items remaining in the breeze portfolio, it implies these are
+        // holdings which don't exist in local. We create new holdings
+        // for each of them
+        if( !breezeHoldingsMap.isEmpty() ) {
             
-            // After the bidirectional matching if there are still some
-            // items remaining in the breeze portfolio, it implies these are
-            // holdings which don't exist in local. We create new holdings
-            // for each of them
-            if( !breezeHoldingsMap.isEmpty() ) {
+            for( PortfolioHolding bh : breezeHoldingsMap.values() ) {
                 
-                for( PortfolioHolding bh : breezeHoldingsMap.values() ) {
-                    
-                    createNewEquityHolding( symbolIcici, bh, cred ) ;
-                    
-                    // Not required, but do it for hygiene purposes
-                    breezeHoldingsMap.remove( symbolIcici ) ;
-                }
+                String symbolIcici = bh.getSymbol() ;
+                
+                createNewEquityHolding( symbolIcici, bh, cred ) ;
+                breezeHoldingsMap.remove( symbolIcici ) ;
             }
         }
     }
@@ -459,7 +477,8 @@ public class EquityTradeUpdater extends OTA {
     
     private void setCapitalystHoldingQuantityToZero( EquityHolding eh ) {
         
-        addResult( "     Setting quantity of " + eh.getSymbolIcici() + " to zero." );
+        addResult( "     Updating quantity of " + 
+                   eh.getSymbolIcici() + " to zero." );
         
         eh.setQuantity( 0 ) ;
         eh.setAvgCostPrice( 0 ) ;
@@ -472,20 +491,18 @@ public class EquityTradeUpdater extends OTA {
         ehRepo.save( eh ) ;
     }
 
-    private void syncLocalHoldingWithBreeze( EquityHolding capitalystHolding,
+    private void syncLocalHoldingWithBreeze( EquityHolding eh,
                                              PortfolioHolding ph ) {
         
-         String symbolIcici = capitalystHolding.getSymbolIcici() ;
+         String symbolIcici = eh.getSymbolIcici() ;
 
-         addResult( "      Updating quantity for existing holding " 
-                    + symbolIcici ) ;
+         addResult( "     Updating quantity of " + 
+                    symbolIcici + " to " + ph.getQuantity() ) ;
     
          int   quantity = ph.getQuantity() ;
          float avgPrice = ph.getAveragePrice() ;
          float dayGain  = ph.getChange() * quantity ;
          float curPrice = ph.getCurrentMktPrice() ;
-    
-         EquityHolding eh = new EquityHolding() ;
     
          eh.setQuantity        ( quantity   ) ;
          eh.setAvgCostPrice    ( avgPrice   ) ;

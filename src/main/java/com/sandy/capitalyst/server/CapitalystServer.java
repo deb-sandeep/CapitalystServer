@@ -179,11 +179,21 @@ public class CapitalystServer
     // --------------------- Main method ---------------------------------------
 
     public static void main( String[] args ) throws Exception {
+        
+        long startTime = System.currentTimeMillis() ;
         log.debug( "Starting Spring Booot..." ) ;
         SpringApplication.run( CapitalystServer.class, args ) ;
 
         log.debug( "Starting Capitalyst Server.." ) ;
         CapitalystServer app = CapitalystServer.getAppContext().getBean( CapitalystServer.class ) ;
         app.initialize() ;
+        long endTime = System.currentTimeMillis() ;
+        
+        int timeTaken = (int)(( endTime - startTime )/1000) ;
+        
+        log.debug( "" ) ;
+        log.debug( "Capitalyst Server open for business. "  + 
+                   "Boot time = " + timeTaken + " secs." ) ;
+        log.debug( "" ) ;
     }
 }

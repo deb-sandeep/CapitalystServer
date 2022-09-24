@@ -31,18 +31,6 @@ capitalystNgApp.controller( 'ManageConfigController',
         $scope.groupedCfgs = $scope.allCfgs[ $scope.selectedCfgGroup ] ;
     }
     
-    $scope.showNewGroupDialog = function() {
-        $( '#newGroupDialog' ).modal( 'show' ) ;
-    }
-    
-    $scope.saveNewGroup = function() {
-        $scope.hideNewGroupDialog() ;
-    }
-    
-    $scope.hideNewGroupDialog = function() {
-        $( '#newGroupDialog' ).modal( 'hide' ) ;
-    }
-    
     $scope.editConfig = function( cfg ) {
         resetEditState() ;
         cfg.editing = true ;
