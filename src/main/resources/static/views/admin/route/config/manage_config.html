@@ -4,6 +4,10 @@
 	        ng-options="item for item in cfgGroupNames"
 	        ng-change="groupChanged()">
 	</select>
+	&nbsp;
+    <a ng-click="refresh()">
+       <span class="glyphicon glyphicon-refresh"></span>
+    </a>              
 </div>
 
 <div id="cfg-listing">

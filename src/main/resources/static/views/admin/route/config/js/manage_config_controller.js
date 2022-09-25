@@ -21,7 +21,7 @@ capitalystNgApp.controller( 'ManageConfigController',
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading ManageConfigController" ) ;
-    initializeController() ;
+    fetchAllConfigs( $scope.selectedCfgGroup ) ;
     // --- [END] Controller initialization -----------------------------------
     
     // -----------------------------------------------------------------------
@@ -49,14 +49,14 @@ capitalystNgApp.controller( 'ManageConfigController',
         saveCfgOnServer( cfg ) ;
     }
     
+    $scope.refresh = function() {
+        fetchAllConfigs( $scope.selectedCfgGroup ) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
-    
-    function initializeController() {
-        fetchClassificationCategories() ;
-    }
     
     function resetEditState() {
         
@@ -72,15 +72,17 @@ capitalystNgApp.controller( 'ManageConfigController',
     }
     
     // ------------------- Server comm functions -----------------------------
-    function fetchClassificationCategories() {
+    function fetchAllConfigs( selectedGroup ) {
         
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/AllConfig' )
         .then ( 
             function( response ){
                 console.log( response.data ) ;
                 
                 $scope.cfgGroupNames.length = 0 ;
+                if( selectedGroup != null ) {
+                    $scope.selectedCfgGroup = selectedGroup ;
+                }
                 
                 $scope.allCfgs = response.data ;
                 for( const groupName in $scope.allCfgs ) {
@@ -88,7 +90,10 @@ capitalystNgApp.controller( 'ManageConfigController',
                     $scope.allCfgs[ groupName ].forEach( cfg => {
                         cfg.editing = false ;
                     }) ;
-                    $scope.selectedCfgGroup = groupName ;
+                    
+                    if( selectedGroup == null ) {
+                        $scope.selectedCfgGroup = groupName ;
+                    }
                 }
                 
                 $scope.groupChanged() ;
@@ -98,14 +103,10 @@ capitalystNgApp.controller( 'ManageConfigController',
                                               error.data.message ) ;
             }
         )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
     }
     
     function saveCfgOnServer( cfg ) {
         
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.post( '/Config', cfg )
         .then ( 
             function( response ){
@@ -116,9 +117,6 @@ capitalystNgApp.controller( 'ManageConfigController',
                                               error.data.message ) ;
             }
         )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
     }
     // ------------------- Server response processors ------------------------
 } ) ;
