@@ -131,13 +131,7 @@ public class BreezeNetworkClient {
             
             setHeaders( request, customHdrs, body, session ) ;
             
-            int delay = rateLimiter.getDelay( session.getUserId() ) ;
-            if( delay > 0 ) {
-                if( netLogEnabled ) {
-                    log.debug( "Introducing rate delay of " + delay + " ms." ) ;
-                }
-                Thread.sleep( delay ) ;
-            }
+            rateLimiter.throttle( session.getUserId() ) ;
             
             response = httpClient.execute( request ) ;
             

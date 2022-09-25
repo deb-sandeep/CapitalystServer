@@ -48,7 +48,9 @@ public class Breeze {
     
     private boolean initialized = false ;
     
-    private Breeze() {}
+    private Breeze() {
+        nvpCfg = new BreezeNVPConfig() ;
+    }
     
     public void initialize( File cfgFile ) throws Exception {
         
@@ -57,8 +59,6 @@ public class Breeze {
         
         resetState() ;
         configure( cfgFile ) ;
-        
-        nvpCfg = new BreezeNVPConfig() ;
         
         initialized = true ;
     }

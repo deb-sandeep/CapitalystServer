@@ -58,6 +58,10 @@ public class CapitalystServer
     public static CapitalystServer getApp() {
         return APP ;
     }
+    
+    public static boolean isInServerMode() {
+        return APP != null ;
+    }
 
     // ---------------- Instance methods start ------------------------------
     @Autowired
@@ -185,7 +189,8 @@ public class CapitalystServer
         SpringApplication.run( CapitalystServer.class, args ) ;
 
         log.debug( "Starting Capitalyst Server.." ) ;
-        CapitalystServer app = CapitalystServer.getAppContext().getBean( CapitalystServer.class ) ;
+        CapitalystServer app = CapitalystServer.getAppContext()
+                                               .getBean( CapitalystServer.class ) ;
         app.initialize() ;
         long endTime = System.currentTimeMillis() ;
         

@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.breeze.internal;
 
 import org.apache.log4j.Logger ;
 
+import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfig ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigChangeListener ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
@@ -16,6 +17,7 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
     
     public static final String CFG_PRINT_API_RESPONSE = "print_api_response" ;
     public static final String CFG_NET_LOG_ENABLED    = "network_log_enabled" ;
+    public static final String CFG_RATE_LIMIT_MINUTE  = "rate_limit_per_minute" ;
     
     @Getter
     private boolean printAPIResponse = false ;
@@ -23,26 +25,39 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
     @Getter
     private boolean networkLoggingEnabled = false ;
     
+    @Getter
+    private int rateLimitPerMinute = 75 ;
+    
     private NVPManager nvpMgr = null ;
     
     public BreezeNVPConfig() {
         
-        loadConfigValues() ;
-        nvpMgr.addConfigChangeListener( this, CFG_GRP_NAME ) ;
+        if( CapitalystServer.isInServerMode() ) {
+            loadNVPConfigValues() ;
+        }
     }
     
-    private void loadConfigValues() {
+    private void loadNVPConfigValues() {
         
         nvpMgr = NVPManager.instance() ;
         
         printAPIResponse      = getBooleanCfg( CFG_PRINT_API_RESPONSE ) ;
         networkLoggingEnabled = getBooleanCfg( CFG_NET_LOG_ENABLED    ) ;
+        rateLimitPerMinute    = getIntCfg    ( CFG_RATE_LIMIT_MINUTE  ) ;
+
+        nvpMgr.addConfigChangeListener( this, CFG_GRP_NAME ) ;
     }
     
     private boolean getBooleanCfg( String cfgName ) {
         
         return nvpMgr.getConfig( CFG_GRP_NAME, cfgName, "false" )
                      .getBooleanValue() ;
+    }
+    
+    private int getIntCfg( String cfgName ) {
+        
+        return nvpMgr.getConfig( CFG_GRP_NAME, cfgName, "0" )
+                     .getIntValue() ;
     }
     
     @Override
@@ -57,6 +72,9 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
                 break ;
             case CFG_NET_LOG_ENABLED:
                 networkLoggingEnabled = nvp.getBooleanValue() ;
+                break ;
+            case CFG_RATE_LIMIT_MINUTE:
+                rateLimitPerMinute = nvp.getIntValue() ;
                 break ;
         }
     }
