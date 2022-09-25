@@ -145,7 +145,7 @@ capitalystNgApp.controller( 'ProfitLossController',
                 }
             }, 
             function(){
-                $scope.$parent.addErrorAlert( "Error fetching MF portfolio." ) ;
+                $scope.$parent.addErrorAlert( "Error fetching sell txns for current year." ) ;
             }
         )
         .finally(function() {

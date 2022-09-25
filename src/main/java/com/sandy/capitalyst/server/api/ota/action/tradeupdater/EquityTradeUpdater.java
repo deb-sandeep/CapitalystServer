@@ -39,18 +39,18 @@ import com.sandy.common.util.StringUtil ;
 
 public class EquityTradeUpdater extends OTA {
     
-    private static SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
+    private static SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy HH:mm:ss" ) ;
     
     public static final String NAME                 = "EquityTradeUpdater" ;
     public static final String CFG_GRP_NAME         = NAME ;
     public static final String CFG_LAST_UPDATE_DATE = "last_update_date" ;
-    public static final String CFG_ITER_DUR_IN_MTHS = "iteration_duration_mths" ;
+    public static final String CFG_ITER_DUR_IN_DAYS = "iteration_duration_days" ;
     
     public static final String CFG_INCL_PORTFOLIO_STOCKS = "incl_portfolio_stocks" ;
     public static final String CFG_EXCL_PORTFOLIO_STOCKS = "excl_portfolio_stocks" ;
     
     public static final String CFG_DEF_LAST_UPDATE_DATE = "01-01-2014" ;
-    public static final int    CFG_DEF_ITER_DUR_IN_MTHS = 3 ;
+    public static final int    CFG_DEF_ITER_DUR_IN_DAYS = 7 ;
 
     private EquityMasterRepo  emRepo    = null ;
     private EquityTradeRepo   etrdRepo  = null ;
@@ -64,7 +64,7 @@ public class EquityTradeUpdater extends OTA {
     
     private Date lastUpdateDate = null ;
     private Date iterToDate = null ;
-    private int  iterDurationMths = CFG_DEF_ITER_DUR_IN_MTHS ;
+    private int  iterDurationDays = CFG_DEF_ITER_DUR_IN_DAYS ;
     
     private List<String> inclPortfolioStocks = new ArrayList<>() ;
     private List<String> exclPortfolioStocks = new ArrayList<>() ;
@@ -90,14 +90,19 @@ public class EquityTradeUpdater extends OTA {
         lastUpdateDate = cfg.getDateValue( CFG_LAST_UPDATE_DATE, 
                                            CFG_DEF_LAST_UPDATE_DATE ) ;
         
-        iterDurationMths = cfg.getIntValue( CFG_ITER_DUR_IN_MTHS, 
-                                            CFG_DEF_ITER_DUR_IN_MTHS ) ;
+        iterDurationDays = cfg.getIntValue( CFG_ITER_DUR_IN_DAYS, 
+                                            CFG_DEF_ITER_DUR_IN_DAYS ) ;
         
         inclPortfolioStocks = cfg.getListValue( CFG_INCL_PORTFOLIO_STOCKS, "" ) ;
         
         exclPortfolioStocks = cfg.getListValue( CFG_EXCL_PORTFOLIO_STOCKS, "" ) ;
 
-        iterToDate = DateUtils.addMonths( lastUpdateDate, iterDurationMths ) ;
+        iterToDate = DateUtils.addDays( lastUpdateDate, iterDurationDays ) ;
+        
+        Date now = new Date() ;
+        if( iterToDate.after( now ) ) {
+            iterToDate = now ;
+        }
     }
 
     @Override
@@ -110,6 +115,7 @@ public class EquityTradeUpdater extends OTA {
         Breeze breeze = Breeze.instance() ;
         try {
             for( BreezeCred cred : breeze.getAllCreds() ) {
+                addResult( "------------------------------------" ) ; 
                 addResult( "Updating trades for " + cred.getUserName() ) ;
                 
                 addResult( "  Loading holdings" ) ;
@@ -122,15 +128,19 @@ public class EquityTradeUpdater extends OTA {
                 updateEquityHoldings( cred ) ;
             }
             
-            addResult( "  Statistics:" ) ;
-            addResult( "    numHoldingsCreated = " + numHoldingsCreated ) ;
-            addResult( "    numHoldingsUpdated = " + numHoldingsUpdated ) ;
-            addResult( "    numTradesCreated   = " + numTradesCreated   ) ;
-            addResult( "    numTradesProcessed = " + numTradesProcessed ) ;
-            addResult( "    numTxnCreated      = " + numTxnCreated      ) ;
-            addResult( "    numTxnUpdated      = " + numTxnUpdated      ) ;
+            addResult( "------------------------------------" ) ; 
+            addResult( "Statistics:" ) ;
+            addResult( "  numHoldingsCreated = " + numHoldingsCreated ) ;
+            addResult( "  numHoldingsUpdated = " + numHoldingsUpdated ) ;
+            addResult( "  numTradesCreated   = " + numTradesCreated   ) ;
+            addResult( "  numTradesProcessed = " + numTradesProcessed ) ;
+            addResult( "  numTxnCreated      = " + numTxnCreated      ) ;
+            addResult( "  numTxnUpdated      = " + numTxnUpdated      ) ;
             
-            addResult( "  Updating last update timestamp." ) ;
+            addResult( "" ) ;
+            addResult( "Updating last update timestamp. " +
+                       SDF.format( iterToDate ) ) ;
+
             cfg.setValue( CFG_LAST_UPDATE_DATE, iterToDate ) ;
         }
         catch( Exception e ) {
@@ -140,25 +150,31 @@ public class EquityTradeUpdater extends OTA {
     
     private void loadHoldings( BreezeCred cred ) throws Exception {
         
+        List<EquityHolding>                 lHoldings = null ;
+        List<PortfolioHolding>              bHoldings = null ;
+        BreezeGetPortfolioHoldingsAPI       api       = null ;
+        BreezeAPIResponse<PortfolioHolding> response  = null ;
+        
         localHoldingsMap.clear() ;
         breezeHoldingsMap.clear() ;
         
+        // ---------------------------------------------------------------------
         addResult( "    Loading DB holdings" ) ;
-        List<EquityHolding> lHoldings = ehRepo.findByOwnerName( cred.getUserName() ) ;
-        for( EquityHolding h : lHoldings ) {
-            localHoldingsMap.put( h.getSymbolIcici(), h ) ;
-        }
-        addResult( "      DB holdings loaded" ) ;
+        lHoldings = ehRepo.findByOwnerName( cred.getUserName() ) ;
         
+        lHoldings.forEach( h -> 
+            localHoldingsMap.put( h.getSymbolIcici(), h ) 
+        ) ;
+        
+        // ---------------------------------------------------------------------
         addResult( "    Loading Breeze holdings" ) ;
-        BreezeGetPortfolioHoldingsAPI api = new BreezeGetPortfolioHoldingsAPI() ;
-        BreezeAPIResponse<PortfolioHolding> response = api.execute( cred ) ;
-        List<PortfolioHolding> bHoldings = response.getEntities() ;
+        api       = new BreezeGetPortfolioHoldingsAPI() ;
+        response  = api.execute( cred ) ;
+        bHoldings = response.getEntities() ;
         
-        for( PortfolioHolding ph : bHoldings ) {
+        bHoldings.forEach( ph -> {
             this.breezeHoldingsMap.put( ph.getSymbol(), ph ) ;
-        }
-        addResult( "      Breeze holdings loaded" ) ;
+        } ) ;
     }
     
     private void updateTrades( BreezeCred cred, Date fromDate, Date toDate ) 
@@ -166,7 +182,7 @@ public class EquityTradeUpdater extends OTA {
         
         addResult( "    Getting breeze trades" ) ;
         List<Trade> trades = getBreezeTrades( cred, fromDate, toDate ) ;
-        addResult( "      Breze trades obtained. " + trades.size() + " trades." ) ;
+        addResult( "    " + trades.size() + " Breeze trades obtained." ) ;
         
         if( trades != null && !trades.isEmpty() ) {
             
@@ -186,6 +202,7 @@ public class EquityTradeUpdater extends OTA {
                         " | " + leftPad  ( "" + trade.getQuantity(), 4 ) + 
                         " | " + trade.getOrderId() ;
                 
+                addResult( "" ) ;
                 addResult( "    " + msg ) ;
                 
                 EquityHolding    eh = null ;
@@ -214,7 +231,6 @@ public class EquityTradeUpdater extends OTA {
                     et = processNewTrade( eh, trade, cred ) ;
                 }
                 
-                addResult( "    Procssing txns for order " + et.getOrderId() ) ;
                 processTxnsForTrade( eh, et, cred );
             }
         }
@@ -223,7 +239,7 @@ public class EquityTradeUpdater extends OTA {
     private EquityTrade processNewTrade( EquityHolding eh, Trade trade, BreezeCred cred ) 
         throws Exception {
         
-        addResult( "    Creating new trade - " + trade.getOrderId() ) ;
+        addResult( "      Creating new trade - " + trade.getOrderId() ) ;
         
         EquityTrade et = new EquityTrade() ;
         
@@ -257,18 +273,18 @@ public class EquityTradeUpdater extends OTA {
         BreezeGetTradeDetailAPI        api        = null ;
         BreezeAPIResponse<TradeDetail> response   = null ;
         
-        addResult( "    Loading breeze transactions" ) ;
+        addResult( "      Loading breeze transactions" ) ;
         api = new BreezeGetTradeDetailAPI() ;
         api.setOrderId( trade.getOrderId() ) ;
         
         response = api.execute( cred ) ;
         breezeTxns = response.getEntities() ;
         
-        addResult( "     " + breezeTxns.size() + " breeze txns found." ) ;
+        addResult( "        " + breezeTxns.size() + " breeze txns found." ) ;
 
         for( TradeDetail breezeTxn : breezeTxns ) {
             
-            addResult( "     Processing txn " + breezeTxn.getTradeId() ) ;
+            addResult( "      Processing txn " + breezeTxn.getTradeId() ) ;
             
             EquityTxn txn = etxnRepo.findByOrderIdAndTradeId( 
                                   trade.getOrderId(), breezeTxn.getTradeId() ) ;
@@ -282,12 +298,9 @@ public class EquityTradeUpdater extends OTA {
             // tradeId, settlement details etc.
             if( txn == null ) {
                 txn = findClosestMatchingTxn( breezeTxn, eh ) ;
-                if( txn != null ) {
-                    addResult( "       closest match exists." ) ;
-                }
             }
             else {
-                addResult( "       txn exists." ) ;
+                addResult( "        txn exists." ) ;
             }
             
             boolean txnNeedsSaving = false ;
@@ -299,7 +312,7 @@ public class EquityTradeUpdater extends OTA {
             }
             else {
                 if( StringUtil.isEmptyOrNull( txn.getOrderId() ) ) {
-                    addResult( "       updating existing txn." ) ;
+                    addResult( "        updating existing txn." ) ;
                     updateExistingTxn( trade, breezeTxn, txn ) ;
                     txnNeedsSaving = true ;
                 }

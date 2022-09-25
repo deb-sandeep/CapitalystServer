@@ -92,7 +92,8 @@ public abstract class BreezeAPI<T> {
         
         checkMandatoryParameters() ;
         
-        BreezeSession session = BreezeSessionManager.instance().getSession( cred ) ;
+        BreezeSession session = BreezeSessionManager.instance()
+                                                    .getSession( cred ) ;
         APIInvocationInfo invInfo = null ;
 
         if( session != null ) {
@@ -115,6 +116,11 @@ public abstract class BreezeAPI<T> {
                 
                 response = createResponse( json ) ;
                 invInfo.setCallStatus( response.getStatus() ) ;
+                
+                if( response.getStatus() == 500 ) {
+                    throw new BreezeAPIException( response.getStatus(), 
+                                                  response.getError() ) ;
+                }
             }
             catch( BreezeAPIException e ) {
                 

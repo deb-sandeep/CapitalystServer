@@ -52,6 +52,7 @@ public class EquitySellTxnQueryController {
         try {
             dateRange = getDateRange( fy ) ;
             holdingsSold = ehRepo.getHoldingsSold( dateRange[0], dateRange[1] ) ;
+            
             for( Integer holdingId : holdingsSold ) {
                 collateSellTxns( holdingId, sellTxns ) ;
             }
@@ -162,6 +163,10 @@ public class EquitySellTxnQueryController {
         
         eh = ehRepo.findById( holdingId ).get() ;
         txnList = etRepo.findByHoldingIdOrderByTxnDateAscActionAsc( holdingId ) ;
+        
+        log.debug( "Collating sell txns for " + eh.getSymbolIcici() + 
+                   " for user " + eh.getOwnerName() + 
+                   ". holding id = " + eh.getId() ) ;
 
         helper = new EquitySellTxnVOListBuilder() ;
         sellTxns.addAll( helper.buildSellTxnVOList( eh, txnList ) ) ;

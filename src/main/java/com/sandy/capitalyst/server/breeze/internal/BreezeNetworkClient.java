@@ -45,7 +45,7 @@ public class BreezeNetworkClient {
         @Getter private int status = 0 ;
         @Getter private String errorMsg = null ;
         
-        private BreezeAPIException( int status, String msg ) {
+        BreezeAPIException( int status, String msg ) {
             this.status = status ;
             this.errorMsg = msg ;
         }
@@ -112,6 +112,9 @@ public class BreezeNetworkClient {
                               .isNetworkLoggingEnabled() ;
         
         if( netLogEnabled ) {
+            if( session == null ) {
+                log.info( "Making a call with null session" ) ;
+            }
             log.debug( "GET " + urlStr ) ;
         }
         
@@ -168,32 +171,36 @@ public class BreezeNetworkClient {
     }
     
     private void setHeaders( HttpRequestBase req, 
-                             Map<String, String> headers,
+                             Map<String, String> customHeaders,
                              String body, BreezeSession session ) 
         throws Exception {
         
         if( netLogEnabled ) {
             log.debug( "  Headers:" ) ;
-        }
-        
-        if( headers != null && !headers.isEmpty() ) {
-            for( String header : headers.keySet() ) {
-                String val = headers.get( header ) ;
-                req.addHeader( header, val ) ;
-                if( netLogEnabled ) {
-                    log.debug( "    " + header + " = " + val ) ;
-                }
-            }
+            log.debug( "    Standard Headers:" ) ;
         }
         
         for( String header : standardHeaders.keySet() ) {
             String val = standardHeaders.get( header ) ;
             req.addHeader( header, val ) ;
             if( netLogEnabled ) {
-                log.debug( "    " + header + " = " + val ) ;
+                log.debug( "      " + header + " = " + val ) ;
             }
         }
 
+        if( customHeaders != null && !customHeaders.isEmpty() ) {
+            if( netLogEnabled ) {
+                log.debug( "    Custom Headers:" ) ;
+            }
+            for( String header : customHeaders.keySet() ) {
+                String val = customHeaders.get( header ) ;
+                req.addHeader( header, val ) ;
+                if( netLogEnabled ) {
+                    log.debug( "      " + header + " = " + val ) ;
+                }
+            }
+        }
+        
         if( session != null ) {
             addChecksumHeaders( req, body, session ) ;
         }
@@ -206,6 +213,14 @@ public class BreezeNetworkClient {
         String timestamp = SDF.format( new Date() ) ;
         String checksum  = generateChecksum( timestamp, body, 
                                              session.getCred().getSecretKey() ) ;
+        
+        if( netLogEnabled ) {
+            log.debug( "    Checksum Headers:" ) ;
+            log.debug( "      X-Checksum     = token " + checksum ) ;
+            log.debug( "      X-Timestamp    = " + timestamp ) ;
+            log.debug( "      X-AppKey       = " + session.getCred().getAppKey() ) ;
+            log.debug( "      X-SessionToken = " + session.getSessionToken() ) ;
+        }
         
         req.addHeader( "X-Checksum",     "token " + checksum ) ;
         req.addHeader( "X-Timestamp",    timestamp ) ;

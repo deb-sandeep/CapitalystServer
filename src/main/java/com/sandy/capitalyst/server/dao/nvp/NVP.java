@@ -25,7 +25,7 @@ import lombok.Data ;
 @Table( name = "nvp" )
 public class NVP {
     
-    public static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MM-yyyy hh:mm:ss" ) ;
+    public static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MM-yyyy HH:mm:ss" ) ;
 
     @Id
     @GeneratedValue( strategy=GenerationType.AUTO )

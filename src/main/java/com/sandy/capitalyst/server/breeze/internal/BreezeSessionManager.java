@@ -129,10 +129,10 @@ public class BreezeSessionManager {
         BreezeSession session = sessionMap.get( uid ) ;
         
         if( session == null ) {
-            log.debug( "  No live session found. Checking serialized session" ) ;
+            log.info( "  No live session found. Checking serialized session" ) ;
             session = deserializeSession( uid ) ;
             if( session == null ) {
-                log.debug( "  No serialized session found." ) ;
+                log.info( "  No serialized session found." ) ;
             }
         }
         
@@ -147,17 +147,19 @@ public class BreezeSessionManager {
         
         if( session.initializationRequired() ) {
             try {
-                log.debug( "  Creating new session." ) ;
+                log.info( "  Creating new session." ) ;
                 generateNewSession( session ) ;
                 
-                // Replace the existing session in the map
-                sessionMap.put( uid, session ) ;
+                // No need to put the session back into the map. We are
+                // working on the reference of the existing instance.
                 
                 log.debug( "  Serializing session." ) ;
                 serializeSession( session ) ;
             }
             catch( Exception e ) {
                 log.error( "BreezeSession initialization failed.", e ) ;
+                sessionMap.remove( uid ) ;
+                return null ;
             }
         }
         
@@ -218,6 +220,10 @@ public class BreezeSessionManager {
             resBodyContent = response.body().string() ;
             
             inputNameValues = getInputAttrValuePairs( resBodyContent, "name" ) ;
+            if( inputNameValues.isEmpty() ) {
+                throw new Exception( "Invalid breeze login page obtained. " + 
+                                     "Response = " + resBodyContent ) ;
+            }
         }
         finally {
             if( response != null ) {
@@ -259,6 +265,10 @@ public class BreezeSessionManager {
             }
         
             idValMap = getInputAttrValuePairs( resBodyContent, "id" ) ;
+            if( idValMap.isEmpty() ) {
+                throw new Exception( "Invalid login response obtained. " + 
+                                     "Response = " + resBodyContent ) ;
+            }
         }
         finally {
             if( response != null ) {
@@ -321,6 +331,11 @@ public class BreezeSessionManager {
             }
             
             idValMap = getInputAttrValuePairs( resBodyContent, "id" ) ;
+            
+            if( idValMap.isEmpty() || !idValMap.containsKey( "API_Session" ) ) {
+                throw new Exception( "API_Session could not be obtained. " + 
+                                     "Response = " + resBodyContent ) ;
+            }
             sessionKey = idValMap.get( "API_Session" ) ;
         }
         finally {
@@ -354,6 +369,10 @@ public class BreezeSessionManager {
         String sessionToken = null ;
         if( successNode != null ) {
             JsonNode tokenNode = successNode.get( "session_token" ) ;
+            
+            if( tokenNode == null ) {
+                throw new Exception( "Session token could not be obtained." ) ;
+            }
             sessionToken = tokenNode.asText() ;
         }
         

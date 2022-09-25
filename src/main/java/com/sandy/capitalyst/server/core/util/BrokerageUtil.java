@@ -9,10 +9,10 @@ public class BrokerageUtil {
         
         // This is dependent upon the brokerage plan.
         if( ownerName.equalsIgnoreCase( "Sandeep" ) ) {
-            brokeragePct = (float)( tradePrice * (0.1/100)) ;
+            brokeragePct = 0.1f ;
         }
         else if( ownerName.equalsIgnoreCase( "Sova" ) ) {
-            brokeragePct = (float)( tradePrice * (0.22/100)) ;
+            brokeragePct = 0.22f ;
         }
 
         return (float)( tradePrice * (brokeragePct/100)) ;

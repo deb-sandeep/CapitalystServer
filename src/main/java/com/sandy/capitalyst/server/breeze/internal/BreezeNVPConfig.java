@@ -17,7 +17,7 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
     
     public static final String CFG_PRINT_API_RESPONSE = "print_api_response" ;
     public static final String CFG_NET_LOG_ENABLED    = "network_log_enabled" ;
-    public static final String CFG_RATE_LIMIT_MINUTE  = "rate_limit_per_minute" ;
+    public static final String CFG_RATE_LIMIT_MINUTE  = "api_rate_limit_per_minute" ;
     
     @Getter
     private boolean printAPIResponse = false ;
