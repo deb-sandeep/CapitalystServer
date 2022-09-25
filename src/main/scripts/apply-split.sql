@@ -5,12 +5,18 @@
 --          -> DO NOT run this while drunk
 --          -> Take a backup of the database before running it.
 
-SET @SPLIT_RATIO    = 10 ;
-SET @SYMBOL_IDIRECT = 'NIFBEE'    collate utf8mb4_unicode_ci ;
-SET @SYMBOL_NSE     = 'NIFTYBEES' collate utf8mb4_unicode_ci ;
+SET @SPLIT_RATIO    = 100 ;
+SET @SYMBOL_IDIRECT = 'GOLDEX'   collate utf8mb4_unicode_ci ;
+SET @SYMBOL_NSE     = 'GOLDBEES' collate utf8mb4_unicode_ci ;
 SET @SPLIT_DATE     = '2019-12-19' ;
 
 -- EQUITY_HOLDING --------------------------------------------------------------
+SELECT *
+FROM equity_holding
+WHERE 
+    quantity > 0 AND
+    symbol_icici = @SYMBOL_IDIRECT ;
+
 UPDATE equity_holding
 SET
     quantity = quantity*@SPLIT_RATIO,
@@ -28,7 +34,9 @@ WHERE
         SELECT id
         FROM equity_holding
         WHERE symbol_icici = @SYMBOL_IDIRECT
-    ) ;
+    ) 
+ORDER BY
+    trade_date DESC ;
 
 UPDATE equity_trade
 SET 
@@ -50,7 +58,9 @@ WHERE
         SELECT id
         FROM equity_holding
         WHERE symbol_icici = @SYMBOL_IDIRECT
-    ) ;
+    ) 
+ORDER BY
+    txn_date DESC ;
 
 UPDATE equity_txn
 SET
