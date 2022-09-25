@@ -134,7 +134,7 @@ public class BreezeNetworkClient {
             
             setHeaders( request, customHdrs, body, session ) ;
             
-            rateLimiter.throttle( session.getUserId() ) ;
+            rateLimiter.throttle( session ) ;
             
             response = httpClient.execute( request ) ;
             

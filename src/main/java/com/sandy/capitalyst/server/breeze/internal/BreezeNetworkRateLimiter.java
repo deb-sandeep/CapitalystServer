@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
 
 public class BreezeNetworkRateLimiter {
 
@@ -19,11 +20,15 @@ public class BreezeNetworkRateLimiter {
     
     private Map<String, Queue<Long>> callTimelines = new HashMap<>() ;
     
-    public void throttle( String userId ) {
+    public void throttle( BreezeSession session ) {
+        
+        if( session == null ) {
+            return ;
+        }
         
         int rateLimit = Breeze.instance().getNVPCfg().getRateLimitPerMinute() ;
         
-        Queue<Long> callTimelineQueue = getCallTimelineQueue( userId ) ;
+        Queue<Long> callTimelineQueue = getCallTimelineQueue( session.getUserId() ) ;
         callTimelineQueue.add( System.currentTimeMillis() ) ;
         
         long windowEnd   = System.currentTimeMillis() ;
