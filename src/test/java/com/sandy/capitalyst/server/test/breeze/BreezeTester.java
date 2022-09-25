@@ -108,10 +108,11 @@ public class BreezeTester {
     private void getTrades() throws Exception {
         
         BreezeGetTradeListAPI api = new BreezeGetTradeListAPI() ;
-        api.setFromDate( DateUtils.addYears( new Date(), -20 ) ) ;
+        api.setFromDate( DateUtils.addYears( new Date(), -1 ) ) ;
+        api.setStockCode( "LIC" ) ;
         //api.setFromDate( DateUtils.addDays( new Date(), -5 ) ) ;
         
-        BreezeCred cred = Breeze.instance().getCred( "sovadeb" ) ;
+        BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
         BreezeAPIResponse<Trade> response = api.execute( cred ) ;
         
         SimpleDateFormat sdf = new SimpleDateFormat( "dd-MMM-yyyy" ) ;

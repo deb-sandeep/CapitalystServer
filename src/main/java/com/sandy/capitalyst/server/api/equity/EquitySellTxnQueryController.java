@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.api.equity ;
 
+import static org.apache.commons.lang.StringUtils.rightPad ;
+
 import java.time.Month ;
 import java.util.ArrayList ;
 import java.util.Calendar ;
@@ -164,9 +166,10 @@ public class EquitySellTxnQueryController {
         eh = ehRepo.findById( holdingId ).get() ;
         txnList = etRepo.findByHoldingIdOrderByTxnDateAscActionAsc( holdingId ) ;
         
-        log.debug( "Collating sell txns for " + eh.getSymbolIcici() + 
-                   " for user " + eh.getOwnerName() + 
-                   ". holding id = " + eh.getId() ) ;
+        log.debug( "Collating sell txns." + 
+                   " "  + rightPad( eh.getSymbolIcici(), 6 ) + 
+                   " for " + rightPad( eh.getOwnerName(), 10 ) + 
+                   " holding id = " + eh.getId() ) ;
 
         helper = new EquitySellTxnVOListBuilder() ;
         sellTxns.addAll( helper.buildSellTxnVOList( eh, txnList ) ) ;
