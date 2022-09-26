@@ -102,7 +102,8 @@ public class EquityTradeUpdater extends OTA {
 
         iterToDate = DateUtils.addDays( lastUpdateDate, iterDurationDays ) ;
         
-        updateAvgCostPrice = cfg.getBoolValue( CFG_UPDATE_AVG_COST_PRICE, true ) ;
+        updateAvgCostPrice = cfg.getBoolValue( CFG_UPDATE_AVG_COST_PRICE, 
+                                               updateAvgCostPrice ) ;
         
         Date now = new Date() ;
         if( iterToDate.after( now ) ) {

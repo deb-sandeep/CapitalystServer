@@ -58,8 +58,8 @@ public class BreezeTester {
         
         //getPortfolioHoldings() ;
         //getTrades( "25-Sep-2022", "26-Sep-2022" ) ;
-        //getTradeDetail( null ) ;
-        getDmatHoldings() ;
+        getTradeDetail( "20210901N800022001" ) ;
+        //getDmatHoldings() ;
     }
     
     public void getDmatHoldings() throws Exception {
@@ -125,8 +125,8 @@ public class BreezeTester {
         for( TradeDetail detail : response.getEntities() ) {
             log.debug( sdf.format( detail.getTxnDate() ) + " | " + 
                        leftPad( "" + detail.getQuantity(), 5) + " | " +
-                       leftPad( "" + detail.getTxnPrice(), 6) + " | " + 
-                       leftPad( "" + detail.getBrokerage(), 4) + " | " ) ;
+                       leftPad( "" + detail.getTxnPrice(), 8) + " | " + 
+                       leftPad( "" + detail.getBrokerage(), 7) + " | " ) ;
         }
     }
 }

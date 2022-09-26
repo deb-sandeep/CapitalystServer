@@ -37,8 +37,8 @@ public class IndividualEquityHoldingVO extends EquityHolding {
     private float sellSTT                 = 0 ;
     private float sellTotalTxnCharges     = 0 ;
     
-    private String uniqueId         = null ;
-    private String holdingType      = "Individual" ;
+    private String uniqueId    = null ;
+    private String holdingType = "Individual" ;
     
     private List<EquityBuyTxnVO> buyTxnVOList = new ArrayList<>() ;
     

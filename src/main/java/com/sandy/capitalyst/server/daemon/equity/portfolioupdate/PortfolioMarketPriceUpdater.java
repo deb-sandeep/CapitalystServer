@@ -1,7 +1,10 @@
 package com.sandy.capitalyst.server.daemon.equity.portfolioupdate;
 
+import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+
 import java.util.Date ;
 import java.util.List ;
+import java.util.concurrent.TimeUnit ;
 
 import org.apache.log4j.Logger ;
 
@@ -10,19 +13,24 @@ import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.internal.TradingHolidayCalendar ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
-
-import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 
 public class PortfolioMarketPriceUpdater extends Thread {
 
     private static final Logger log = Logger.getLogger( PortfolioMarketPriceUpdater.class ) ;
 
     private static PortfolioMarketPriceUpdater instance = null ;
-    private static boolean DEBUG_ENABLE = false ;
     
+    public static final String CFG_GRP_NAME = "PortfolioCMPUpdaterDaemon" ;
+    
+    public static final String CFG_PAUSE_REFRESH_FLAG = "pause_refresh" ;
+    public static final String CFG_LIVE_REFRESH_DELAY = "refresh_delay_secs" ;
+    public static final String CFG_PRINT_DEBUG_STMT   = "debug_enable" ;
+
     public static PortfolioMarketPriceUpdater instance() {
         if( instance == null ) {
             instance = new PortfolioMarketPriceUpdater() ;
@@ -32,11 +40,17 @@ public class PortfolioMarketPriceUpdater extends Thread {
     
     private TradingHolidayCalendar holidayCalendar = null ;
     private BreezeGetPortfolioHoldingsAPI api = null ;
+    
     private EquityHoldingRepo ehRepo = null ;
+    
+    private boolean pauseRefresh = false ;
+    private int     refreshDelay = 10 ;
+    private boolean debugEnable  = false ;
     
     private PortfolioMarketPriceUpdater() {}
 
     public void initialize() throws Exception {
+        
         this.holidayCalendar = new TradingHolidayCalendar() ;
         this.api = new BreezeGetPortfolioHoldingsAPI() ;
         this.ehRepo = getBean( EquityHoldingRepo.class ) ;
@@ -46,20 +60,40 @@ public class PortfolioMarketPriceUpdater extends Thread {
         while( true ) {
             try {
                 if( holidayCalendar.isMarketOpenNow() ) {
-                    updateCurrentMktPriceInPortfolio() ;
+                    
+                    refreshConfiguration() ;
+                    
+                    if( pauseRefresh ) {
+                        if( debugEnable ) {
+                            log.debug( "Portfolio CMP refresh paused." ) ;
+                        }
+                    }
+                    else {
+                        updateCurrentMktPriceInPortfolio() ;
+                    }
                     // 15 seconds gap -> 1680 calls per trading day
                     // 10 seconds gap -> 2500 calls
                     //  5 seconds gap -> 5040 calls
-                    Thread.sleep( 10*1000 ) ;
+                    TimeUnit.SECONDS.sleep( refreshDelay ) ;
                 }
                 else {
-                    Thread.sleep( 2*60*1000 ) ;
+                    TimeUnit.MINUTES.sleep( 2 ) ;
                 }
             }
             catch( Exception e ) {
                 log.error( "Error updating portfolio current mkt price.", e ) ;
             }
         }
+    }
+    
+    private void refreshConfiguration() {
+        
+        NVPManager nvpMgr = NVPManager.instance() ;
+        NVPConfigGroup cfg = nvpMgr.getConfigGroup( CFG_GRP_NAME ) ; ;
+
+        pauseRefresh = cfg.getBoolValue( CFG_PAUSE_REFRESH_FLAG, pauseRefresh ) ;
+        refreshDelay = cfg.getIntValue ( CFG_LIVE_REFRESH_DELAY, refreshDelay ) ;
+        debugEnable  = cfg.getBoolValue( CFG_PRINT_DEBUG_STMT,   debugEnable  ) ;
     }
     
     private void updateCurrentMktPriceInPortfolio() 
@@ -70,7 +104,7 @@ public class PortfolioMarketPriceUpdater extends Thread {
         List<BreezeCred> credentials = Breeze.instance().getAllCreds() ;
         
         for( BreezeCred cred : credentials ) {
-            if( DEBUG_ENABLE ) {
+            if( debugEnable ) {
                 log.debug( "Updating Portfolio CMP for " + cred.getUserName() ) ;
             }
             response = api.execute( cred ) ;
@@ -111,7 +145,7 @@ public class PortfolioMarketPriceUpdater extends Thread {
         List<EquityHolding> ehList = ehRepo.findBySymbolIcici( symbolIcici ) ;
         for( EquityHolding eh : ehList ) {
             
-            if( DEBUG_ENABLE ) {
+            if( debugEnable ) {
                 log.debug( "Updating intra-day CMP for " + symbolIcici ) ;
             }
             
