@@ -21,7 +21,7 @@
     <fileSets>
         <fileSet>
             <directory>${project.basedir}</directory>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>README*</include>
                 <include>LICENSE*</include>
@@ -30,14 +30,14 @@
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/scripts</directory>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>*</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory>/lib</outputDirectory>
+            <outputDirectory>${file.separator}lib</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>

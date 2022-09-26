@@ -438,7 +438,8 @@ public class EquityTradeUpdater extends OTA {
         for( String symbolIcici : localHoldingsMap.keySet() ) {
             
             if( !shouldProcessHolding( symbolIcici ) ) {
-                addResult( "    Ignoring " + symbolIcici + " based on config." ) ;
+                addResult( "    Ignoring holding update for " + symbolIcici + 
+                           " based on config." ) ;
                 breezeHoldingsMap.remove( symbolIcici ) ;
                 continue ;
             }
@@ -453,6 +454,8 @@ public class EquityTradeUpdater extends OTA {
                 // A Capitalyst holding exists, but a breeze holding does 
                 // not exist. This implies that the DMAT quantity is zero.
                 if( capitalystHolding.getQuantity() != 0 ) {
+                    addResult( "    Setting quantity for " + symbolIcici + 
+                               " to zero" ) ;
                     setCapitalystHoldingQuantityToZero( capitalystHolding ) ;
                 }
             }
@@ -461,6 +464,11 @@ public class EquityTradeUpdater extends OTA {
                 // if the quantities differ. If so, sync with breeze, else
                 // ignore.
                 if( capitalystHolding.getQuantity() != breezeHolding.getQuantity() ) {
+                    
+                    addResult( "    Updating local quantity for " + symbolIcici ) ;
+                    addResult( "      Old quantity = " + capitalystHolding.getQuantity() ) ;
+                    addResult( "      New quantity = " + breezeHolding.getQuantity() ) ;
+                    
                     syncLocalHoldingWithBreeze( capitalystHolding, breezeHolding ) ;
                 }
                 
@@ -478,6 +486,7 @@ public class EquityTradeUpdater extends OTA {
             for( PortfolioHolding bh : breezeHoldingsMap.values() ) {
                 
                 String symbolIcici = bh.getSymbol() ;
+                addResult( "    Creating new holding for " + symbolIcici ) ;
                 
                 createNewEquityHolding( symbolIcici, bh, cred ) ;
                 breezeHoldingsMap.remove( symbolIcici ) ;
