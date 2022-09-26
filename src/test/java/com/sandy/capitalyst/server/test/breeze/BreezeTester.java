@@ -58,7 +58,7 @@ public class BreezeTester {
         
         //getPortfolioHoldings() ;
         //getTrades( "25-Sep-2022", "26-Sep-2022" ) ;
-        getTradeDetail( "20210901N800022001" ) ;
+        getTradeDetail( "20200803N100016404" ) ;
         //getDmatHoldings() ;
     }
     
