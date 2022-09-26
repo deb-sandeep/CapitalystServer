@@ -49,6 +49,8 @@ public class EquityTradeUpdater extends OTA {
     public static final String CFG_INCL_PORTFOLIO_STOCKS = "incl_portfolio_stocks" ;
     public static final String CFG_EXCL_PORTFOLIO_STOCKS = "excl_portfolio_stocks" ;
     
+    public static final String CFG_UPDATE_AVG_COST_PRICE = "update_avg_cost_price" ;
+
     public static final String CFG_DEF_LAST_UPDATE_DATE = "01-01-2014" ;
     public static final int    CFG_DEF_ITER_DUR_IN_DAYS = 7 ;
 
@@ -62,9 +64,10 @@ public class EquityTradeUpdater extends OTA {
     
     private NVPConfigGroup cfg = null ;
     
-    private Date lastUpdateDate = null ;
-    private Date iterToDate = null ;
-    private int  iterDurationDays = CFG_DEF_ITER_DUR_IN_DAYS ;
+    private Date    lastUpdateDate     = null ;
+    private Date    iterToDate         = null ;
+    private int     iterDurationDays   = CFG_DEF_ITER_DUR_IN_DAYS ;
+    private boolean updateAvgCostPrice = true ;
     
     private List<String> inclPortfolioStocks = new ArrayList<>() ;
     private List<String> exclPortfolioStocks = new ArrayList<>() ;
@@ -98,6 +101,8 @@ public class EquityTradeUpdater extends OTA {
         exclPortfolioStocks = cfg.getListValue( CFG_EXCL_PORTFOLIO_STOCKS, "" ) ;
 
         iterToDate = DateUtils.addDays( lastUpdateDate, iterDurationDays ) ;
+        
+        updateAvgCostPrice = cfg.getBoolValue( CFG_UPDATE_AVG_COST_PRICE, true ) ;
         
         Date now = new Date() ;
         if( iterToDate.after( now ) ) {
@@ -518,10 +523,13 @@ public class EquityTradeUpdater extends OTA {
          float curPrice = ph.getCurrentMktPrice() ;
     
          eh.setQuantity        ( quantity   ) ;
-         eh.setAvgCostPrice    ( avgPrice   ) ;
          eh.setCurrentMktPrice ( curPrice   ) ;
          eh.setDayGain         ( dayGain    ) ;
          eh.setLastUpdate      ( new Date() ) ;
+         
+         if( updateAvgCostPrice ) {
+             eh.setAvgCostPrice( avgPrice ) ;
+         }
          
          numHoldingsUpdated++ ;
          
@@ -552,11 +560,14 @@ public class EquityTradeUpdater extends OTA {
         eh.setCompanyName        ( em.getName()       ) ;
         eh.setIsin               ( em.getIsin()       ) ;
         eh.setQuantity           ( quantity           ) ;
-        eh.setAvgCostPrice       ( avgPrice           ) ;
         eh.setCurrentMktPrice    ( em.getClose()      ) ;
         eh.setRealizedProfitLoss ( 0                  ) ;
         eh.setDayGain            ( dayGain            ) ;
         eh.setLastUpdate         ( new Date()         ) ;
+        
+        if( updateAvgCostPrice ) {
+            eh.setAvgCostPrice( avgPrice ) ;
+        }
         
         eh = ehRepo.save( eh ) ;
 
