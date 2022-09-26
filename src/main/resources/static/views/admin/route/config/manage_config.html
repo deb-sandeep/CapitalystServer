@@ -39,18 +39,25 @@
 	           <td class="fixed-font">{{cfg.groupName}}</td>
 	           <td class="fixed-font">{{cfg.configName}}</td>
 	           <td>
-	               <div ng-if="!cfg.editing"
-	                    ng-dblclick="editConfig( cfg )"
-	                    class="fixed-font">
-		               {{cfg.value}}
+	               <div ng-if="!cfg.boolFlag">
+		               <div ng-if="!cfg.editing"
+		                    ng-dblclick="editConfig( cfg )"
+		                    class="fixed-font">
+			               {{cfg.value}}
+		               </div>
+	                   <div ng-if="cfg.editing" style="width:100%">
+	                       <input type="text"
+	                              ng-enter="saveConfig( cfg )"
+	                              ng-escape="cancelEditing()"
+	                              ng-model="tempEditValues.value"
+	                              style="width:100%;"/>
+	                   </div>
 	               </div>
-                   <div ng-if="cfg.editing" style="width:100%">
-                       <input type="text"
-                              ng-enter="saveConfig( cfg )"
-                              ng-escape="cancelEditing()"
-                              ng-model="tempEditValues.value"
-                              style="width:100%;"/>
-                   </div>
+	               <div ng-if="cfg.boolFlag">
+		                <input type="checkbox" 
+		                       ng-model="cfg.boolValue"
+		                       ng-change="saveConfig( cfg )"/>
+	               </div>
 	           </td>
                <td>
                    <div ng-if="!cfg.editing">

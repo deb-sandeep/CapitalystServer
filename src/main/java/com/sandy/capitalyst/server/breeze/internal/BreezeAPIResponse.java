@@ -20,4 +20,8 @@ public class BreezeAPIResponse<T> {
     public void addEntity( T t ) {
         entities.add( t ) ;
     }
+    
+    public boolean isError() {
+        return status != 200 ;
+    }
 }

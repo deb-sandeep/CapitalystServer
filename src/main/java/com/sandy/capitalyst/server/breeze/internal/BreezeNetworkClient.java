@@ -10,10 +10,13 @@ import java.util.HashMap ;
 import java.util.Map ;
 import java.util.TimeZone ;
 
+import javax.net.ssl.SSLHandshakeException ;
+
 import org.apache.commons.codec.binary.Hex ;
 import org.apache.commons.io.IOUtils ;
 import org.apache.http.HttpEntity ;
 import org.apache.http.HttpResponse ;
+import org.apache.http.NoHttpResponseException ;
 import org.apache.http.client.HttpClient ;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase ;
 import org.apache.http.client.methods.HttpRequestBase ;
@@ -24,6 +27,7 @@ import org.apache.log4j.Logger ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
+import com.univocity.parsers.common.input.EOFException ;
 
 import lombok.Getter ;
 
@@ -162,6 +166,15 @@ public class BreezeNetworkClient {
                     log.debug( "    " + responseStr ) ;
                 }
             }
+        }
+        catch( NoHttpResponseException nhre ) {
+            throw new BreezeAPIException( -1, "Server did not send any response." ) ;
+        }
+        catch( SSLHandshakeException ssle ) {
+            throw new BreezeAPIException( -1, "SSL handshake failure." ) ;
+        }
+        catch( EOFException eofe ) {
+            throw new BreezeAPIException( -1, "Server abruptly closed the response stream." ) ;
         }
         finally {
             request.releaseConnection() ;

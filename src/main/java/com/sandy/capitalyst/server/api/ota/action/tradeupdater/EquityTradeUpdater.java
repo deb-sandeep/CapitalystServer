@@ -176,11 +176,18 @@ public class EquityTradeUpdater extends OTA {
         addResult( "    Loading Breeze holdings" ) ;
         api       = new BreezeGetPortfolioHoldingsAPI() ;
         response  = api.execute( cred ) ;
-        bHoldings = response.getEntities() ;
         
-        bHoldings.forEach( ph -> {
-            this.breezeHoldingsMap.put( ph.getSymbol(), ph ) ;
-        } ) ;
+        if( !response.isError() ) {
+            bHoldings = response.getEntities() ;
+            bHoldings.forEach( ph -> {
+                this.breezeHoldingsMap.put( ph.getSymbol(), ph ) ;
+            } ) ;
+        }
+        else {
+            addResult( "     ERROR loading breeze holdings." ) ; 
+            addResult( "      Msg: " + response.getError() ) ; 
+            throw new Exception( "Error loading breeze holdings." ) ;
+        }
     }
     
     private void updateTrades( BreezeCred cred, Date fromDate, Date toDate ) 
@@ -284,8 +291,13 @@ public class EquityTradeUpdater extends OTA {
         api.setOrderId( trade.getOrderId() ) ;
         
         response = api.execute( cred ) ;
-        breezeTxns = response.getEntities() ;
+        if( response.isError() ) {
+            addResult( "      ERROR loading breeze transactions." ) ; 
+            addResult( "       Msg: " + response.getError() ) ; 
+            throw new Exception( "Error loading breeze holdings." ) ;
+        }
         
+        breezeTxns = response.getEntities() ;
         addResult( "        " + breezeTxns.size() + " breeze txns found." ) ;
 
         for( TradeDetail breezeTxn : breezeTxns ) {
@@ -407,7 +419,7 @@ public class EquityTradeUpdater extends OTA {
         
         response = api.execute( cred ) ;
         
-        if( response.getStatus() != 200 ) {
+        if( response.isError()) {
             throw new Exception( "BreezeGetTradeListAPI server error. " + 
                                  "Status = " + response.getStatus() + ". " + 
                                  "Error = " + response.getError() ) ;

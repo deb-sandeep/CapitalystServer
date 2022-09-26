@@ -13,7 +13,7 @@ capitalystNgApp.controller( 'ManageConfigController',
     $scope.groupedCfgs = null ;
     
     $scope.tempEditValues = {
-        value : "",
+        value       : "",
         description : ""
     } ;
     $scope.isEditing = false ;
@@ -43,7 +43,12 @@ capitalystNgApp.controller( 'ManageConfigController',
     }
     
     $scope.saveConfig = function( cfg ) {
-        cfg.value = $scope.tempEditValues.value ;
+        if( cfg.boolFlag ) {
+            cfg.value = cfg.boolValue ? "true" : "false" ;        
+        }
+        else {
+            cfg.value = $scope.tempEditValues.value ;
+        }
         cfg.description = $scope.tempEditValues.description ;
         resetEditState() ;
         saveCfgOnServer( cfg ) ;
@@ -89,6 +94,7 @@ capitalystNgApp.controller( 'ManageConfigController',
                     $scope.cfgGroupNames.push( groupName ) ;
                     $scope.allCfgs[ groupName ].forEach( cfg => {
                         cfg.editing = false ;
+                        cfg.boolValue = cfg.value == 'true' ;
                     }) ;
                     
                     if( selectedGroup == null ) {

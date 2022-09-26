@@ -112,7 +112,7 @@ public class PortfolioMarketPriceUpdater extends Thread {
                 log.info( "Get portfolio CMP failed. " + cred.getUserName() ) ;
                 log.info( "  Reason : Response is null." ) ;
             }
-            else if( response.getStatus() == 200 ) {
+            else if( !response.isError() ) {
                 Date curTime = new Date() ;
                 updateCurrentMktPrice( response, curTime ) ;
             }

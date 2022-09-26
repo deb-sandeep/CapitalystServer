@@ -27,21 +27,21 @@ public class ConfigController {
     private NVPRepo nvpRepo = null ;
     
     @GetMapping( "/AllConfig" ) 
-    public ResponseEntity<Map<String, List<NVP>>> getRefData() {
+    public ResponseEntity<Map<String, List<NVPVO>>> getRefData() {
         
         try {
-            Map<String, List<NVP>> cfgMap = new TreeMap<>() ;
+            Map<String, List<NVPVO>> cfgMap = new TreeMap<>() ;
             
             for( NVP nvp : nvpRepo.findAll() ) {
                 
                 String groupName = nvp.getGroupName() ;
-                List<NVP> groupedCfgs = cfgMap.get( groupName ) ;
+                List<NVPVO> groupedCfgs = cfgMap.get( groupName ) ;
                 
                 if( groupedCfgs == null ) {
                     groupedCfgs = new ArrayList<>() ;
                     cfgMap.put( groupName, groupedCfgs ) ;
                 }
-                groupedCfgs.add( nvp ) ;
+                groupedCfgs.add( new NVPVO( nvp ) ) ;
             }
             
             return ResponseEntity.status( HttpStatus.OK )
@@ -58,8 +58,6 @@ public class ConfigController {
     public ResponseEntity<APIResponse> execute( @RequestBody NVPVO nvpVo ) {
         
         try {
-            log.debug( "Saving " + nvpVo ) ;
-            
             NVP nvp = nvpRepo.findById( nvpVo.getId() ).get() ;
             
             // This will ensure that if we don't have a config, we are not
