@@ -4,18 +4,16 @@ import static org.apache.commons.lang.StringUtils.leftPad;
 import static org.apache.commons.lang.StringUtils.rightPad;
 
 import java.io.File ;
-import java.lang.reflect.Method ;
 import java.text.SimpleDateFormat ;
 import java.util.Date ;
-import java.util.List ;
 
-import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeAPIInvocationListener ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI ;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI.DmatHolding ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI ;
@@ -23,37 +21,31 @@ import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI.TradeDetai
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI.Trade ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
-import com.sandy.common.util.ReflectionUtil ;
+import com.sandy.common.util.StringUtil ;
 
 public class BreezeTester {
 
     private static final Logger log = Logger.getLogger( BreezeTester.class ) ;
     
+    private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
+
     public static void main( String[] args ) throws Exception {
-        BreezeTester tester = new BreezeTester( args ) ;
+        BreezeTester tester = new BreezeTester() ;
         tester.test() ;
     }
     
     public class BreezeListener implements BreezeAPIInvocationListener {
 
-        @Override
         public void preBreezeCall( APIInvocationInfo info ) {
             log.debug( info ) ;
         }
 
-        @Override
         public void postBreezeCall( APIInvocationInfo info ) {
             log.debug( info ) ;
         }
     }
     
-    private String ucId = "getTrades" ;
-    
-    public BreezeTester( String[] args ) {
-        
-        log.debug( "----------------= BreezeSessionManager Test =--------------------" ) ;
-        log.debug( "   ucId   = " + ucId ) ;
-    }
+    private BreezeCred cred = null ;
     
     public void test() throws Exception {
         
@@ -61,64 +53,54 @@ public class BreezeTester {
         Breeze breeze = Breeze.instance() ;
         breeze.initialize( configFile ) ;
         breeze.addInvocationListener( new BreezeListener() ) ;
+
+        cred = Breeze.instance().getCred( "sandkumb23" ) ;
         
-        if( ucId != null ) {
-            log.debug( "\nInvoking use case - " + ucId ) ;
-            log.debug( "-------------------------------------------" ) ;
-            
-            Method method =  ReflectionUtil.findMethod( BreezeTester.class, ucId, null ) ;
-            method.invoke( this ) ;
-        }
+        //getPortfolioHoldings() ;
+        //getTrades( "25-Sep-2022", "26-Sep-2022" ) ;
+        //getTradeDetail( null ) ;
+        getDmatHoldings() ;
     }
     
-    @SuppressWarnings( "unused" )
-    private void getDmatHoldings() throws Exception {
+    public void getDmatHoldings() throws Exception {
         
         BreezeGetDmatHoldingsAPI api = new BreezeGetDmatHoldingsAPI() ;
-        List<BreezeCred> creds = Breeze.instance().getAllCreds() ;
-        for( BreezeCred cred : creds ) {
-            api.execute( cred ) ;
-        }
-        /*
-        BreezeCred cred = Breeze.instance().getCred( "sovadeb" ) ;
-        api.execute( cred ) ;
-        */
+        BreezeAPIResponse<DmatHolding> response = api.execute( cred ) ;
+        
+        response.getEntities().forEach( h -> {
+            
+            log.debug( h.getSymbol() + " :: " + 
+                       leftPad( ""+h.getQuantity(), 5 ) ) ;
+        }) ;
     }
 
-    @SuppressWarnings( "unused" )
-    private void getPortfolioHoldings() throws Exception {
+    public void getPortfolioHoldings() throws Exception {
         
         BreezeGetPortfolioHoldingsAPI api = new BreezeGetPortfolioHoldingsAPI() ;
-        api.setStockCode( "ADAPOR" ) ;
-        /*
-        List<BreezeCred> creds = Breeze.instance().getAllCreds() ;
-        for( BreezeCred cred : creds ) {
-            api.execute( cred ) ;
-        }
-         */
-        BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
         BreezeAPIResponse<PortfolioHolding> response = api.execute( cred ) ;
         
         for( PortfolioHolding h : response.getEntities() ) {
-            log.debug( h.getSymbol() + " :: " + h.getQuantity() + " :: " + h.getAveragePrice() ) ;
+            log.debug( h.getSymbol() + " :: " + 
+                       leftPad( ""+h.getQuantity(), 5 ) + " :: " + 
+                       leftPad( ""+h.getAveragePrice(), 10 ) ) ;
         }
     }
 
-    @SuppressWarnings( "unused" )
-    private void getTrades() throws Exception {
+    public void getTrades( String fromDate, String toDate ) throws Exception {
         
         BreezeGetTradeListAPI api = new BreezeGetTradeListAPI() ;
-        api.setFromDate( DateUtils.addYears( new Date(), -1 ) ) ;
-        api.setStockCode( "LIC" ) ;
-        //api.setFromDate( DateUtils.addDays( new Date(), -5 ) ) ;
+        api.setFromDate( SDF.parse( fromDate ) ) ;
+        if( StringUtil.isEmptyOrNull( toDate ) ) {
+            api.setToDate( new Date() ) ;
+        }
+        else {
+            api.setToDate( SDF.parse( toDate ) ) ;
+        }
         
-        BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
         BreezeAPIResponse<Trade> response = api.execute( cred ) ;
         
-        SimpleDateFormat sdf = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
-        
         for( Trade trade : response.getEntities() ) {
-            log.debug( sdf.format( trade.getTradeDate() ) + " | " + 
+            log.debug( SDF.format( trade.getTradeDate() ) + " | " + 
                        rightPad( trade.getSymbolIcici(), 7) + " | " +
                        rightPad( trade.getAction(), 5) + " | " + 
                        leftPad( "" + trade.getQuantity(), 4) + " | " + 
@@ -126,13 +108,16 @@ public class BreezeTester {
         }
     }
 
-    @SuppressWarnings( "unused" )
-    private void getTradeDetail() throws Exception {
+    public void getTradeDetail( String orderId ) throws Exception {
         
         BreezeGetTradeDetailAPI api = new BreezeGetTradeDetailAPI() ;
-        api.setOrderId( "20220919N800053166" ) ;
+        if( StringUtil.isEmptyOrNull( orderId ) ) {
+            api.setOrderId( "20220919N800053166" ) ;
+        }
+        else {
+            api.setOrderId( orderId ) ;
+        }
         
-        BreezeCred cred = Breeze.instance().getCred( "sandkumb23" ) ;
         BreezeAPIResponse<TradeDetail> response = api.execute( cred ) ;
         
         SimpleDateFormat sdf = new SimpleDateFormat( "dd-MMM-yyyy HH:mm:ss" ) ;
