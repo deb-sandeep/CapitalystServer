@@ -135,15 +135,15 @@ public abstract class BreezeAPI<T> {
                 response.setError( e.getErrorMsg() ) ;
             }
             finally {
-                if( response != null ) {
-                    response.setCredential( cred ) ;
-                }
-                
                 long endTime = System.currentTimeMillis() ;
                 int timeTaken = (int)(endTime - startTime) ;
+
+                if( response != null ) {
+                    response.setCredential( cred ) ;
+                    response.setTimeTakenInMillis( timeTaken ) ;
+                }
                 
                 invInfo.setCallDurationInMillis( timeTaken ) ;
-                response.setTimeTakenInMillis( timeTaken ) ;
                 
                 if( PRINT_INVOCATION_LOG ) {
                     log.debug( "  Status = " + invInfo.getCallStatus() + 
