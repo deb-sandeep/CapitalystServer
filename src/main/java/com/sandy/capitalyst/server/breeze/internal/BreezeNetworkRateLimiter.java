@@ -1,15 +1,15 @@
 package com.sandy.capitalyst.server.breeze.internal;
 
-import java.util.HashMap ;
 import java.util.LinkedList ;
 import java.util.Map ;
 import java.util.Queue ;
+import java.util.concurrent.ConcurrentHashMap ;
 import java.util.concurrent.TimeUnit ;
 
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.breeze.Breeze ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
+import com.sandy.capitalyst.server.breeze.BreezeCred ;
 
 public class BreezeNetworkRateLimiter {
 
@@ -18,17 +18,26 @@ public class BreezeNetworkRateLimiter {
     private static final long WINDOW_SIZE_SECS = 60 ;
     private static final long WINDOW_DURATION  = WINDOW_SIZE_SECS*1000 ;
     
-    private Map<String, Queue<Long>> callTimelines = new HashMap<>() ;
+    private static BreezeNetworkRateLimiter instance = null ;
     
-    public void throttle( BreezeSession session ) {
+    public static BreezeNetworkRateLimiter instance() {
+        if( instance == null ) {
+            instance = new BreezeNetworkRateLimiter() ;
+        }
+        return instance ;
+    }
+    
+    private Map<String, Queue<Long>> callTimelines = new ConcurrentHashMap<>() ;
+    
+    public void throttle( BreezeCred cred ) {
         
-        if( session == null ) {
+        if( cred == null ) {
             return ;
         }
         
         int rateLimit = Breeze.instance().getNVPCfg().getRateLimitPerMinute() ;
         
-        Queue<Long> callTimelineQueue = getCallTimelineQueue( session.getUserId() ) ;
+        Queue<Long> callTimelineQueue = getCallTimelineQueue( cred.getUserId() ) ;
         callTimelineQueue.add( System.currentTimeMillis() ) ;
         
         long windowEnd   = System.currentTimeMillis() ;

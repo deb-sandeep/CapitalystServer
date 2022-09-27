@@ -7,6 +7,7 @@ import java.io.IOException ;
 import java.io.ObjectInputStream ;
 import java.io.ObjectOutputStream ;
 import java.io.Serializable ;
+import java.io.UnsupportedEncodingException ;
 import java.net.URLEncoder ;
 import java.util.Calendar ;
 import java.util.Date ;
@@ -26,10 +27,13 @@ import com.fasterxml.jackson.databind.JsonNode ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
+import com.sandy.capitalyst.server.breeze.BreezeException ;
 import com.sandy.capitalyst.server.core.util.RSACipher ;
+import com.sandy.capitalyst.server.core.util.RSACipher.RSACipherException ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 
-import lombok.Data ;
+import lombok.Getter ;
+import okhttp3.HttpUrl ;
 import okhttp3.MediaType ;
 import okhttp3.OkHttpClient ;
 import okhttp3.Request ;
@@ -44,29 +48,25 @@ public class BreezeSessionManager {
     
     private static final MediaType FORM_DATA = MediaType.parse( "application/x-www-form-urlencoded" ) ;
     
-    @Data
     public static class BreezeSession implements Serializable {
         
         private static final long serialVersionUID = -1427026265072334302L ;
 
-        // If this flag is set, it implies that the session has been 
-        // invalidated and the session would need to be initialized/created
-        // again. 
-        private boolean valid = false ;
+        @Getter private String  userId          = null ;
+        @Getter private String  sessionId       = null ;
+        @Getter private String  sessionToken    = null ;
+        @Getter private Date    creationTime    = null ;
+        @Getter private boolean dayLimitReached = false ;
         
-        private String userId       = null ;
-        private String sessionId    = null ;
-        private String sessionToken = null ;
-        private Date   creationTime = null ;
+        @Getter private BreezeCred cred = null ;
         
-        private BreezeCred cred = null ;
+        private BreezeSession( BreezeCred cred ) {
+            this.cred = cred ;
+        }
         
         private boolean initializationRequired() {
             
-            if( !this.valid ) {
-                return true ;
-            }
-            else if( StringUtil.isEmptyOrNull( this.sessionToken ) ) {
+            if( StringUtil.isEmptyOrNull( this.sessionToken ) ) {
                 return true ;
             } 
             else {
@@ -91,6 +91,8 @@ public class BreezeSessionManager {
     
     private Map<String, BreezeSession> sessionMap = new HashMap<>() ;
     
+    private boolean netLogEnabled = false ;
+    
     public static BreezeSessionManager instance() {
         if( instance == null ) {
             instance = new BreezeSessionManager() ;
@@ -106,11 +108,39 @@ public class BreezeSessionManager {
                         .build() ;
     }
     
-    public void setCredentialsUpdated() {
-        // Invalidate all the sessions
-        for( BreezeSession session : sessionMap.values() ) {
-            session.setValid( false ) ;
+    public void invalidateAllSessions() {
+        sessionMap.values().forEach( session -> {
+            deletePersistedSession( session ) ;
+        } ) ;
+        sessionMap.clear() ;
+    }
+    
+    public void invalidateSession( BreezeCred cred ) {
+        
+        BreezeSession session = sessionMap.remove( cred.getUserId() ) ;
+        if( session != null ) {
+            deletePersistedSession( session ) ;
         }
+    }
+    
+    public void setDayLimitReached( BreezeCred cred ) {
+        
+        BreezeSession session = sessionMap.remove( cred.getUserId() ) ;
+        if( session != null ) {
+            session.dayLimitReached = true ;
+            serializeSession( session ) ;
+        }
+    }
+    
+    public boolean isWithinDayRateLimit( BreezeCred cred ) {
+        
+        BreezeSession session = sessionMap.remove( cred.getUserId() ) ;
+        if( session != null ) {
+            if( session.isDayLimitReached() ) {
+                return false ;
+            }
+        }
+        return true ;
     }
     
     /**
@@ -136,27 +166,17 @@ public class BreezeSessionManager {
             }
         }
         
-        if( session == null ) {
-            log.debug( "  Creating an empty session." ) ;
-            session = new BreezeSession() ;
-            session.userId = uid ;
-            session.cred = cred ;
-        }
-        
-        sessionMap.put( uid, session ) ;
-        
-        if( session.initializationRequired() ) {
+        if( session == null || session.initializationRequired() ) {
             try {
                 log.info( "  Creating new session." ) ;
-                generateNewSession( session ) ;
-                
-                // No need to put the session back into the map. We are
-                // working on the reference of the existing instance.
+                session = createNewSession( cred ) ;
+
+                sessionMap.put( uid, session ) ;
                 
                 log.debug( "  Serializing session." ) ;
                 serializeSession( session ) ;
             }
-            catch( Exception e ) {
+            catch( BreezeException e ) {
                 log.error( "BreezeSession initialization failed.", e ) ;
                 sessionMap.remove( uid ) ;
                 return null ;
@@ -166,8 +186,8 @@ public class BreezeSessionManager {
         return session ;
     }
     
-    private void generateNewSession( BreezeSession session ) 
-        throws Exception {
+    private BreezeSession createNewSession( BreezeCred cred ) 
+        throws BreezeException {
         
         Map<String, String> loginFormKVPS      = null ;
         Map<String, String> tradeLoginFormKVPS = null ;
@@ -175,31 +195,38 @@ public class BreezeSessionManager {
         String sessionId = null ;
         String sessionToken = null ;
         
-        log.debug( "\nGenerating session" ) ;
+        BreezeSession session = null ;
         
-        loginFormKVPS      = getLoginPageNameValueMap( session.cred ) ;
-        tradeLoginFormKVPS = getTradeLoginIdValueMap( loginFormKVPS ) ;
-        sessionId          = getSessionId( session.cred, tradeLoginFormKVPS ) ;
-        sessionToken       = getSessionToken( session.cred, sessionId ) ;
+        log.debug( "\n  Creating a new session" ) ;
+        
+        netLogEnabled = Breeze.instance()
+                              .getNVPCfg()
+                              .isNetworkLoggingEnabled() ;
+        
+        loginFormKVPS      = getLoginPageNameValueMap( cred ) ;
+        tradeLoginFormKVPS = getTradeLoginIdValueMap( cred, loginFormKVPS ) ;
+        sessionId          = getSessionId( cred, tradeLoginFormKVPS ) ;
+        sessionToken       = getSessionToken( cred, sessionId ) ;
         
         log.debug( "    API session id = " + sessionId ) ;
         log.debug( "    Session Token  = " + sessionToken ) ;
 
-        session.setSessionId( sessionId ) ;
-        session.setSessionToken( sessionToken ) ;
-        session.setCreationTime( new Date() ) ;
-        session.setValid( true ) ;
+        session = new BreezeSession( cred ) ;
+        
+        session.userId       = cred.getUserId() ;
+        session.sessionId    = sessionId ;
+        session.sessionToken = sessionToken ;
+        session.creationTime = new Date() ;
+        
+        return session ;
     }
     
     private Map<String, String> getLoginPageNameValueMap( BreezeCred cred ) 
-            throws Exception {
+            throws BreezeException {
         
         log.debug( "  Getting the login page" ) ;
         
-        String url = API_USER_BASEURL + 
-                     "/login?api_key=" + 
-                     URLEncoder.encode( cred.getAppKey(), "UTF-8" ) ;
-        
+        String   url            = null ;
         Request  request        = null ;
         Response response       = null ;
         String   resBodyContent = null ;
@@ -207,23 +234,24 @@ public class BreezeSessionManager {
         Map<String, String> inputNameValues = null ;
         
         try {
+            url = API_USER_BASEURL + "/login?api_key=" + 
+                  URLEncoder.encode( cred.getAppKey(), "UTF-8" ) ;
+            
             Request.Builder builder = getRequestBuilder( url ) ;
             request = builder.get().build() ;
             
-            response = client.newCall( request ).execute() ;
-            log.debug( "    Server response - " + response.code() ) ;
-            if( response.code() != 200 ) {
-                throw new Exception( "Server error getting login page. " + 
-                                     "Msg = " + resBodyContent ) ;
-            }
-            
-            resBodyContent = response.body().string() ;
+            resBodyContent = executeOkHttpRequest( request, cred, "" ) ;
             
             inputNameValues = getInputAttrValuePairs( resBodyContent, "name" ) ;
+            
             if( inputNameValues.isEmpty() ) {
-                throw new Exception( "Invalid breeze login page obtained. " + 
-                                     "Response = " + resBodyContent ) ;
+                throw BreezeException.sessionError( cred.getUserName(),
+                                                    "Login page",
+                                                    resBodyContent ) ;
             }
+        }
+        catch( UnsupportedEncodingException e ) {
+            // Ignore. This will never happen with a hard coded UTF-8 value
         }
         finally {
             if( response != null ) {
@@ -234,8 +262,9 @@ public class BreezeSessionManager {
         return inputNameValues ;
     }
     
-    private Map<String, String> getTradeLoginIdValueMap( Map<String, String> nvps ) 
-        throws Exception {
+    private Map<String, String> getTradeLoginIdValueMap( 
+                                     BreezeCred cred, Map<String, String> nvps ) 
+        throws BreezeException {
         
         log.debug( "  Getting the trade login form" ) ;
 
@@ -253,21 +282,18 @@ public class BreezeSessionManager {
             Request.Builder builder = getRequestBuilder( url ) ;
             
             reqBodyContent = buildFormBody( nvps ) ;
-            requestBody = RequestBody.create( FORM_DATA, reqBodyContent ) ;
-            request = builder.post( requestBody ).build() ;
+            requestBody    = RequestBody.create( FORM_DATA, reqBodyContent ) ;
+            request        = builder.post( requestBody ).build() ;
             
-            response = client.newCall( request ).execute() ;
-            resBodyContent = response.body().string() ;
-            log.debug( "    Server response - " + response.code() ) ;
-            if( response.code() != 200 ) {
-                throw new Exception( "Server error providing trade login page. " + 
-                                     "Msg = " + resBodyContent ) ;
-            }
-        
+            resBodyContent = executeOkHttpRequest( request, cred,
+                                                   reqBodyContent ) ;
+            
             idValMap = getInputAttrValuePairs( resBodyContent, "id" ) ;
+            
             if( idValMap.isEmpty() ) {
-                throw new Exception( "Invalid login response obtained. " + 
-                                     "Response = " + resBodyContent ) ;
+                throw BreezeException.sessionError( cred.getUserName(),
+                                                    "Pre login", 
+                                                    resBodyContent ) ;
             }
         }
         finally {
@@ -281,9 +307,9 @@ public class BreezeSessionManager {
     
     private String getSessionId( BreezeCred cred, 
                                  Map<String, String> formFields )
-        throws Exception {
+        throws BreezeException {
         
-        log.debug( "  Validating the user" ) ;
+        log.debug( "  Validating the user and getting session id" ) ;
 
         String url = API_USER_BASEURL + "/tradelogin/validateuser"  ;
         
@@ -318,25 +344,29 @@ public class BreezeSessionManager {
             Request.Builder builder = getRequestBuilder( url ) ;
             
             reqBodyContent = buildFormBody( formFields ) ;
+            requestBody    = RequestBody.create( FORM_DATA, reqBodyContent ) ;
+            request        = builder.post( requestBody ).build() ;
             
-            requestBody = RequestBody.create( FORM_DATA, reqBodyContent ) ;
-            request = builder.post( requestBody ).build() ;
-            
-            response = client.newCall( request ).execute() ;
-            resBodyContent = response.body().string() ;
-            log.debug( "    Server response - " + response.code() ) ;
-            if( response.code() != 200 ) {
-                throw new Exception( "Server error validating the user. " + 
-                                     "Msg = " + resBodyContent ) ;
-            }
+            resBodyContent = executeOkHttpRequest( request, cred,
+                                                   reqBodyContent ) ;
             
             idValMap = getInputAttrValuePairs( resBodyContent, "id" ) ;
             
-            if( idValMap.isEmpty() || !idValMap.containsKey( "API_Session" ) ) {
-                throw new Exception( "API_Session could not be obtained. " + 
-                                     "Response = " + resBodyContent ) ;
+            if( idValMap.isEmpty() || 
+                !idValMap.containsKey( "API_Session" ) ) {
+                
+                throw BreezeException.sessionError( cred.getUserName(),
+                                                    "API_Session generation", 
+                                                    resBodyContent ) ;
             }
+            
             sessionKey = idValMap.get( "API_Session" ) ;
+        }
+        catch( RSACipherException e ) {
+            throw BreezeException.appException( e ) ;
+        }
+        catch( UnsupportedEncodingException e ) {
+            // This will never happen because of hard coded UTF-8 value
         }
         finally {
             if( response != null ) {
@@ -347,41 +377,115 @@ public class BreezeSessionManager {
         return sessionKey ;
     }
     
+    private String executeOkHttpRequest( Request request, 
+                                         BreezeCred cred,
+                                         String requestBody ) 
+        throws BreezeException {
+        
+        final String I0 = "    " ;
+        final String I1 = "      " ;
+        
+        Response response       = null ;
+        String   resBodyContent = null ;
+        
+        BreezeNetworkRateLimiter.instance().throttle( cred ) ;
+        
+        if( netLogEnabled ) {
+            log.debug( I0 + "Executing " + request.method() + " request." ) ;
+            log.debug( I0 + "URL : " + request.url().url().toString() ) ;
+            
+            log.debug( I0 + "Parameters :" ) ;
+            HttpUrl url = request.url() ;
+            url.queryParameterNames().forEach( param -> {
+                log.debug( I1 + param + " - " + url.queryParameter( param ) ) ;
+            });
+            
+            log.debug( I0 + "Headers : " ) ;
+            request.headers().names().forEach( hdrName -> {
+                log.debug( I1 + hdrName + " - " + request.header( hdrName ) ) ;
+            }) ;
+            
+            if( StringUtil.isNotEmptyOrNull( requestBody ) ) {
+                log.debug( I0 + "Body : " + requestBody ) ;
+            }
+        }
+        
+        try {
+            response = client.newCall( request ).execute() ;
+            resBodyContent = response.body().string() ;
+            
+            if( netLogEnabled ) {
+                log.debug( I0 + "Response code : " + response.code() ) ; 
+                log.debug( I0 + "Response body : " + resBodyContent ) ;
+            }
+        }
+        catch( IOException e ) {
+            log.error( "Exception invoking HTTP request.", e ) ;
+            throw BreezeException.appException( e ) ;
+        }
+        
+        if( response.code() != 200 ) {
+            throw BreezeException.httpError( response.code(), resBodyContent ) ;
+        }
+        else {
+            if( resBodyContent.startsWith( "Limit exceed:" ) ) {
+                if( resBodyContent.contains( "day" ) ) {
+                    throw BreezeException.dayRateExceed( cred.getUserName() ) ;
+                }
+                else {
+                    throw BreezeException.minRateExceed( cred.getUserName() ) ;
+                }
+            }
+        }
+        
+        return resBodyContent ;
+    }
+    
     // Redirect URL : http://127.0.0.1:8080/BreezeAuthCallback?userName=<userName>
     private String getSessionToken( BreezeCred cred, String apiSessionId ) 
-        throws Exception {
+        throws BreezeException {
 
         log.debug( "  Generating session token" ) ;
 
-        String url = Breeze.BRZ_API_BASEURL + "/customerdetails" ;
-        BreezeNetworkClient netClient = BreezeNetworkClient.instance() ;
-        
-        Map<String, String> params = new HashMap<>() ;
-        params.put( "SessionToken", apiSessionId ) ;
-        params.put( "AppKey", cred.getAppKey() ) ;
-        
-        String resBody = netClient.get( url, params, null ) ;
-        
-        ObjectMapper mapper = new ObjectMapper() ;
-        JsonNode root = mapper.readTree( resBody ) ;
-        JsonNode successNode = root.get( "Success" ) ;
-        
-        String sessionToken = null ;
-        if( successNode != null ) {
-            JsonNode tokenNode = successNode.get( "session_token" ) ;
+        String sessionToken ;
+        try {
+            sessionToken = null ;
             
-            if( tokenNode == null ) {
-                throw new Exception( "Session token could not be obtained." ) ;
+            String url = Breeze.BRZ_API_BASEURL + "/customerdetails" ;
+            BreezeNetworkClient netClient = BreezeNetworkClient.instance() ;
+            
+            Map<String, String> params = new HashMap<>() ;
+            params.put( "SessionToken", apiSessionId ) ;
+            params.put( "AppKey", cred.getAppKey() ) ;
+            
+            String resBody = netClient.get( url, params, null ) ;
+            
+            ObjectMapper mapper = new ObjectMapper() ;
+            JsonNode root = mapper.readTree( resBody ) ;
+            JsonNode successNode = root.get( "Success" ) ;
+            
+            if( successNode != null ) {
+                JsonNode tokenNode = successNode.get( "session_token" ) ;
+                
+                if( tokenNode == null ) {
+                    throw BreezeException.sessionError( cred.getUserName(), 
+                                                        "Getting session token", 
+                                                        resBody ) ;
+                }
+                sessionToken = tokenNode.asText() ;
             }
-            sessionToken = tokenNode.asText() ;
+            
+            log.debug( "    BreezeSession Token = " + sessionToken ) ;
         }
-        
-        log.debug( "    BreezeSession Token = " + sessionToken ) ;        
+        catch( IOException e ) {
+            throw BreezeException.appException( e ) ;
+        }
         
         return sessionToken ;
     }
     
-    private RSACipher createCipher( String hidencStr ) throws Exception {
+    private RSACipher createCipher( String hidencStr ) 
+            throws RSACipherException {
         
         String[] parts = hidencStr.split( "~" ) ;
         String exp     = parts[0] ;
@@ -390,16 +494,20 @@ public class BreezeSessionManager {
         return new RSACipher( modulus, exp, 16 ) ;
     }
     
-    private String buildFormBody( Map<String, String> kvps ) 
-        throws Exception {
+    private String buildFormBody( Map<String, String> kvps ) {
         
         StringBuilder formBody = new StringBuilder() ;
-        for( String key : kvps.keySet() ) {
-            String envVal = URLEncoder.encode( kvps.get( key ), "UTF-8" ) ;
-            formBody.append( key ).append( "=" ).append( envVal ) ;
-            formBody.append( "&" ) ;
+        try {
+            for( String key : kvps.keySet() ) {
+                String envVal = URLEncoder.encode( kvps.get( key ), "UTF-8" ) ;
+                formBody.append( key ).append( "=" ).append( envVal ) ;
+                formBody.append( "&" ) ;
+            }
+            formBody.deleteCharAt( formBody.length()-1 ) ;
         }
-        formBody.deleteCharAt( formBody.length()-1 ) ;
+        catch( UnsupportedEncodingException e ) {
+            // This will never happen with a hard coded UTF-8 value
+        }
         return formBody.toString() ;
     }
 
@@ -491,6 +599,14 @@ public class BreezeSessionManager {
                 }
             }
         }    
+    }
+    
+    private void deletePersistedSession( BreezeSession session ) {
+        
+        File serFile = getSessionSerFile( session.userId ) ;
+        if( serFile.exists() ) {
+            serFile.delete() ;
+        }
     }
     
     private File getSessionSerFile( String userId ) {

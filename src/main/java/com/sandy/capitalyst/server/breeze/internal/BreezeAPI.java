@@ -2,6 +2,8 @@ package com.sandy.capitalyst.server.breeze.internal;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT ;
 
+import java.io.IOException ;
+import java.lang.reflect.InvocationTargetException ;
 import java.lang.reflect.Method ;
 import java.text.SimpleDateFormat ;
 import java.util.Date ;
@@ -14,13 +16,15 @@ import java.util.TreeSet ;
 
 import org.apache.log4j.Logger ;
 
+import com.fasterxml.jackson.core.JsonProcessingException ;
 import com.fasterxml.jackson.databind.JsonNode ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeAPIInvocationListener ;
 import com.sandy.capitalyst.server.breeze.BreezeAPIInvocationListener.APIInvocationInfo ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeNetworkClient.BreezeAPIException ;
+import com.sandy.capitalyst.server.breeze.BreezeException ;
+import com.sandy.capitalyst.server.breeze.BreezeException.Type ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
 import com.sandy.common.util.StringUtil ;
 
@@ -80,65 +84,86 @@ public abstract class BreezeAPI<T> {
         }
     }
     
-    public BreezeAPIResponse<T> execute( BreezeCred cred ) 
-            throws Exception {
+    public final BreezeAPIResponse<T> execute( BreezeCred cred ) 
+            throws BreezeException {
         
+        BreezeSession        session  = null ;
+        APIInvocationInfo    invInfo  = null ;
         BreezeAPIResponse<T> response = null ;
         
-        if( PRINT_INVOCATION_LOG ) {
+        BreezeNVPConfig cfg = Breeze.config() ;
+        
+        if( cfg.isPrintAPICallLog() ) {
             log.debug( "Executing BreezeAPI " + endpointId + 
-                    " for " + cred.getUserName() ) ;
+                       " for " + cred.getUserName() ) ;
         }
         
         checkMandatoryParameters() ;
         
-        BreezeSession session = BreezeSessionManager.instance()
-                                                    .getSession( cred ) ;
-        APIInvocationInfo invInfo = null ;
-
-        if( session != null ) {
-            
-            invInfo = createInvocationInfo( cred ) ;
-            
-            notifyListeners( "preBreezeCall", invInfo ) ;
+        session = BreezeSessionManager.instance().getSession( cred ) ;
+        
+        if( session == null ) {
+            throw BreezeException.sessionError( cred.getUserName(),
+                                                "Session for API call",
+                                                "Session could not be obtained" ) ;
+        }
+        else if( !session.isDayLimitReached() ) {
+            throw BreezeException.dayRateExceed( cred.getUserName() ) ;
+        }
+        else {
             
             long startTime = System.currentTimeMillis() ;
+
+            invInfo = createInvocationInfo( cred ) ;
+            notifyListeners( "preBreezeCall", invInfo ) ;
+            
             try {
-                String responseStr = null ;
-                responseStr = netClient.get( apiEndpointUrl, params, session ) ;
-                
-                JsonNode json = jsonParser.readTree( responseStr ) ;
-                
-                if( breezeCfg.isPrintAPIResponse() ) {
-                    log.debug( "API response:" ) ;
-                    log.debug( jsonParser.writeValueAsString( json ) ) ;
+                try {
+                    String responseStr = null ;
+                    
+                    responseStr = netClient.get( apiEndpointUrl, params, session ) ;
+                    
+                    JsonNode json = jsonParser.readTree( responseStr ) ;
+                    if( breezeCfg.isPrintAPIResponse() ) {
+                        log.debug( "API response:" ) ;
+                        log.debug( jsonParser.writeValueAsString( json ) ) ;
+                    }
+                    
+                    response = createResponse( json ) ;
+                    
+                    if( response.getStatus() == 500 ) {
+                        throw BreezeException.serverError( responseStr ) ;
+                    }
                 }
-                
-                response = createResponse( json ) ;
-                invInfo.setCallStatus( response.getStatus() ) ;
-                
-                if( response.getStatus() == 500 ) {
-                    throw new BreezeAPIException( response.getStatus(), 
-                                                  response.getError() ) ;
+                catch( IOException e ) {
+                    throw BreezeException.appException( "JSON Processing error", e ) ;
                 }
             }
-            catch( BreezeAPIException e ) {
+            catch( BreezeException e ) {
                 
-                log.error( "Breeze API error. Status = " + e.getStatus() + 
-                           ". Msg = " + e.getErrorMsg() ) ;
+                log.error( "Exception encountered : " + e ) ;
                 
-                invInfo.setCallStatus( e.getStatus() ) ;
-                invInfo.setErrorMsg( e.getErrorMsg() ) ;
+                invInfo.setCallStatus( e.getHttpStatusCode() ) ;
+                invInfo.setErrorMsg(   e.getMessage() ) ;
                 
-                response = new BreezeAPIResponse<>() ;
-                response.setStatus( e.getStatus() ) ;
-                response.setError( e.getErrorMsg() ) ;
+                BreezeSessionManager sessionMgr = BreezeSessionManager.instance() ;
+                
+                if( e.getType() == Type.API_DAY_LIMIT_EXCEED ) {
+                    sessionMgr.setDayLimitReached( cred ) ;
+                }
+                else if( e.getType() == Type.SESSION_ERROR ) {
+                    sessionMgr.invalidateSession( cred ) ;
+                }
+                
+                throw e ;
             }
             finally {
+                
                 long endTime = System.currentTimeMillis() ;
                 int timeTaken = (int)(endTime - startTime) ;
 
                 if( response != null ) {
+                    invInfo.setCallStatus( response.getStatus() ) ;
                     response.setCredential( cred ) ;
                     response.setTimeTakenInMillis( timeTaken ) ;
                 }
@@ -153,23 +178,28 @@ public abstract class BreezeAPI<T> {
                 notifyListeners( "postBreezeCall", invInfo ) ;
             }
         }
-        else {
-            throw new IllegalStateException( "Active session for " + 
-                                     cred.getUserName() + " does not exist." ) ;
-        }
+        
         return response ;
     }
     
     private void notifyListeners( String callbackName, 
-                                  APIInvocationInfo info ) 
-        throws Exception {
+                                  APIInvocationInfo info ) {
         
-        List<BreezeAPIInvocationListener> listeners = null ;
-        Method callbackMethod = BreezeAPIInvocationListener.class.getMethod( callbackName, APIInvocationInfo.class ) ;
-        
-        listeners = Breeze.instance().getListeners() ;
-        for( BreezeAPIInvocationListener l : listeners ) {
-            callbackMethod.invoke( l, info ) ;
+        try {
+            List<BreezeAPIInvocationListener> listeners = null ;
+            Method callbackMethod = null ;
+            
+            callbackMethod = BreezeAPIInvocationListener.class.getMethod( 
+                                       callbackName, APIInvocationInfo.class ) ;
+            
+            listeners = Breeze.instance().getListeners() ;
+            
+            for( BreezeAPIInvocationListener l : listeners ) {
+                callbackMethod.invoke( l, info ) ;
+            }
+        }
+        catch( Exception e ) {
+            log.error( "This should never have happened", e ) ;
         }
     }
     
@@ -198,39 +228,56 @@ public abstract class BreezeAPI<T> {
         return hash ;
     }
     
-    private void checkMandatoryParameters() {
+    private void checkMandatoryParameters() throws BreezeException {
+        
         if( !mandatoryParameters.isEmpty() ) {
             for( String param : mandatoryParameters ) {
                 if( !params.containsKey( param ) ) {
-                    throw new IllegalStateException( 
+                    throw BreezeException.appException( 
                             "Mandatory parameter " + param + " missing." ) ;
                 }
             }
         }
     }
     
+    @SuppressWarnings( "unchecked" )
     public BreezeAPIResponse<T> createResponse( JsonNode rootNode ) 
-        throws Exception {
+        throws BreezeException {
         
-        @SuppressWarnings( "unchecked" )
-        BreezeAPIResponse<T> response = BreezeAPIResponse.class.getConstructor().newInstance() ;
+        BreezeAPIResponse<T> response = null ;
         
-        int      statusCode  = rootNode.get( "Status" ).asInt() ;
-        String   errorMsg    = rootNode.get( "Error" ).asText() ;
-        JsonNode resultsNode = rootNode.get( "Success" ) ;
-        
-        response.setStatus( statusCode ) ;
-        response.setError( errorMsg ) ;
-        
-        if( resultsNode != null ) {
+        try {
+            response = BreezeAPIResponse.class.getConstructor().newInstance() ;
             
-            int numChildren = resultsNode.size() ;
-            for( int i=0; i<numChildren; i++ ) {
+            int      statusCode  = rootNode.get( "Status" ).asInt() ;
+            String   errorMsg    = rootNode.get( "Error" ).asText() ;
+            JsonNode resultsNode = rootNode.get( "Success" ) ;
+            
+            response.setStatus( statusCode ) ;
+            response.setError( errorMsg ) ;
+            
+            if( resultsNode != null ) {
                 
-                JsonNode entityNode = resultsNode.get( i ) ;
-                T t = jsonParser.treeToValue( entityNode, entityClass ) ;
-                response.addEntity( t ) ;
+                int numChildren = resultsNode.size() ;
+                for( int i=0; i<numChildren; i++ ) {
+                    
+                    JsonNode entityNode = resultsNode.get( i ) ;
+                    T t = jsonParser.treeToValue( entityNode, entityClass ) ;
+                    response.addEntity( t ) ;
+                }
             }
+        }
+        catch( IllegalAccessException    | 
+               IllegalArgumentException  | 
+               InvocationTargetException | 
+               NoSuchMethodException     |
+               SecurityException         | 
+               InstantiationException e ) {
+
+            log.error( "This should never have happened", e ) ;
+        }
+        catch( JsonProcessingException e ) {
+            throw BreezeException.appException( "Response JSON invalid.", e ) ;
         }
         
         return response ;

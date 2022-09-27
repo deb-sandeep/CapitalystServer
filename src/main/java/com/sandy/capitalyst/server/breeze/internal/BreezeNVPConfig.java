@@ -16,6 +16,8 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
     public static final String CFG_GRP_NAME = "Breeze" ;
     
     public static final String CFG_PRINT_API_RESPONSE = "print_api_response" ;
+    public static final String CFG_PRINT_API_CALL_LOG = "print_api_call_log" ;
+    public static final String CFG_PRINT_EX_ORIGINS   = "print_exception_origins" ;
     public static final String CFG_NET_LOG_ENABLED    = "network_log_enabled" ;
     public static final String CFG_RATE_LIMIT_MINUTE  = "api_rate_limit_per_minute" ;
     
@@ -27,6 +29,12 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
     
     @Getter
     private int rateLimitPerMinute = 75 ;
+    
+    @Getter
+    private boolean printExceptionOrigins = true ;
+    
+    @Getter
+    private boolean printAPICallLog = false ;
     
     private NVPManager nvpMgr = null ;
     
@@ -44,6 +52,8 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
         printAPIResponse      = getBooleanCfg( CFG_PRINT_API_RESPONSE ) ;
         networkLoggingEnabled = getBooleanCfg( CFG_NET_LOG_ENABLED    ) ;
         rateLimitPerMinute    = getIntCfg    ( CFG_RATE_LIMIT_MINUTE  ) ;
+        printExceptionOrigins = getBooleanCfg( CFG_PRINT_EX_ORIGINS   ) ;
+        printAPICallLog       = getBooleanCfg( CFG_PRINT_API_CALL_LOG ) ;
 
         nvpMgr.addConfigChangeListener( this, CFG_GRP_NAME ) ;
     }
@@ -70,11 +80,17 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
             case CFG_PRINT_API_RESPONSE:
                 printAPIResponse = nvp.getBooleanValue() ;
                 break ;
+            case CFG_PRINT_API_CALL_LOG:
+                printAPICallLog = nvp.getBooleanValue() ;
+                break ;
             case CFG_NET_LOG_ENABLED:
                 networkLoggingEnabled = nvp.getBooleanValue() ;
                 break ;
             case CFG_RATE_LIMIT_MINUTE:
                 rateLimitPerMinute = nvp.getIntValue() ;
+                break ;
+            case CFG_PRINT_EX_ORIGINS:
+                printExceptionOrigins = nvp.getBooleanValue() ;
                 break ;
         }
     }

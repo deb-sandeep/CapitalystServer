@@ -34,6 +34,10 @@ public class Breeze {
         return instance ;
     }
     
+    public static BreezeNVPConfig config() {
+        return instance().getNVPCfg() ;
+    }
+    
     private List<BreezeCred> creds = new ArrayList<>() ;
     
     private Map<String, BreezeCred> credMap = new HashMap<>() ;
@@ -71,12 +75,13 @@ public class Breeze {
         mapper.findAndRegisterModules() ;
         
         this.config = mapper.readValue( file, BreezeExternalConfig.class ) ;
+        
         for( BreezeCred cred : this.config.getCredentials() ) {
             this.creds.add( cred ) ;
             this.credMap.put( cred.getUserId(), cred ) ;
         }
         
-        this.sessionMgr.setCredentialsUpdated() ;
+        this.sessionMgr.invalidateAllSessions() ;
     }
     
     private void assertInitializedState() throws IllegalStateException {

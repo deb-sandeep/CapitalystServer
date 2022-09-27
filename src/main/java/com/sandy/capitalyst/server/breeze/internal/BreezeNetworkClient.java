@@ -2,21 +2,21 @@ package com.sandy.capitalyst.server.breeze.internal;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON ;
 
+import java.io.IOException ;
 import java.net.URI ;
+import java.net.URISyntaxException ;
 import java.security.MessageDigest ;
+import java.security.NoSuchAlgorithmException ;
 import java.text.SimpleDateFormat ;
 import java.util.Date ;
 import java.util.HashMap ;
 import java.util.Map ;
 import java.util.TimeZone ;
 
-import javax.net.ssl.SSLHandshakeException ;
-
 import org.apache.commons.codec.binary.Hex ;
 import org.apache.commons.io.IOUtils ;
 import org.apache.http.HttpEntity ;
 import org.apache.http.HttpResponse ;
-import org.apache.http.NoHttpResponseException ;
 import org.apache.http.client.HttpClient ;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase ;
 import org.apache.http.client.methods.HttpRequestBase ;
@@ -24,12 +24,12 @@ import org.apache.http.entity.StringEntity ;
 import org.apache.http.impl.client.HttpClientBuilder ;
 import org.apache.log4j.Logger ;
 
+import com.fasterxml.jackson.core.JsonProcessingException ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.BreezeException ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
 import com.univocity.parsers.common.input.EOFException ;
-
-import lombok.Getter ;
 
 public class BreezeNetworkClient {
 
@@ -39,19 +39,6 @@ public class BreezeNetworkClient {
         public final static String METHOD_NAME = "GET";
         public String getMethod() {
             return METHOD_NAME;
-        }
-    }
-    
-    public static class BreezeAPIException extends Exception {
-        
-        private static final long serialVersionUID = 1L ;
-        
-        @Getter private int status = 0 ;
-        @Getter private String errorMsg = null ;
-        
-        BreezeAPIException( int status, String msg ) {
-            this.status = status ;
-            this.errorMsg = msg ;
         }
     }
     
@@ -72,7 +59,6 @@ public class BreezeNetworkClient {
     private HttpClient httpClient = null ;
     private Map<String, String> standardHeaders = new HashMap<>() ;
     private ObjectMapper objMapper = null ;
-    private BreezeNetworkRateLimiter rateLimiter = null ;
     
     private boolean netLogEnabled = false ;
 
@@ -80,7 +66,6 @@ public class BreezeNetworkClient {
         
         httpClient  = HttpClientBuilder.create().build() ;
         objMapper   = new ObjectMapper() ;
-        rateLimiter = new BreezeNetworkRateLimiter() ;
         
         SDF.setTimeZone( TimeZone.getTimeZone( "GMT" ) ) ;
         
@@ -90,91 +75,60 @@ public class BreezeNetworkClient {
         standardHeaders.put( "Host",            "api.icicidirect.com" ) ;
         standardHeaders.put( "Accept-Encoding", "gzip, deflate, br" ) ;
         standardHeaders.put( "Connection",      "keep-alive" ) ;
-        
     }
     
     public String get( String urlStr, BreezeSession session ) 
-            throws Exception {
+            throws BreezeException {
         
         return get( urlStr, null, null, session ) ;
     }
         
     public String get( String urlStr, Map<String, String> bodyMap, 
                        BreezeSession session ) 
-            throws Exception {
+            throws BreezeException {
         
-        String body = objMapper.writeValueAsString( bodyMap ) ;
+        String body = null ;
+        
+        try {
+            body = objMapper.writeValueAsString( bodyMap ) ;
+        }
+        catch( JsonProcessingException e ) {
+            throw BreezeException.appException( e ) ;
+        }
+        
         return get( urlStr, null, body, session ) ;
     }
     
     private String get( String urlStr, Map<String, String> customHdrs, 
                         String body, BreezeSession session )
-        throws Exception {
+        throws BreezeException {
         
         netLogEnabled = Breeze.instance()
                               .getNVPCfg()
                               .isNetworkLoggingEnabled() ;
+        
+        HttpGetWithEntity request        = new HttpGetWithEntity() ;
+        String            responseStr    = null ;
         
         if( netLogEnabled ) {
             if( session == null ) {
                 log.info( "Making a call with null session" ) ;
             }
             log.debug( "GET " + urlStr ) ;
-        }
-        
-        HttpGetWithEntity request = new HttpGetWithEntity() ;
-        HttpResponse      response = null ;
-        HttpEntity        responseEntity = null ;
-        
-        if( netLogEnabled ) {
             log.debug( "  Body:" ) ;
             log.debug( body ) ;
         }
         
-        String responseStr ;
         try {
             request.setURI( new URI( urlStr ) ) ;
             request.setEntity( new StringEntity( body, APPLICATION_JSON ) ) ;
             
             setHeaders( request, customHdrs, body, session ) ;
             
-            rateLimiter.throttle( session ) ;
-            
-            response = httpClient.execute( request ) ;
-            
-            responseStr = null ;
-            responseEntity = response.getEntity() ;
-            
-            if( netLogEnabled ) {
-                log.debug( "  Response:" ) ;
-                log.debug( "    Status = " + response.getStatusLine().getStatusCode() );
-            }
-            
-            if( response.getStatusLine().getStatusCode() != 200 ) {
-                throw new BreezeAPIException( response.getStatusLine().getStatusCode(),
-                                              response.getEntity().toString() ) ;
-            }
-            
-            if( responseEntity != null ) {
-                int    len     = (int)responseEntity.getContentLength() ;
-                byte[] content = new byte[len] ;
-                IOUtils.readFully( responseEntity.getContent(), content );
-                
-                responseStr = new String( content ) ;
-                if( netLogEnabled ) {
-                    log.debug( "  Response body:" ) ; 
-                    log.debug( "    " + responseStr ) ;
-                }
-            }
+            responseStr = executeHttpRequest( request, session ) ;
         }
-        catch( NoHttpResponseException nhre ) {
-            throw new BreezeAPIException( -1, "Server did not send any response." ) ;
-        }
-        catch( SSLHandshakeException ssle ) {
-            throw new BreezeAPIException( -1, "SSL handshake failure." ) ;
-        }
-        catch( EOFException eofe ) {
-            throw new BreezeAPIException( -1, "Server abruptly closed the response stream." ) ;
+        catch( URISyntaxException e ) {
+            throw BreezeException.appException( e ) ;
         }
         finally {
             request.releaseConnection() ;
@@ -183,10 +137,67 @@ public class BreezeNetworkClient {
         return responseStr ;
     }
     
+    private String executeHttpRequest( HttpGetWithEntity request, 
+                                       BreezeSession session ) 
+            throws BreezeException {
+            
+        HttpResponse response       = null ;
+        int          responseCode   = 0 ;
+        String       resBodyContent = null ;
+        HttpEntity   responseEntity = null ;
+        
+        String userName = session.getCred().getUserName() ;
+        
+        try {
+            BreezeNetworkRateLimiter.instance().throttle( session.getCred() ) ;
+            
+            response       = httpClient.execute( request ) ;
+            responseCode   = response.getStatusLine().getStatusCode() ;
+            responseEntity = response.getEntity() ;
+            
+            if( netLogEnabled ) {
+                log.debug( "  Response:" ) ;
+                log.debug( "    Status = " + response.getStatusLine().getStatusCode() );
+            }
+            
+            if( responseEntity != null ) {
+                int    len     = (int)responseEntity.getContentLength() ;
+                byte[] content = new byte[len] ;
+                
+                IOUtils.readFully( responseEntity.getContent(), content );
+                
+                resBodyContent = new String( content ) ;
+                
+                if( netLogEnabled ) {
+                    log.debug( "  Response body:" ) ; 
+                    log.debug( "    " + resBodyContent ) ;
+                }
+            }
+        }
+        catch( IOException | EOFException e ) {
+            throw BreezeException.appException( e ) ;
+        }
+        
+        if( responseCode != 200 ) {
+            throw BreezeException.httpError( responseCode, resBodyContent ) ;
+        }
+        else {
+            if( resBodyContent.startsWith( "Limit exceed:" ) ) {
+                if( resBodyContent.contains( "day" ) ) {
+                    throw BreezeException.dayRateExceed( userName ) ;
+                }
+                else {
+                    throw BreezeException.minRateExceed( userName ) ;
+                }
+            }
+        }
+        
+        return resBodyContent ;
+    }
+    
     private void setHeaders( HttpRequestBase req, 
                              Map<String, String> customHeaders,
-                             String body, BreezeSession session ) 
-        throws Exception {
+                             String body, BreezeSession session ) {
         
         if( netLogEnabled ) {
             log.debug( "  Headers:" ) ;
@@ -220,8 +231,7 @@ public class BreezeNetworkClient {
     }
     
     private void addChecksumHeaders( HttpRequestBase req, String body, 
-                                     BreezeSession session ) 
-        throws Exception {
+                                     BreezeSession session ) {
         
         String timestamp = SDF.format( new Date() ) ;
         String checksum  = generateChecksum( timestamp, body, 
@@ -242,16 +252,23 @@ public class BreezeNetworkClient {
     }
     
     private String generateChecksum( String timestamp, String body,
-                                     String secretKey ) 
-        throws Exception {
+                                     String secretKey ) {
         
-        String rawChecksum = timestamp + body + secretKey ;
-
-        MessageDigest sha256 = MessageDigest.getInstance( "SHA-256" ) ;
-        sha256.reset();
-
-        byte[] digested  = sha256.digest( rawChecksum.getBytes() ) ;
+        String response = null ;
         
-        return Hex.encodeHexString( digested ) ;
+        try {
+            String rawChecksum = timestamp + body + secretKey ;
+            MessageDigest sha256 = MessageDigest.getInstance( "SHA-256" ) ;
+            
+            sha256.reset();
+
+            byte[] digested  = sha256.digest( rawChecksum.getBytes() ) ;
+            response = Hex.encodeHexString( digested ) ;
+        }
+        catch( NoSuchAlgorithmException e ) {
+            // This will never happen with a hard coded value.
+        }
+        
+        return response ;
     }
 }

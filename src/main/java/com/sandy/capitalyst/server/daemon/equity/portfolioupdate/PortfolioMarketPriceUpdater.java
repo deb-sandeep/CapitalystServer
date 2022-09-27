@@ -10,11 +10,14 @@ import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
+import com.sandy.capitalyst.server.breeze.BreezeException ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
+import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.internal.EventRateMonitor ;
 import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.internal.TradingHolidayCalendar ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
@@ -30,6 +33,8 @@ public class PortfolioMarketPriceUpdater extends Thread {
     public static final String CFG_PAUSE_REFRESH_FLAG = "pause_refresh" ;
     public static final String CFG_LIVE_REFRESH_DELAY = "refresh_delay_secs" ;
     public static final String CFG_PRINT_DEBUG_STMT   = "debug_enable" ;
+    
+    public static final int MIN_REFRESH_DELAY = 10 ;
 
     public static PortfolioMarketPriceUpdater instance() {
         if( instance == null ) {
@@ -40,6 +45,12 @@ public class PortfolioMarketPriceUpdater extends Thread {
     
     private TradingHolidayCalendar holidayCalendar = null ;
     private BreezeGetPortfolioHoldingsAPI api = null ;
+    
+    // In the last 300 seconds, if we have 5 exceptions or more, the rate
+    // monitor will keep the threshold breached flag till the time the 
+    // count goes down below 5
+    private EventRateMonitor genericERM   = new EventRateMonitor( 300, 5 ) ;
+    private EventRateMonitor cmpUpdateERM = new EventRateMonitor( 300, 5 ) ;
     
     private EquityHoldingRepo ehRepo = null ;
     
@@ -57,9 +68,11 @@ public class PortfolioMarketPriceUpdater extends Thread {
     }
     
     public void run() {
+        
         while( true ) {
             try {
-                if( holidayCalendar.isMarketOpenNow() ) {
+                if( holidayCalendar.isMarketOpenNow() && 
+                    !genericERM.hasThresholdBreached() ) {
                     
                     refreshConfiguration() ;
                     
@@ -71,6 +84,7 @@ public class PortfolioMarketPriceUpdater extends Thread {
                     else {
                         updateCurrentMktPriceInPortfolio() ;
                     }
+                    
                     // 15 seconds gap -> 1680 calls per trading day
                     // 10 seconds gap -> 2500 calls
                     //  5 seconds gap -> 5040 calls
@@ -80,8 +94,21 @@ public class PortfolioMarketPriceUpdater extends Thread {
                     TimeUnit.MINUTES.sleep( 2 ) ;
                 }
             }
+            catch( InterruptedException e ) {
+                // Don't worry about it.
+            }
             catch( Exception e ) {
-                log.error( "Error updating portfolio current mkt price.", e ) ;
+                
+                log.error( "Unanticipated error.", e ) ;
+                genericERM.registerEvent() ;
+                
+                try {
+                    TimeUnit.SECONDS.sleep( 10 ) ;
+                }
+                catch( InterruptedException ie ) {
+                    log.error( "CMP daemon exception stall interrrupted.", ie ) ;
+                    break ;
+                }
             }
         }
     }
@@ -94,43 +121,81 @@ public class PortfolioMarketPriceUpdater extends Thread {
         pauseRefresh = cfg.getBoolValue( CFG_PAUSE_REFRESH_FLAG, pauseRefresh ) ;
         refreshDelay = cfg.getIntValue ( CFG_LIVE_REFRESH_DELAY, refreshDelay ) ;
         debugEnable  = cfg.getBoolValue( CFG_PRINT_DEBUG_STMT,   debugEnable  ) ;
+        
+        // Hardening - Prevents accidental setting of refresh delay to a lower
+        // value which will result in a tight loop and API rate threshold
+        // breach.
+        if( refreshDelay < MIN_REFRESH_DELAY ) {
+            refreshDelay = MIN_REFRESH_DELAY ;
+            cfg.setValue( CFG_LIVE_REFRESH_DELAY, MIN_REFRESH_DELAY ) ;
+        }
     }
     
-    private void updateCurrentMktPriceInPortfolio() 
-        throws Exception {
+    private void updateCurrentMktPriceInPortfolio() {
         
-        BreezeAPIResponse<PortfolioHolding> response = null ;
         
         List<BreezeCred> credentials = Breeze.instance().getAllCreds() ;
         
         for( BreezeCred cred : credentials ) {
+            
             if( debugEnable ) {
                 log.debug( "Updating Portfolio CMP for " + cred.getUserName() ) ;
             }
-            response = api.execute( cred ) ;
-            if( response == null ) {
-                log.info( "Get portfolio CMP failed. " + cred.getUserName() ) ;
-                log.info( "  Reason : Response is null." ) ;
-            }
-            else if( !response.isError() ) {
-                Date curTime = new Date() ;
-                updateCurrentMktPrice( response, curTime ) ;
+            
+            if( BreezeSessionManager.instance().isWithinDayRateLimit( cred ) ) {
+                
+                if( !cmpUpdateERM.hasThresholdBreached( cred.getUserId() ) ) {
+                    try {
+                        updateCurrentMktPriceInPortfolio( cred ) ;
+                    }
+                    catch( BreezeException e ) {
+                        log.error( "Exception while updating CMP. " + e, e ) ;
+                        cmpUpdateERM.registerEvent( cred.getUserId() ) ;
+                    }
+                }
+                else {
+                    log.info( cred.getUserId() + " has breached exception limit. " + 
+                              "Update CMP stalled for some time." ) ;
+                }
             }
             else {
-                log.info( "Get portfolio CMP failed. " + cred.getUserName() ) ;
-                log.info( "  Reason : " + response.getError() ) ;
+                if( debugEnable ) {
+                    log.debug( "  Breeze daily rate limit reached." ) ;
+                }
             }
         }
     }
     
-    private void updateCurrentMktPrice( BreezeAPIResponse<PortfolioHolding> response,
-                                        Date curTime ) {
+    private void updateCurrentMktPriceInPortfolio( BreezeCred cred ) 
+        throws BreezeException {
+        
+        BreezeAPIResponse<PortfolioHolding> response = null ;
+        
+        response = api.execute( cred ) ;
+        
+        if( response == null ) {
+            log.info( "Get portfolio CMP failed. " + cred.getUserName() ) ;
+            log.info( "  Reason : Response is null." ) ;
+        }
+        else if( !response.isError() ) {
+            Date curTime = new Date() ;
+            updateCurrentMktPrice( response, curTime ) ;
+        }
+        else {
+            log.info( "Get portfolio CMP failed. " + cred.getUserName() ) ;
+            log.info( "  Reason : " + response.getError() ) ;
+        }
+    }
+    
+    private void updateCurrentMktPrice( 
+                  BreezeAPIResponse<PortfolioHolding> response, Date curTime ) {
         
         List<PortfolioHolding> holdings = null ;
         
         holdings = response.getEntities() ;
 
         for( PortfolioHolding holding : holdings ) {
+            
             String symbolIcici = holding.getSymbol() ;
             float  curMktPrice = holding.getCurrentMktPrice() ;
             float  change      = holding.getChange() ;
