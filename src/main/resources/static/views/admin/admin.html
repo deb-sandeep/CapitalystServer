@@ -41,6 +41,7 @@
     <script src="/views/admin/route/idx/js/manage_index_controller.js"></script>
     <script src="/views/admin/route/actions/js/onetime_actions.js"></script>
     <script src="/views/admin/route/config/js/manage_config_controller.js"></script>
+    <script src="/views/admin/route/breeze/js/breeze_auth_controller.js"></script>
 </head>
 
 <body ng-controller="AdminLandingController"
@@ -86,6 +87,10 @@
       <a ng-class="getActiveClass('manage_config')" 
          href="#!/manage_config">
         <i class="fa-solid fa-code"></i>
+      </a>
+      <a ng-class="getActiveClass('breeze_auth')" 
+         href="#!/breeze_auth">
+        <i class="fa-solid fa-fan"></i>
       </a>
     </div>
     <div id="module-panel">

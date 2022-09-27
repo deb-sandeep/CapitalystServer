@@ -107,7 +107,8 @@ public abstract class BreezeAPI<T> {
                                                 "Session for API call",
                                                 "Session could not be obtained" ) ;
         }
-        else if( !session.isDayLimitReached() ) {
+        else if( session.isDayLimitReached() ) {
+            
             throw BreezeException.dayRateExceed( cred.getUserName() ) ;
         }
         else {

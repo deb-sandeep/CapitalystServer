@@ -11,6 +11,7 @@ import org.apache.log4j.Logger ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.BreezeException ;
+import com.sandy.capitalyst.server.breeze.BreezeException.Type ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
@@ -149,7 +150,11 @@ public class PortfolioMarketPriceUpdater extends Thread {
                         updateCurrentMktPriceInPortfolio( cred ) ;
                     }
                     catch( BreezeException e ) {
-                        log.error( "Exception while updating CMP. " + e, e ) ;
+                        if( e.getType() != Type.API_DAY_LIMIT_EXCEED ) {
+                            log.error( "Exception while updating CMP." ) ;
+                            log.error( e ) ;
+                        }
+                        
                         cmpUpdateERM.registerEvent( cred.getUserId() ) ;
                     }
                 }

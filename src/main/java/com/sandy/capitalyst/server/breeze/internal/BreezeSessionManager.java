@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.BreezeException ;
+import com.sandy.capitalyst.server.breeze.BreezeException.Type ;
 import com.sandy.capitalyst.server.core.util.RSACipher ;
 import com.sandy.capitalyst.server.core.util.RSACipher.RSACipherException ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
@@ -66,17 +67,27 @@ public class BreezeSessionManager {
         
         private boolean initializationRequired() {
             
-            if( StringUtil.isEmptyOrNull( this.sessionToken ) ) {
-                return true ;
-            } 
-            else {
+            if( this.creationTime != null ) {
+                
                 Date todayStart = new Date() ;
                 todayStart = DateUtils.truncate( todayStart, Calendar.DAY_OF_MONTH ) ;
                 if( this.creationTime.before( todayStart ) ) {
-                    log.debug( "  New session id required. Old one expired." ) ;
+                    log.debug( "  New session required. Old one expired." ) ;
                     return true ;
                 }
             }
+            
+            if( this.dayLimitReached ) {
+                return false ;
+            }
+            
+            if( StringUtil.isEmptyOrNull( this.sessionToken ) || 
+                this.creationTime == null ) {
+                
+                log.debug( "  New session required. Session token absent." ) ;
+                return true ;
+            } 
+            
             return false ;
         }
     }
@@ -125,16 +136,27 @@ public class BreezeSessionManager {
     
     public void setDayLimitReached( BreezeCred cred ) {
         
-        BreezeSession session = sessionMap.remove( cred.getUserId() ) ;
+        BreezeSession session = sessionMap.get( cred.getUserId() ) ;
+        
         if( session != null ) {
             session.dayLimitReached = true ;
-            serializeSession( session ) ;
         }
+        else {
+            session = new BreezeSession( cred ) ;
+            
+            session.userId          = cred.getUserId() ;
+            session.creationTime    = new Date() ;
+            session.dayLimitReached = true ;
+            
+            sessionMap.put( cred.getUserId(), session ) ;
+        }
+        
+        serializeSession( session ) ;
     }
     
     public boolean isWithinDayRateLimit( BreezeCred cred ) {
         
-        BreezeSession session = sessionMap.remove( cred.getUserId() ) ;
+        BreezeSession session = sessionMap.get( cred.getUserId() ) ;
         if( session != null ) {
             if( session.isDayLimitReached() ) {
                 return false ;
@@ -177,9 +199,17 @@ public class BreezeSessionManager {
                 serializeSession( session ) ;
             }
             catch( BreezeException e ) {
-                log.error( "BreezeSession initialization failed.", e ) ;
-                sessionMap.remove( uid ) ;
-                return null ;
+                
+                if( e.getType() == Type.API_DAY_LIMIT_EXCEED ) {
+                    log.error( "    ERROR: Day limit exceeded." ) ;
+                    BreezeSessionManager.instance().setDayLimitReached( cred ) ;
+                    session = sessionMap.get( uid ) ;
+                }
+                else {
+                    log.error( "BreezeSession initialization failed.", e ) ;
+                    invalidateSession( cred ) ;
+                    session = null ;
+                }
             }
         }
         
@@ -196,8 +226,6 @@ public class BreezeSessionManager {
         String sessionToken = null ;
         
         BreezeSession session = null ;
-        
-        log.debug( "\n  Creating a new session" ) ;
         
         netLogEnabled = Breeze.instance()
                               .getNVPCfg()
@@ -420,7 +448,6 @@ public class BreezeSessionManager {
             }
         }
         catch( IOException e ) {
-            log.error( "Exception invoking HTTP request.", e ) ;
             throw BreezeException.appException( e ) ;
         }
         

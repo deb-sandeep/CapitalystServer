@@ -114,6 +114,12 @@ public class EquityTradeUpdater extends OTA {
     @Override
     protected void execute() throws Exception {
         
+        addResult( "This is temporarily out of service" ) ;
+        addResult( "till BreezeAPI is properly integrated." ) ;
+        return ;
+        
+        /*
+        
         addResult( "Date Range:" ) ;
         addResult( "  From = " + SDF.format( lastUpdateDate ) ) ;
         addResult( "  To   = " + SDF.format( iterToDate     ) ) ;
@@ -152,6 +158,7 @@ public class EquityTradeUpdater extends OTA {
         catch( Exception e ) {
             super.addResult( e ) ;
         }
+        */
     }
     
     private void loadHoldings( BreezeCred cred ) throws Exception {

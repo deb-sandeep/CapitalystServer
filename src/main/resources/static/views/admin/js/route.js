@@ -24,4 +24,8 @@ capitalystNgApp.config( function( $routeProvider ) {
         templateUrl : "/views/admin/route/config/manage_config.html",
         controller : "ManageConfigController"
     })
+    .when( "/breeze_auth", {
+        templateUrl : "/views/admin/route/breeze/breeze_auth.html",
+        controller : "BreezeAuthController"
+    })
 });

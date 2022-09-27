@@ -137,7 +137,7 @@ public class BreezeException extends Exception {
         sb.append( "   Msg           = " + getMessage() + "\n" ) ;
         
         if( Breeze.config().isPrintExceptionOrigins() ) {
-            sb.append( "   Origins       = " + getMessage() + "\n" ) ;
+            sb.append( "   Origins       = \n" ) ;
             originLines.subList( 3, originLines.size() ).forEach( origin -> {
                 sb.append( "    " + origin.className  + "::" + 
                                     origin.methodName + " (" + 
@@ -151,7 +151,7 @@ public class BreezeException extends Exception {
                 sb.append( "   Status Code = " + httpStatusCode + "\n" ) ;
                 break ;
             case APP_EXCEPTION:
-                sb.append( "   Exception     = " + ExceptionUtils.getStackTrace( rootException ) ) ;
+                sb.append( "   Exception     = \n" + ExceptionUtils.getStackTrace( rootException ) ) ;
                 break ;
             default:
                 break ;
