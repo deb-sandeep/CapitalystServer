@@ -1,0 +1,18 @@
+#session-listing {
+    padding-top:10px;
+    padding-right:10px;
+    font-size:12px;
+}
+
+#session-listing-table {
+}
+
+#session-listing-table th {
+    font-size:14px;
+    padding-left: 10px;
+}
+
+#session-listing-table td {
+    font-size:13px;
+    padding-left: 10px;
+}

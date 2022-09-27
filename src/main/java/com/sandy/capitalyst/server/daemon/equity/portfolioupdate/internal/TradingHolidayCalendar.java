@@ -89,8 +89,7 @@ public class TradingHolidayCalendar {
     }
     
     public boolean isMarketOpenNow() {
-        return true ;
-        //return isMarketOpenOnDate( new Date() ) ;
+        return isMarketOpenOnDate( new Date() ) ;
     }
     
     public boolean isMarketOpenOnDate( Date date ) {

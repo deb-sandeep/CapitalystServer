@@ -105,7 +105,12 @@ public abstract class BreezeAPI<T> {
         if( session == null ) {
             throw BreezeException.sessionError( cred.getUserName(),
                                                 "Session for API call",
-                                                "Session could not be obtained" ) ;
+                                                "Session could not be obtained." ) ;
+        }
+        else if( session.isInitializationRequired() ) {
+            throw BreezeException.sessionError( cred.getUserName(),
+                                                "Session for API call",
+                                                "Session is not active." ) ;
         }
         else if( session.isDayLimitReached() ) {
             

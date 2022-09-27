@@ -27,6 +27,7 @@ import org.apache.log4j.Logger ;
 import com.fasterxml.jackson.core.JsonProcessingException ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.BreezeException ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
 import com.univocity.parsers.common.input.EOFException ;
@@ -77,15 +78,26 @@ public class BreezeNetworkClient {
         standardHeaders.put( "Connection",      "keep-alive" ) ;
     }
     
-    public String get( String urlStr, BreezeSession session ) 
-            throws BreezeException {
+    public String get( String urlStr, 
+                       Map<String, String> bodyMap,
+                       BreezeCred cred ) 
+        throws BreezeException {
         
-        return get( urlStr, null, null, session ) ;
+        String body = null ;
+        try {
+            body = objMapper.writeValueAsString( bodyMap ) ;
+        }
+        catch( JsonProcessingException e ) {
+            throw BreezeException.appException( e ) ;
+        }
+        
+        return get( urlStr, null, body, null, cred ) ;
     }
-        
-    public String get( String urlStr, Map<String, String> bodyMap, 
+    
+    public String get( String urlStr, 
+                       Map<String, String> bodyMap, 
                        BreezeSession session ) 
-            throws BreezeException {
+        throws BreezeException {
         
         String body = null ;
         
@@ -96,23 +108,26 @@ public class BreezeNetworkClient {
             throw BreezeException.appException( e ) ;
         }
         
-        return get( urlStr, null, body, session ) ;
+        return get( urlStr, null, body, session, session.getCred() ) ;
     }
     
-    private String get( String urlStr, Map<String, String> customHdrs, 
-                        String body, BreezeSession session )
+    private String get( String urlStr, 
+                        Map<String, String> customHdrs, 
+                        String body, 
+                        BreezeSession session,
+                        BreezeCred cred )
         throws BreezeException {
         
         netLogEnabled = Breeze.instance()
                               .getNVPCfg()
                               .isNetworkLoggingEnabled() ;
         
-        HttpGetWithEntity request        = new HttpGetWithEntity() ;
-        String            responseStr    = null ;
+        HttpGetWithEntity request     = new HttpGetWithEntity() ;
+        String            responseStr = null ;
         
         if( netLogEnabled ) {
             if( session == null ) {
-                log.info( "Making a call with null session" ) ;
+                log.info( "Making a call without an active session." ) ;
             }
             log.debug( "GET " + urlStr ) ;
             log.debug( "  Body:" ) ;
@@ -125,7 +140,7 @@ public class BreezeNetworkClient {
             
             setHeaders( request, customHdrs, body, session ) ;
             
-            responseStr = executeHttpRequest( request, session ) ;
+            responseStr = executeHttpRequest( request, cred ) ;
         }
         catch( URISyntaxException e ) {
             throw BreezeException.appException( e ) ;
@@ -138,7 +153,7 @@ public class BreezeNetworkClient {
     }
     
     private String executeHttpRequest( HttpGetWithEntity request, 
-                                       BreezeSession session ) 
+                                       BreezeCred cred ) 
             throws BreezeException {
             
         HttpResponse response       = null ;
@@ -146,10 +161,10 @@ public class BreezeNetworkClient {
         String       resBodyContent = null ;
         HttpEntity   responseEntity = null ;
         
-        String userName = session.getCred().getUserName() ;
+        String userName = cred.getUserName() ;
         
         try {
-            BreezeNetworkRateLimiter.instance().throttle( session.getCred() ) ;
+            BreezeNetworkRateLimiter.instance().throttle( cred ) ;
             
             response       = httpClient.execute( request ) ;
             responseCode   = response.getStatusLine().getStatusCode() ;
@@ -161,6 +176,7 @@ public class BreezeNetworkClient {
             }
             
             if( responseEntity != null ) {
+                
                 int    len     = (int)responseEntity.getContentLength() ;
                 byte[] content = new byte[len] ;
                 
@@ -197,7 +213,8 @@ public class BreezeNetworkClient {
     
     private void setHeaders( HttpRequestBase req, 
                              Map<String, String> customHeaders,
-                             String body, BreezeSession session ) {
+                             String body, 
+                             BreezeSession session ) {
         
         if( netLogEnabled ) {
             log.debug( "  Headers:" ) ;
@@ -271,4 +288,5 @@ public class BreezeNetworkClient {
         
         return response ;
     }
+
 }

@@ -121,4 +121,8 @@ public class Breeze {
     public BreezeNVPConfig getNVPCfg() {
         return this.nvpCfg ;
     }
+    
+    public boolean hasActiveSession( BreezeCred cred ) {
+        return sessionMgr.hasActiveSession( cred ) ;
+    }
 }

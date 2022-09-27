@@ -19,6 +19,7 @@ import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
+import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.PortfolioMarketPriceUpdater ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
@@ -131,14 +132,13 @@ public class CapitalystServer
         breeze.addInvocationListener( statPersist ) ;
         breeze.initialize( cfgPath ) ;
         
-        /*
         if( runDaemon ) {
             log.debug( "Initilizaing Portfolio CMP updater." ) ;
             PortfolioMarketPriceUpdater pmpUpdater = null ;
             pmpUpdater = PortfolioMarketPriceUpdater.instance() ;
             pmpUpdater.initialize() ;
             pmpUpdater.start() ;
-        }*/
+        }
         
         log.debug( "  Breeze initialized." ) ;
     }

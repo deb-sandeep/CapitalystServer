@@ -1,1 +1,46 @@
-<h2>Breeze Auth</h2>
+<div id="session-ctlr-controls">
+    &nbsp;
+    <a ng-click="refresh()">
+       <span class="glyphicon glyphicon-refresh"></span>
+    </a>              
+</div>
+
+<div id="session-listing">
+    <table id="session-listing-table"
+           class="pure-table pure-table-bordered">
+       <thead>
+           <tr>
+               <th width="100px">User Name</th>
+               <th width="100px">User ID</th>
+               <th width="200px">Generate Session</th>
+               <th width="40px" >Valid</th>
+               <th width="250px">Generation time</th>
+           </tr>
+       </thead>
+       <tbody>
+           <tr ng-repeat="session in sessions">
+               <td class="fixed-font">{{session.cred.userName}}</td>
+               <td class="fixed-font">{{session.cred.userId}}</td>
+               <td class="fixed-font">
+                 <a ng-href="{{getLoginURL(session)}}" 
+                    target="_blank">
+                    {{session.cred.appName}}
+                 </a>
+               </td>
+               <td>
+                    <span ng-if="session.initializationRequired"
+                          class="glyphicon glyphicon-remove"
+                          style="color:red;">
+                    </span>
+                    <span ng-if="!session.initializationRequired"
+                          class="glyphicon glyphicon-ok"
+                          style="color:green;">
+                    </span>
+               </td>
+               <td class="fixed-font">
+                    {{session.creationTime | date:'medium'}}
+               </td>
+           </tr>
+       </tbody>
+    </table>
+</div>

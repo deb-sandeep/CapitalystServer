@@ -18,6 +18,7 @@ import org.apache.commons.lang.time.DateUtils ;
 import com.sandy.capitalyst.server.api.ota.action.OTA ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
+import com.sandy.capitalyst.server.breeze.BreezeException ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI ;
@@ -114,11 +115,7 @@ public class EquityTradeUpdater extends OTA {
     @Override
     protected void execute() throws Exception {
         
-        addResult( "This is temporarily out of service" ) ;
-        addResult( "till BreezeAPI is properly integrated." ) ;
-        return ;
-        
-        /*
+        assertValidSessions() ;
         
         addResult( "Date Range:" ) ;
         addResult( "  From = " + SDF.format( lastUpdateDate ) ) ;
@@ -158,7 +155,17 @@ public class EquityTradeUpdater extends OTA {
         catch( Exception e ) {
             super.addResult( e ) ;
         }
-        */
+    }
+    
+    private void assertValidSessions() throws BreezeException {
+        
+        for( BreezeCred cred : Breeze.instance().getAllCreds() ) {
+            if( !Breeze.instance().hasActiveSession( cred ) ) {
+                
+                throw BreezeException.sessionError( cred.getUserName(), 
+                            "EquityTradeUpdater", "No active session." ) ; 
+            }
+        }
     }
     
     private void loadHoldings( BreezeCred cred ) throws Exception {

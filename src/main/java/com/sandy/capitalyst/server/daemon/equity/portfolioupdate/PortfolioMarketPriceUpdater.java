@@ -143,9 +143,15 @@ public class PortfolioMarketPriceUpdater extends Thread {
                 log.debug( "Updating Portfolio CMP for " + cred.getUserName() ) ;
             }
             
+            if( !Breeze.instance().hasActiveSession( cred ) ) {
+                log.debug( "  Skipping CMP update. No active session." ) ;
+                continue ;
+            }
+            
             if( BreezeSessionManager.instance().isWithinDayRateLimit( cred ) ) {
                 
                 if( !cmpUpdateERM.hasThresholdBreached( cred.getUserId() ) ) {
+                    
                     try {
                         updateCurrentMktPriceInPortfolio( cred ) ;
                     }
