@@ -97,7 +97,7 @@ public class BreezeSessionManager {
         sessionMap.clear() ;
     }
     
-    public void invalidateSession( BreezeCred cred ) {
+    public synchronized void invalidateSession( BreezeCred cred ) {
         
         BreezeSession session = sessionMap.remove( cred.getUserId() ) ;
         if( session != null ) {
@@ -105,7 +105,7 @@ public class BreezeSessionManager {
         }
     }
     
-    public void setDayLimitReached( BreezeCred cred ) {
+    public synchronized  void setDayLimitReached( BreezeCred cred ) {
         
         BreezeSession session = sessionMap.get( cred.getUserId() ) ;
         
@@ -124,7 +124,7 @@ public class BreezeSessionManager {
         serializeSession( session ) ;
     }
     
-    public boolean isWithinDayRateLimit( BreezeCred cred ) {
+    public synchronized boolean isWithinDayRateLimit( BreezeCred cred ) {
         
         BreezeSession session = sessionMap.get( cred.getUserId() ) ;
         if( session != null ) {
@@ -135,11 +135,11 @@ public class BreezeSessionManager {
         return true ;
     }
     
-    public boolean hasActiveSession( BreezeCred cred ) {
+    public synchronized boolean hasActiveSession( BreezeCred cred ) {
         return !getSession( cred ).isInitializationRequired() ;
     }
 
-    public BreezeSession getSession( BreezeCred cred ) {
+    public synchronized BreezeSession getSession( BreezeCred cred ) {
         
         String uid = cred.getUserId() ;
         BreezeSession session = sessionMap.get( uid ) ;
@@ -160,7 +160,7 @@ public class BreezeSessionManager {
         return session ;
     }
     
-    public void activateSession( String userId, String sessionId ) 
+    public synchronized void activateSession( String userId, String sessionId ) 
         throws BreezeException {
 
         log.debug( "Activating session for " + userId + 
