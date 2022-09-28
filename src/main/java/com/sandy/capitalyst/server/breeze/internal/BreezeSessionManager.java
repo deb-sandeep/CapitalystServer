@@ -42,6 +42,7 @@ public class BreezeSessionManager {
         
         private BreezeSession( BreezeCred cred ) {
             this.cred = cred ;
+            this.userId = cred.getUserId() ;
         }
         
         public void eraseState() {
@@ -145,18 +146,16 @@ public class BreezeSessionManager {
         
         if( session == null ) {
             session = deserializeSession( uid ) ;
+            if( session == null ) {
+                session = new BreezeSession( cred ) ;
+            }
+            sessionMap.put( uid, session ) ;
         }
         
-        if( session == null ) {
-            session = new BreezeSession( cred ) ;
-            session.userId = cred.getUserId() ;
-        }
-        else if( session.isInitializationRequired() ) {
+        if( session.isInitializationRequired() ) {
             session.eraseState() ;
+            serializeSession( session ) ;
         }
-        
-        sessionMap.put( uid, session ) ;
-        serializeSession( session ) ;
 
         return session ;
     }
@@ -173,6 +172,7 @@ public class BreezeSessionManager {
         }
         
         String sessionToken = generateSessionToken( cred, sessionId ) ;
+        
         if( StringUtil.isEmptyOrNull( sessionToken ) ) {
             throw BreezeException.appException( "Session token is null." ) ;
         }
@@ -186,6 +186,7 @@ public class BreezeSessionManager {
             session.sessionToken    = sessionToken ;
             
             serializeSession( session ) ;
+            log.debug( "  Session activated and persisted." ) ;
         }
     }
 

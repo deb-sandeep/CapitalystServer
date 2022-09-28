@@ -16,4 +16,20 @@ public class BreezeCred implements Serializable {
     private String appName     = null ;
     private String appKey      = null ;
     private String secretKey   = null ;
+    
+    @Override
+    public String toString() {
+        
+        StringBuilder sb = new StringBuilder() ;
+        sb.append( "BreezeCred [\n" ) ;
+        sb.append( "  userName = " + userName  + "\n" ) ;
+        sb.append( "  userId   = " + userId    + "\n" ) ;
+        sb.append( "  password = " + password  + "\n" ) ;
+        sb.append( "  dob      = " + dob       + "\n" ) ;
+        sb.append( "  appName  = " + appName   + "\n" ) ;
+        sb.append( "  appKey   = " + appKey    + "\n" ) ;
+        sb.append( "  secretKey= " + secretKey + "\n" ) ;
+        sb.append( "]" ) ;
+        return sb.toString() ;
+    }
 }

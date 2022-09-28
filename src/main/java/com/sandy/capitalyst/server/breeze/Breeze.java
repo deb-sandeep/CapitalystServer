@@ -13,6 +13,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeExternalConfig ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeNVPConfig ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
 
 public class Breeze {
 
@@ -50,8 +51,6 @@ public class Breeze {
     
     private BreezeNVPConfig nvpCfg = null ;
     
-    private boolean initialized = false ;
-    
     private Breeze() {
         nvpCfg = new BreezeNVPConfig() ;
     }
@@ -63,13 +62,15 @@ public class Breeze {
         
         resetState() ;
         configure( cfgFile ) ;
-        
-        initialized = true ;
     }
     
     private void configure( File file ) throws Exception {
         
-        ObjectMapper mapper = null ; 
+        ObjectMapper mapper = null ;
+        BreezeSession session = null ;
+        BreezeSessionManager sessionMgr = null ;
+        
+        sessionMgr = BreezeSessionManager.instance() ;
         
         mapper = new ObjectMapper( new YAMLFactory() ) ; 
         mapper.findAndRegisterModules() ;
@@ -79,14 +80,14 @@ public class Breeze {
         for( BreezeCred cred : this.config.getCredentials() ) {
             this.creds.add( cred ) ;
             this.credMap.put( cred.getUserId(), cred ) ;
-        }
-        
-        this.sessionMgr.invalidateAllSessions() ;
-    }
-    
-    private void assertInitializedState() throws IllegalStateException {
-        if( !initialized ) {
-            throw new IllegalStateException( "Breeze not initialized." ) ;
+            
+            log.debug( cred ) ;
+            
+            session = sessionMgr.getSession( cred ) ;
+            if( !session.getCred().getAppKey().equals( cred.getAppKey() ) ) {
+                log.debug( "Detected credential change. Invalidating existing session state." ) ;
+                sessionMgr.invalidateSession( cred ) ;
+            }
         }
     }
     
@@ -104,17 +105,14 @@ public class Breeze {
     }
     
     public File getSerializationDir() {
-        assertInitializedState() ;
         return this.config.getSerializationDir() ;
     }
     
     public List<BreezeCred> getAllCreds() {
-        assertInitializedState() ;
         return this.creds ;
     }
     
     public BreezeCred getCred( String userId ) {
-        assertInitializedState() ;
         return this.credMap.get( userId ) ;
     }
     
