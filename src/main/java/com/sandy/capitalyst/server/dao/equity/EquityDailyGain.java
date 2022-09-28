@@ -40,15 +40,6 @@ public class EquityDailyGain {
     private float marketValue = 0.0f ;
 
     @Column( precision=16, scale=2 )
-    private float profit = 0.0f ;
-
-    @Column( precision=16, scale=2 )
-    private float pat = 0.0f ;
-
-    @Column( precision=16, scale=2 )
-    private float patPct = 0.0f ;
-
-    @Column( precision=16, scale=2 )
     private float dayChange = 0.0f ;
 
     @Column( precision=16, scale=2 )
@@ -64,13 +55,10 @@ public class EquityDailyGain {
         builder.append( "  quantity         = " + quantity         + "\n" ) ;
         builder.append( "  closingUnitPrice = " + closingUnitPrice + "\n" ) ;
         builder.append( "  marketValue      = " + marketValue      + "\n" ) ;
-        builder.append( "  profit           = " + profit           + "\n" ) ;
-        builder.append( "  pat              = " + pat              + "\n" ) ;
-        builder.append( "  patPct           = " + patPct           + "\n" ) ;
         builder.append( "  dayChange        = " + dayChange        + "\n" ) ;
         builder.append( "  dayChangePct     = " + dayChangePct     + "\n" ) ;
-        
         builder.append( "]" ) ;
+        
         return builder.toString() ;
     }
 }
