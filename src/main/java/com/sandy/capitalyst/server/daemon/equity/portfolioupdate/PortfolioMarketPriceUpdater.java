@@ -140,11 +140,14 @@ public class PortfolioMarketPriceUpdater extends Thread {
         for( BreezeCred cred : credentials ) {
             
             if( debugEnable ) {
+                log.debug( "" ) ;
                 log.debug( "Updating Portfolio CMP for " + cred.getUserName() ) ;
             }
             
             if( !Breeze.instance().hasActiveSession( cred ) ) {
-                log.debug( "  Skipping CMP update. No active session." ) ;
+                if( debugEnable ) {
+                    log.debug( "  Skipping CMP update. No active session." ) ;
+                }
                 continue ;
             }
             
@@ -165,7 +168,8 @@ public class PortfolioMarketPriceUpdater extends Thread {
                     }
                 }
                 else {
-                    log.info( cred.getUserId() + " has breached exception limit. " + 
+                    log.info( "  " + cred.getUserId() + 
+                              " has breached exception limit. " + 
                               "Update CMP stalled for some time." ) ;
                 }
             }
@@ -185,16 +189,16 @@ public class PortfolioMarketPriceUpdater extends Thread {
         response = api.execute( cred ) ;
         
         if( response == null ) {
-            log.info( "Get portfolio CMP failed. " + cred.getUserName() ) ;
-            log.info( "  Reason : Response is null." ) ;
+            log.info( "  Get portfolio CMP failed. " + cred.getUserName() ) ;
+            log.info( "    Reason : Server response is null." ) ;
         }
         else if( !response.isError() ) {
             Date curTime = new Date() ;
             updateCurrentMktPrice( response, curTime ) ;
         }
         else {
-            log.info( "Get portfolio CMP failed. " + cred.getUserName() ) ;
-            log.info( "  Reason : " + response.getError() ) ;
+            log.info( "  Get portfolio CMP failed. " + cred.getUserName() ) ;
+            log.info( "    Reason : " + response.getError() ) ;
         }
     }
     
@@ -222,7 +226,7 @@ public class PortfolioMarketPriceUpdater extends Thread {
         for( EquityHolding eh : ehList ) {
             
             if( debugEnable ) {
-                log.debug( "Updating intra-day CMP for " + symbolIcici ) ;
+                log.debug( "  Updating CMP for " + symbolIcici ) ;
             }
             
             eh.setCurrentMktPrice( currPrice ) ;
