@@ -56,9 +56,9 @@ public class BreezeTester {
 
         cred = Breeze.instance().getCred( "sandkumb23" ) ;
         
-        //getPortfolioHoldings() ;
+        getPortfolioHoldings() ;
         //getTrades( "25-Sep-2022", "26-Sep-2022" ) ;
-        getTradeDetail( "20200803N100016404" ) ;
+        //getTradeDetail( "20200803N100016404" ) ;
         //getDmatHoldings() ;
     }
     

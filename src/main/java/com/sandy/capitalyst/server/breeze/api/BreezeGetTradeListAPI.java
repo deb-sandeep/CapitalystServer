@@ -12,7 +12,7 @@ import com.sandy.capitalyst.server.breeze.BreezeConstants.Action ;
 import com.sandy.capitalyst.server.breeze.BreezeConstants.ExchangeCode ;
 import com.sandy.capitalyst.server.breeze.BreezeConstants.ProductType ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI.Trade ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeAPIProxy ;
 
 import lombok.Data ;
 
@@ -27,7 +27,7 @@ import lombok.Data ;
  * stock_code       String      No         "AXIBAN","TATMOT
  */
 public class BreezeGetTradeListAPI 
-    extends BreezeAPI<Trade> {
+    extends BreezeAPIProxy<Trade> {
 
     private static final String API_URL = Breeze.BRZ_API_BASEURL + "/trades" ;
 

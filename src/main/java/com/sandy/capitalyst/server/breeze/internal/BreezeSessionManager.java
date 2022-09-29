@@ -73,6 +73,10 @@ public class BreezeSessionManager {
             
             return false ;
         }
+        
+        public boolean isActive() {
+            return !isInitializationRequired() ;
+        }
     }
     
     private static BreezeSessionManager instance = null ;
@@ -88,14 +92,6 @@ public class BreezeSessionManager {
     }
     
     private BreezeSessionManager() {}
-    
-    public void invalidateAllSessions() {
-        
-        sessionMap.values().forEach( session -> {
-            deletePersistedSession( session ) ;
-        } ) ;
-        sessionMap.clear() ;
-    }
     
     public synchronized void invalidateSession( BreezeCred cred ) {
         
@@ -136,7 +132,7 @@ public class BreezeSessionManager {
     }
     
     public synchronized boolean hasActiveSession( BreezeCred cred ) {
-        return !getSession( cred ).isInitializationRequired() ;
+        return getSession( cred ).isActive() ;
     }
 
     public synchronized BreezeSession getSession( BreezeCred cred ) {
@@ -153,8 +149,10 @@ public class BreezeSessionManager {
         }
         
         if( session.isInitializationRequired() ) {
-            session.eraseState() ;
-            serializeSession( session ) ;
+            if( session.creationTime != null ) {
+                session.eraseState() ;
+                serializeSession( session ) ;
+            }
         }
 
         return session ;
@@ -177,7 +175,6 @@ public class BreezeSessionManager {
             throw BreezeException.appException( "Session token is null." ) ;
         }
         else {
-
             BreezeSession session = getSession( cred ) ;
             
             session.creationTime    = new Date() ;
@@ -186,6 +183,7 @@ public class BreezeSessionManager {
             session.sessionToken    = sessionToken ;
             
             serializeSession( session ) ;
+            
             log.debug( "  Session activated and persisted." ) ;
         }
     }
@@ -222,7 +220,7 @@ public class BreezeSessionManager {
                 sessionToken = tokenNode.asText() ;
             }
             
-            log.debug( "    BreezeSession Token = " + sessionToken ) ;
+            log.debug( "  BreezeSession Token = " + sessionToken ) ;
         }
         catch( IOException e ) {
             throw BreezeException.appException( e ) ;

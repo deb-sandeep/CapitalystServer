@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeConstants.ExchangeCode ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI.TradeDetail ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeAPIProxy ;
 
 import lombok.Data ;
 
@@ -19,7 +19,7 @@ import lombok.Data ;
  * order_id         String      Yes        order_id as obtained from /trade
  */
 public class BreezeGetTradeDetailAPI 
-    extends BreezeAPI<TradeDetail> {
+    extends BreezeAPIProxy<TradeDetail> {
 
     private static final String API_URL = Breeze.BRZ_API_BASEURL + "/trades" ;
 

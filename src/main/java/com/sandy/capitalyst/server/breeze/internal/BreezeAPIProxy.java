@@ -1,6 +1,7 @@
 package com.sandy.capitalyst.server.breeze.internal;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT ;
+import static org.apache.commons.lang.StringUtils.rightPad ;
 
 import java.io.IOException ;
 import java.lang.reflect.InvocationTargetException ;
@@ -16,7 +17,6 @@ import java.util.TreeSet ;
 
 import org.apache.log4j.Logger ;
 
-import com.fasterxml.jackson.core.JsonProcessingException ;
 import com.fasterxml.jackson.databind.JsonNode ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
@@ -28,11 +28,9 @@ import com.sandy.capitalyst.server.breeze.BreezeException.Type ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
 import com.sandy.common.util.StringUtil ;
 
-public abstract class BreezeAPI<T> {
+public abstract class BreezeAPIProxy<T> {
 
-    public static final Logger log = Logger.getLogger( BreezeAPI.class ) ;
-    
-    private static final boolean PRINT_INVOCATION_LOG = false ;
+    public static final Logger log = Logger.getLogger( BreezeAPIProxy.class ) ;
     
     protected static SimpleDateFormat ISO_8601_FMT = 
                                     new SimpleDateFormat( Breeze.ISO8601_FMT ) ;
@@ -44,7 +42,6 @@ public abstract class BreezeAPI<T> {
         ISO_8601_FMT.setTimeZone( TimeZone.getTimeZone( "GMT" ) ) ;
     }
 
-    private BreezeNVPConfig     breezeCfg      = null ;
     private BreezeNetworkClient netClient      = null ;
     private String              endpointId     = null ;
     private ObjectMapper        jsonParser     = null ;
@@ -54,14 +51,13 @@ public abstract class BreezeAPI<T> {
     private Set<String> mandatoryParameters = new TreeSet<>() ;
     protected Map<String, String> params = new HashMap<>() ;
     
-    protected BreezeAPI( String apiId, String apiURL, Class<T> entityClass ) {
+    protected BreezeAPIProxy( String apiId, String apiURL, Class<T> entityClass ) {
         
         this.endpointId     = apiId ;
         this.apiEndpointUrl = apiURL ;
         this.entityClass    = entityClass ;
         this.netClient      = BreezeNetworkClient.instance() ;
         this.jsonParser     = new ObjectMapper().enable( INDENT_OUTPUT ) ;
-        this.breezeCfg      = Breeze.instance().getNVPCfg() ;
     }
     
     public void clearParams() {
@@ -94,8 +90,17 @@ public abstract class BreezeAPI<T> {
         BreezeNVPConfig cfg = Breeze.config() ;
         
         if( cfg.isPrintAPICallLog() ) {
-            log.debug( "Executing BreezeAPI " + endpointId + 
+            
+            log.debug( "Executing BreezeAPIProxy " + endpointId + 
                        " for " + cred.getUserName() ) ;
+            
+            if( !params.isEmpty() ) {
+                
+                log.debug( "API Parameters:" ) ;
+                params.forEach( (key, value) -> {
+                    log.debug( "  " + rightPad( key, 15 ) + " = " + value ) ;
+                } ) ;
+            }
         }
         
         checkMandatoryParameters() ;
@@ -124,25 +129,13 @@ public abstract class BreezeAPI<T> {
             notifyListeners( "preBreezeCall", invInfo ) ;
             
             try {
-                try {
-                    String responseStr = null ;
-                    
-                    responseStr = netClient.get( apiEndpointUrl, params, session ) ;
-                    
-                    JsonNode json = jsonParser.readTree( responseStr ) ;
-                    if( breezeCfg.isPrintAPIResponse() ) {
-                        log.debug( "API response:" ) ;
-                        log.debug( jsonParser.writeValueAsString( json ) ) ;
-                    }
-                    
-                    response = createResponse( json ) ;
-                    
-                    if( response.getStatus() == 500 ) {
-                        throw BreezeException.serverError( responseStr ) ;
-                    }
-                }
-                catch( IOException e ) {
-                    throw BreezeException.appException( "JSON Processing error", e ) ;
+                String responseStr = null ;
+                
+                responseStr = netClient.get( apiEndpointUrl, params, session ) ;
+                response = createResponse( responseStr ) ;
+                
+                if( response.getStatus() == 500 ) {
+                    throw BreezeException.serverError( responseStr ) ;
                 }
             }
             catch( BreezeException e ) {
@@ -174,13 +167,18 @@ public abstract class BreezeAPI<T> {
                     response.setTimeTakenInMillis( timeTaken ) ;
                 }
                 
-                invInfo.setCallDurationInMillis( timeTaken ) ;
-                
-                if( PRINT_INVOCATION_LOG ) {
-                    log.debug( "  Status = " + invInfo.getCallStatus() + 
-                               ". Latency = " + timeTaken + " ms." ) ;
+                if( cfg.isPrintAPICallLog() ) {
+                    
+                    log.debug( "API Response:" ) ;
+                    log.debug( "  Call status = " + response.getStatus() ) ;
+                    log.debug( "  Time taken  = " + timeTaken + " ms."   ) ;
+                    
+                    if( response != null ) {
+                        log.debug( "  Num entities= " + response.getEntities().size() ) ;
+                    }
                 }
-
+                
+                invInfo.setCallDurationInMillis( timeTaken ) ;
                 notifyListeners( "postBreezeCall", invInfo ) ;
             }
         }
@@ -247,14 +245,15 @@ public abstract class BreezeAPI<T> {
     }
     
     @SuppressWarnings( "unchecked" )
-    public BreezeAPIResponse<T> createResponse( JsonNode rootNode ) 
+    private BreezeAPIResponse<T> createResponse( String responseStr ) 
         throws BreezeException {
         
         BreezeAPIResponse<T> response = null ;
         
         try {
             response = BreezeAPIResponse.class.getConstructor().newInstance() ;
-            
+
+            JsonNode rootNode    = jsonParser.readTree( responseStr ) ;
             int      statusCode  = rootNode.get( "Status" ).asInt() ;
             String   errorMsg    = rootNode.get( "Error" ).asText() ;
             JsonNode resultsNode = rootNode.get( "Success" ) ;
@@ -282,7 +281,7 @@ public abstract class BreezeAPI<T> {
 
             log.error( "This should never have happened", e ) ;
         }
-        catch( JsonProcessingException e ) {
+        catch( IOException e ) {
             throw BreezeException.appException( "Response JSON invalid.", e ) ;
         }
         

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeConstants.ExchangeCode ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeAPIProxy ;
 
 import lombok.Data ;
 
@@ -20,7 +20,7 @@ import lombok.Data ;
  * stockCode        String      No         "AXIBAN", "TATMOT"
  */
 public class BreezeGetPortfolioHoldingsAPI 
-    extends BreezeAPI<PortfolioHolding> {
+    extends BreezeAPIProxy<PortfolioHolding> {
 
     private static final String API_URL = Breeze.BRZ_API_BASEURL + "/portfolioholdings" ;
 

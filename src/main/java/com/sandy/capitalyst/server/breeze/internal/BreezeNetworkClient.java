@@ -62,6 +62,7 @@ public class BreezeNetworkClient {
     private ObjectMapper objMapper = null ;
     
     private boolean netLogEnabled = false ;
+    private boolean printAPIResponse = false ;
 
     private BreezeNetworkClient() {
         
@@ -118,9 +119,10 @@ public class BreezeNetworkClient {
                         BreezeCred cred )
         throws BreezeException {
         
-        netLogEnabled = Breeze.instance()
-                              .getNVPCfg()
-                              .isNetworkLoggingEnabled() ;
+        BreezeNVPConfig cfg = Breeze.instance().getNVPCfg() ;
+        
+        netLogEnabled    = cfg.isNetworkLoggingEnabled() ;
+        printAPIResponse = cfg.isPrintAPIResponse() ;
         
         HttpGetWithEntity request     = new HttpGetWithEntity() ;
         String            responseStr = null ;
@@ -184,7 +186,7 @@ public class BreezeNetworkClient {
                 
                 resBodyContent = new String( content ) ;
                 
-                if( netLogEnabled ) {
+                if( netLogEnabled && printAPIResponse ) {
                     log.debug( "  Response body:" ) ; 
                     log.debug( "    " + resBodyContent ) ;
                 }
@@ -253,8 +255,14 @@ public class BreezeNetworkClient {
         String timestamp = SDF.format( new Date() ) ;
         String checksum  = generateChecksum( timestamp, body, 
                                              session.getCred().getSecretKey() ) ;
-        
         if( netLogEnabled ) {
+            log.debug( "    Cred:" ) ;
+            log.debug( "      User ID        = " + session.getCred().getUserId() ) ;
+            log.debug( "      App Key        = " + session.getCred().getAppKey() ) ;
+            log.debug( "      Secret Key     = " + session.getCred().getSecretKey() );
+            log.debug( "    Session:" ) ;
+            log.debug( "      Session ID     = " + session.getSessionId() ) ;
+            log.debug( "      Session Token  = " + session.getSessionToken() );
             log.debug( "    Checksum Headers:" ) ;
             log.debug( "      X-Checksum     = token " + checksum ) ;
             log.debug( "      X-Timestamp    = " + timestamp ) ;

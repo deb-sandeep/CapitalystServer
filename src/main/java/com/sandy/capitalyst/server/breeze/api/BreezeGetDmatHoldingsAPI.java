@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties ;
 import com.fasterxml.jackson.annotation.JsonProperty ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetDmatHoldingsAPI.DmatHolding ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeAPI ;
+import com.sandy.capitalyst.server.breeze.internal.BreezeAPIProxy ;
 
 import lombok.Data ;
 
-public class BreezeGetDmatHoldingsAPI extends BreezeAPI<DmatHolding> {
+public class BreezeGetDmatHoldingsAPI extends BreezeAPIProxy<DmatHolding> {
     
     static final Logger log = Logger.getLogger( BreezeGetDmatHoldingsAPI.class ) ;
     
