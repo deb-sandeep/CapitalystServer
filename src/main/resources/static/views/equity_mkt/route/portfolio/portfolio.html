@@ -176,7 +176,17 @@
                 <th>
                     <span id="spark_tot"></span>
                 </th>
-                <th colspan="3"></th>
+                <th colspan="3">
+                    <span style="padding-left:30px;">Market &nbsp;</span>
+                    <span ng-show="marketOpen"
+                          class="glyphicon glyphicon-ok-circle"
+                          style="color:green;">
+                    </span>
+                    <span ng-show="!marketOpen"
+                          class="glyphicon glyphicon-ban-circle"
+                          style="color:red;">
+                    </span>
+                </th>
             </tr>
             <tr class="success">
                 <th ng-if="holdingType == 'Individual'" colspan="7"></th>

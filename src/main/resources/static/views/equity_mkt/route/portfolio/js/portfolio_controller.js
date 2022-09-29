@@ -37,10 +37,12 @@ capitalystNgApp.controller( 'PortfolioController',
     $scope.holdingType = "Family" ;
     $scope.holdingForTxnsDisplay = null ;
     $scope.inbetweenServerCall = false ;
+    $scope.marketOpen = true ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading EquityController" ) ;
+    getMarketOpenStatus() ;
     fetchEquityHoldingsFromServer( true ) ;
     
     // --- [END] Controller initialization -----------------------------------
@@ -232,6 +234,17 @@ capitalystNgApp.controller( 'PortfolioController',
     }
     
     // ------------------- Server comm functions -----------------------------
+    function getMarketOpenStatus() {
+        
+        $http.get( '/Breeze/MarketStatus' )
+        .then ( 
+            function( response ){
+                console.log( response.data ) ;
+                $scope.marketOpen = response.data.mktOpen ;
+            }
+        )
+    }
+    
     function fetchEquityHoldingsFromServer( scheduleNextFetch ) {
         
         $scope.inbetweenServerCall = true ;
@@ -263,9 +276,11 @@ capitalystNgApp.controller( 'PortfolioController',
                 setVisibleSLData() ;
                 
                 if( scheduleNextFetch ) {
+                    var delay = $scope.marketOpen ? 5 : 3000 ; 
                     setTimeout( function(){
                         fetchEquityHoldingsFromServer( scheduleNextFetch )
-                    }, 5*1000 ) ;
+                    }, delay*1000 ) ;
+                    getMarketOpenStatus() ;
                 }
             }
         )

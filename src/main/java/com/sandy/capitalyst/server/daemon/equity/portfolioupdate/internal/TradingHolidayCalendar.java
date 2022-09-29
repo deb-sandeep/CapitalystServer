@@ -20,7 +20,7 @@ import lombok.Data ;
 
 public class TradingHolidayCalendar {
 
-    private static final Logger log = Logger.getLogger( TradingHolidayCalendar.class ) ;
+    static final Logger log = Logger.getLogger( TradingHolidayCalendar.class ) ;
     
     private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
     
@@ -56,8 +56,8 @@ public class TradingHolidayCalendar {
             
             holidayMap.put( SDF.format( h.getDate() ), h ) ;
             
-            log.debug( "Holiday " + SDF.format( h.getDate() ) + " :: " +
-                       h.getName() ) ;
+            //log.debug( "Holiday " + SDF.format( h.getDate() ) + " :: " +
+            //           h.getName() ) ;
         }
     }
     
