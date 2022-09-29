@@ -108,6 +108,13 @@ capitalystNgApp.controller( 'PortfolioController',
         $( '#txnsDisplayDialog' ).modal( 'show' ) ;
     }
     
+    $scope.showGraphDialog = function( holding ) {
+        $scope.$broadcast( 'graphDialogDisplayTrigger', {
+            holding : holding
+        }) ;
+        $( '#graphDisplayDialog' ).modal( 'show' ) ;
+    }
+    
     $scope.toggleSparkline = function() {
         
         curSparklineView = ( curSparklineView == "Discrete" ) ? 

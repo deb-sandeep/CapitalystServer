@@ -1,47 +1,29 @@
 package com.sandy.capitalyst.server.test;
 
-import org.apache.log4j.AppenderSkeleton ;
+import java.text.SimpleDateFormat ;
+import java.util.Date ;
+
+import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
-import org.apache.log4j.spi.LoggingEvent ;
 
 public class Scratch {
 
     private static final Logger log = Logger.getLogger( Scratch.class ) ;
     
-    static class MyAppender extends AppenderSkeleton {
-
-        StringBuilder sb = new StringBuilder() ;
-        
-        @Override
-        protected void append( LoggingEvent event ) {
-            sb.append( event.getMessage() ).append( "\n" ) ;
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public boolean requiresLayout() {
-            return false ;
-        }
-        
-        public String toString() {
-            return sb.toString() ;
-        }
-    }
-
     public static void main( String[] args ) throws Exception {
         
-        MyAppender appender = new MyAppender() ;
-        Logger.getRootLogger().addAppender( appender ) ;
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy/MM/dd" ) ;
+        Date start = sdf.parse( "2022/01/01" ) ;
+        Date end   = sdf.parse( "2022/09/29" ) ;
+        Date date  = start ;
         
-        log.debug( "1" ) ;
-        log.debug( "2" ) ;
-        log.debug( "3" ) ;
-        Logger.getRootLogger().removeAppender( appender ) ;
-        log.debug( "4" ) ;
-     
-        log.debug( "->" + appender.toString() );
+        StringBuilder sb = new StringBuilder() ;
+        while( date.before( end ) ) {
+            
+            log.debug( "['" + sdf.format( date ) + "', " + (int)(10+Math.random()*10) + "]," ) ;
+            date = DateUtils.addDays( date, 1 ) ;
+        }
+        
+        log.debug( "\n" + sb ) ;
     }
 }
