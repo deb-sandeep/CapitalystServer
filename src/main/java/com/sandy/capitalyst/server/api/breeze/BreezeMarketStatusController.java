@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity ;
 import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
+import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.internal.TradingHolidayCalendar ;
 
 @RestController
@@ -27,7 +28,15 @@ public class BreezeMarketStatusController {
             }
 
             Map<String, Boolean> result = new HashMap<>() ;
-            result.put( "mktOpen", holidayCalendar.isMarketOpenNow() ) ;
+            if( Breeze.config().isForceMktClose() ) {
+                result.put( "mktOpen", false ) ;
+            }
+            else if( Breeze.config().isForceMktOpen() ) {
+                result.put( "mktOpen", true ) ;
+            }
+            else {
+                result.put( "mktOpen", holidayCalendar.isMarketOpenNow() ) ;
+            }
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( result ) ;

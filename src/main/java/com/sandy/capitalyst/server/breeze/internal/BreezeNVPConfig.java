@@ -20,6 +20,8 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
     public static final String CFG_PRINT_EX_ORIGINS   = "print_exception_origins" ;
     public static final String CFG_NET_LOG_ENABLED    = "network_log_enabled" ;
     public static final String CFG_RATE_LIMIT_MINUTE  = "api_rate_limit_per_minute" ;
+    public static final String CFG_FORCE_MKT_CLOSE    = "force_mkt_close" ;
+    public static final String CFG_FORCE_MKT_OPEN     = "force_mkt_open" ;
     
     @Getter
     private boolean printAPIResponse = false ;
@@ -35,6 +37,12 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
     
     @Getter
     private boolean printAPICallLog = false ;
+    
+    @Getter
+    private boolean forceMktClose = false ;
+    
+    @Getter
+    private boolean forceMktOpen = false ;
     
     private NVPManager nvpMgr = null ;
     
@@ -54,6 +62,8 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
         rateLimitPerMinute    = getIntCfg    ( CFG_RATE_LIMIT_MINUTE  ) ;
         printExceptionOrigins = getBooleanCfg( CFG_PRINT_EX_ORIGINS   ) ;
         printAPICallLog       = getBooleanCfg( CFG_PRINT_API_CALL_LOG ) ;
+        forceMktClose         = getBooleanCfg( CFG_FORCE_MKT_CLOSE    ) ;
+        forceMktOpen          = getBooleanCfg( CFG_FORCE_MKT_OPEN     ) ;
 
         nvpMgr.addConfigChangeListener( this, CFG_GRP_NAME ) ;
     }
@@ -91,6 +101,12 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
                 break ;
             case CFG_PRINT_EX_ORIGINS:
                 printExceptionOrigins = nvp.getBooleanValue() ;
+                break ;
+            case CFG_FORCE_MKT_CLOSE:
+                forceMktClose = nvp.getBooleanValue() ;
+                break ;
+            case CFG_FORCE_MKT_OPEN:
+                forceMktOpen = nvp.getBooleanValue() ;
                 break ;
         }
     }

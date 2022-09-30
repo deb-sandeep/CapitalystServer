@@ -70,4 +70,18 @@ public interface HistoricEQDataRepo
           + "LIMIT 1 "
     )
     HistoricEQData getEarliestRecord( @Param("symbol") String symbol ) ;
+    
+    
+    @Query( value = 
+            "SELECT h "
+          + "FROM HistoricEQData h "
+          + "WHERE "
+          + "   h.symbol = :symbol AND "
+          + "   h.date BETWEEN :fromDate AND :endDate "
+          + "ORDER BY "
+          + "   h.date ASC "
+    )
+    List<HistoricEQData> getHistoricData( @Param( "symbol"   ) String symbol,
+                                          @Param( "fromDate" ) Date fromDate,
+                                          @Param( "toDate"   ) Date toDate ) ;
 }
