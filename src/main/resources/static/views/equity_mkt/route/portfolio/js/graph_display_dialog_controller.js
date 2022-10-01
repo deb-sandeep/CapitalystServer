@@ -12,16 +12,15 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     var chartData = null ;
     
     // ---------------- Scope variables --------------------------------------
-    $scope.holding = null ;
-    $scope.eodData = [] ;
+    $scope.graphParams = null ;
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
     
     $scope.$on( 'graphDialogDisplayTrigger', function( _event, args ) {
-        $scope.holding = args.holding ;
+        $scope.graphParams = args ;
         console.log( "Trigger obtained. " ) ;
-        console.log( $scope.holding ) ;
+        console.log( $scope.graphParams ) ;
         fetchChartData() ;
     } ) ;
     
@@ -135,13 +134,13 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     function fetchChartData() {
         
-        console.log( "Fetching chart data for " + $scope.holding.symbolNse + 
-                     " and owner "              + $scope.holding.ownerName ) ;
+        console.log( "Fetching chart data for " + $scope.graphParams.symbolNse + 
+                     " and owner "              + $scope.graphParams.ownerName ) ;
         
         $scope.inbetweenServerCall = true ;
         $http.get( '/Equity/GraphData?duration=3y' + 
-                   '&symbolNse=' + $scope.holding.symbolNse + 
-                   '&owner='     + $scope.holding.ownerName )
+                   '&symbolNse=' + $scope.graphParams.symbolNse + 
+                   '&owner='     + $scope.graphParams.ownerName )
         .then ( 
             function( response ){
                 console.log( response.data ) ;

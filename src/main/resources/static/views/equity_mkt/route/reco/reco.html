@@ -3,7 +3,7 @@
            style="width: auto !important;">
         <thead>
             <tr class="success">
-                <th colspan="5"></th>
+                <th colspan="6"></th>
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
@@ -21,6 +21,7 @@
                 <th ng-click="sort('symbol')">
                     Symbol
                 </th>
+                <th></th>
                 <th ng-click="sort('holding')">
                     <i class="fa-solid fa-map-pin"></i>
                 </th>
@@ -89,6 +90,12 @@
                <td>
                     <a ng-href="{{reco.equityMaster.detailUrl}}#advchart" target="_blank">
                         {{reco.symbolNse}}&nbsp;&nbsp;
+                    </a>
+               </td>
+               <td>
+                    <a ng-click="showGraphDialog(reco)">
+                        <span class="glyphicon glyphicon-stats"
+                              style="color:#C8C8C8;"></span>
                     </a>
                </td>
                <td>
@@ -195,4 +202,12 @@
      role="dialog"
      data-backdrop="static"
      ng-include="'route/reco/dialog/stock_detail_dialog.html'">
+</div>
+
+<div id="graphDisplayDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/portfolio/dialog/graph_display_dialog.html'"
+     ng-controller="GraphDisplayDialogController">
 </div>

@@ -270,9 +270,13 @@ public class EquityGraphDataController {
             
             for( BreezeCred cred : Breeze.instance().getAllCreds() ) {
                 
-                holding = ehRepo.findByOwnerNameAndSymbolIcici( cred.getUserName(), symbolIcici ) ;
+                holding = ehRepo.findByOwnerNameAndSymbolIcici( 
+                                             cred.getUserName(), symbolIcici ) ;
+                
                 if( holding != null ) {
-                    txns = etxnRepo.findByHoldingIdOrderByTxnDateAscActionAsc( holding.getId() ) ;
+                    
+                    txns = etxnRepo.findByHoldingIdOrderByTxnDateAscActionAsc( 
+                                                             holding.getId() ) ;
                     indVO = voBuilder.buildVO( holding, txns ) ;
                     
                     if( famVO == null ) {
@@ -284,12 +288,14 @@ public class EquityGraphDataController {
                 }
             }
             
-            return famVO.getAvgCostPrice() ;
+            return famVO != null ? famVO.getAvgCostPrice() : 0 ;
         }
         else {
             
-            holding = ehRepo.findByOwnerNameAndSymbolIcici( ownerName, symbolIcici ) ;
-            txns = etxnRepo.findByHoldingIdOrderByTxnDateAscActionAsc( holding.getId() ) ;
+            holding = ehRepo.findByOwnerNameAndSymbolIcici( ownerName, 
+                                                            symbolIcici ) ;
+            txns = etxnRepo.findByHoldingIdOrderByTxnDateAscActionAsc( 
+                                                             holding.getId() ) ;
             indVO = voBuilder.buildVO( holding, txns ) ;
 
             return indVO.getAvgCostPrice() ;
