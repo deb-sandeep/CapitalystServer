@@ -6,7 +6,7 @@ screenerCfgs:
    - id : ManualInclusionScreener
      priority : 99
      attributes :
-        nseSymbols : ATGL, ADANIPORTS, ADANITRANS, ADANIGREEN
+        nseSymbols : ATGL, ADANIPORTS, ADANITRANS, ADANIGREEN, NIFTYBEES
         
    - id : IndexScreener
      priority : 98
