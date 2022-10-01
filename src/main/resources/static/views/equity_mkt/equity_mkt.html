@@ -44,11 +44,12 @@
     <script src="/views/equity_mkt/js/route.js"></script>
     <script src="/views/equity_mkt/js/filter.js"></script>
     
+    <script src="/views/equity_mkt/dialog/graph/graph_display_dialog_controller.js"></script>
+    
     <!-- Portfolio route specific includes -->
     <link rel="stylesheet" href="/views/equity_mkt/route/portfolio/css/portfolio.css"/>
     <script src="/views/equity_mkt/route/portfolio/js/portfolio_controller.js"></script>
     <script src="/views/equity_mkt/route/portfolio/js/txns_display_dialog_controller.js"></script>
-    <script src="/views/equity_mkt/route/portfolio/js/graph_display_dialog_controller.js"></script>
 
     <!-- Profitloss route specific includes -->
     <link rel="stylesheet" href="/views/equity_mkt/route/profitloss/css/profitloss.css"/>
@@ -120,6 +121,14 @@
      class="modal loader" 
      role="dialog"
      data-backdrop="static">
+</div>
+
+<div id="graphDisplayDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'dialog/graph/graph_display_dialog.html'"
+     ng-controller="GraphDisplayDialogController">
 </div>
 
 </body>

@@ -28,6 +28,10 @@ capitalystNgApp.controller( 'EquityMktLandingController',
         }
     } ) ;
 
+    $scope.$on( 'graphDialogDisplayTrigger', function( _event, args ) {
+        $scope.$broadcast( 'graphDialogDisplay', args ) ;
+    } ) ;
+    
     // ----------- UI related scope functions --------------------------------
     $scope.addErrorAlert = function( msgString ) {
         console.log( msgString ) ;

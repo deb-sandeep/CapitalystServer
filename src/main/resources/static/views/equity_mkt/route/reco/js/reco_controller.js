@@ -75,12 +75,11 @@ capitalystNgApp.controller( 'RecoController',
     }
 
     $scope.showGraphDialog = function( reco ) {
-        $scope.$broadcast( 'graphDialogDisplayTrigger', {
+        $scope.$emit( 'graphDialogDisplayTrigger', {
             symbolNse   : reco.symbolNse,
             companyName : reco.equityMaster.name,
             ownerName   : 'Family' 
         }) ;
-        $( '#graphDisplayDialog' ).modal( 'show' ) ;
     }
     
     // --- [END] Scope functions

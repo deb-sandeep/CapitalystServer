@@ -19,10 +19,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
     
-    $scope.$on( 'graphDialogDisplayTrigger', function( _event, args ) {
+    $scope.$on( 'graphDialogDisplay', function( _event, args ) {
         $scope.graphParams = args ;
-        console.log( "Trigger obtained. " ) ;
-        console.log( $scope.graphParams ) ;
         fetchChartData() ;
     } ) ;
     
@@ -53,6 +51,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         if( chart != null ) {
             chart.destroy() ;
         }
+        
+        $( '#graphDisplayDialog' ).modal( 'show' ) ;
 
         const ctx = document.getElementById( 'eodGraph' ) ;
         

@@ -109,12 +109,12 @@ capitalystNgApp.controller( 'PortfolioController',
     }
     
     $scope.showGraphDialog = function( holding ) {
-        $scope.$broadcast( 'graphDialogDisplayTrigger', {
+        console.log( "Emitting graphDialogDisplayTrigger" ) ;
+        $scope.$emit( 'graphDialogDisplayTrigger', {
             symbolNse   : holding.symbolNse,
             companyName : holding.companyName,
             ownerName   : holding.ownerName 
         }) ;
-        $( '#graphDisplayDialog' ).modal( 'show' ) ;
     }
     
     $scope.toggleSparkline = function() {
@@ -257,6 +257,7 @@ capitalystNgApp.controller( 'PortfolioController',
     function fetchEquityHoldingsFromServer( scheduleNextFetch ) {
         
         $scope.inbetweenServerCall = true ;
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Equity/' + $scope.holdingType + 'Holding' )
         .then ( 
             function( response ){
