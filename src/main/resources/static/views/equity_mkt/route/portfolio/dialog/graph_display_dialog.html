@@ -3,9 +3,18 @@
      
   <div class="modal-content" >
     <div class="modal-header" style="background-color:#C5C5C5;padding:5px">
-      <h3 class="modal-title">
-        {{graphParams.companyName}} for {{graphParams.ownerName}}
-      </h3>
+       <div class="graph-title">
+        {{graphParams.companyName}} <i>for</i> {{graphParams.ownerName}}
+       </div>
+       <div>
+           <button ng-repeat="duration in durationKeys"
+                   type="button"
+                   class="btn btn-info btn-sm duration-btn pull-right" 
+                   ng-class="getDurationBtnClass( duration )"
+                   ng-click="setDuration( duration )">
+                {{duration}}
+           </button>
+       </div>
     </div>
     
     <div class="modal-body">

@@ -13,6 +13,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     // ---------------- Scope variables --------------------------------------
     $scope.graphParams = null ;
+    $scope.durationKeys = [ '1m', '2m', '3m', '6m', '1y', '2y', '3y' ] ;
+    $scope.duration = '3m' ;
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
@@ -24,10 +26,21 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         fetchChartData() ;
     } ) ;
     
-    $scope.hideGraphDialog = function( holding ) {
-        if( chart != null ) {
-            chart.destroy() ;
+    $scope.setDuration = function( newDuration ) {
+        if( newDuration != $scope.duration ) {
+            $scope.duration = newDuration ;
+            fetchChartData() ;
         }
+    }
+    
+    $scope.getDurationBtnClass = function( duration ) {
+        if( $scope.duration == duration ) {
+            return "sel-duration-btn" ;
+        }
+        return null ;
+    }
+    
+    $scope.hideGraphDialog = function( holding ) {
         $( '#graphDisplayDialog' ).modal( 'hide' ) ;
     }
     // --- [END] Scope functions
@@ -37,6 +50,10 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     function drawChart() {
         
+        if( chart != null ) {
+            chart.destroy() ;
+        }
+
         const ctx = document.getElementById( 'eodGraph' ) ;
         
         const data = {
@@ -138,7 +155,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                      " and owner "              + $scope.graphParams.ownerName ) ;
         
         $scope.inbetweenServerCall = true ;
-        $http.get( '/Equity/GraphData?duration=3y' + 
+        $http.get( '/Equity/GraphData' + 
+                   '?duration='  + $scope.duration + 
                    '&symbolNse=' + $scope.graphParams.symbolNse + 
                    '&owner='     + $scope.graphParams.ownerName )
         .then ( 
