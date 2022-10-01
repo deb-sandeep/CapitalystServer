@@ -38,6 +38,7 @@ public class FamilyEquityHoldingVO {
     private float  patPct           = 0 ; // Profit after tax percentage
     private String uniqueId         = null ;
     private String holdingType      = "Family" ;
+    private String ownerName        = "Family" ;
     
     private List<IndividualEquityHoldingVO> holdings = new ArrayList<>() ;
 

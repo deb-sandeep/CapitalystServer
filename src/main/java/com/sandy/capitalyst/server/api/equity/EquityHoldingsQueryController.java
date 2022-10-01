@@ -75,7 +75,7 @@ public class EquityHoldingsQueryController {
 
     @GetMapping( "/Equity/FamilyHolding" ) 
     public ResponseEntity<List<FamilyEquityHoldingVO>> 
-    getFamilyEquityHoldings() {
+                                                     getFamilyEquityHoldings() {
         
         EquityHoldingVOBuilder voBuilder = new EquityHoldingVOBuilder() ;
         

@@ -77,7 +77,7 @@ public interface HistoricEQDataRepo
           + "FROM HistoricEQData h "
           + "WHERE "
           + "   h.symbol = :symbol AND "
-          + "   h.date BETWEEN :fromDate AND :endDate "
+          + "   h.date BETWEEN :fromDate AND :toDate "
           + "ORDER BY "
           + "   h.date ASC "
     )
