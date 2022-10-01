@@ -224,20 +224,23 @@ public class EquityGraphDataController {
                                       String symbolIcici,
                                       String ownerName ) {
         
-        List<Long> labels = graphData.getLabels() ;
         float avgPrice = getAvgCost( ownerName, symbolIcici ) ;
-        
-        AvgCostData s = new AvgCostData() ;
-        AvgCostData e = new AvgCostData() ;
-        
-        s.setX( labels.get( 0 ) ) ;
-        e.setX( labels.get( labels.size()-1 ) ) ;
-        
-        e.setY( avgPrice ) ;
-        s.setY( avgPrice ) ;
-        
-        graphData.getAvgData().add( s ) ;
-        graphData.getAvgData().add( e ) ;
+        if( avgPrice > 0 ) {
+            
+            List<Long> labels = graphData.getLabels() ;
+            
+            AvgCostData s = new AvgCostData() ;
+            AvgCostData e = new AvgCostData() ;
+            
+            s.setX( labels.get( 0 ) ) ;
+            e.setX( labels.get( labels.size()-1 ) ) ;
+            
+            e.setY( avgPrice ) ;
+            s.setY( avgPrice ) ;
+            
+            graphData.getAvgData().add( s ) ;
+            graphData.getAvgData().add( e ) ;
+        }
     }
     
     private Map<Date, DataHolder> loadEODData( Map<Date, DataHolder> data,
