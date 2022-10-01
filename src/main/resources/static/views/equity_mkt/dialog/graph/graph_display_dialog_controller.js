@@ -4,7 +4,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     const BUY_COLOR            = '#256BEF' ;
     const SELL_COLOR           = '#E7871C' ;
     const EOD_LINE_COLOR       = '#B5B7B5' ;
-    const AVG_LINE_COLOR       = '#80CC77' ;
+    const AVG_LINE_COLOR       = '#ABABAB' ;
     const SCATTER_POINT_RADIUS = 4 ;
     
     // ---------------- Local variables --------------------------------------
@@ -56,6 +56,12 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
 
         const ctx = document.getElementById( 'eodGraph' ) ;
         
+        var cmpColor = '#000000' ;
+        if( chartData.avgData.length > 0 ) {
+            cmpColor = ( chartData.avgData[0].y < chartData.cmpData[0].y ) ? 
+                       '#00FF00' : '#FF0000' ; 
+        }
+        
         const data = {
           labels: chartData.labels,
           datasets: [
@@ -90,6 +96,13 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 borderWidth      : 1,
                 tension          : 0,
                 radius           : 0,
+              },
+              {
+                type             : 'scatter',
+                data             : chartData.cmpData,
+                borderColor      : cmpColor,
+                backgroundColor  : cmpColor,
+                radius           : 4,
               },
             ]
         } ;

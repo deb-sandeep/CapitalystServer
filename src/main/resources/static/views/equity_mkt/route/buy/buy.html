@@ -7,9 +7,9 @@
                 <th>Owner</th>
                 <th>Date</th>
                 <th>Company</th>
+                <th></th>
                 <th style="width:50px;">Qty</th>
                 <th style="width:75px;">Txn Price</th>
-                <th></th>
                 <th style="width:75px;">Mkt Price</th>
                 <th style="width:100px;">Cost Price</th>
             </tr>
@@ -35,17 +35,17 @@
                         {{txn.parentHolding.symbolIcici}}
                    </span>
                </td>
-               <td class="fixed-font amt">
-                    {{txn.quantity}}
-               </td>
-               <td class="fixed-font amt">
-                    {{txn.txnPrice | amt}}
-               </td>
                <td>
                     <a ng-click="showGraphDialog( txn )">
                         <span class="glyphicon glyphicon-stats"
                               style="color:#C8C8C8;"></span>
                     </a>
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.quantity}}
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.txnPrice | amt}}
                </td>
                <td class="fixed-font amt"
                    ng-class="getAmtClass( txn.parentHolding.currentMktPrice - txn.txnPrice)">
@@ -59,13 +59,13 @@
         
         <tfoot>
             <tr class="success">
-                <th colspan="7"></th>
+                <th colspan="8"></th>
                 <th class="fixed-font amt">
                     {{allTotal.costPrice | amt}}
                 </th>
             </tr>
             <tr class="info">
-                <th colspan="7"></th>
+                <th colspan="8"></th>
                 <th class="fixed-font amt">
                     {{selTotal.costPrice | amt}}
                 </th>

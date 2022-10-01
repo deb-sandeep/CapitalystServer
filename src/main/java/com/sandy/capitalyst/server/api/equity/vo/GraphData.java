@@ -16,14 +16,15 @@ public class GraphData {
     }
 
     @Data
-    public static class AvgCostData {
+    public static class DayPriceData {
         private Long x ;
         private Float y ;
     }
 
-    private List<Long>        labels       = new ArrayList<>() ;
-    private List<Float>       eodPriceList = new ArrayList<>() ;
-    private List<TradeData>   buyData      = new ArrayList<>() ;
-    private List<TradeData>   sellData     = new ArrayList<>() ;
-    private List<AvgCostData> avgData      = new ArrayList<>() ;
+    private List<Long>         labels       = new ArrayList<>() ;
+    private List<Float>        eodPriceList = new ArrayList<>() ;
+    private List<TradeData>    buyData      = new ArrayList<>() ;
+    private List<TradeData>    sellData     = new ArrayList<>() ;
+    private List<DayPriceData> avgData      = new ArrayList<>() ;
+    private List<DayPriceData> cmpData      = new ArrayList<>() ;
 }

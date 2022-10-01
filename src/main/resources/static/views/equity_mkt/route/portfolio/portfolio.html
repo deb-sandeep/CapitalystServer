@@ -15,8 +15,8 @@
                 </th>
                 <th ng-if="holdingType == 'Individual'">Owner</th>
                 <th></th>
-                <th></th>
                 <th>Company</th>
+                <th></th>
                 <th>Qty</th>
                 <th>Price</th>
                 <th class="js-sort-number">LTCG%</th>
@@ -63,17 +63,17 @@
                         <span class="glyphicon glyphicon-link"></span>
                     </a>
                </td>
-               <td>
-                    <a ng-click="showGraphDialog(holding)">
-                        <span class="glyphicon glyphicon-stats"
-                              style="color:#C8C8C8;"></span>
-                    </a>
-               </td>
                <td ng-dblclick="selectAllHoldingsForSymbol( holding.symbolIcici )"
                    style="font-size:11px;">
                    <span data-toggle="tooltip" title="{{holding.companyName}}">
                         {{holding.symbolIcici}}
                    </span>
+               </td>
+               <td>
+                    <a ng-click="showGraphDialog(holding)">
+                        <span class="glyphicon glyphicon-stats"
+                              style="color:#C8C8C8;"></span>
+                    </a>
                </td>
                <td class="fixed-font amt"
                    ng-dblclick="showTransactionsDialog(holding)">

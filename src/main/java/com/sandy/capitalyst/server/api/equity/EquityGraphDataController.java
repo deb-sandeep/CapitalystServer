@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVOBuilder ;
 import com.sandy.capitalyst.server.api.equity.vo.FamilyEquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData ;
-import com.sandy.capitalyst.server.api.equity.vo.GraphData.AvgCostData ;
+import com.sandy.capitalyst.server.api.equity.vo.GraphData.DayPriceData ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData.TradeData ;
 import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
@@ -146,6 +146,7 @@ public class EquityGraphDataController {
         populateEoDPriceList( graphData, data ) ;
         populateBuySellData ( graphData, data ) ;
         populateAvgCostData ( graphData, em.getSymbolIcici(), ownerName ) ;
+        populateCMPData     ( graphData ) ;
         
         return graphData ;
     }
@@ -229,8 +230,8 @@ public class EquityGraphDataController {
             
             List<Long> labels = graphData.getLabels() ;
             
-            AvgCostData s = new AvgCostData() ;
-            AvgCostData e = new AvgCostData() ;
+            DayPriceData s = new DayPriceData() ;
+            DayPriceData e = new DayPriceData() ;
             
             s.setX( labels.get( 0 ) ) ;
             e.setX( labels.get( labels.size()-1 ) ) ;
@@ -303,6 +304,21 @@ public class EquityGraphDataController {
 
             return indVO.getAvgCostPrice() ;
         }
+    }
+    
+    private void populateCMPData( GraphData graphData ) {
+        
+        List<Float> eodList = graphData.getEodPriceList() ;
+        List<Long>  labels  = graphData.getLabels() ;
+        
+        float cmp     = eodList.get( eodList.size()-1 ) ;
+        long  lastDay = labels.get( labels.size()-1 ) ;
+        
+        DayPriceData d = new DayPriceData() ;
+        d.setX( lastDay ) ;
+        d.setY( cmp ) ;
+        
+        graphData.getCmpData().add( d ) ;
     }
 }
 

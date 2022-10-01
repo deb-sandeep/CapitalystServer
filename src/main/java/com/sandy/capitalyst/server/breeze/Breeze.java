@@ -57,8 +57,8 @@ public class Breeze {
     
     public void initialize( File cfgFile ) throws Exception {
         
-        log.debug( "Initializing Breeze" ) ;
-        log.debug( "  Cfg path - " + cfgFile.getAbsolutePath() ) ;
+        log.info( "Initializing Breeze" ) ;
+        log.info( "  Cfg path - " + cfgFile.getAbsolutePath() ) ;
         
         resetState() ;
         configure( cfgFile ) ;
