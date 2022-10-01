@@ -7,6 +7,7 @@
                 <th>Owner</th>
                 <th>Date</th>
                 <th>Company</th>
+                <th></th>
                 <th class="js-sort-number">Qty</th>
                 <th class="js-sort-number">Txn Price</th>
                 <th class="js-sort-number">Cost Price</th>
@@ -38,6 +39,12 @@
                    <span data-toggle="tooltip" title="{{txn.holding.companyName}}">
                         {{txn.parentHolding.symbolIcici}}
                    </span>
+               </td>
+               <td>
+                    <a ng-click="showGraphDialog( txn )">
+                        <span class="glyphicon glyphicon-stats"
+                              style="color:#C8C8C8;"></span>
+                    </a>
                </td>
                <td class="fixed-font amt">
                     {{txn.quantity}}

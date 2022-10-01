@@ -87,6 +87,14 @@ capitalystNgApp.controller( 'ProfitLossController',
         recomputeSelTotals() ;
     }
     
+    $scope.showGraphDialog = function( txn ) {
+        $scope.$emit( 'graphDialogDisplayTrigger', {
+            symbolNse   : txn.parentHolding.symbolNse,
+            companyName : txn.parentHolding.companyName,
+            ownerName   : txn.parentHolding.ownerName
+        }) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
