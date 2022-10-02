@@ -5,10 +5,10 @@
 --          -> DO NOT run this while drunk
 --          -> Take a backup of the database before running it.
 
-SET @SPLIT_RATIO    = 100 ;
-SET @SYMBOL_IDIRECT = 'GOLDEX'   collate utf8mb4_unicode_ci ;
-SET @SYMBOL_NSE     = 'GOLDBEES' collate utf8mb4_unicode_ci ;
-SET @SPLIT_DATE     = '2019-12-19' ;
+SET @SPLIT_RATIO    = 10 ;
+SET @SYMBOL_IDIRECT = 'TATSTE'    collate utf8mb4_unicode_ci ;
+SET @SYMBOL_NSE     = 'TATASTEEL' collate utf8mb4_unicode_ci ;
+SET @SPLIT_DATE     = '2022-07-29' ;
 
 -- EQUITY_HOLDING --------------------------------------------------------------
 SELECT *
@@ -130,7 +130,9 @@ SELECT *
 FROM historic_eq_data
 WHERE 
     date < @SPLIT_DATE AND
-    symbol=@SYMBOL_NSE ;
+    symbol=@SYMBOL_NSE 
+ORDER BY
+    date DESC ;
 
 UPDATE historic_eq_data
 SET
