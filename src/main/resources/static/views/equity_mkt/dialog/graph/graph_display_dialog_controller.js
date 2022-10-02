@@ -4,6 +4,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     const BUY_COLOR            = '#256BEF' ;
     const SELL_COLOR           = '#E7871C' ;
     const EOD_LINE_COLOR       = '#B5B7B5' ;
+    const EOD_LINE_COLOR_GREEN = '#93DA91' ;
+    const EOD_LINE_COLOR_RED   = '#FDA4A4' ;
     const AVG_LINE_COLOR       = '#ABABAB' ;
     const SCATTER_POINT_RADIUS = 4 ;
     
@@ -62,6 +64,11 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                        '#00FF00' : '#FF0000' ; 
         }
         
+        var eodLineColor = EOD_LINE_COLOR_RED ;
+        if( chartData.eodPriceList[0] < chartData.eodPriceList.at(-1) ) {
+            eodLineColor = EOD_LINE_COLOR_GREEN ;
+        }
+        
         const data = {
           labels: chartData.labels,
           datasets: [
@@ -91,8 +98,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
               {
                 type             : 'line',
                 data             : chartData.eodPriceList,
-                borderColor      : EOD_LINE_COLOR,
-                backgroundColor  : EOD_LINE_COLOR,
+                borderColor      : eodLineColor,
+                backgroundColor  : eodLineColor,
                 borderWidth      : 1,
                 tension          : 0,
                 radius           : 0,
