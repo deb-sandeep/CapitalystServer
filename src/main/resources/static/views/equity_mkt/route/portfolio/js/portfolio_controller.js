@@ -256,8 +256,6 @@ capitalystNgApp.controller( 'PortfolioController',
     
     function fetchEquityHoldingsFromServer( scheduleNextFetch ) {
         
-        $scope.inbetweenServerCall = true ;
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Equity/' + $scope.holdingType + 'Holding' )
         .then ( 
             function( response ){
@@ -294,10 +292,6 @@ capitalystNgApp.controller( 'PortfolioController',
                 }
             }
         )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-            $scope.inbetweenServerCall = false ;
-        }) ;
     }
     
     function isFullRefreshRequired( response ) {

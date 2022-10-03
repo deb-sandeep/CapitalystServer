@@ -62,7 +62,7 @@ public class BreezeTestExecutionController {
             BreezeAPIResponse<PortfolioHolding> response = api.execute( cred ) ;
             
             log.debug( "" ) ;
-            log.debug( "Symbol | Units |     CMP" ) ;
+            log.debug( "Symbol | Units |  Avg Price" ) ;
             log.debug( "-----------------------------" ) ;
             for( PortfolioHolding h : response.getEntities() ) {
                 log.debug( rightPad( h.getSymbol(),           6 ) + " | " + 
