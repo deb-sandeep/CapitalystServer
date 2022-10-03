@@ -63,6 +63,25 @@ public interface HistoricEQDataRepo
     
     @Query( nativeQuery = true,
             value = 
+              "SELECT "
+            + "    * "
+            + "FROM "
+            + "    historic_eq_data "
+            + "WHERE "
+            + "    date = ( "
+            + "       SELECT date "
+            + "       FROM historic_eq_data "
+            + "       WHERE date <= :date "
+            + "       ORDER BY date DESC "
+            + "       LIMIT 1 "
+            + "    ) "
+            + "ORDER BY "
+            + "    symbol ASC"
+    )
+    List<HistoricEQData> getHistoricDataClosestInPastToDate( @Param("date") Date date ) ;
+    
+    @Query( nativeQuery = true,
+            value = 
             "SELECT * "
           + "FROM historic_eq_data "
           + "WHERE symbol = :symbol "
@@ -70,7 +89,6 @@ public interface HistoricEQDataRepo
           + "LIMIT 1 "
     )
     HistoricEQData getEarliestRecord( @Param("symbol") String symbol ) ;
-    
     
     @Query( value = 
             "SELECT h "

@@ -82,6 +82,19 @@ capitalystNgApp.controller( 'RecoController',
         }) ;
     }
     
+    $scope.refreshTTM = function() {
+        
+        $scope.ttmRefreshTriggered = true ;
+        $http.post( '/Equity/PerfTTMRefresh' )
+        .then( function( response ) {
+                console.log( response.data ) ;
+        } )
+        .finally(function() {
+            $scope.ttmRefreshTriggered = false ;
+            fetchRecoDataFromServer() ;
+        }) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

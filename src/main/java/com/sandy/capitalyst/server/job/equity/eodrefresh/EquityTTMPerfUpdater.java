@@ -24,6 +24,8 @@ import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo.ClosePrice
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;
 
+import static com.sandy.capitalyst.server.core.util.IndentUtil.* ;
+
 public class EquityTTMPerfUpdater {
     
     private static final Logger log = Logger.getLogger( EquityTTMPerfUpdater.class ) ;
@@ -41,7 +43,7 @@ public class EquityTTMPerfUpdater {
     
     private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
     
-    private Map<String, HistoricEQData> todayEODCandles = new HashMap<>() ;
+    private Map<String, HistoricEQData> todayCandles = new HashMap<>() ;
     private Map<String, EquityTTMPerf>  perfMap      = new HashMap<>() ;
     
     private HistoricEQDataRepo histRepo = null ;
@@ -110,39 +112,51 @@ public class EquityTTMPerfUpdater {
     }
     
     public void addTodayEODCandle( HistoricEQData candle ) {
-        todayEODCandles.put( candle.getSymbol(), candle ) ;
+        todayCandles.put( candle.getSymbol(), candle ) ;
+    }
+    
+    public int getNumStocksForUpdate() {
+        return todayCandles.size() ;
     }
 
-    public void updateTTMPerfMeasures() throws Exception {
+    public void updateTTMPerfMeasures() throws Exception { i_mark() ;
         
         preloadTTMPerfRecords() ;
         
         for( Object[] meta : ttmTimeMarkers ) {
             
-            String milestoneName = ( String )meta[0] ;
-            Date date    = ( Date )meta[1] ;
+            String milestone = ( String )meta[0] ;
+            Date   date      = ( Date   )meta[1] ;
             
-            log.debug( "Updating TTM " + milestoneName + " @" + SDF.format( date ) ) ;
+            log.debug( "Updating TTM " + milestone + 
+                       " @" + SDF.format( date ) ) ;
             
-            updateMilestonePerf( milestoneName, date ) ;
+            updateMilestonePerf( milestone, date ) ;
         }
+        
         perfRepo.saveAll( perfMap.values() ) ;
+        
+        i_reset() ;
     }
     
     private void preloadTTMPerfRecords() throws Exception {
         
-        for( HistoricEQData todayCandle : todayEODCandles.values() ) {
+        log.debug( "Preloading TTM perf records" ) ;
+        
+        for( HistoricEQData currEod : todayCandles.values() ) {
             
-            String symbol = todayCandle.getSymbol() ;
+            String symbol = currEod.getSymbol() ;
+            log.debug( i1() + "Loading " + symbol ) ;
             
             EquityTTMPerf perf = perfRepo.findBySymbolNse( symbol ) ;
             if( perf == null ) {
+                log.debug( i2() + "TTM record not found. Creating new." ) ;
                 perf = new EquityTTMPerf() ;
-                perf.setSymbolNse( todayCandle.getSymbol() ) ;
+                perf.setSymbolNse( currEod.getSymbol() ) ;
             }
-            perf.setCurrentPrice( todayCandle.getClose() ) ;
+            perf.setCurrentPrice( currEod.getClose() ) ;
             
-            perfMap.put( todayCandle.getSymbol(), perf ) ;
+            perfMap.put( currEod.getSymbol(), perf ) ;
         }
     }
     
@@ -157,7 +171,7 @@ public class EquityTTMPerfUpdater {
             histEODPriceMap.put( histCP.getSymbol(), histCP ) ;
         }
         
-        for( HistoricEQData todayCandle : todayEODCandles.values() ) {
+        for( HistoricEQData todayCandle : todayCandles.values() ) {
             
             String        symbol = todayCandle.getSymbol() ;
             EquityTTMPerf perf   = perfMap.get( symbol ) ;
