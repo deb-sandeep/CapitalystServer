@@ -18,6 +18,7 @@ import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
+import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.equity.EquityTTMPerf ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTTMPerfRepo ;
@@ -152,6 +153,8 @@ public class EquityTTMPerfUpdater {
 
         perfMap.values().forEach( perfRepo::saveAndFlush ) ;
         
+        RecoManager.instance().setEquityDataUpdated( true ) ;
+        
         log.debug( "<< TTM perf refresh completed." ) ;
     }
     
@@ -266,7 +269,7 @@ public class EquityTTMPerfUpdater {
                             }
                         } ;
                     }
-                    log.debug( "<< Gap filled" ) ;
+                    log.debug( "- Gap filled <<" ) ;
                 }
             }
             
@@ -340,7 +343,7 @@ public class EquityTTMPerfUpdater {
                 }
             }
             
-            log.debug( "->" + numGapsFilled + " gaps filled." ) ;
+            log.debug( "-> " + numGapsFilled + " gaps filled." ) ;
         }
         
         perf.setGapsFilled( true ) ;
