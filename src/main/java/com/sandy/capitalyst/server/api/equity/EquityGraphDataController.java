@@ -25,11 +25,13 @@ import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
+import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityTrade ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTradeRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
@@ -62,6 +64,9 @@ public class EquityGraphDataController {
     
     @Autowired
     private EquityHoldingRepo ehRepo = null ;
+    
+    @Autowired
+    private EquityIndicatorsRepo eiRepo = null ;
     
     @GetMapping( "/Equity/GraphData" ) 
     public ResponseEntity<GraphData> getGraphData( 
@@ -148,6 +153,10 @@ public class EquityGraphDataController {
         populateAvgCostData ( graphData, em.getSymbolIcici(), ownerName ) ;
         populateCMPData     ( graphData ) ;
         
+        EquityIndicators ei = eiRepo.findByIsin( em.getIsin() ) ;
+        graphData.setIndicators( ei ) ;
+        graphData.setEquityMaster( em ) ;
+        
         return graphData ;
     }
 
@@ -225,7 +234,7 @@ public class EquityGraphDataController {
                                       String symbolIcici,
                                       String ownerName ) {
         
-        float avgPrice = getAvgCost( ownerName, symbolIcici ) ;
+        float avgPrice = getAvgCost( ownerName, symbolIcici, graphData ) ;
         if( avgPrice > 0 ) {
             
             List<Long> labels = graphData.getLabels() ;
@@ -262,7 +271,8 @@ public class EquityGraphDataController {
         return data ;
     }
     
-    private float getAvgCost( String ownerName, String symbolIcici ) {
+    private float getAvgCost( String ownerName, String symbolIcici, 
+                              GraphData graphData ) {
         
         List<EquityTxn>           txns      = null ;
         IndividualEquityHoldingVO indVO     = null ;
@@ -292,17 +302,20 @@ public class EquityGraphDataController {
                 }
             }
             
+            graphData.setHolding( famVO ) ;
             return famVO != null ? famVO.getAvgCostPrice() : 0 ;
         }
         else {
-            
             holding = ehRepo.findByOwnerNameAndSymbolIcici( ownerName, 
                                                             symbolIcici ) ;
-            txns = etxnRepo.findByHoldingIdOrderByTxnDateAscActionAsc( 
-                                                             holding.getId() ) ;
-            indVO = voBuilder.buildVO( holding, txns ) ;
+            if( holding != null ) {
+                txns = etxnRepo.findByHoldingIdOrderByTxnDateAscActionAsc( 
+                        holding.getId() ) ;
+                indVO = voBuilder.buildVO( holding, txns ) ;
+            }
 
-            return indVO.getAvgCostPrice() ;
+            graphData.setHolding( indVO ) ;
+            return indVO != null ? indVO.getAvgCostPrice() : 0 ;
         }
     }
     
