@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.job.equity.eodrefresh;
+package com.sandy.capitalyst.server.api.equity.helper;
 
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 
@@ -15,6 +15,8 @@ import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.equity.EquityTTMPerf ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
@@ -24,11 +26,13 @@ import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo.ClosePrice
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;
 
-import static com.sandy.capitalyst.server.core.util.IndentUtil.* ;
-
 public class EquityTTMPerfUpdater {
     
     private static final Logger log = Logger.getLogger( EquityTTMPerfUpdater.class ) ;
+    
+    public static final String CFG_GRP_NAME    = "EquityPerfTTMUpdater" ;
+    public static final String CFG_INCL_STOCKS = "incl_stocks" ;
+    public static final String CFG_EXCL_STOCKS = "excl_stocks" ;
     
     private static final String LAST_1Y_EOD_URL = 
         "https://www1.nseindia.com/" + 
@@ -43,6 +47,11 @@ public class EquityTTMPerfUpdater {
     
     private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
     
+    class Config {
+        List<String> inclStocks = null ;
+        List<String> exclStocks = null ;
+    }
+
     private Map<String, HistoricEQData> todayCandles = new HashMap<>() ;
     private Map<String, EquityTTMPerf>  perfMap      = new HashMap<>() ;
     
@@ -50,17 +59,105 @@ public class EquityTTMPerfUpdater {
     private EquityTTMPerfRepo  perfRepo = null ;
     
     private Object[][] ttmTimeMarkers = null ;
+    
+    private Config cfg = null ;
 
     public EquityTTMPerfUpdater() {
+        
+        cfg = loadConfig() ;
+
         histRepo = getBean( HistoricEQDataRepo.class ) ;
         perfRepo = getBean( EquityTTMPerfRepo.class ) ;
+    }
+    
+    private Config loadConfig() { 
+        
+        log.debug( "- Loading config" ) ;
+        
+        NVPConfigGroup nvpCfg = NVPManager.instance()
+                                          .getConfigGroup( CFG_GRP_NAME ) ;
+        Config cfg = new Config() ;
+        cfg.inclStocks = nvpCfg.getListValue( CFG_INCL_STOCKS, "" ) ;
+        cfg.exclStocks = nvpCfg.getListValue( CFG_EXCL_STOCKS, "" ) ;
+        
+        log.debug( "-> Included stocks = " + String.join( ",", cfg.inclStocks ) ) ;
+        log.debug( "-> Excluded stocks = " + String.join( ",", cfg.exclStocks ) ) ;
+        
+        return cfg ;
+    }
+    
+    private Date getFYStartDate() {
+        
+        Calendar cal    = Calendar.getInstance() ;
+        int      fyYear = cal.get( Calendar.YEAR ) ;
+        int      month  = cal.get( Calendar.MONTH ) ;
+        
+        if( month >= Calendar.JANUARY && month <= Calendar.MARCH ) { 
+            fyYear -= 1 ;
+        }
+        cal.set( fyYear, Calendar.APRIL, 1, 0, 0, 0 ) ;
+        return cal.getTime() ;
+    }
+    
+    public void addTodayEODCandle( HistoricEQData c ) {
+        
+        if( shouldProcessSymbol( c.getSymbol() ) ) {
+            todayCandles.put( c.getSymbol(), c ) ;
+        }
+        else {
+            log.debug( "-> Filtering " + c.getSymbol() ) ;
+        }
+    }
+    
+    private boolean shouldProcessSymbol( String symbol ) {
+        
+        // If no include stocks are specified, we include all, else any 
+        // stock not in the include list is ignored.
+        if( !cfg.inclStocks.isEmpty() ) {
+            if( !cfg.inclStocks.contains( symbol ) ) {
+                return false ;
+            }
+        }
+        
+        // If no exclude stocks are specified, we include all, else any
+        // stock in the exclude stock is rejected
+        if( !cfg.exclStocks.isEmpty() ) {
+            if( cfg.exclStocks.contains( symbol ) ) {
+                return false ;
+            }
+        }
+        
+        return true ;
+    }
+
+    public int getNumStocksForUpdate() {
+        return todayCandles.size() ;
+    }
+
+    public void updateTTMPerfMeasures() throws Exception { 
+        
+        log.debug( "- Updating TTM perf" ) ;
+        log.debug( "-> Num stocks = " + getNumStocksForUpdate() + " !>" ) ;
         
         generateTTMDateMarkers() ;
+        preloadTTMPerfRecords() ;
+        
+        for( Object[] meta : ttmTimeMarkers ) {
+            
+            String milestone = ( String )meta[0] ;
+            Date   date      = ( Date   )meta[1] ;
+            
+            updateMilestonePerf( milestone, date ) ;
+        }
+
+        perfMap.values().forEach( perfRepo::saveAndFlush ) ;
+        
+        log.debug( "<< TTM perf refresh completed." ) ;
     }
     
     private void generateTTMDateMarkers() {
         
-        Date today   = new Date() ;
+        Date today = todayCandles.entrySet().iterator().next().getValue().getDate() ;
         
         Date back1D  = DateUtils.addDays  ( today, -1  ) ;
         Date back1W  = DateUtils.addDays  ( today, -7  ) ;
@@ -98,59 +195,17 @@ public class EquityTTMPerfUpdater {
         ttmTimeMarkers[15] = new Object[]{ "perfFy" , fyStart } ;     
     }
     
-    private Date getFYStartDate() {
-        
-        Calendar cal    = Calendar.getInstance() ;
-        int      fyYear = cal.get( Calendar.YEAR ) ;
-        int      month  = cal.get( Calendar.MONTH ) ;
-        
-        if( month >= Calendar.JANUARY && month <= Calendar.MARCH ) { 
-            fyYear -= 1 ;
-        }
-        cal.set( fyYear, Calendar.APRIL, 1, 0, 0, 0 ) ;
-        return cal.getTime() ;
-    }
-    
-    public void addTodayEODCandle( HistoricEQData candle ) {
-        todayCandles.put( candle.getSymbol(), candle ) ;
-    }
-    
-    public int getNumStocksForUpdate() {
-        return todayCandles.size() ;
-    }
-
-    public void updateTTMPerfMeasures() throws Exception { i_mark() ;
-        
-        preloadTTMPerfRecords() ;
-        
-        for( Object[] meta : ttmTimeMarkers ) {
-            
-            String milestone = ( String )meta[0] ;
-            Date   date      = ( Date   )meta[1] ;
-            
-            log.debug( "Updating TTM " + milestone + 
-                       " @" + SDF.format( date ) ) ;
-            
-            updateMilestonePerf( milestone, date ) ;
-        }
-        
-        perfRepo.saveAll( perfMap.values() ) ;
-        
-        i_reset() ;
-    }
-    
     private void preloadTTMPerfRecords() throws Exception {
         
-        log.debug( "Preloading TTM perf records" ) ;
+        log.debug( "- Preloading TTM perf records" ) ;
         
         for( HistoricEQData currEod : todayCandles.values() ) {
             
             String symbol = currEod.getSymbol() ;
-            log.debug( i1() + "Loading " + symbol ) ;
             
             EquityTTMPerf perf = perfRepo.findBySymbolNse( symbol ) ;
             if( perf == null ) {
-                log.debug( i2() + "TTM record not found. Creating new." ) ;
+                log.debug( "->> TTM record not found. Creating new." ) ;
                 perf = new EquityTTMPerf() ;
                 perf.setSymbolNse( currEod.getSymbol() ) ;
             }
@@ -163,20 +218,24 @@ public class EquityTTMPerfUpdater {
     private void updateMilestonePerf( String perfField, Date date ) 
         throws Exception {
         
-        List<ClosePrice>        histEODPriceList = null ;
-        Map<String, ClosePrice> histEODPriceMap  = new HashMap<>() ;
+        log.debug( "- Updating TTM " + perfField + " @" + SDF.format( date ) ) ;
+     
+        List<ClosePrice>        histEODList = null ;
+        Map<String, ClosePrice> histEODMap  = new HashMap<>() ;
         
-        histEODPriceList = histRepo.getClosePriceNearestToDate( date ) ;
-        for( ClosePrice histCP : histEODPriceList ) {
-            histEODPriceMap.put( histCP.getSymbol(), histCP ) ;
-        }
+        histEODList = histRepo.getClosePriceNearestToDate( date ) ;
+        histEODList.forEach( i -> { histEODMap.put( i.getSymbol(), i ) ; } ) ;
         
-        for( HistoricEQData todayCandle : todayCandles.values() ) {
+        log.debug( "-> Closest eod record " + 
+                   SDF.format( histEODList.get( 0 ).getDate() ) ) ;
+        
+        for( HistoricEQData candle : todayCandles.values() ) {
             
-            String        symbol = todayCandle.getSymbol() ;
+            String        symbol = candle.getSymbol() ;
             EquityTTMPerf perf   = perfMap.get( symbol ) ;
             
-            ClosePrice histCP = histEODPriceMap.get( symbol ) ;
+            ClosePrice histCP = histEODMap.get( symbol ) ;
+            
             if( histCP == null ) {
                 // If we don't have a historic eod price it can be because of the
                 // following reasons:
@@ -187,6 +246,8 @@ public class EquityTTMPerfUpdater {
                 //
                 // We try to fill the gap if possible
                 if( perf.genuineGapExists() ) {
+                    
+                    log.debug( "!> Genuine gap found for " + symbol ) ;
                     
                     final HistoricEQData milestoneCP = fillGapsInHistoricData( perf, date ) ;
                     if( milestoneCP != null ) {
@@ -205,6 +266,7 @@ public class EquityTTMPerfUpdater {
                             }
                         } ;
                     }
+                    log.debug( "<< Gap filled" ) ;
                 }
             }
             
@@ -232,7 +294,7 @@ public class EquityTTMPerfUpdater {
         
         String symbol = perf.getSymbolNse() ;
         
-        log.debug( "   Filling historic cap for " + symbol ) ;
+        log.debug( "> Filling historic gap for " + symbol ) ;
         
         String DIV_START = "<div id='csvContentDiv' style='display:none;'>" ;
         String url = LAST_1Y_EOD_URL.replace( "{symbol}", symbol ) ;
@@ -278,7 +340,7 @@ public class EquityTTMPerfUpdater {
                 }
             }
             
-            log.debug( "     " + numGapsFilled + " gaps filled." ) ;
+            log.debug( "->" + numGapsFilled + " gaps filled." ) ;
         }
         
         perf.setGapsFilled( true ) ;

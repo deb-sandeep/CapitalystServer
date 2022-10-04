@@ -474,17 +474,9 @@ public class EquityTradeUpdater extends OTA {
                 }
             }
             else {
-                // If both capitalyst and breeze holdings exist, we check
-                // if the quantities differ. If so, sync with breeze, else
-                // ignore.
-                if( capitalystHolding.getQuantity() != breezeHolding.getQuantity() ) {
-                    
-                    addResult( "    Updating local quantity for " + symbolIcici ) ;
-                    addResult( "      Old quantity = " + capitalystHolding.getQuantity() ) ;
-                    addResult( "      New quantity = " + breezeHolding.getQuantity() ) ;
-                    
-                    syncLocalHoldingWithBreeze( capitalystHolding, breezeHolding ) ;
-                }
+                // If both capitalyst and breeze holdings exist, we sync the
+                // two entities
+                syncLocalHoldingWithBreeze( capitalystHolding, breezeHolding ) ;
                 
                 // Remove the breeze holding
                 breezeHoldingsMap.remove( symbolIcici ) ;
@@ -548,28 +540,53 @@ public class EquityTradeUpdater extends OTA {
     private void syncLocalHoldingWithBreeze( EquityHolding eh,
                                              PortfolioHolding ph ) {
         
-         String symbolIcici = eh.getSymbolIcici() ;
+        int   newQuantity = ph.getQuantity() ;
+        float newAvgPrice = ph.getAveragePrice() ;
+        float newDayGain  = ph.getChange() * newQuantity ;
+        float newCurPrice = ph.getCurrentMktPrice() ;
 
-         addResult( "     Updating quantity of " + 
-                    symbolIcici + " to " + ph.getQuantity() ) ;
-    
-         int   quantity = ph.getQuantity() ;
-         float avgPrice = ph.getAveragePrice() ;
-         float dayGain  = ph.getChange() * quantity ;
-         float curPrice = ph.getCurrentMktPrice() ;
-    
-         eh.setQuantity        ( quantity   ) ;
-         eh.setCurrentMktPrice ( curPrice   ) ;
-         eh.setDayGain         ( dayGain    ) ;
-         eh.setLastUpdate      ( new Date() ) ;
-         
-         if( updateAvgCostPrice ) {
-             eh.setAvgCostPrice( avgPrice ) ;
-         }
-         
-         numHoldingsUpdated++ ;
-         
-         ehRepo.save( eh ) ;
+        int   oldQuantity = eh.getQuantity() ;
+        float oldAvgPrice = eh.getAvgCostPrice() ;
+        float oldDayGain  = eh.getDayGain() ;
+        float oldCurPrice = eh.getCurrentMktPrice() ;
+        
+        boolean qtyUpdated     = false ;
+        boolean avgPriceUpdated = false ;
+        boolean dayGainUpdated  = false ; 
+        boolean curPriceUpdated = false ;
+        
+        if( newQuantity != oldQuantity ) {
+            qtyUpdated = true ;
+            eh.setQuantity ( newQuantity   ) ;
+        }
+        
+        if( newAvgPrice != oldAvgPrice && updateAvgCostPrice ) {
+            avgPriceUpdated = true ;
+            eh.setAvgCostPrice( newAvgPrice ) ;
+        }
+        
+        if( newDayGain != oldDayGain ) {
+            dayGainUpdated = true ;
+            eh.setDayGain( newDayGain ) ;
+        }
+        
+        if( newCurPrice != oldCurPrice ) {
+            curPriceUpdated = true ;
+            eh.setCurrentMktPrice( newCurPrice ) ;
+        }
+        
+        if( qtyUpdated | avgPriceUpdated | dayGainUpdated | curPriceUpdated ) {
+            
+            addResult( "    Updating local holding for " +  eh.getSymbolIcici() ) ;
+            
+            if( qtyUpdated      ) addResult( "      Quantity  : " + oldQuantity + " -> " + newQuantity ) ;
+            if( avgPriceUpdated ) addResult( "      Avg Price : " + oldAvgPrice + " -> " + newAvgPrice ) ;
+            if( dayGainUpdated  ) addResult( "      Day gain  : " + oldDayGain  + " -> " + newDayGain  ) ;
+            if( curPriceUpdated ) addResult( "      Cur Price : " + oldCurPrice + " -> " + newCurPrice ) ;
+            
+            ehRepo.saveAndFlush( eh ) ;
+            numHoldingsUpdated++ ;
+        }
     }
     
     // Note that breeze portfolio can be null. This is possible if we are 
@@ -606,6 +623,7 @@ public class EquityTradeUpdater extends OTA {
         }
         
         eh = ehRepo.save( eh ) ;
+        localHoldingsMap.put( symbolIcici, eh ) ;
 
         numHoldingsCreated++ ;
         

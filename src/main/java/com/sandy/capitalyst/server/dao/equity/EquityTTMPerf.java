@@ -79,10 +79,12 @@ public class EquityTTMPerf {
     private float perfFy = 0.0F ;
     
     public boolean genuineGapExists() {
-        if( getNumGaps() > 0 ) {
-            Date firstGapDate = getFirstMilestoneGapDate() ;
-            if( firstGapDate != null ) {
-                if( gapsFilled == null || !gapsFilled ) {
+        
+        // If we have already filled the gaps, no genuine gaps exist.
+        if( gapsFilled == null || !gapsFilled ) {
+            if( getNumGaps() > 0 ) {
+                Date firstGapDate = getFirstMilestoneGapDate() ;
+                if( firstGapDate != null ) {
                     return true ;
                 }
             }

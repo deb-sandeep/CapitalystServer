@@ -11,6 +11,7 @@ import java.util.Map ;
 
 import org.apache.log4j.Logger ;
 
+import com.sandy.capitalyst.server.api.equity.helper.EquityTTMPerfUpdater ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
@@ -97,14 +98,14 @@ public class NSEBhavcopyImporter {
                     
                     em.setClose( candle.getClose() ) ;
                     em.setPrevClose( candle.getPrevClose() ) ;
-                    emRepo.save( em ) ;
+                    emRepo.saveAndFlush( em ) ;
                     
                     if( StringUtil.isNotEmptyOrNull( em.getIndustry() ) || 
                         em.isEtf() || 
                         holdingsMap.containsKey( symbol ) || 
                         nifty200Stocks.contains( em.getSymbol() ) ) {
                         
-                        ecRepo.save( candle ) ;
+                        ecRepo.saveAndFlush( candle ) ;
                         updateEquityISINMapping( symbol, isin ) ;
                         
                         ttmPerfUpdater.addTodayEODCandle( candle ) ;
@@ -118,7 +119,7 @@ public class NSEBhavcopyImporter {
                             
                             holding.setCurrentMktPrice( candle.getClose() ) ;
                             holding.setLastUpdate( date ) ;
-                            ehRepo.save( holding ) ;
+                            ehRepo.saveAndFlush( holding ) ;
                         }
                     }
                 }
