@@ -95,6 +95,12 @@ capitalystNgApp.controller( 'RecoController',
         }) ;
     }
     
+    $scope.addTracking = function( reco ) {
+        
+        console.log( "Adding tracking to stock. ISIN = " + reco.equityMaster.isin ) ;
+        // TODO
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

@@ -15,7 +15,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     // ---------------- Scope variables --------------------------------------
     $scope.graphParams = null ;
-    $scope.durationKeys = [ '1m', '2m', '3m', '6m', '1y', '2y', '3y' ] ;
+    $scope.durationKeys = [ '3y', '2y', '1y', '6m', '3m', '2m', '1m' ] ;
     $scope.duration = '3m' ;
     
     // -----------------------------------------------------------------------

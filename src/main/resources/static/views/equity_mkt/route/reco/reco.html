@@ -104,6 +104,10 @@
                     <i ng-if="reco.inPortfolio" 
                        class="fa-solid fa-map-pin"
                        style="color:red;"></i>
+                    <i ng-if="!reco.inPortfolio"
+                       class="fa-solid fa-map-pin"
+                       style="color:#EEEEEE;"
+                       ng-click="addTracking( reco )"></i>
                </td>
                <td>
                     <i class="fa-regular fa-note-sticky"
