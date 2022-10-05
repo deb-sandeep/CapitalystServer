@@ -5,10 +5,10 @@
 --          -> DO NOT run this while drunk
 --          -> Take a backup of the database before running it.
 
-SET @SPLIT_RATIO    = 100 ;
-SET @SYMBOL_IDIRECT = 'SBIGOL'    collate utf8mb4_unicode_ci ;
-SET @SYMBOL_NSE     = 'SETFGOLD' collate utf8mb4_unicode_ci ;
-SET @SPLIT_DATE     = '2022-01-06' ;
+SET @SPLIT_RATIO.   = 1.36 ;
+SET @SYMBOL_IDIRECT = 'VBLBEV' collate utf8mb4_unicode_ci ;
+SET @SYMBOL_NSE     = 'VBL' collate utf8mb4_unicode_ci ;
+SET @SPLIT_DATE     = '2021-06-10' ;
 
 -- EQUITY_HOLDING --------------------------------------------------------------
 SELECT *
