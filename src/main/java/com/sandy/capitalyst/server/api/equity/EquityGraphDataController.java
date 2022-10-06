@@ -1,6 +1,7 @@
 package com.sandy.capitalyst.server.api.equity ;
 
 import java.text.SimpleDateFormat ;
+import java.util.Calendar ;
 import java.util.Date ;
 import java.util.List ;
 import java.util.Map ;
@@ -261,14 +262,43 @@ public class EquityGraphDataController {
         
         histEqDataList = hedRepo.getHistoricData( em.getSymbol(), 
                                                   fromDate, toDate ) ;
-        
         histEqDataList.forEach( item -> {
             DataHolder holder = new DataHolder() ;
             holder.histData = item ;
             data.put( item.getDate(), holder ) ;
         } ) ;
         
+        populateLatestCMP( data, em.getSymbol() ) ;
+        
         return data ;
+    }
+    
+    // If we are tracking intra-day price for this stock, there is a possibility
+    // that we might have a more recent market price. If so, lets add it to the
+    // graph data.
+    private void populateLatestCMP( Map<Date, DataHolder> data, String symbolNse ) {
+        
+        List<EquityHolding> holdings = null ;
+        EquityHolding holding = null ;
+        
+        holdings = ehRepo.findBySymbolNse( symbolNse ) ;
+        
+        if( holdings != null && !holdings.isEmpty() ) {
+            holding = holdings.get( 0 ) ;
+            
+            Date lastUpdate = holding.getLastUpdate() ;
+            lastUpdate = DateUtils.truncate( lastUpdate, Calendar.DAY_OF_MONTH ) ;
+            
+            if( !data.containsKey( lastUpdate ) ) {
+                HistoricEQData histData = new HistoricEQData() ;
+                histData.setClose( holding.getCurrentMktPrice() ) ;
+                histData.setDate( lastUpdate ) ;
+                
+                DataHolder holder = new DataHolder() ;
+                holder.histData = histData ;
+                data.put( lastUpdate, holder ) ;
+            }
+        }
     }
     
     private float getAvgCost( String ownerName, String symbolIcici, 

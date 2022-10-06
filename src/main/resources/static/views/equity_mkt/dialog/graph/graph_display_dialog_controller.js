@@ -158,11 +158,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     function renderTooltipLabel( context ) {
         if( context.dataset.type == 'scatter' ) {
-            
             if( context.raw.hasOwnProperty( 'q' ) ) {
                 return "Units = " + context.dataset.data[ context.dataIndex ].q ;
             }
-            return "Avg price = " + context.formattedValue ;
         }
         return "Price = " + context.formattedValue ;
     }
