@@ -26,7 +26,7 @@ public class EquityRecommendationsController {
         try {
             RecoManager recoMgr = RecoManager.instance() ;
             
-            recommendations = recoMgr.getScreenedRecos() ;
+            recommendations = recoMgr.getRecommendations() ;
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( recommendations ) ;

@@ -1,5 +1,7 @@
 package com.sandy.capitalyst.server.daemon.equity.recoengine.internal;
 
+import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
@@ -10,8 +12,10 @@ import com.sandy.capitalyst.server.daemon.equity.recoengine.internal.Screener.Sc
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
+import com.sandy.capitalyst.server.dao.equity.EquityMonitor ;
 import com.sandy.capitalyst.server.dao.equity.EquityTTMPerf ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMonitorRepo ;
 
 public class RecoEngine extends RecoEngineBase {
 
@@ -25,8 +29,12 @@ public class RecoEngine extends RecoEngineBase {
         }
         return instance ;
     }
+    
+    private EquityMonitorRepo monRepo = null ;
 
-    private RecoEngine() {}
+    private RecoEngine() {
+        monRepo = getBean( EquityMonitorRepo.class ) ;
+    }
     
     public EquityReco screen( EquityMaster em,
                               EquityIndicators eIndicators,
@@ -61,6 +69,13 @@ public class RecoEngine extends RecoEngineBase {
                                  EquityReco reco ) {
         
         ScreenerResult result = null ;
+        EquityMonitor mon = null ;
+        
+        mon = monRepo.findBySymbolNse( reco.getEquityMaster().getSymbol() ) ;
+        if( mon != null ) {
+            reco.setMonitored( true ) ;
+            return ;
+        }
         
         for( Screener filter : screeners ) {
             

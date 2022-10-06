@@ -16,6 +16,7 @@ import com.sandy.capitalyst.server.daemon.equity.recoengine.internal.RecoEngine 
 import com.sandy.capitalyst.server.daemon.equity.recoengine.internal.StatisticsManager ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
+import com.sandy.capitalyst.server.dao.equity.EquityMonitor ;
 import com.sandy.capitalyst.server.dao.equity.EquityTTMPerf ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
@@ -70,7 +71,7 @@ public class RecoManager {
         return allRecos ;
     }
     
-    public List<EquityReco> getScreenedRecos()  
+    public List<EquityReco> getRecommendations()  
         throws Exception {
         
         initialize() ;
@@ -203,5 +204,13 @@ public class RecoManager {
         csvWriter.close() ;
         
         log.debug( output.toString() ) ;
+    }
+
+    public void setMonitorFlag( EquityMonitor mon, boolean flag ) {
+        
+        EquityReco reco = recommendations.get( mon.getSymbolNse() ) ;
+        if( reco != null ) {
+            reco.setMonitored( flag ) ;
+        }
     }
 }

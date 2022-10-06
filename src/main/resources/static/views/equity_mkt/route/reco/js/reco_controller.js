@@ -1,5 +1,5 @@
 capitalystNgApp.controller( 'RecoController', 
-    function( $scope, $http ) {
+    function( $scope, $http, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
     var sortDir = {
@@ -95,10 +95,35 @@ capitalystNgApp.controller( 'RecoController',
         }) ;
     }
     
-    $scope.addTracking = function( reco ) {
+    $scope.toggleMonitor = function( reco ) {
         
-        console.log( "Adding tracking to stock. ISIN = " + reco.equityMaster.isin ) ;
-        // TODO
+        var symbol  = reco.equityMaster.symbol ;
+        var content = reco.monitored ? 'Remove monitor from ' + symbol :
+                                       'Add monitor to ' + symbol ; 
+        
+        $ngConfirm({
+            title: 'Confirm ' + (reco.monitored ? 'remove' : 'add'),
+            content: content ,
+            scope: $scope,
+            buttons: {
+                close: function(scope, button){},
+                yes: {
+                    text: 'Yes',
+                    btnClass: 'btn-blue',
+                    action: function(scope, button){
+                        if( reco.monitored ) {
+                            $http.delete( '/Equity/Monitor/' + reco.equityMaster.isin )
+                            .finally(function() { reco.monitored = false ; }) ;
+                        }
+                        else {
+                            $http.post( '/Equity/Monitor/' + reco.equityMaster.isin )
+                            .finally(function() { reco.monitored = true ; }) ;
+                        }
+                        return true ;
+                    }
+                }
+            }
+        });
     }
     
     // --- [END] Scope functions
@@ -250,12 +275,18 @@ capitalystNgApp.controller( 'RecoController',
     }
     
     function holdingSort( r1, r2 ) {
-        var r1Holding = r1.inPortfolio ? 1 : 0 ;
-        var r2Holding = r2.inPortfolio ? 1 : 0 ;
+        var r1Holding = r1.inPortfolio ? 2 : 0 ;
+        var r2Holding = r2.inPortfolio ? 2 : 0 ;
+        
+        var r1Monitored = r1.monitored ? 1 : 0 ;
+        var r2Monitored = r2.monitored ? 1 : 0 ;
+        
+        var r1Score = r1Holding + r1Monitored ;
+        var r2Score = r2Holding + r2Monitored ;
         
         return sortDir[ "holding"] == "asc" ?
-            ( r2Holding - r1Holding ) :
-            ( r1Holding - r2Holding ) ;
+            ( r2Score - r1Score ) :
+            ( r1Score - r2Score ) ;
     }
     
     function priceSort( r1, r2 ) {

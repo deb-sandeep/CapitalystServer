@@ -34,6 +34,7 @@ public class EquityReco {
     private EquityTTMPerf             ttmPerf        = null ;
     
     private float goodnessScore = 0 ;
+    private boolean monitored = false ;
 
     public void setReco( Type type, String msg ) {
         
