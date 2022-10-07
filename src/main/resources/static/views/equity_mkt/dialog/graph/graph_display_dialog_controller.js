@@ -211,6 +211,28 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         quantityRange = maxQuantity - minQuantity ;
     }
     
+    function caculateMovingAverage( data, window ) {
+        
+        var sum = 0;
+        var result = [] ;
+        
+        if( data.length < window ){ return result; }
+        
+        for( var i=0; i<window; ++i ) {
+            sum += data[i] ;
+        }
+        result.push( sum / window ) ;
+        
+        var steps = data.length - window - 1 ;
+        for( var i=0; i<steps; ++i) {
+            sum -= data[i] ;
+            sum += data[i + window] ;
+            result.push( sum / window ) ;
+        }
+        
+        return result ;
+    }
+    
     // ------------------- Server comm functions -------------------------------
     
     function fetchChartData() {
