@@ -32,9 +32,74 @@
         </canvas>
     </div>
     
-    <div class="modal-footer">
+    <div class="modal-footer"
+         style="padding-left:50px;padding-right:30px;">
+	    <table class="table table-bordered table-compact">
+	        <tbody>
+	           <tr>
+	               <td class="label-cell">Quantity</td>
+	               <td class="value-cell fixed-font">{{chartData.holding.quantity}}</td>
+	               <td class="label-cell">Avg. Cost Price</td>
+	               <td class="value-cell fixed-font">{{chartData.holding.avgCostPrice | amt}}</td>
+	               <td class="label-cell">Current Price</td>
+	               <td class="value-cell fixed-font">{{chartData.holding.currentMktPrice | amt}}</td>
+                   <td class="label-cell">Trend</td>
+	               <td style="text-align:center;">
+	                   <span ng-if="chartData.holding.indicators.trend == 'VERY BULLISH'"
+	                         class="glyphicon glyphicon-arrow-up"
+	                         style="color:green;"></span>
+	                         
+	                   <span ng-if="chartData.holding.indicators.trend == 'VERY BULLISH'"
+	                         class="glyphicon glyphicon-arrow-up"
+	                         style="color:green;"></span>
+	                         
+	                   <span ng-if="chartData.holding.indicators.trend == 'BULLISH'"
+	                         class="glyphicon glyphicon-arrow-up"
+	                         style="color:green;"></span>
+	                         
+	                   <span ng-if="chartData.holding.indicators.trend == 'NEUTRAL'"
+	                         class="glyphicon glyphicon-resize-horizontal"></span>
+	                         
+	                   <span ng-if="chartData.holding.indicators.trend == 'BEARISH'"
+	                         class="glyphicon glyphicon-arrow-down"
+	                         style="color:red;"></span>
+	                         
+	                   <span ng-if="chartData.holding.indicators.trend == 'VERY BEARISH'"
+	                         class="glyphicon glyphicon-arrow-down"
+	                         style="color:red;"></span>
+	                         
+	                   <span ng-if="chartData.holding.indicators.trend == 'VERY BEARISH'"
+	                         class="glyphicon glyphicon-arrow-down"
+	                         style="color:red;"></span>
+	               </td>
+               </tr>
+               <tr>
+                   <td class="label-cell">52W High</td>
+                   <td class="value-cell fixed-font">{{chartData.indicators.high52 | amt}}</td>
+                   <td class="label-cell">52W Low</td>
+                   <td class="value-cell fixed-font">{{chartData.indicators.low52 | amt}}</td>
+                   <td class="label-cell">Symbol NSE</td>
+                   <td class="value-cell fixed-font">{{chartData.holding.symbolNse}}</td>
+	               <td class="label-cell">Symbol ICICI</td>
+                   <td class="value-cell fixed-font">{{chartData.holding.symbolIcici}}</td>
+               </tr>
+               <tr>
+                   <td class="label-cell">Investment</td>
+                   <td class="value-cell fixed-font">{{chartData.holding.valueAtCost | amt}}</td>
+                   <td class="label-cell">Market Value</td>
+                   <td class="value-cell fixed-font">{{chartData.holding.valueAtMktPrice | amt}}</td>
+                   <td class="label-cell">Profit/Loss</td>
+                   <td class="value-cell fixed-font"
+                       ng-class="getAmtClass(chartData.holding.pat)">
+                       {{chartData.holding.pat | amt}}
+                   </td>
+	               <td class="label-cell">PAT%</td>
+                   <td class="value-cell fixed-font"
+                       ng-class="getAmtClass(chartData.holding.patPct)">
+                       {{chartData.holding.patPct | number:1}} %</td>
+               </tr>
+	        </tbody>
+	    </table>
     </div>
-    
-    <p>
   </div>
 </div>

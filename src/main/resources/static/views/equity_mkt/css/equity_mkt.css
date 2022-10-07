@@ -106,3 +106,17 @@ td {
     padding-top : 3px !important;
     padding-bottom : 3px !important;
 }
+
+.property-table {
+	width: auto !important;
+}
+
+.label-cell {
+	width: 125px;
+	text-align: left;
+	background-color: #eafffb;
+}
+
+.value-cell {
+	padding-right:10px !important;
+}
