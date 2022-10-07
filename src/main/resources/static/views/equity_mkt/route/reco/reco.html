@@ -104,10 +104,12 @@
                     <i ng-if="reco.inPortfolio" 
                        class="fa-solid fa-map-pin"
                        style="color:red;"></i>
-                    <i ng-if="reco.monitored" 
+                       
+                    <i ng-if="!reco.inPortfolio && reco.monitored" 
                        class="fa-solid fa-map-pin"
                        style="color:blue;"
                        ng-click="toggleMonitor( reco )"></i>
+                       
                     <i ng-if="!reco.inPortfolio && !reco.monitored"
                        class="fa-solid fa-map-pin"
                        style="color:#EEEEEE;"
