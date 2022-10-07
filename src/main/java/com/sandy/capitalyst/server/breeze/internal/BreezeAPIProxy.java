@@ -135,7 +135,18 @@ public abstract class BreezeAPIProxy<T> {
                 response = createResponse( responseStr ) ;
                 
                 if( response.getStatus() == 500 ) {
-                    throw BreezeException.serverError( responseStr ) ;
+                    if( StringUtil.isNotEmptyOrNull( response.getError() ) &&
+                        response.getError().contains( "Portfolio not defined" ) ) {
+
+                        // We return this response. This is a valid scenario
+                        // where the user does not have a portfolio or the 
+                        // portfolio is temporarily empty. The list of entities
+                        // ,in this case PortfolioHolding will be empty.
+                        response.setStatus( 200 ) ;
+                    }
+                    else {
+                        throw BreezeException.serverError( responseStr ) ;
+                    }
                 }
             }
             catch( BreezeException e ) {

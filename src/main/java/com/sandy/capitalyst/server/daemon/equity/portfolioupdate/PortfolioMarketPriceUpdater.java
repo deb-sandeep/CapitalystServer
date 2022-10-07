@@ -144,6 +144,13 @@ public class PortfolioMarketPriceUpdater extends Thread {
                 log.debug( "Updating Portfolio CMP for " + cred.getUserName() ) ;
             }
             
+            if( !cred.isHasPortfolio() ) {
+                if( debugEnable ) {
+                    log.debug( "  No portfolio exists for " + cred.getUserName() ) ;
+                }
+                continue ;
+            }
+            
             if( !Breeze.instance().hasActiveSession( cred ) ) {
                 if( debugEnable ) {
                     log.debug( "  Skipping CMP update. No active session." ) ;

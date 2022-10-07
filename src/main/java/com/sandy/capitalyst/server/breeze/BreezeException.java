@@ -22,7 +22,8 @@ public class BreezeException extends Exception {
         API_DAY_LIMIT_EXCEED,
         API_MIN_LIMIT_EXCEED,
         APP_EXCEPTION,
-        SESSION_ERROR
+        SESSION_ERROR,
+        NO_PORTFOLIO
     } ;
     
     private class OriginLine {
@@ -107,6 +108,14 @@ public class BreezeException extends Exception {
         
         BreezeException e = new BreezeException( Type.SERVER_ERROR, 
                                                  message ) ;
+        e.setHttpStatusCode( 500 ) ;
+        return e ;
+    }
+    
+    public static BreezeException noPortfolio() {
+        
+        BreezeException e = new BreezeException( Type.NO_PORTFOLIO, 
+                                                 "Empty portfolio." ) ;
         e.setHttpStatusCode( 500 ) ;
         return e ;
     }

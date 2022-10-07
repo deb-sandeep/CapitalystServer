@@ -61,13 +61,18 @@ public class BreezeTestExecutionController {
             BreezeGetPortfolioHoldingsAPI api = new BreezeGetPortfolioHoldingsAPI() ;
             BreezeAPIResponse<PortfolioHolding> response = api.execute( cred ) ;
             
-            log.debug( "" ) ;
-            log.debug( "Symbol | Units |  Avg Price" ) ;
-            log.debug( "-----------------------------" ) ;
-            for( PortfolioHolding h : response.getEntities() ) {
-                log.debug( rightPad( h.getSymbol(),           6 ) + " | " + 
-                           leftPad ( ""+h.getQuantity(),      5 ) + " | " + 
-                           leftPad ( ""+h.getAveragePrice(), 10 ) ) ;
+            if( response.getEntities().isEmpty() ) {
+                log.debug( "Empty portfolio." ) ;
+            }
+            else {
+                log.debug( "" ) ;
+                log.debug( "Symbol | Units |  Avg Price" ) ;
+                log.debug( "-----------------------------" ) ;
+                for( PortfolioHolding h : response.getEntities() ) {
+                    log.debug( rightPad( h.getSymbol(),           6 ) + " | " + 
+                            leftPad ( ""+h.getQuantity(),      5 ) + " | " + 
+                            leftPad ( ""+h.getAveragePrice(), 10 ) ) ;
+                }
             }
             
             results.put( "logs", appender.toString() ) ;
