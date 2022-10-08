@@ -97,7 +97,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
     
     $scope.smaGraphOptionsChanged = function() {
-        drawChart() ;
+        drawChart( false ) ;
     }
 
     // --- [END] Scope functions
@@ -208,13 +208,15 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
     }
     
-    function drawChart() {
+    function drawChart( animate ) {
         
         $( '#graphDisplayDialog' ).modal( 'show' ) ;
         
         if( chart != null ) { chart.destroy() ; }
 
         const ctx = document.getElementById( 'eodGraph' ) ;
+        const animationDuration = animate ? 1000 : 0 ;
+
         var datasets = [] ;
         
         datasets.push( getBuyTradesDataset()  ) ;
@@ -252,6 +254,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                         }
                     }
                 }  
+            },
+            animation : {
+                duration : animationDuration 
             }
         } ;
         
@@ -352,7 +357,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 console.log( response.data ) ;
                 $scope.chartData = response.data ;
                 extractQuantityRange() ;
-                drawChart() ;
+                drawChart( true ) ;
             }
         )
         .finally(function() {
