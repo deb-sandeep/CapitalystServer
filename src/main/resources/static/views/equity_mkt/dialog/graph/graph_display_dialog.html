@@ -24,7 +24,8 @@
        </div>
     </div>
     
-    <div class="modal-body">
+    <div class="modal-body"
+         style="padding:5px 15px 5px 15px;">
         <canvas id="eodGraph" 
                 width="1000" 
                 height="500">
@@ -33,7 +34,7 @@
     </div>
     
     <div class="modal-footer"
-         style="padding-left:50px;padding-right:30px;">
+         style="padding: 5px 30px 5px 50px;">
 	    <table class="table table-bordered table-compact">
 	        <tbody>
 	           <tr>
@@ -97,6 +98,21 @@
                    <td class="value-cell fixed-font"
                        ng-class="getAmtClass(chartData.holding.patPct)">
                        {{chartData.holding.patPct | number:1}} %</td>
+               </tr>
+               <tr>
+                   <td class="label-cell">SMA Graphs</td>
+                   <td class="value-cell" colspan="3"
+                       style="text-align:left;padding:2px;">
+                     <span ng-repeat="(key, value) in smaGraphs"
+                           ng-style="{'color':value.color, 'font-weight':700}">
+                         {{key}}&nbsp;
+		                 <input type="checkbox" 
+		                        ng-model="smaGraphs[key].enabled"
+		                        ng-change="smaGraphOptionsChanged()"/>
+		                 &nbsp;&nbsp;
+	                 </span>
+                   </td>
+                   <td colspan="4"></td>
                </tr>
 	        </tbody>
 	    </table>

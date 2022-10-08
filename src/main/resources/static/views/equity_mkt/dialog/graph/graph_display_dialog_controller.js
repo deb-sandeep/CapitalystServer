@@ -23,6 +23,44 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.graphParams = null ;
     $scope.durationKeys = [ '3y', '2y', '1y', '6m', '3m', '2m', '1m' ] ;
     $scope.duration = '3m' ;
+    $scope.smaGraphs = {
+       d5 : {
+          window : 5,
+          enabled : true,
+          color : '#008080',
+          dash : [1,4] 
+       },
+       d10 : {
+          window : 10,
+          enabled : true,
+          color : '#FF6347',
+          dash : [1,4] 
+       },
+       d20 : {
+          window : 20,
+          enabled : false,
+          color : '#008B8B',
+          dash : [1,4] 
+       },
+       d50 : {
+          window : 50,
+          enabled : false,
+          color : '#483D8B',
+          dash : [1,4] 
+       },
+       d100 : {
+          window : 100,
+          enabled : false,
+          color : '#DAA520',
+          dash : [1,4] 
+       },
+       d200 : {
+          window : 200,
+          enabled : false,
+          color : '#20B2AA',
+          dash : [1,4] 
+       },
+    } ;
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
@@ -52,6 +90,14 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     $scope.getAmtClass = function( value ) {
         return ( value < 0 ) ? "neg_amt" : "pos_amt" ;
+    }
+    
+    $scope.smaGraphOptionsChanged = function() {
+        console.log( $scope.smaGraphs ) ;
+    }
+    
+    $scope.smaGraphOptionsChanged = function() {
+        drawChart() ;
     }
 
     // --- [END] Scope functions
@@ -131,6 +177,37 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         } ;
     }
     
+    function getSMADataset( datasets ) {
+        
+        var eodPriceList = $scope.chartData.eodPriceList ;
+        
+        for( const smaKey in $scope.smaGraphs ) {
+            
+            const smaCfg = $scope.smaGraphs[smaKey] ;
+            
+            if( !smaCfg.enabled ) { continue ; }
+                
+            var smaValues = calculateSMA( eodPriceList, smaCfg.window ) ;
+            
+            if( smaValues.length == 0 ) { continue ; }
+            
+            while( smaValues.length != eodPriceList.length ) {
+                smaValues.unshift( null ) ;
+            }
+            
+            datasets.push( {
+                type             : 'line',
+                data             : smaValues,
+                borderColor      : smaCfg.color ,
+                backgroundColor  : smaCfg.color,
+                borderWidth      : 2,
+                tension          : 0.25,
+                radius           : 0,
+                borderDash       : smaCfg.dash
+            } ) ;
+        }
+    }
+    
     function drawChart() {
         
         $( '#graphDisplayDialog' ).modal( 'show' ) ;
@@ -145,6 +222,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         datasets.push( getAvgPriceDataset()   ) ;
         datasets.push( getEodPriceDataset()   ) ;
         datasets.push( getCMPDataset()        ) ;
+        
+        getSMADataset( datasets ) ;
         
         const options = {
             plugins : {
@@ -235,7 +314,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         quantityRange = maxQuantity - minQuantity ;
     }
     
-    function calculateMovingAverage( data, window ) {
+    function calculateSMA( data, window ) {
         
         var sum = 0;
         var result = [] ;
