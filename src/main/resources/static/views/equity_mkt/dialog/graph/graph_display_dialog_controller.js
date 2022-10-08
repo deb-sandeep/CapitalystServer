@@ -59,71 +59,92 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     
-    function drawChart() {
+    function getBuyTradesDataset() {
+        var buyData = $scope.chartData.buyData ;
+        return {
+            type             : 'scatter',
+            data             : buyData,
+            backgroundColor  : BUY_COLOR,
+            borderColor      : BUY_COLOR,
+            pointRadius      : getPointRadiusArray( buyData ),
+        } ;
+    }
+    
+    function getSellTradesDataset() {
+        var sellData = $scope.chartData.sellData ;
+        return {
+            type             : 'scatter',
+            data             : sellData,
+            backgroundColor  : SELL_COLOR,
+            borderColor      : SELL_COLOR,
+            radius           : getPointRadiusArray( sellData ),
+        } ;
+    }
+    
+    function getAvgPriceDataset() {
+        return {
+            type             : 'scatter',
+            data             : $scope.chartData.avgData,
+            backgroundColor  : AVG_LINE_COLOR,
+            borderColor      : AVG_LINE_COLOR,
+            radius           : 5,
+            borderWidth      : 1,
+            showLine         : true,
+        } ;
+    }
+    
+    function getEodPriceDataset() {
         
-        if( chart != null ) {
-            chart.destroy() ;
-        }
-        
-        $( '#graphDisplayDialog' ).modal( 'show' ) ;
-
-        const ctx = document.getElementById( 'eodGraph' ) ;
-        
-        var cmpColor = '#000000' ;
-        if( $scope.chartData.avgData.length > 0 ) {
-            cmpColor = ( $scope.chartData.avgData[0].y < $scope.chartData.cmpData[0].y ) ? 
-                       '#00FF00' : '#FF0000' ; 
-        }
-        
+        var eodPriceList = $scope.chartData.eodPriceList ;
         var eodLineColor = EOD_LINE_COLOR_RED ;
-        if( $scope.chartData.eodPriceList[0] < $scope.chartData.eodPriceList.at(-1) ) {
+        if( eodPriceList[0] < eodPriceList.at(-1) ) {
             eodLineColor = EOD_LINE_COLOR_GREEN ;
         }
         
-        const data = {
-          labels: $scope.chartData.labels,
-          datasets: [
-              {
-                type             : 'scatter',
-                data             : $scope.chartData.buyData,
-                backgroundColor  : BUY_COLOR,
-                borderColor      : BUY_COLOR,
-                pointRadius      : getPointRadiusArray( $scope.chartData.buyData ),
-              },
-              {
-                type             : 'scatter',
-                data             : $scope.chartData.sellData,
-                backgroundColor  : SELL_COLOR,
-                borderColor      : SELL_COLOR,
-                radius           : getPointRadiusArray( $scope.chartData.sellData ),
-              },
-              {
-                type             : 'scatter',
-                data             : $scope.chartData.avgData,
-                backgroundColor  : AVG_LINE_COLOR,
-                borderColor      : AVG_LINE_COLOR,
-                radius           : 5,
-                borderWidth      : 1,
-                showLine         : true,
-              },
-              {
-                type             : 'line',
-                data             : $scope.chartData.eodPriceList,
-                borderColor      : eodLineColor,
-                backgroundColor  : eodLineColor,
-                borderWidth      : 1,
-                tension          : 0,
-                radius           : 0,
-              },
-              {
-                type             : 'scatter',
-                data             : $scope.chartData.cmpData,
-                borderColor      : cmpColor,
-                backgroundColor  : cmpColor,
-                radius           : 4,
-              },
-            ]
+        return {
+            type             : 'line',
+            data             : eodPriceList,
+            borderColor      : eodLineColor,
+            backgroundColor  : eodLineColor,
+            borderWidth      : 1,
+            tension          : 0,
+            radius           : 0,
         } ;
+    }
+    
+    function getCMPDataset() {
+        
+        var cd = $scope.chartData ;
+        var cmpColor = '#000000' ;
+        
+        if( cd.avgData.length > 0 ) {
+            cmpColor = ( cd.avgData[0].y < cd.cmpData[0].y ) ? '#00FF00' : 
+                                                               '#FF0000' ; 
+        }
+        
+        return {
+            type             : 'scatter',
+            data             : cd.cmpData,
+            borderColor      : cmpColor,
+            backgroundColor  : cmpColor,
+            radius           : 4,
+        } ;
+    }
+    
+    function drawChart() {
+        
+        $( '#graphDisplayDialog' ).modal( 'show' ) ;
+        
+        if( chart != null ) { chart.destroy() ; }
+
+        const ctx = document.getElementById( 'eodGraph' ) ;
+        var datasets = [] ;
+        
+        datasets.push( getBuyTradesDataset()  ) ;
+        datasets.push( getSellTradesDataset() ) ;
+        datasets.push( getAvgPriceDataset()   ) ;
+        datasets.push( getEodPriceDataset()   ) ;
+        datasets.push( getCMPDataset()        ) ;
         
         const options = {
             plugins : {
@@ -156,7 +177,10 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         } ;
         
         chart = new Chart( ctx, {
-            data: data,
+            data: {
+              labels: $scope.chartData.labels,
+              datasets: datasets
+            },
             options: options
         } ) ;
     }
@@ -211,7 +235,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         quantityRange = maxQuantity - minQuantity ;
     }
     
-    function caculateMovingAverage( data, window ) {
+    function calculateMovingAverage( data, window ) {
         
         var sum = 0;
         var result = [] ;
@@ -229,7 +253,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             sum += data[i + window] ;
             result.push( sum / window ) ;
         }
-        
         return result ;
     }
     
