@@ -49,6 +49,7 @@ public class EquityHistDataImporter {
         private int numRecordsFounds = 0 ;
         private int numAdditions = 0 ;
         private int numDeletions = 0 ;
+        private int numModified  = 0 ;
         private boolean dataForWrongSymbolReceived = false ;
     }
     
@@ -88,6 +89,7 @@ public class EquityHistDataImporter {
             
             log.info( "-> Num records found    = " + results.getNumRecordsFounds() ) ;
             log.info( "-> Num records imported = " + results.getNumAdditions() ) ;
+            log.info( "-> Num records modified = " + results.getNumModified() ) ;
             log.info( "-> Num dups deleted     = " + results.getNumDeletions() ) ;
             log.info( "-> Total eod records    = " + histRepo.getNumRecords( symbol ) ) ;
         }
@@ -184,6 +186,7 @@ public class EquityHistDataImporter {
         
         String symbol        = row[0].trim() ;
         Date   date          = RES_SDF.parse   ( row[ 2].trim() ) ;
+        float  prevClose     = Float.parseFloat( row[ 3].trim() ) ;
         float  open          = Float.parseFloat( row[ 4].trim() ) ;
         float  high          = Float.parseFloat( row[ 5].trim() ) ;
         float  low           = Float.parseFloat( row[ 6].trim() ) ;
@@ -199,6 +202,7 @@ public class EquityHistDataImporter {
             
             eodData.setSymbol( symbol ) ;
             eodData.setDate( date ) ;
+            eodData.setPrevClose( prevClose ) ;
             eodData.setOpen( open ) ;
             eodData.setHigh( high ) ;
             eodData.setLow( low ) ;
@@ -210,21 +214,43 @@ public class EquityHistDataImporter {
             results.numAdditions++ ;
             histRepo.saveAndFlush( eodData ) ;
         }
+        else if( histRows.size() == 1 ) {
+            
+            HistoricEQData histData = histRows.get( 0 ) ;
+            if( histData.getPrevClose() == null || 
+                histData.getPrevClose() == 0 ) {
+                
+                histData.setPrevClose( prevClose ) ;
+                results.numModified++ ;
+                histRepo.saveAndFlush( histData ) ;
+            }
+        }
         else {
-            deleteDuplicateHistoricData( histRows ) ;
+            deleteDuplicateHistoricData( histRows, prevClose ) ;
         }
         
         return eodData ;
     }
     
-    private void deleteDuplicateHistoricData( List<HistoricEQData> candles ) {
+    private void deleteDuplicateHistoricData( List<HistoricEQData> candles,
+                                              float prevClose ) {
         
         if( candles != null && !candles.isEmpty() && candles.size()>1 ) {
-            for( int i=1; i<candles.size()-1; i++ ) {
+            
+            HistoricEQData histData = candles.get( 0 ) ;
+            
+            if( histData.getPrevClose() == null || 
+                histData.getPrevClose() == 0 ) {
                 
-                HistoricEQData candle = candles.get( i ) ;
+                histData.setPrevClose( prevClose ) ;
+                results.numModified++ ;
+                histRepo.saveAndFlush( histData ) ;
+            }
+
+            for( int i=1; i<candles.size(); i++ ) {
+                histData = candles.get( i ) ;
                 results.numDeletions++ ;
-                histRepo.delete( candle ) ;
+                histRepo.delete( histData ) ;
             }
         }
     }

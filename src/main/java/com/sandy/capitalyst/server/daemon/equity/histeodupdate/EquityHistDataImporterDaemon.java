@@ -19,7 +19,7 @@ public class EquityHistDataImporterDaemon extends Thread {
     public static final String CFG_IMPORT_DELAY_SECS  = "import_delay_secs" ;
     public static final String CFG_PRINT_DEBUG_STMT   = "debug_enable" ;
     
-    public static final int MIN_IMPORT_DELAY_SEC = 10 ;
+    public static final int MIN_IMPORT_DELAY_SEC = 5 ;
 
     private EquityHistDataPartImporter partImporter = null ;
     
