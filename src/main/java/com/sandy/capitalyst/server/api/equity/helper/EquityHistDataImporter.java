@@ -45,7 +45,7 @@ public class EquityHistDataImporter {
     private static final String DIV_START = "<div id='csvContentDiv' style='display:none;'>" ;
     
     @Data
-    private static class UpdateResults {
+    public static class ImportResults {
         private int numRecordsFounds = 0 ;
         private int numAdditions = 0 ;
         private int numDeletions = 0 ;
@@ -55,7 +55,7 @@ public class EquityHistDataImporter {
     private Date fromDate = null ;
     private Date toDate   = null ;
     
-    private UpdateResults results = new UpdateResults() ;
+    private ImportResults results = new ImportResults() ;
     
     private HistoricEQDataRepo histRepo = null ;
 
@@ -67,11 +67,11 @@ public class EquityHistDataImporter {
         histRepo = getBean( HistoricEQDataRepo.class ) ;
     }
     
-    public UpdateResults execute() throws Exception {
+    public ImportResults execute() throws Exception {
         
-        log.debug( "!- Filling historic data for " + symbol + " >" ) ;
-        log.debug( "-> From date = " + RES_SDF.format( fromDate ) ) ;
-        log.debug( "-> To date = " + RES_SDF.format( toDate ) ) ;
+        log.info( "!- Filling historic data for " + symbol + " >" ) ;
+        log.info( "-> From date = " + RES_SDF.format( fromDate ) ) ;
+        log.info( "-> To date   = " + RES_SDF.format( toDate ) ) ;
         
         try {
             if( fromDate365DaysBeforeToDate() ) {
@@ -108,6 +108,7 @@ public class EquityHistDataImporter {
         results.setNumRecordsFounds( records.size()-1 ) ;
         log.debug( "- Num records found = " + (records.size()-1) );
         
+        log.info( "- Importing eod data." ) ;
         for( int i=1; i<records.size(); i++ ) {
             String[] row = records.get( i ) ;
             addHistoricRecord( row ) ;
@@ -130,7 +131,7 @@ public class EquityHistDataImporter {
         String response = null ;
         String csvContent = null ;
         
-        log.debug( "- Downloading eod data." ) ;
+        log.info( "- Downloading eod data." ) ;
         log.debug( "-> URL " + url ) ;
         response = downloader.getResource( url, "nse-bhav.txt" ) ;
         log.debug( "-> Done. Response size " + response.length() + " bytes." ) ;
