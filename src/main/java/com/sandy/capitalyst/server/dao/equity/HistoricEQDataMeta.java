@@ -20,6 +20,7 @@ public class HistoricEQDataMeta {
     private Integer id = null ;
     
     private String symbolNse = null ;
+    private Integer numRecords = 0 ;
     private Date earliestEodDate = null ;
     private Date lastUpdate = null ;
 }

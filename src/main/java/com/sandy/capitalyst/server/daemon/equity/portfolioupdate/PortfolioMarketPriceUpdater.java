@@ -18,8 +18,8 @@ import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
-import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.internal.EventRateMonitor ;
 import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.internal.TradingHolidayCalendar ;
+import com.sandy.capitalyst.server.daemon.util.EventRateMonitor ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 

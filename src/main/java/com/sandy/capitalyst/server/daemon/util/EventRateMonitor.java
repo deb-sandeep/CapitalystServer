@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.daemon.equity.portfolioupdate.internal;
+package com.sandy.capitalyst.server.daemon.util;
 
 import java.util.LinkedList ;
 import java.util.Map ;

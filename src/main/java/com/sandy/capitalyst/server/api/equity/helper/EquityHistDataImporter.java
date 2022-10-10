@@ -49,6 +49,7 @@ public class EquityHistDataImporter {
         private int numRecordsFounds = 0 ;
         private int numAdditions = 0 ;
         private int numDeletions = 0 ;
+        private boolean dataForWrongSymbolReceived = false ;
     }
     
     private String symbol = null ;
@@ -84,13 +85,18 @@ public class EquityHistDataImporter {
             if( StringUtil.isNotEmptyOrNull( csvContent ) ) {
                 parseAndPopulateHistoricData( csvContent ) ;
             }
+            
+            log.info( "-> Num records found    = " + results.getNumRecordsFounds() ) ;
+            log.info( "-> Num records imported = " + results.getNumAdditions() ) ;
+            log.info( "-> Num dups deleted     = " + results.getNumDeletions() ) ;
+            log.info( "-> Total eod records    = " + histRepo.getNumRecords( symbol ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error updating historic data.", e ) ;
             throw e ;
         }
         finally {
-            log.debug( "- Completed historic data update <<" ) ;
+            log.debug( "-> Completed historic data update <<" ) ;
         }
         return results ;
     }
@@ -109,9 +115,25 @@ public class EquityHistDataImporter {
         log.debug( "- Num records found = " + (records.size()-1) );
         
         log.info( "- Importing eod data." ) ;
-        for( int i=1; i<records.size(); i++ ) {
-            String[] row = records.get( i ) ;
-            addHistoricRecord( row ) ;
+        if( records.size() > 1 ) {
+
+            String[] firstRecord = records.get( 1 ) ;
+            
+            if( !firstRecord[0].trim().equals( this.symbol ) ) {
+                // There is a bizzare scenario where the server returns 
+                // EOD for a different symbol. If such a scenario occurs,
+                // Don't process this bunch of records.
+                log.error( "-> ERROR: Different symbol data obtained. " + 
+                           firstRecord[0].trim() ) ;
+                
+                results.setDataForWrongSymbolReceived( true ) ;
+            }
+            else {
+                for( int i=1; i<records.size(); i++ ) {
+                    String[] row = records.get( i ) ;
+                    addHistoricRecord( row ) ;
+                }
+            }
         }
     }
 
@@ -132,8 +154,7 @@ public class EquityHistDataImporter {
         String csvContent = null ;
         
         log.info( "- Downloading eod data." ) ;
-        log.debug( "-> URL " + url ) ;
-        response = downloader.getResource( url, "nse-bhav.txt" ) ;
+        response = downloader.getResource( url, "eod-pricevol.txt" ) ;
         log.debug( "-> Done. Response size " + response.length() + " bytes." ) ;
         
         int startIndex = response.indexOf( DIV_START ) ;
@@ -142,6 +163,10 @@ public class EquityHistDataImporter {
             int endIndex = response.indexOf( "</div>", startIndex ) ;
             csvContent = response.substring( startIndex, endIndex ) ;
             log.debug( "-> Data size = " + csvContent.length() + " bytes." ) ;
+        }
+        else if( response.contains( "No Records" ) ) {
+            log.debug( "-> No records found." ) ;
+            csvContent = "" ;
         }
         else {
             log.error( "-> Invalid response from server." ) ;
@@ -166,7 +191,7 @@ public class EquityHistDataImporter {
         long   totalTradeQty = Long.parseLong  ( row[10].trim() ) ;
         float  totalTradeVal = Float.parseFloat( row[11].trim() ) ;
         long   totalTrades   = Long.parseLong  ( row[12].trim() ) ;
-
+        
         histRows = histRepo.findBySymbolAndDate( symbol, date ) ;
         if( histRows == null || histRows.isEmpty() ) {
             
@@ -183,8 +208,6 @@ public class EquityHistDataImporter {
             eodData.setTotalTrades( totalTrades ) ;
             
             results.numAdditions++ ;
-            log.debug( "->> Adding record " + RES_SDF.format( date ) ) ;
-            
             histRepo.saveAndFlush( eodData ) ;
         }
         else {
@@ -200,13 +223,7 @@ public class EquityHistDataImporter {
             for( int i=1; i<candles.size()-1; i++ ) {
                 
                 HistoricEQData candle = candles.get( i ) ;
-                log.debug( "Deleting duplicate candle for " + 
-                           candle.getSymbol() + " @ " + 
-                           RES_SDF.format( candle.getDate()  ) ) ;
-                
                 results.numDeletions++ ;
-                log.debug( "->> Removing record " + RES_SDF.format( candle.getDate() ) ) ;
-                
                 histRepo.delete( candle ) ;
             }
         }

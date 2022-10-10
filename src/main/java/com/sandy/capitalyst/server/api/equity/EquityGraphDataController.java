@@ -131,6 +131,15 @@ public class EquityGraphDataController {
             case "3y":
                 fromDate = DateUtils.addYears( toDate, -3 ) ;
                 break ;
+            case "4y":
+                fromDate = DateUtils.addYears( toDate, -4 ) ;
+                break ;
+            case "5y":
+                fromDate = DateUtils.addYears( toDate, -5 ) ;
+                break ;
+            case "6y":
+                fromDate = DateUtils.addYears( toDate, -6 ) ;
+                break ;
             default:
                 fromDate = DateUtils.addMonths( toDate, -6 ) ;
                 break ;

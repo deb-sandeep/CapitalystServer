@@ -102,4 +102,12 @@ public interface HistoricEQDataRepo
     List<HistoricEQData> getHistoricData( @Param( "symbol"   ) String symbol,
                                           @Param( "fromDate" ) Date fromDate,
                                           @Param( "toDate"   ) Date toDate ) ;
+    
+    @Query( value = 
+            "SELECT COUNT(h) "
+          + "FROM HistoricEQData h "
+          + "WHERE "
+          + "   h.symbol = :symbol "
+    )
+    int getNumRecords( @Param( "symbol" ) String symbol ) ;
 }

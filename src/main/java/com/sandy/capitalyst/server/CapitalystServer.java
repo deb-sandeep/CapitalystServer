@@ -19,6 +19,7 @@ import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
+import com.sandy.capitalyst.server.daemon.equity.histeodupdate.EquityHistDataImporterDaemon ;
 import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.PortfolioMarketPriceUpdater ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.account.Account ;
@@ -39,8 +40,9 @@ public class CapitalystServer
     
     public static String CFG_GRP_APP = "Capitalyst" ;
     
-    public static String CFG_RUN_CMP_DAEMON   = "run_portfolio_cmp_updater" ;
-    public static String CFG_RUN_BATCH_DAEMON = "run_batch_daemon" ;
+    public static String CFG_RUN_CMP_DAEMON      = "run_portfolio_cmp_updater" ;
+    public static String CFG_RUN_BATCH_DAEMON    = "run_batch_daemon" ;
+    public static String CFG_RUN_HIST_EOD_DAEMON = "run_hist_eod_daemon" ;
     
     public static ApplicationContext getAppContext() {
         return APP_CTX ;
@@ -103,6 +105,12 @@ public class CapitalystServer
         log.debug( "Updating account balances" ) ;
         updateAccountBalanceOnStartup() ;
         
+        initializeDaemons( cfg, nvpCfg ) ;
+    }
+    
+    private void initializeDaemons( CapitalystConfig cfg, NVPConfigGroup nvpCfg ) 
+        throws Exception {
+        
         if( cfg.isInitializeRecoMgrOnStart() ) {
             log.debug( "Initilizaing recommendation manager." ) ;
             initializeRecoManager() ;
@@ -121,6 +129,23 @@ public class CapitalystServer
         boolean runCMPUpdateDaemon = true ;
         runCMPUpdateDaemon = nvpCfg.getBoolValue( CFG_RUN_CMP_DAEMON, true ) ;
         initializeBreeze( cfg.getBreezeCfgFile(), runCMPUpdateDaemon ) ;
+        
+        initializeHistEoDUpdateDaemon( nvpCfg ) ;
+    }
+    
+    private void initializeHistEoDUpdateDaemon( NVPConfigGroup nvpCfg ) {
+        
+        boolean runDaemon = true ;
+        EquityHistDataImporterDaemon histEoDDaemon = null ;
+        
+        runDaemon = nvpCfg.getBoolValue( CFG_RUN_HIST_EOD_DAEMON, true ) ;
+        
+        if( runDaemon ) {
+            
+            log.debug( "Starting historic eod update daemon." ) ;
+            histEoDDaemon = new EquityHistDataImporterDaemon() ;
+            histEoDDaemon.start() ;
+        }
     }
     
     private void initializeBreeze( File cfgPath, boolean runDaemon ) 
