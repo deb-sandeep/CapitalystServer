@@ -19,13 +19,14 @@ public abstract class CapitalystLogLayout extends PatternLayout {
     private static final int    MARKER_LEN = MARKER.length() ;
     
     private static final String START_INDENT     = "> " ;
-    private static final String START_INDENT2    = "-> " ;
-    private static final String START_INDENT3    = "->> " ;
     private static final String START_DEINDENT   = "< " ;
     private static final String START_USE_INDENT = "- " ;
+    private static final String START_USE_INDENT2= "-> " ;
+    private static final String START_USE_INDENT3= "->> " ;
     private static final String START_RESET      = "<< " ;
     private static final String START_MARK_INDENT= "!> " ;
     private static final String START_INDENT_MARK= ">! " ;
+    private static final String MARK_USE_CURRENT = "!- " ;
     
     private static final String END_INDENT      = " >\n" ;
     private static final String END_DEINDENT    = " <\n" ;
@@ -80,12 +81,12 @@ public abstract class CapitalystLogLayout extends PatternLayout {
         
         if( fmtStr.length() > mkrEnd ) {
             
-            if( fmtStr.indexOf( START_INDENT3, mkrEnd ) == mkrEnd ) {
-                hint = START_INDENT3 ;
+            if( fmtStr.indexOf( START_USE_INDENT3, mkrEnd ) == mkrEnd ) {
+                hint = START_USE_INDENT3 ;
                 indent = getCurrentIndent() + I2 ;
             }
-            else if( fmtStr.indexOf( START_INDENT2, mkrEnd ) == mkrEnd ) {
-                hint = START_INDENT2 ;
+            else if( fmtStr.indexOf( START_USE_INDENT2, mkrEnd ) == mkrEnd ) {
+                hint = START_USE_INDENT2 ;
                 indent = getCurrentIndent() + I ;
             }
             else if( fmtStr.indexOf( START_INDENT, mkrEnd ) == mkrEnd ) {
@@ -108,6 +109,11 @@ public abstract class CapitalystLogLayout extends PatternLayout {
             else if( fmtStr.indexOf( START_INDENT_MARK, mkrEnd ) == mkrEnd ) {
                 hint = START_INDENT_MARK ;
                 indent = incrementIndent() ;
+                getIndent().markIndent() ;
+            }
+            else if( fmtStr.indexOf( MARK_USE_CURRENT, mkrEnd ) == mkrEnd ) {
+                hint = MARK_USE_CURRENT ;
+                indent = getCurrentIndent() ;
                 getIndent().markIndent() ;
             }
             else if( fmtStr.indexOf( START_RESET, mkrEnd ) == mkrEnd ) {

@@ -16,11 +16,12 @@ capitalystNgApp.controller( 'OneTimeActionsController',
     $scope.$parent.activeModuleId = "onetime_actions" ;
     
     $scope.otaStat = {
-        'RefreshEquityMaster'   : new OTAStat( 'RefreshEquityMaster'   ),
-        'RefreshIndexMaster'    : new OTAStat( 'RefreshIndexMaster'    ), 
-        'MapICICIDirectSymbols' : new OTAStat( 'MapICICIDirectSymbols' ), 
-        'HistPrevCloseUpdater'  : new OTAStat( 'HistPrevCloseUpdater'  ),
-        'EquityTradeUpdater'    : new OTAStat( 'EquityTradeUpdater'  )
+        'RefreshEquityMaster'    : new OTAStat( 'RefreshEquityMaster'    ),
+        'RefreshIndexMaster'     : new OTAStat( 'RefreshIndexMaster'     ), 
+        'MapICICIDirectSymbols'  : new OTAStat( 'MapICICIDirectSymbols'  ), 
+        'HistPrevCloseUpdater'   : new OTAStat( 'HistPrevCloseUpdater'   ),
+        'EquityTradeUpdater'     : new OTAStat( 'EquityTradeUpdater'     ),
+        'HistoricEQDataImporter' : new OTAStat( 'HistoricEQDataImporter' ),
     } ;
     
     // -----------------------------------------------------------------------
@@ -121,7 +122,7 @@ capitalystNgApp.controller( 'OneTimeActionsController',
         }
         else if( msg.resultType == 'EndOfProcessing' ) {
             ota.executing = false ;
-            ota.message = ota.message + "ENDED.\n\n" ;
+            ota.message += "\n\n" ;
         }
         
         setTimeout( function() {

@@ -9,9 +9,13 @@ import java.util.List ;
 import java.util.Map ;
 import java.util.concurrent.LinkedBlockingQueue ;
 
+import org.apache.log4j.AppenderSkeleton ;
+import org.apache.log4j.Level ;
 import org.apache.log4j.Logger ;
+import org.apache.log4j.spi.LoggingEvent ;
 
 import com.sandy.capitalyst.server.api.ota.vo.PartResult ;
+import com.sandy.capitalyst.server.core.log.CapitalystOTALogLayout ;
 
 import lombok.Getter ;
 import lombok.Setter ;
@@ -19,6 +23,38 @@ import lombok.Setter ;
 public abstract class OTA implements Runnable, OTALogger {
     
     private static final Logger log = Logger.getLogger( OTA.class ) ;
+    
+    public class OTALogAppender extends AppenderSkeleton {
+        
+        private static final String PATTERN = "[indent]%m%n";
+
+        public OTALogAppender() {
+            super() ;
+            
+            CapitalystOTALogLayout layout = new CapitalystOTALogLayout() ;
+            layout.setConversionPattern( PATTERN ) ;
+            
+            setLayout( layout ) ;
+            setThreshold( Level.INFO ) ;
+            activateOptions() ;
+        }
+
+        @Override
+        protected void append( LoggingEvent event ) {
+            
+            String msg = layout.format( event ) ;
+            if( msg.endsWith( "\n" ) ) {
+                msg = msg.substring( 0, msg.length()-1 ) ;
+            }
+            addResult( msg ) ;
+        }
+
+        @Override
+        public void close() {}
+
+        @Override
+        public boolean requiresLayout() { return true; }
+    }    
 
     @Getter
     private String name = null ;
@@ -38,16 +74,21 @@ public abstract class OTA implements Runnable, OTALogger {
     @Override
     public final void run() {
 
+        OTALogAppender appender = new OTALogAppender() ;
+        Logger.getRootLogger().addAppender( appender ) ;
+        
         try {
-            log.debug( "Executing OTA - " + this.name ) ;
+            log.info( "!- Executing OTA - " + this.name ) ;
             execute() ;
         }
         catch( Exception e ) {
             addResult( e ) ;
-            log.error( "Error in OTA - ", e ) ;
+            log.error( "- Error in OTA - ", e ) ;
         }
         finally {
+            log.info( "<< ENDED." );
             markEndOfProcessing() ;
+            Logger.getRootLogger().removeAppender( appender ) ;
         }
     }
     
@@ -55,18 +96,15 @@ public abstract class OTA implements Runnable, OTALogger {
     
     public void addResult( String message ) {
         queue.add( new PartResult( Message, message ) ) ;
-        log.debug( "2CLIENT : " + message ) ;
     }
     
     public void addResult( Exception e ) {
         queue.add( new PartResult( Exception, e.getMessage() ) ) ;
-        log.debug( "2CLIENT : Error : " + e.getMessage() ) ;
     }
     
-    protected void markEndOfProcessing() {
+    private void markEndOfProcessing() {
         queue.add( new PartResult( EndOfProcessing, null ) ) ;
         this.complete = true ;
-        log.debug( "2CLIENT : End of processing" ) ;
     }
     
     public List<PartResult> getPartResults() {

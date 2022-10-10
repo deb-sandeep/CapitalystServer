@@ -52,4 +52,20 @@
              ng-include="'route/actions/template/action.html'"></div>
     </div>
   </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-target="#histEQDataUpdater" data-toggle="collapse" data-parent="#acc">
+        Historic EQ data importer
+        </a>
+      </h4>
+    </div>
+    <div id="#histEQDataUpdater" class="panel-collapse form action-div">
+        <div class="explanation">
+            Updates historic equity data
+        </div>
+        <div ng-repeat="ota in [$parent.otaStat[ 'HistoricEQDataImporter' ]]" 
+             ng-include="'route/actions/template/action.html'"></div>
+    </div>
+  </div>
 </div>

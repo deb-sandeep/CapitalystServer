@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.ota.action.OTA ;
 import com.sandy.capitalyst.server.api.ota.action.emrefresh.EquityMasterRefreshOTA ;
+import com.sandy.capitalyst.server.api.ota.action.eqhistupdate.HistoricEQDataImporterOTA ;
 import com.sandy.capitalyst.server.api.ota.action.idirectmap.IDirectSymbolMappingOTA ;
 import com.sandy.capitalyst.server.api.ota.action.idxrefresh.IndexMasterRefreshOTA ;
 import com.sandy.capitalyst.server.api.ota.action.prevcloseupdater.HistPrevCloseUpdater ;
@@ -38,11 +39,12 @@ public class OnetimeActionController {
     
     public OnetimeActionController() {
         
-        otaMap.put( EquityTradeUpdater.NAME,      EquityTradeUpdater.class      ) ;
-        otaMap.put( HistPrevCloseUpdater.NAME,    HistPrevCloseUpdater.class    ) ;
-        otaMap.put( IndexMasterRefreshOTA.NAME,   IndexMasterRefreshOTA.class   ) ;
-        otaMap.put( EquityMasterRefreshOTA.NAME,  EquityMasterRefreshOTA.class  ) ;
-        otaMap.put( IDirectSymbolMappingOTA.NAME, IDirectSymbolMappingOTA.class ) ;
+        otaMap.put( EquityTradeUpdater.NAME,        EquityTradeUpdater.class      ) ;
+        otaMap.put( HistPrevCloseUpdater.NAME,      HistPrevCloseUpdater.class    ) ;
+        otaMap.put( IndexMasterRefreshOTA.NAME,     IndexMasterRefreshOTA.class   ) ;
+        otaMap.put( EquityMasterRefreshOTA.NAME,    EquityMasterRefreshOTA.class  ) ;
+        otaMap.put( IDirectSymbolMappingOTA.NAME,   IDirectSymbolMappingOTA.class ) ;
+        otaMap.put( HistoricEQDataImporterOTA.NAME, HistoricEQDataImporterOTA.class ) ;
         
         executorService = Executors.newFixedThreadPool( 5 ) ;
     }

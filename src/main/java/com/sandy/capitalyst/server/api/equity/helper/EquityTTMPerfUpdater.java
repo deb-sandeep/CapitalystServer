@@ -35,7 +35,7 @@ public class EquityTTMPerfUpdater {
     public static final String CFG_INCL_STOCKS = "incl_stocks" ;
     public static final String CFG_EXCL_STOCKS = "excl_stocks" ;
     
-    private static final String LAST_1Y_EOD_URL = 
+    private static final String LAST_24M_EOD_URL = 
         "https://www1.nseindia.com/" + 
         "products/dynaContent/common/productsSymbolMapping.jsp?" + 
         "symbol={symbol}&" + 
@@ -300,7 +300,7 @@ public class EquityTTMPerfUpdater {
         log.debug( "> Filling historic gap for " + symbol ) ;
         
         String DIV_START = "<div id='csvContentDiv' style='display:none;'>" ;
-        String url = LAST_1Y_EOD_URL.replace( "{symbol}", symbol ) ;
+        String url = LAST_24M_EOD_URL.replace( "{symbol}", symbol ) ;
         
         HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
         String response = null ;
