@@ -139,6 +139,10 @@ public class EquityHistDataPartImporter {
                 else if( earliestImport.after( earliestEodStartDateLimit ) ) {
                     break ;
                 }
+                else {
+                    // Boundary condition. Else ZYDUSLIFE keeps looping :)
+                    meta = null ;
+                }
             }
         }
         return meta ;
