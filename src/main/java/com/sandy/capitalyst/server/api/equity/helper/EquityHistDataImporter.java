@@ -45,7 +45,7 @@ public class EquityHistDataImporter {
     private static final String DIV_START = "<div id='csvContentDiv' style='display:none;'>" ;
     
     @Data
-    public static class ImportResults {
+    public static class ImportResult {
         private int numRecordsFounds = 0 ;
         private int numAdditions = 0 ;
         private int numDeletions = 0 ;
@@ -57,7 +57,7 @@ public class EquityHistDataImporter {
     private Date fromDate = null ;
     private Date toDate   = null ;
     
-    private ImportResults results = new ImportResults() ;
+    private ImportResult results = new ImportResult() ;
     
     private HistoricEQDataRepo histRepo = null ;
 
@@ -69,7 +69,7 @@ public class EquityHistDataImporter {
         histRepo = getBean( HistoricEQDataRepo.class ) ;
     }
     
-    public ImportResults execute() throws Exception {
+    public ImportResult execute() throws Exception {
         
         log.info( "!- Filling historic data for " + symbol + " >" ) ;
         log.info( "-> From date = " + RES_SDF.format( fromDate ) ) ;
@@ -94,7 +94,7 @@ public class EquityHistDataImporter {
             log.info( "-> Total eod records    = " + histRepo.getNumRecords( symbol ) ) ;
         }
         catch( Exception e ) {
-            log.error( "Error updating historic data.", e ) ;
+            log.error( "Error updating historic data. " + e.getMessage() ) ;
             throw e ;
         }
         finally {
@@ -122,6 +122,7 @@ public class EquityHistDataImporter {
             String[] firstRecord = records.get( 1 ) ;
             
             if( !firstRecord[0].trim().equals( this.symbol ) ) {
+                
                 // There is a bizzare scenario where the server returns 
                 // EOD for a different symbol. If such a scenario occurs,
                 // Don't process this bunch of records.
@@ -160,6 +161,7 @@ public class EquityHistDataImporter {
         log.debug( "-> Done. Response size " + response.length() + " bytes." ) ;
         
         int startIndex = response.indexOf( DIV_START ) ;
+        
         if( startIndex != -1 ) {
             startIndex += DIV_START.length() ;
             int endIndex = response.indexOf( "</div>", startIndex ) ;

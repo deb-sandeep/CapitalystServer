@@ -23,4 +23,13 @@ public class IndentUtil {
             indent.resetIndent() ;
         } ) ;
     }
+    
+    @SuppressWarnings( "unchecked" )
+    public static void i_clear() {
+        
+        MDC.getContext().values().forEach( item -> {
+            Indent indent = ( Indent )item ;
+            indent.clearIndent() ;
+        } ) ;
+    }
 }

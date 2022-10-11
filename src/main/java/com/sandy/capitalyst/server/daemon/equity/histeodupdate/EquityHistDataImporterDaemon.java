@@ -1,10 +1,12 @@
 package com.sandy.capitalyst.server.daemon.equity.histeodupdate;
 
+import java.net.SocketTimeoutException ;
 import java.util.concurrent.TimeUnit ;
 
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataPartImporter ;
+import com.sandy.capitalyst.server.core.log.IndentUtil ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.daemon.util.EventRateMonitor ;
@@ -40,8 +42,12 @@ public class EquityHistDataImporterDaemon extends Thread {
         
         while( true ) {
             try {
-                if( !genericERM.hasThresholdBreached() ) {
-                    
+                if( genericERM.hasThresholdBreached() ) {
+                    log.info( "Exception rate threshold breached." ) ;
+                    log.info( "  Sleeping for 10 minutes." ) ;
+                    TimeUnit.MINUTES.sleep( 10 ) ;
+                }
+                else {
                     refreshConfiguration() ;
                     
                     if( pauseRefresh ) {
@@ -53,31 +59,36 @@ public class EquityHistDataImporterDaemon extends Thread {
                         partImporter = new EquityHistDataPartImporter() ;
                         partImporter.execute() ;
                     }
+                    
+                    if( debugEnable ) {
+                        log.debug( "\nSleeping for " + refreshDelay + " seconds.\n" ) ;
+                    }
+                    TimeUnit.SECONDS.sleep( refreshDelay ) ;
                 }
-                else {
-                    log.info( "Exception rate threshold breached." ) ;
-                }
-                
-                if( debugEnable ) {
-                    log.debug( "\nSleeping for " + refreshDelay + " seconds.\n" ) ;
-                }
-                TimeUnit.SECONDS.sleep( refreshDelay ) ;
             }
             catch( InterruptedException e ) {
                 // Don't worry about it.
             }
-            catch( Exception e ) {
-                
-                log.error( "Unanticipated error.", e ) ;
-                genericERM.registerEvent() ;
-                try {
-                    TimeUnit.SECONDS.sleep( 10 ) ;
-                }
-                catch( InterruptedException ie ) {
-                    log.error( "EOD update daemon exception stall interrrupted.", ie ) ;
-                    break ;
-                }
+            catch( SocketTimeoutException ste ) {
+                processException() ;
             }
+            catch( Exception e ) {
+                log.error( "Unanticipated error.", e ) ;
+                processException() ;
+            }
+            finally {
+                IndentUtil.i_clear() ;
+            }
+        }
+    }
+    
+    private void processException() {
+        genericERM.registerEvent() ;
+        try {
+            TimeUnit.SECONDS.sleep( 10 ) ;
+        }
+        catch( InterruptedException ie ) {
+            log.error( "EOD update daemon exception stall interrrupted.", ie ) ;
         }
     }
     

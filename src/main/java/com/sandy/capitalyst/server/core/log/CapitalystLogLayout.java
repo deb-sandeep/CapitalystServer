@@ -27,6 +27,7 @@ public abstract class CapitalystLogLayout extends PatternLayout {
     private static final String START_MARK_INDENT= "!> " ;
     private static final String START_INDENT_MARK= ">! " ;
     private static final String MARK_USE_CURRENT = "!- " ;
+    private static final String CLEAR_INDENT     = "!! " ;
     
     private static final String END_INDENT      = " >\n" ;
     private static final String END_DEINDENT    = " <\n" ;
@@ -47,6 +48,11 @@ public abstract class CapitalystLogLayout extends PatternLayout {
             if( !indentStack.isEmpty() ) {
                 curIndent = indentStack.pop() ;
             }
+        }
+        
+        public void clearIndent() {
+            curIndent = "" ;
+            indentStack.clear() ;
         }
     }
     
@@ -119,6 +125,11 @@ public abstract class CapitalystLogLayout extends PatternLayout {
             else if( fmtStr.indexOf( START_RESET, mkrEnd ) == mkrEnd ) {
                 hint = START_RESET ;
                 getIndent().resetIndent() ;
+                indent = getCurrentIndent() ;
+            }
+            else if( fmtStr.indexOf( CLEAR_INDENT, mkrEnd ) == mkrEnd ) {
+                hint = CLEAR_INDENT ;
+                getIndent().clearIndent() ;
                 indent = getCurrentIndent() ;
             }
         }

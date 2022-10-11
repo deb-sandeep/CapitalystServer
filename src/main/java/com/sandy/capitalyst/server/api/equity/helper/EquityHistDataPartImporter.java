@@ -9,7 +9,7 @@ import java.util.List ;
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter.ImportResults ;
+import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter.ImportResult ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQDataMeta ;
@@ -39,6 +39,7 @@ public class EquityHistDataPartImporter {
     public static final String CFG_GRP_NAME         = "EquityHistDataImporter" ;
     public static final String CFG_EOD_START_DATE   = "eod_bar_start_date" ;
     public static final String CFG_SCOOP_SIZE_DAYS  = "scoop_size_in_days" ;
+    public static final String CFG_IGNORE_SYMBOLS   = "ignore_symbols" ;
     
     public static final String CFG_DEF_EOD_START_DATE  = "01-01-2014" ;
     public static final int    CFG_DEF_SCOOP_SIZE_DAYS = 365 ;
@@ -47,6 +48,7 @@ public class EquityHistDataPartImporter {
     
     private Date earliestEodStartDateLimit = null ;
     private int scoopSizeInDays = CFG_DEF_SCOOP_SIZE_DAYS ;
+    private List<String> ignoreSymbols = null ;
     
     private EquityIndicatorsRepo eiRepo = null ;
     private HistoricEQDataMetaRepo eodMetaRepo = null ;
@@ -68,19 +70,22 @@ public class EquityHistDataPartImporter {
         log.debug( "" ) ;
         log.debug( "!- Executing EOD data import >" ) ;
         
-        loadConfiguration() ;
-        
-        List<String> symbols = eiRepo.findSymbols() ;
-        HistoricEQDataMeta meta = findSymbolForImport( symbols ) ;
-        
-        if( meta == null ) {
-            log.info( "- All symbols have required historic data." ) ;
+        try {
+            loadConfiguration() ;
+            
+            List<String> symbols = eiRepo.findSymbols() ;
+            
+            HistoricEQDataMeta meta = findSymbolForImport( symbols ) ;
+            if( meta == null ) {
+                log.info( "- All symbols have required historic data." ) ;
+            }
+            else {
+                importHistoricValues( meta ) ;
+            } 
         }
-        else {
-            importHistoricValues( meta ) ;
+        finally {
+            log.debug( "<< Finished execution" ) ;
         }
-        
-        log.debug( "<< Finished execution" ) ;
     }
 
     private void loadConfiguration() {
@@ -95,18 +100,27 @@ public class EquityHistDataPartImporter {
         scoopSizeInDays = cfg.getIntValue( CFG_SCOOP_SIZE_DAYS, 
                                            CFG_DEF_SCOOP_SIZE_DAYS ) ;
         
-        log.debug( "-> Earliest import date limit = " + DD_MMM_YYYY.format( earliestEodStartDateLimit ) ) ;
+        ignoreSymbols = cfg.getListValue( CFG_IGNORE_SYMBOLS, "" ) ;
+        
+        log.debug( "-> Earliest import date limit = " + 
+                   DD_MMM_YYYY.format( earliestEodStartDateLimit ) ) ;
         log.debug( "-> Scoop size in days = " + scoopSizeInDays ) ;
     }
 
+    // Finds the first symbol for which the earliest eod date has not reached
+    // or for whom a meta record does not exist.
     private HistoricEQDataMeta findSymbolForImport( List<String> symbols ) {
         
         HistoricEQDataMeta meta = null ;
         
         for( String symbol : symbols ) {
+
+            if( ignoreSymbols.contains( symbol ) ) {
+                log.debug( "- Ignoring " + symbol + " as configured." ) ;
+                continue ;
+            }
             
             meta = eodMetaRepo.findBySymbolNse( symbol ) ;
-            
             if( meta == null ) {
                 
                 meta = new HistoricEQDataMeta() ;
@@ -125,28 +139,31 @@ public class EquityHistDataPartImporter {
                 else if( earliestImport.after( earliestEodStartDateLimit ) ) {
                     break ;
                 }
-                else {
-                    meta = null ;
-                }
             }
         }
         return meta ;
     }
 
-    private ImportResults importHistoricValues( HistoricEQDataMeta meta ) 
+    private ImportResult importHistoricValues( HistoricEQDataMeta meta ) 
         throws Exception {
         
+        EquityHistDataImporter importer = null ;
+        ImportResult           result   = null ;
         
-        Date toDate = meta.getEarliestEodDate() == null ? 
-                      new Date() : meta.getEarliestEodDate() ;
-        Date fromDate = DateUtils.addDays( toDate, -scoopSizeInDays ) ;
+        Date toDate   = meta.getEarliestEodDate() ;
+        Date fromDate = null ;
         
-        ImportResults result = null ;
-        result = new EquityHistDataImporter( meta.getSymbolNse(), 
-                                             fromDate, toDate ).execute() ;
+        String symbol = meta.getSymbolNse() ;
+        
+        toDate   = toDate == null ? new Date() : toDate ;
+        fromDate = DateUtils.addDays( toDate, -scoopSizeInDays ) ;
+        
+        importer = new EquityHistDataImporter( symbol, fromDate, toDate ) ;
+
+        result = importer.execute() ;
         
         if( result.isDataForWrongSymbolReceived() ) {
-            // In effect don't let the daemon process this symbol anymore
+            // In effect, don't let the daemon process this symbol anymore
             meta.setEarliestEodDate( earliestEodStartDateLimit ) ;
         }
         else if( result.getNumRecordsFounds() == 0 ) {
@@ -158,6 +175,7 @@ public class EquityHistDataPartImporter {
         
         meta.setNumRecords( eodRepo.getNumRecords( meta.getSymbolNse() ) ) ;
         meta.setLastUpdate( new Date() ) ;
+        
         eodMetaRepo.save( meta ) ;
         
         return result ;
