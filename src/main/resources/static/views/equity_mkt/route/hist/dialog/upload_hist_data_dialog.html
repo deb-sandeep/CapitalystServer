@@ -1,0 +1,56 @@
+<div class="modal-dialog" 
+     style="width:600px;"
+     ng-controller="UploadEquityEODController">
+     
+  <div class="modal-content" >
+    <div class="modal-header" style="background-color:#E5E5E5;padding:5px">
+      <h4 class="modal-title">Upload Equity EOD</h4>
+    </div>
+
+	<div class="modal-body"
+		style="background-color: #FEFEFE; padding: 5px">
+        <span style="height:10px;display:block;"></span>
+        
+        <button ngf-select="uploadFiles($files)" multiple>Select Files</button>
+		
+		<br>
+	    Files:
+	    <ul>
+	        <li ng-repeat="f in files" style="font:smaller">
+	            {{f.name}}
+	        </li>
+	    </ul>
+	    Progress:
+	    <span class="progress" ng-show="progress >= 0">
+	        <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
+	    </span>
+	    <br>
+	    <table class="table table-bordered table-compact">
+	       <thead>
+	            <tr class="success">
+	                <th>File</th>
+	                <th># Entries</th>
+	                <th># Imported</th>
+	                <th># Dup</th>
+	            </tr>
+	       </thead>
+	       <tbody>
+            <tr ng-repeat="entry in results">
+               <td>{{entry.fileName}}</td>
+               <td>{{entry.numEntriesFound}}</td>
+               <td>{{entry.numEntriesImported}}</td>
+               <td>{{entry.numDuplicateEntries}}</td>
+            </tr>
+	       </tbody>
+	    </table>
+	</div>
+
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-default btn-sm" 
+              ng-click="hideDialog()">
+            Done
+      </button>
+    </div>
+  </div>
+</div>

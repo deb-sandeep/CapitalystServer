@@ -109,7 +109,6 @@ capitalystNgApp.controller( 'PortfolioController',
     }
     
     $scope.showGraphDialog = function( holding ) {
-        console.log( "Emitting graphDialogDisplayTrigger" ) ;
         $scope.$emit( 'graphDialogDisplayTrigger', {
             symbolNse   : holding.symbolNse,
             companyName : holding.companyName,

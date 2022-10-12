@@ -1,1 +1,45 @@
-<h1>Historic EOD data</h1>
+<div style="padding: 0px; margin: 10px">
+    <table class="table table-bordered table-compact"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th width="150px;">
+                    Symbol
+                    &nbsp;
+                    <span class="glyphicon glyphicon-cloud-upload"
+                          ng-click="showUploadDialog()"></span>
+                </th>
+                <th></th>
+                <th style="width:50px;">Records</th>
+                <th style="width:150px;">Last Update</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <tr ng-repeat="meta in metadata">
+               <td style="font-size:12px;">
+                   {{meta.symbolNse}}
+               </td>
+               <td>
+                    <a ng-click="showGraphDialog( meta )">
+                        <span class="glyphicon glyphicon-stats"
+                              style="color:#C8C8C8;"></span>
+                    </a>
+               </td>
+               <td class="fixed-font amt">
+                    {{meta.numRecords}}
+               </td>
+               <td class="fixed-font">
+                    &nbsp;&nbsp;{{meta.lastUpdate | date}}
+               </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="uploadEquityHistoryDialog"
+     class="modal"
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/hist/dialog/upload_hist_data_dialog.html'">
+</div>
