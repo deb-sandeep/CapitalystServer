@@ -48,6 +48,7 @@ capitalystNgApp.controller( 'UploadEquityEODController',
     $scope.hideDialog = function() {
         resetState() ;
         $( '#uploadEquityHistoryDialog' ).modal( 'hide' ) ;
+        $scope.$parent.refreshTable() ;
     }
     
     // --- [END] Scope functions

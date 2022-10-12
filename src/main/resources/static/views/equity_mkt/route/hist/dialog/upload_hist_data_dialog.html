@@ -1,5 +1,5 @@
 <div class="modal-dialog" 
-     style="width:600px;"
+     style="width:700px;"
      ng-controller="UploadEquityEODController">
      
   <div class="modal-content" >
@@ -28,18 +28,26 @@
 	    <table class="table table-bordered table-compact">
 	       <thead>
 	            <tr class="success">
-	                <th>File</th>
-	                <th># Entries</th>
-	                <th># Imported</th>
-	                <th># Dup</th>
+	                <th colspan="2"></th>
+	                <th colspan="4"># Records</th>
+	            </tr>
+	            <tr class="success">
+	                <th width="250px">File</th>
+	                <th width="60px">Symbol</th>
+	                <th width="60px">Found</th>
+	                <th width="60px">Imported</th>
+	                <th width="60px">Deleted</th>
+	                <th width="60px">Modified</th>
 	            </tr>
 	       </thead>
 	       <tbody>
-            <tr ng-repeat="entry in results">
-               <td>{{entry.fileName}}</td>
-               <td>{{entry.numEntriesFound}}</td>
-               <td>{{entry.numEntriesImported}}</td>
-               <td>{{entry.numDuplicateEntries}}</td>
+            <tr ng-repeat="result in results">
+               <td>{{result.fileName}}</td>
+               <td>{{result.symbol}}</td>
+               <td>{{result.numRecordsFounds}}</td>
+               <td>{{result.numAdditions}}</td>
+               <td>{{result.numDeletions}}</td>
+               <td>{{result.numModified}}</td>
             </tr>
 	       </tbody>
 	    </table>

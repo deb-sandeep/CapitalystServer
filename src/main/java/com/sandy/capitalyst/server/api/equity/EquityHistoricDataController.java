@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.OK ;
 import static org.springframework.http.ResponseEntity.status ;
 
 import java.util.ArrayList ;
+import java.util.Date ;
 import java.util.List ;
 
 import org.apache.log4j.Logger ;
@@ -18,9 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 import org.springframework.web.multipart.MultipartFile ;
 
-import com.sandy.capitalyst.server.core.ledger.importer.LedgerImportResult ;
+import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter ;
+import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter.ImportResult ;
+import com.sandy.capitalyst.server.core.log.IndentUtil ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQDataMeta ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataMetaRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 
 @RestController
 public class EquityHistoricDataController {
@@ -29,6 +33,9 @@ public class EquityHistoricDataController {
     
     @Autowired
     private HistoricEQDataMetaRepo hedmRepo = null ;
+    
+    @Autowired
+    private HistoricEQDataRepo hedRepo = null ;
     
     @GetMapping( "/Equity/HistoricData/Meta/{symbol}" ) 
     public ResponseEntity<List<HistoricEQDataMeta>> getGraphData( 
@@ -54,21 +61,60 @@ public class EquityHistoricDataController {
     }
 
     @PostMapping( "/Equity/HistoricData/FileUpload" ) 
-    public ResponseEntity<List<LedgerImportResult>> uploadAccountStatements( 
+    public ResponseEntity<List<ImportResult>> uploadAccountStatements( 
                     @RequestParam( "files" ) MultipartFile[] multipartFiles ) {
         
         try {
-            log.debug( "Uploading equity EOD records" ) ;
+            log.debug( "!! Uploading equity EOD records" ) ;
+            
+            List<ImportResult> results = new ArrayList<>() ;
+            ImportResult result = null ;
             
             for( MultipartFile file : multipartFiles ) {
-                log.debug( file.getOriginalFilename() ) ;
+                
+                log.debug( "!> Processing file : " + file.getOriginalFilename() + " >" ) ;
+                
+                result = new EquityHistDataImporter().importFile( file ) ;
+                result.setFileName( file.getOriginalFilename() ) ;
+                
+                results.add( result ) ;
+                
+                log.debug( "- Processed symbol     = " + result.getSymbol() ) ;
+                log.debug( "- Num records found    = " + result.getNumRecordsFounds() ) ;
+                log.debug( "- Num records imported = " + result.getNumAdditions() ) ;
+                log.debug( "- Num records modified = " + result.getNumModified() ) ;
+                log.debug( "- Num dups deleted     = " + result.getNumDeletions() ) ;
+                
+                updateMeta( result.getSymbol() ) ;
+                
+                log.debug( "- Done! <<" ) ;
             }
 
-            return status( HttpStatus.OK ).body( null ) ;
+            return status( HttpStatus.OK ).body( results ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             return status( HttpStatus.INTERNAL_SERVER_ERROR ).body( null ) ;
         }
+        finally {
+            IndentUtil.i_clear() ;
+        }
+    }
+    
+    private void updateMeta( String symbol ) {
+        
+        HistoricEQDataMeta meta = hedmRepo.findBySymbolNse( symbol ) ;
+        if( meta == null ) {
+            meta = new HistoricEQDataMeta() ;
+            meta.setSymbolNse( symbol ) ;
+        }
+
+        meta.setNumRecords( hedRepo.getNumRecords( symbol ) ) ;
+        meta.setEarliestEodDate( hedRepo.getEarliestRecord( symbol ).getDate() ) ;
+        meta.setLastUpdate( new Date() ) ;
+        
+        hedmRepo.saveAndFlush( meta ) ;
+        
+        log.debug( "- Num historic records = " + meta.getNumRecords() ) ;
     }
 }

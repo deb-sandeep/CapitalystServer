@@ -9,6 +9,7 @@ import java.util.List ;
 
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
+import org.springframework.web.multipart.MultipartFile ;
 
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
@@ -46,6 +47,9 @@ public class EquityHistDataImporter {
     
     @Data
     public static class ImportResult {
+        
+        private String symbol = null ;
+        private String fileName = null ;
         private int numRecordsFounds = 0 ;
         private int numAdditions = 0 ;
         private int numDeletions = 0 ;
@@ -61,12 +65,15 @@ public class EquityHistDataImporter {
     
     private HistoricEQDataRepo histRepo = null ;
 
+    public EquityHistDataImporter() {
+        histRepo = getBean( HistoricEQDataRepo.class ) ;
+    }
+
     public EquityHistDataImporter( String symbol, Date fromDate, Date toDate ) {
+        this() ;
         this.symbol   = symbol ;
         this.fromDate = fromDate ;
         this.toDate   = toDate ;
-        
-        histRepo = getBean( HistoricEQDataRepo.class ) ;
     }
     
     public ImportResult execute() throws Exception {
@@ -102,8 +109,16 @@ public class EquityHistDataImporter {
         }
         return results ;
     }
+    
+    public ImportResult importFile( MultipartFile file )
+        throws Exception {
+        
+        String fileContent = new String( file.getBytes() ) ;
+        results = parseAndPopulateHistoricData( fileContent ) ;
+        return results ;
+    }
 
-    private void parseAndPopulateHistoricData( String csvContent )
+    private ImportResult parseAndPopulateHistoricData( String csvContent )
             throws Exception {
         
         CsvParserSettings settings = new CsvParserSettings() ;
@@ -114,14 +129,15 @@ public class EquityHistDataImporter {
         records = parser.parseAll( new StringReader( csvContent ) ) ;
         
         results.setNumRecordsFounds( records.size()-1 ) ;
-        log.debug( "- Num records found = " + (records.size()-1) );
+        log.debug( "-> Num records found = " + (records.size()-1) );
         
-        log.info( "- Importing eod data." ) ;
+        log.info( "-> Importing eod data." ) ;
         if( records.size() > 1 ) {
 
             String[] firstRecord = records.get( 1 ) ;
+            String importSymbol  = firstRecord[0].trim() ;
             
-            if( !firstRecord[0].trim().equals( this.symbol ) ) {
+            if( symbol !=null && !importSymbol.equals( this.symbol ) ) {
                 
                 // There is a bizzare scenario where the server returns 
                 // EOD for a different symbol. If such a scenario occurs,
@@ -132,12 +148,16 @@ public class EquityHistDataImporter {
                 results.setDataForWrongSymbolReceived( true ) ;
             }
             else {
+                results.symbol = importSymbol ;
+                
                 for( int i=1; i<records.size(); i++ ) {
                     String[] row = records.get( i ) ;
                     addHistoricRecord( row ) ;
                 }
             }
         }
+        
+        return results ;
     }
 
     private boolean fromDate365DaysBeforeToDate() {

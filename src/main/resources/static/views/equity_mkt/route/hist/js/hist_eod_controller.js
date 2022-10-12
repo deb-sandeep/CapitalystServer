@@ -24,6 +24,10 @@ capitalystNgApp.controller( 'HistEODController', function( $scope, $http ) {
         }) ;
     }
     
+    $scope.refreshTable = function() {
+        fetchAllHistoricMeta() ;
+    }
+    
     $scope.showUploadDialog = function() {
         $( '#uploadEquityHistoryDialog' ).modal( 'show' ) ;
     }
@@ -36,7 +40,6 @@ capitalystNgApp.controller( 'HistEODController', function( $scope, $http ) {
     // ------------------- Server comm functions -----------------------------
     function fetchAllHistoricMeta() {
         
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Equity/HistoricData/Meta/All' )
         .then ( 
             function( response ){
@@ -46,9 +49,6 @@ capitalystNgApp.controller( 'HistEODController', function( $scope, $http ) {
             function( error ){
                 $scope.$parent.addErrorAlert( "Error getting historic metadata." ) ;
             }
-        )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
+        ) ;
     }
 } ) ;
