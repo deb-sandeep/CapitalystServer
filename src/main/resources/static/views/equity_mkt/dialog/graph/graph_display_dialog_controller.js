@@ -99,6 +99,12 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.smaGraphOptionsChanged = function() {
         drawChart( false ) ;
     }
+    
+    $scope.resetZoom = function() {
+        if( chart != null ) {
+            chart.resetZoom() ;
+        }
+    }
 
     // --- [END] Scope functions
 
@@ -237,6 +243,24 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                         title : renderTooltipTitle,
                         label : renderTooltipLabel
                     }
+                },
+                zoom : {
+                    zoom: {
+                        mode : 'xy',
+                        wheel : {
+                            enabled : true,
+                            speed : 0.05,
+                            modifierKey : 'ctrl',
+                        },
+                        drag : {
+                            enabled : true,
+                            modifierKey : 'meta',
+                        }
+                    },
+                    pan : {
+                        mode : 'xy',
+                        enabled : true,
+                    }
                 }
             },
             scales : {
@@ -257,6 +281,14 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             },
             animation : {
                 duration : animationDuration 
+            },
+            transitions : {
+                zoom : {
+                    animation : {
+                        duration : 1000,
+                        easing: 'easeOutCubic'
+                    }
+                }
             }
         } ;
         
