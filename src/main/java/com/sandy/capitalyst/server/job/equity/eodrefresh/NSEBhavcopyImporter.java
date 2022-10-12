@@ -15,8 +15,10 @@ import com.sandy.capitalyst.server.api.equity.helper.EquityTTMPerfUpdater ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
+import com.sandy.capitalyst.server.dao.equity.HistoricEQDataMeta ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataMetaRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 import com.sandy.capitalyst.server.dao.index.repo.IndexEquityRepo ;
 import com.sandy.common.util.StringUtil ;
@@ -29,20 +31,22 @@ public class NSEBhavcopyImporter {
 
     private static final String NIFTY_200_IDX_NAME = "Nifty 200" ;
     
-    private HistoricEQDataRepo ecRepo = null ;
-    private EquityMasterRepo emRepo = null ;
-    private EquityHoldingRepo ehRepo = null ;
-    private IndexEquityRepo ieRepo = null ;
+    private HistoricEQDataRepo     ecRepo  = null ;
+    private HistoricEQDataMetaRepo ecmRepo = null ;
+    private EquityMasterRepo       emRepo  = null ;
+    private EquityHoldingRepo      ehRepo  = null ;
+    private IndexEquityRepo        ieRepo  = null ;
 
     private EquityDailyGainUpdater dgUpdater = null ;
     
     private List<String> nifty200Stocks = new ArrayList<>() ;
     
     public NSEBhavcopyImporter() {
-        ecRepo  = getBean( HistoricEQDataRepo.class ) ;
-        emRepo  = getBean( EquityMasterRepo.class ) ;
-        ehRepo  = getBean( EquityHoldingRepo.class ) ;
-        ieRepo  = getBean( IndexEquityRepo.class ) ;
+        ecRepo  = getBean( HistoricEQDataRepo.class     ) ;
+        ecmRepo = getBean( HistoricEQDataMetaRepo.class ) ;
+        emRepo  = getBean( EquityMasterRepo.class       ) ;
+        ehRepo  = getBean( EquityHoldingRepo.class      ) ;
+        ieRepo  = getBean( IndexEquityRepo.class        ) ;
         
         dgUpdater = new EquityDailyGainUpdater() ;
         
@@ -107,6 +111,7 @@ public class NSEBhavcopyImporter {
                         
                         ecRepo.saveAndFlush( candle ) ;
                         updateEquityISINMapping( symbol, isin ) ;
+                        updateEquityHistMeta( symbol ) ;
                         
                         ttmPerfUpdater.addTodayEODCandle( candle ) ;
                     }
@@ -181,6 +186,18 @@ public class NSEBhavcopyImporter {
             log.error( "\tSymbol = " + symbol ) ;
             log.error( "\tISIN = " + isin ) ;
             throw e ;
+        }
+    }
+    
+    private void updateEquityHistMeta( String symbol ) {
+        
+        HistoricEQDataMeta meta = ecmRepo.findBySymbolNse( symbol ) ;
+        if( meta != null ) {
+            
+            meta.setNumRecords( ecRepo.getNumRecords( symbol ) ) ;
+            meta.setLastUpdate( new Date() ) ;
+            
+            ecmRepo.saveAndFlush( meta ) ;
         }
     }
 
