@@ -20,4 +20,8 @@ capitalystNgApp.config( function( $routeProvider ) {
         templateUrl : "/views/equity_mkt/route/reco/reco.html",
         controller : "RecoController"
     })
+    .when( "/hist", {
+        templateUrl : "/views/equity_mkt/route/hist/hist.html",
+        controller : "HistEODController"
+    })
 });
