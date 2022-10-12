@@ -4,8 +4,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     const BUY_COLOR            = '#256BEF' ;
     const SELL_COLOR           = '#E7871C' ;
     const EOD_LINE_COLOR       = '#B5B7B5' ;
-    const EOD_LINE_COLOR_GREEN = '#93DA91' ;
-    const EOD_LINE_COLOR_RED   = '#FDA4A4' ;
+    const EOD_LINE_COLOR_GREEN = '#CAE5CD' ;
+    const EOD_LINE_COLOR_RED   = '#FFDDD4' ;
     const AVG_LINE_COLOR       = '#ABABAB' ;
     const SCATTER_POINT_RADIUS = 5 ;
     const MIN_RADIUS           = 2 ;
@@ -27,38 +27,38 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
        d5 : {
           window : 5,
           enabled : true,
-          color : '#008080',
-          dash : [1,4] 
+          color : '#0338FB',
+          dash : [2,4] 
        },
        d10 : {
           window : 10,
           enabled : true,
-          color : '#FF6347',
-          dash : [1,4] 
+          color : '#C30061',
+          dash : [2,4] 
        },
        d20 : {
           window : 20,
           enabled : false,
-          color : '#008B8B',
-          dash : [1,4] 
+          color : '#118788',
+          dash : [2,4] 
        },
        d50 : {
           window : 50,
           enabled : false,
-          color : '#483D8B',
-          dash : [1,4] 
+          color : '#FC5D08',
+          dash : [2,4] 
        },
        d100 : {
           window : 100,
           enabled : false,
-          color : '#DAA520',
-          dash : [1,4] 
+          color : '#102C99',
+          dash : [2,4] 
        },
        d200 : {
           window : 200,
           enabled : false,
-          color : '#20B2AA',
-          dash : [1,4] 
+          color : '#C30061',
+          dash : [2,4] 
        },
     } ;
     
@@ -73,6 +73,34 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.setDuration = function( newDuration ) {
         if( newDuration != $scope.duration ) {
             $scope.duration = newDuration ;
+            
+            for( key in $scope.smaGraphs ) {
+                $scope.smaGraphs[key].enabled = false ;
+            }
+            
+            if( newDuration == '1m' || 
+                newDuration == '2m' ) {
+                $scope.smaGraphs.d5.enabled   = true ;
+                $scope.smaGraphs.d10.enabled  = true ;
+            }
+            else if( newDuration == '3m' |
+                     newDuration == '6m' ) {
+                $scope.smaGraphs.d10.enabled = true ;
+                $scope.smaGraphs.d20.enabled = true ;
+            }
+            else if( newDuration == '1y' ) {
+                $scope.smaGraphs.d20.enabled = true ;
+                $scope.smaGraphs.d50.enabled = true ;
+            }
+            else if( newDuration == '2y' || 
+                     newDuration == '3y' ) {
+                $scope.smaGraphs.d50.enabled  = true ;
+                $scope.smaGraphs.d100.enabled = true ;
+            }
+            else if( newDuration == '5y' ) {
+                $scope.smaGraphs.d100.enabled = true ;
+                $scope.smaGraphs.d200.enabled = true ;
+            }
             fetchChartData() ;
         }
     }
@@ -96,7 +124,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         console.log( $scope.smaGraphs ) ;
     }
     
-    $scope.smaGraphOptionsChanged = function() {
+    $scope.smaGraphOptionsChanged = function( smaType ) {
         drawChart( false ) ;
     }
     
@@ -158,7 +186,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             data             : eodPriceList,
             borderColor      : eodLineColor,
             backgroundColor  : eodLineColor,
-            borderWidth      : 1,
+            borderWidth      : 2,
             tension          : 0,
             radius           : 0,
         } ;
@@ -206,7 +234,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 data             : smaValues,
                 borderColor      : smaCfg.color ,
                 backgroundColor  : smaCfg.color,
-                borderWidth      : 2,
+                borderWidth      : 1,
                 tension          : 0.25,
                 radius           : 0,
                 borderDash       : smaCfg.dash
