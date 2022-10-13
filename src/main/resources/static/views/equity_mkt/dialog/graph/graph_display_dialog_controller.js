@@ -133,6 +133,16 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             chart.resetZoom() ;
         }
     }
+    
+    $scope.getCurrentMktPrice = function() {
+        if( $scope.chartData == null ) {
+            return 0 ;
+        }
+        else if( $scope.chartData.holding != null ) {
+            return $scope.chartData.holding.currentMktPrice ;
+        }
+        return $scope.chartData.equityMaster.close ;
+    }
 
     // --- [END] Scope functions
 

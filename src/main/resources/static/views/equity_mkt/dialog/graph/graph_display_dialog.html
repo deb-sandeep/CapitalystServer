@@ -47,33 +47,33 @@
 	               <td class="label-cell">Avg. Cost Price</td>
 	               <td class="value-cell fixed-font">{{chartData.holding.avgCostPrice | amt}}</td>
 	               <td class="label-cell">Current Price</td>
-	               <td class="value-cell fixed-font">{{chartData.holding.currentMktPrice | amt}}</td>
+	               <td class="value-cell fixed-font">{{getCurrentMktPrice() | amt}}</td>
                    <td class="label-cell">Trend</td>
 	               <td style="text-align:center;">
-	                   <span ng-if="chartData.holding.indicators.trend == 'VERY BULLISH'"
+	                   <span ng-if="chartData.indicators.trend == 'VERY BULLISH'"
 	                         class="glyphicon glyphicon-arrow-up"
 	                         style="color:green;"></span>
 	                         
-	                   <span ng-if="chartData.holding.indicators.trend == 'VERY BULLISH'"
+	                   <span ng-if="chartData.indicators.trend == 'VERY BULLISH'"
 	                         class="glyphicon glyphicon-arrow-up"
 	                         style="color:green;"></span>
 	                         
-	                   <span ng-if="chartData.holding.indicators.trend == 'BULLISH'"
+	                   <span ng-if="chartData.indicators.trend == 'BULLISH'"
 	                         class="glyphicon glyphicon-arrow-up"
 	                         style="color:green;"></span>
 	                         
-	                   <span ng-if="chartData.holding.indicators.trend == 'NEUTRAL'"
+	                   <span ng-if="chartData.indicators.trend == 'NEUTRAL'"
 	                         class="glyphicon glyphicon-resize-horizontal"></span>
 	                         
-	                   <span ng-if="chartData.holding.indicators.trend == 'BEARISH'"
+	                   <span ng-if="chartData.indicators.trend == 'BEARISH'"
 	                         class="glyphicon glyphicon-arrow-down"
 	                         style="color:red;"></span>
 	                         
-	                   <span ng-if="chartData.holding.indicators.trend == 'VERY BEARISH'"
+	                   <span ng-if="chartData.indicators.trend == 'VERY BEARISH'"
 	                         class="glyphicon glyphicon-arrow-down"
 	                         style="color:red;"></span>
 	                         
-	                   <span ng-if="chartData.holding.indicators.trend == 'VERY BEARISH'"
+	                   <span ng-if="chartData.indicators.trend == 'VERY BEARISH'"
 	                         class="glyphicon glyphicon-arrow-down"
 	                         style="color:red;"></span>
 	               </td>
@@ -84,9 +84,9 @@
                    <td class="label-cell">52W Low</td>
                    <td class="value-cell fixed-font">{{chartData.indicators.low52 | amt}}</td>
                    <td class="label-cell">Symbol NSE</td>
-                   <td class="value-cell fixed-font">{{chartData.holding.symbolNse}}</td>
+                   <td class="value-cell fixed-font">{{chartData.equityMaster.symbol}}</td>
 	               <td class="label-cell">Symbol ICICI</td>
-                   <td class="value-cell fixed-font">{{chartData.holding.symbolIcici}}</td>
+                   <td class="value-cell fixed-font">{{chartData.equityMaster.symbolIcici}}</td>
                </tr>
                <tr>
                    <td class="label-cell">Investment</td>
