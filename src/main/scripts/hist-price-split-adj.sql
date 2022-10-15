@@ -1,6 +1,6 @@
 SET @SPLIT_RATIO = 10 ;
-SET @SYMBOL_NSE  = 'BAJAJFINSV' collate utf8mb4_unicode_ci ;
-SET @SPLIT_DATE  = '2020-03-18' ;
+SET @SYMBOL_NSE  = 'NIFTYBEES' collate utf8mb4_unicode_ci ;
+SET @SPLIT_DATE  = '2019-12-19' ;
 
 SELECT id, symbol, date, open, high, low, close, prev_close
 FROM historic_eq_data
