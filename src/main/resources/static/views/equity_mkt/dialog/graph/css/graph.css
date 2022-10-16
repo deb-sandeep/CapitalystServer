@@ -22,6 +22,17 @@
     border-color: #8d8d8d;
 }
 
+.indicator-cfg-btn {
+    
+    padding: 1px 1px 1px 1px;
+    margin: 0px 0px 0px 0px;
+    background-color: white;
+    margin-right:5px;
+    border-color: #c9c9c9;
+    width: 20px;
+    font-size: 12px;
+}
+
 .graph-title {
     font-size: 15px;
     font-weight: 700;

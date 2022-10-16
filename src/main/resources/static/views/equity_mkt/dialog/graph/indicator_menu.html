@@ -8,15 +8,22 @@
         </a>
       </h4>
     </div>
-    <div id="sma" class="panel-collapse form indicator-options">
-	    <div ng-repeat="(key, value) in smaGraphs"
-	         ng-style="{'color':value.color, 'font-weight':700}">
-	        <input type="checkbox" 
-	               ng-model="smaGraphs[key].enabled"
-	               ng-change="smaGraphOptionsChanged( key )"/>
-	        &nbsp;
-	        {{key}}
-	    </div>
+    <div id="sma" class="panel-collapse form indicator-options"
+         ng-include="'dialog/graph/ind/sma/sma_cfg.html'">
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-target="#bollinger" data-toggle="collapse" data-parent="#acc">
+        Bollinger Bands
+        </a>
+      </h4>
+    </div>
+    <div id="bollinger" 
+         class="panel-collapse form collapse indicator-options"
+         ng-include="'dialog/graph/ind/bollinger/bollinger_cfg.html'">
     </div>
   </div>
 

@@ -64,6 +64,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
+    console.log( "Loading GraphDisplayDialogController" ) ;
     
     $scope.$on( 'graphDialogDisplay', function( _event, args ) {
         $scope.graphParams = args ;
@@ -143,7 +144,11 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
         return $scope.chartData.equityMaster.close ;
     }
-
+    
+    $scope.bollinger = function() {
+        console.log( "Bollinger" ) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
