@@ -1,5 +1,5 @@
 <div class="modal-dialog" 
-     style="width:1000px;">
+     style="width:1300px;">
      
   <div class="modal-content" >
     <div class="modal-header" style="background-color:#C5C5C5;padding:5px">
@@ -28,24 +28,27 @@
        </div>
     </div>
     
-    <div class="modal-body"
-         style="padding:5px 15px 5px 15px;">
-        <canvas id="eodGraph" 
-                width="1000" 
-                height="500">
-            [No canvas support]
-        </canvas>
+    <div id="graphDiv" class="modal-body">
+        <div id="graphCanvasDiv">
+	        <canvas id="eodGraph">
+	            [No canvas support]
+	        </canvas>
+        </div>
+        <div id="indicatorsDiv"
+             ng-include="'dialog/graph/indicator_menu.html'">
+        </div>
     </div>
     
     <div class="modal-footer"
          style="padding: 5px 30px 5px 50px;">
-	    <table class="table table-bordered table-compact">
+	    <table class="table table-bordered table-compact"
+	           style="margin-bottom:5px;">
 	        <tbody>
 	           <tr>
-	               <td class="label-cell">Quantity</td>
-	               <td class="value-cell fixed-font">{{chartData.holding.quantity}}</td>
-	               <td class="label-cell">Avg. Cost Price</td>
-	               <td class="value-cell fixed-font">{{chartData.holding.avgCostPrice | amt}}</td>
+                   <td class="label-cell">Symbol NSE</td>
+                   <td class="value-cell fixed-font">{{chartData.equityMaster.symbol}}</td>
+                   <td class="label-cell">Symbol ICICI</td>
+                   <td class="value-cell fixed-font">{{chartData.equityMaster.symbolIcici}}</td>
 	               <td class="label-cell">Current Price</td>
 	               <td class="value-cell fixed-font">{{getCurrentMktPrice() | amt}}</td>
                    <td class="label-cell">Trend</td>
@@ -77,18 +80,16 @@
 	                         class="glyphicon glyphicon-arrow-down"
 	                         style="color:red;"></span>
 	               </td>
-               </tr>
-               <tr>
                    <td class="label-cell">52W High</td>
                    <td class="value-cell fixed-font">{{chartData.indicators.high52 | amt}}</td>
                    <td class="label-cell">52W Low</td>
                    <td class="value-cell fixed-font">{{chartData.indicators.low52 | amt}}</td>
-                   <td class="label-cell">Symbol NSE</td>
-                   <td class="value-cell fixed-font">{{chartData.equityMaster.symbol}}</td>
-	               <td class="label-cell">Symbol ICICI</td>
-                   <td class="value-cell fixed-font">{{chartData.equityMaster.symbolIcici}}</td>
                </tr>
                <tr>
+                   <td class="label-cell">Quantity</td>
+                   <td class="value-cell fixed-font">{{chartData.holding.quantity}}</td>
+                   <td class="label-cell">Avg. Cost Price</td>
+                   <td class="value-cell fixed-font">{{chartData.holding.avgCostPrice | amt}}</td>
                    <td class="label-cell">Investment</td>
                    <td class="value-cell fixed-font">{{chartData.holding.valueAtCost | amt}}</td>
                    <td class="label-cell">Market Value</td>
@@ -105,7 +106,7 @@
                </tr>
                <tr>
                    <td class="label-cell">SMA Graphs</td>
-                   <td class="value-cell" colspan="3"
+                   <td class="value-cell" colspan="5"
                        style="text-align:left;padding:2px;">
                      <span ng-repeat="(key, value) in smaGraphs"
                            ng-style="{'color':value.color, 'font-weight':700}">
@@ -116,7 +117,7 @@
 		                 &nbsp;&nbsp;
 	                 </span>
                    </td>
-                   <td colspan="4"></td>
+                   <td colspan="6"></td>
                </tr>
 	        </tbody>
 	    </table>

@@ -111,37 +111,3 @@ td {
 	width: auto !important;
 }
 
-.label-cell {
-	width: 125px;
-	text-align: left;
-	background-color: #eafffb;
-}
-
-.value-cell {
-	padding-right:10px !important;
-	width: 150px;
-}
-
-.duration-btn {
-    
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-left: 5px;
-    padding-right: 5px;
-    color: black;
-    background-color: white;
-    margin-right:5px;
-    width:30px;
-    border-color: #8d8d8d;
-}
-
-.graph-title {
-    font-size: 15px;
-    font-weight: 700;
-    width: 700px;
-    float: left;
-}
-
-.sel-duration-btn {
-    background-color: lightblue;
-}
