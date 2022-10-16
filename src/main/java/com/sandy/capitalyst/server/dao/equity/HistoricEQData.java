@@ -1,5 +1,8 @@
 package com.sandy.capitalyst.server.dao.equity;
 
+import java.time.Duration ;
+import java.time.ZoneId ;
+import java.time.ZonedDateTime ;
 import java.util.Date ;
 
 import javax.persistence.Column ;
@@ -8,6 +11,10 @@ import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
+
+import org.ta4j.core.Bar ;
+import org.ta4j.core.BaseBar ;
+import org.ta4j.core.num.DecimalNum ;
 
 import lombok.Data ;
 
@@ -42,4 +49,18 @@ public class HistoricEQData {
     
     @Column( precision=16, scale=2 )
     private float totalTradeVal = 0.0F ;
+    
+    public Bar toBar() {
+        return BaseBar.builder()
+                      .timePeriod( Duration.ofDays( 1 ) )
+                      .endTime( ZonedDateTime.ofInstant( date.toInstant(), ZoneId.of( "Asia/Kolkata" ) ) )
+                      .openPrice ( DecimalNum.valueOf( open  ) )
+                      .highPrice ( DecimalNum.valueOf( high  ) )
+                      .lowPrice  ( DecimalNum.valueOf( low   ) )
+                      .closePrice( DecimalNum.valueOf( close ) )
+                      .trades    ( totalTrades )
+                      .volume    ( DecimalNum.valueOf( totalTradeQty ) )
+                      .amount    ( DecimalNum.valueOf( totalTradeVal ) )
+                      .build() ;
+    }
 }

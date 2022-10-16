@@ -10,6 +10,8 @@ import java.util.TreeMap ;
 
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
+import org.ta4j.core.BarSeries ;
+import org.ta4j.core.BaseBarSeries ;
 
 import com.sandy.capitalyst.server.api.equity.vo.FamilyEquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData ;
@@ -28,6 +30,7 @@ import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTradeRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 
 public class EquityGraphDataBuilder {
 
@@ -39,21 +42,21 @@ public class EquityGraphDataBuilder {
         EquityTrade    sellTrade = null ;
     }
     
-    private EquityTradeRepo etRepo = null ;
-    private EquityTxnRepo etxnRepo = null ;
-    private EquityHoldingRepo ehRepo = null ;
-    private EquityIndicatorsRepo eiRepo = null ;
+    private EquityTradeRepo      etRepo   = null ;
+    private EquityTxnRepo        etxnRepo = null ;
+    private EquityHoldingRepo    ehRepo   = null ;
+    private EquityIndicatorsRepo eiRepo   = null ;
+    private HistoricEQDataRepo   hedRepo  = null ;
     
-    private List<HistoricEQData> histData = null ; 
+    private BarSeries barSeries = null ;
     
-    public EquityGraphDataBuilder( List<HistoricEQData> histData ) {
+    public EquityGraphDataBuilder() {
         
         etRepo   = getBean( EquityTradeRepo.class      ) ;
         etxnRepo = getBean( EquityTxnRepo.class        ) ;
         ehRepo   = getBean( EquityHoldingRepo.class    ) ;
         eiRepo   = getBean( EquityIndicatorsRepo.class ) ;
-        
-        this.histData = histData ;
+        hedRepo  = getBean( HistoricEQDataRepo.class   ) ;
     }
     
     public GraphData constructGraphData( Date fromDate, Date toDate, 
@@ -63,7 +66,7 @@ public class EquityGraphDataBuilder {
         GraphData graphData = new GraphData() ;
         Map<Date, DataHolder> data = new TreeMap<>() ;
         
-        loadEODData( data, em.getSymbol() ) ;
+        loadEODData( data, fromDate, toDate, em.getSymbol() ) ;
         populateTradeData( data, em.getSymbolIcici(), ownerName ) ;
         
         populateLabels      ( graphData, data ) ;
@@ -71,6 +74,7 @@ public class EquityGraphDataBuilder {
         populateBuySellData ( graphData, data ) ;
         populateAvgCostData ( graphData, em.getSymbolIcici(), ownerName ) ;
         populateCMPData     ( graphData ) ;
+        populateBarSeries   ( em.getSymbol(), data ) ;
         
         EquityIndicators ei = eiRepo.findByIsin( em.getIsin() ) ;
         graphData.setIndicators( ei ) ;
@@ -78,11 +82,28 @@ public class EquityGraphDataBuilder {
         
         return graphData ;
     }
+    
+    public BarSeries getBarSeries() {
+        return this.barSeries ;
+    }
+    
+    private void populateBarSeries( String symbolNse, 
+                                    Map<Date, DataHolder> data ) {
+        
+        barSeries = new BaseBarSeries( symbolNse ) ;
+        data.forEach( (date, holder) -> {
+            barSeries.addBar( holder.histData.toBar() ) ;
+        } ) ;
+    }
 
     private Map<Date, DataHolder> loadEODData( Map<Date, DataHolder> data,
+                                               Date fromDate, Date toDate,
                                                String symbolNse ) {
         
-        this.histData.forEach( item -> {
+        List<HistoricEQData> histData = null ;
+        histData = hedRepo.getHistoricData( symbolNse, fromDate, toDate ) ;
+
+        histData.forEach( item -> {
             DataHolder holder = new DataHolder() ;
             holder.histData = item ;
             data.put( item.getDate(), holder ) ;
