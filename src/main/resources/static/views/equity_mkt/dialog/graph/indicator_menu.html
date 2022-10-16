@@ -1,1 +1,23 @@
-Indicator Menu
+<div class="panel-group" id="acc" style="font-size:11px;padding:5px;">
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-target="#sma" data-toggle="collapse" data-parent="#acc">
+        SMA
+        </a>
+      </h4>
+    </div>
+    <div id="sma" class="panel-collapse form indicator-options">
+	    <div ng-repeat="(key, value) in smaGraphs"
+	         ng-style="{'color':value.color, 'font-weight':700}">
+	        <input type="checkbox" 
+	               ng-model="smaGraphs[key].enabled"
+	               ng-change="smaGraphOptionsChanged( key )"/>
+	        &nbsp;
+	        {{key}}
+	    </div>
+    </div>
+  </div>
+
+</div>

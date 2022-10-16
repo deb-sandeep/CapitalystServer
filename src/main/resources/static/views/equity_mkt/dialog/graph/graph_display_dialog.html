@@ -104,21 +104,6 @@
                        ng-class="getAmtClass(chartData.holding.patPct)">
                        {{chartData.holding.patPct | number:1}} %</td>
                </tr>
-               <tr>
-                   <td class="label-cell">SMA Graphs</td>
-                   <td class="value-cell" colspan="5"
-                       style="text-align:left;padding:2px;">
-                     <span ng-repeat="(key, value) in smaGraphs"
-                           ng-style="{'color':value.color, 'font-weight':700}">
-                         {{key}}&nbsp;
-		                 <input type="checkbox" 
-		                        ng-model="smaGraphs[key].enabled"
-		                        ng-change="smaGraphOptionsChanged( key )"/>
-		                 &nbsp;&nbsp;
-	                 </span>
-                   </td>
-                   <td colspan="6"></td>
-               </tr>
 	        </tbody>
 	    </table>
     </div>
