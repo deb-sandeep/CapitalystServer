@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.api.equity ;
 
 import java.text.SimpleDateFormat ;
 import java.util.Date ;
+import java.util.List ;
 
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
@@ -16,7 +17,9 @@ import com.sandy.capitalyst.server.api.equity.helper.EquityGraphDataBuilder ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
+import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 
 @RestController
 public class EquityGraphDataController {
@@ -28,12 +31,14 @@ public class EquityGraphDataController {
     @Autowired
     private EquityMasterRepo emRepo = null ;
     
+    @Autowired
+    private HistoricEQDataRepo hedRepo = null ;
+    
     @GetMapping( "/Equity/GraphData" ) 
     public ResponseEntity<GraphData> getGraphData( 
                   @RequestParam( "duration" ) String durationKey,
                   @RequestParam( name="symbolNse", required=true ) String symbolNse,
                   @RequestParam( name="owner",     required=true ) String ownerName ) {
-
         try {
             
             EquityMaster em = emRepo.findBySymbol( symbolNse ) ;
@@ -52,8 +57,13 @@ public class EquityGraphDataController {
             log.debug( "   From Date= " + SDF.format( fromDate ) ) ;
             log.debug( "   To Date  = " + SDF.format( toDate ) ) ;
             
-            EquityGraphDataBuilder builder = new EquityGraphDataBuilder() ;
-            GraphData graphData = builder.constructGraphData( 
+            List<HistoricEQData>   histData  = null ;
+            EquityGraphDataBuilder builder   = null ;
+            GraphData              graphData = null ;
+            
+            histData = loadHistoricData( symbolNse, fromDate, toDate ) ;
+            builder = new EquityGraphDataBuilder( histData ) ;
+            graphData = builder.constructGraphData( 
                                              fromDate, toDate, em, ownerName ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
@@ -78,7 +88,16 @@ public class EquityGraphDataController {
         else if( duration.equalsIgnoreCase( "y" ) ) {
             fromDate = DateUtils.addYears( toDate, -1*amount ) ;
         }
-
         return fromDate ;
     }
+    
+    private List<HistoricEQData> loadHistoricData( 
+                                   String symbol, Date fromDate, Date toDate ) {
+
+        List<HistoricEQData> histDataList = null ;
+        histDataList = hedRepo.getHistoricData( symbol, fromDate, toDate ) ;
+        return histDataList ;
+    }
+
+    
 }
