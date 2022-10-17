@@ -23,7 +23,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.graphParams = null ;
     $scope.durationKeys = [ '5y', '3y', '2y', '1y', '6m', '3m', '2m', '1m' ] ;
     $scope.duration = '3m' ;
-    $scope.smaGraphs = {
+    $scope.maGraphs = {
        d5 : {
           window : 5,
           enabled : true,
@@ -75,32 +75,32 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         if( newDuration != $scope.duration ) {
             $scope.duration = newDuration ;
             
-            for( key in $scope.smaGraphs ) {
-                $scope.smaGraphs[key].enabled = false ;
+            for( key in $scope.maGraphs ) {
+                $scope.maGraphs[key].enabled = false ;
             }
             
             if( newDuration == '1m' || 
                 newDuration == '2m' ) {
-                $scope.smaGraphs.d5.enabled   = true ;
-                $scope.smaGraphs.d10.enabled  = true ;
+                $scope.maGraphs.d5.enabled   = true ;
+                $scope.maGraphs.d10.enabled  = true ;
             }
             else if( newDuration == '3m' |
                      newDuration == '6m' ) {
-                $scope.smaGraphs.d10.enabled = true ;
-                $scope.smaGraphs.d20.enabled = true ;
+                $scope.maGraphs.d10.enabled = true ;
+                $scope.maGraphs.d20.enabled = true ;
             }
             else if( newDuration == '1y' ) {
-                $scope.smaGraphs.d20.enabled = true ;
-                $scope.smaGraphs.d50.enabled = true ;
+                $scope.maGraphs.d20.enabled = true ;
+                $scope.maGraphs.d50.enabled = true ;
             }
             else if( newDuration == '2y' || 
                      newDuration == '3y' ) {
-                $scope.smaGraphs.d50.enabled  = true ;
-                $scope.smaGraphs.d100.enabled = true ;
+                $scope.maGraphs.d50.enabled  = true ;
+                $scope.maGraphs.d100.enabled = true ;
             }
             else if( newDuration == '5y' ) {
-                $scope.smaGraphs.d100.enabled = true ;
-                $scope.smaGraphs.d200.enabled = true ;
+                $scope.maGraphs.d100.enabled = true ;
+                $scope.maGraphs.d200.enabled = true ;
             }
             fetchChartData() ;
         }
@@ -122,7 +122,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
     
     $scope.smaGraphOptionsChanged = function() {
-        console.log( $scope.smaGraphs ) ;
+        console.log( $scope.maGraphs ) ;
     }
     
     $scope.smaGraphOptionsChanged = function( smaType ) {
@@ -230,9 +230,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         
         var eodPriceList = $scope.chartData.eodPriceList ;
         
-        for( const smaKey in $scope.smaGraphs ) {
+        for( const smaKey in $scope.maGraphs ) {
             
-            const smaCfg = $scope.smaGraphs[smaKey] ;
+            const smaCfg = $scope.maGraphs[smaKey] ;
             
             if( !smaCfg.enabled ) { continue ; }
                 
@@ -413,6 +413,17 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             result.push( sum / window ) ;
         }
         return result ;
+    }
+    
+    function calculateEMA( data, window ) {
+        
+        var k = 2/( window + 1 ) ;
+        var emaArray = [data[0]] ;
+        
+        for( var i=1; i<data.length; i++ ) {
+            emaArray.push( k*data[i] + emaArray[i - 1]*(1 - k) ) ;
+        }
+        return emaArray;
     }
     
     // ------------------- Server comm functions -------------------------------
