@@ -14,9 +14,10 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     // ---------------- Local variables --------------------------------------
     var chart = null ;
-    var minQuantity = 999999 ;
-    var maxQuantity = 0 ;
-    var quantityRange = 0 ;
+    var minQty = 999999 ;
+    var maxQty = 0 ;
+    var qtyRange = 0 ;
+    var seriesCache = new Map() ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.chartData = null ;
@@ -128,7 +129,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return ( value < 0 ) ? "neg_amt" : "pos_amt" ;
     }
     
-    $scope.maGraphOptionsChanged = function( smaType ) {
+    $scope.maGraphOptionsChanged = function( maType, window ) {
         drawChart( false ) ;
     }
     
@@ -157,124 +158,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     
-    function getBuyTradesDataset() {
-        var buyData = $scope.chartData.buyData ;
-        return {
-            type             : 'scatter',
-            data             : buyData,
-            backgroundColor  : BUY_COLOR,
-            borderColor      : BUY_COLOR,
-            pointRadius      : getPointRadiusArray( buyData ),
-        } ;
-    }
-    
-    function getSellTradesDataset() {
-        var sellData = $scope.chartData.sellData ;
-        return {
-            type             : 'scatter',
-            data             : sellData,
-            backgroundColor  : SELL_COLOR,
-            borderColor      : SELL_COLOR,
-            radius           : getPointRadiusArray( sellData ),
-        } ;
-    }
-    
-    function getAvgPriceDataset() {
-        return {
-            type             : 'scatter',
-            data             : $scope.chartData.avgData,
-            backgroundColor  : AVG_LINE_COLOR,
-            borderColor      : AVG_LINE_COLOR,
-            radius           : 5,
-            borderWidth      : 1,
-            showLine         : true,
-        } ;
-    }
-    
-    function getEodPriceDataset() {
-        
-        var eodPriceList = $scope.chartData.eodPriceList ;
-        var eodLineColor = EOD_LINE_COLOR_RED ;
-        if( eodPriceList[0] < eodPriceList.at(-1) ) {
-            eodLineColor = EOD_LINE_COLOR_GREEN ;
-        }
-        
-        return {
-            type             : 'line',
-            data             : eodPriceList,
-            borderColor      : eodLineColor,
-            backgroundColor  : eodLineColor,
-            borderWidth      : 2,
-            tension          : 0,
-            radius           : 0,
-        } ;
-    }
-    
-    function getCMPDataset() {
-        
-        var cd = $scope.chartData ;
-        var cmpColor = '#000000' ;
-        
-        if( cd.avgData.length > 0 ) {
-            cmpColor = ( cd.avgData[0].y < cd.cmpData[0].y ) ? '#00FF00' : 
-                                                               '#FF0000' ; 
-        }
-        
-        return {
-            type             : 'scatter',
-            data             : cd.cmpData,
-            borderColor      : cmpColor,
-            backgroundColor  : cmpColor,
-            radius           : 4,
-        } ;
-    }
-    
-    function getMADataset( datasets ) {
-        
-        var eodPriceList = $scope.chartData.eodPriceList ;
-        
-        for( const maKey in $scope.maGraphs ) {
-            
-            const maCfg = $scope.maGraphs[maKey] ;
-            
-            if( !( maCfg.smaEnabled || maCfg.emaEnabled ) ) { 
-                continue ; 
-            }
-            
-            var maValues = null ;
-            
-            if( maCfg.smaEnabled ) {
-                maValues = calculateSMA( eodPriceList, maCfg.window ) ;
-                if( maValues.length == 0 ) { continue ; }
-                datasets.push( {
-                    type             : 'line',
-                    data             : maValues,
-                    borderColor      : maCfg.color ,
-                    backgroundColor  : maCfg.color,
-                    borderWidth      : 1,
-                    tension          : 0.25,
-                    radius           : 0,
-                    borderDash       : maCfg.dash
-                } ) ;
-            }
-            
-            if( maCfg.emaEnabled ) {
-                maValues = calculateEMA( eodPriceList, maCfg.window ) ;
-                if( maValues.length == 0 ) { continue ; }
-                datasets.push( {
-                    type             : 'line',
-                    data             : maValues,
-                    borderColor      : maCfg.color ,
-                    backgroundColor  : maCfg.color,
-                    borderWidth      : 1,
-                    tension          : 0.25,
-                    radius           : 0,
-                    borderDash       : maCfg.dash
-                } ) ;
-            }
-        }
-    }
-    
     function drawChart( animate ) {
         
         $( '#graphDisplayDialog' ).modal( 'show' ) ;
@@ -292,7 +175,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         datasets.push( getEodPriceDataset()   ) ;
         datasets.push( getCMPDataset()        ) ;
         
-        getMADataset( datasets ) ;
+        addMADatasets( datasets ) ;
         
         const options = {
             plugins : {
@@ -362,17 +245,149 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         } ) ;
     }
     
+    function getBuyTradesDataset() {
+        var buyData = $scope.chartData.buyData ;
+        return {
+            type             : 'scatter',
+            data             : buyData,
+            backgroundColor  : BUY_COLOR,
+            borderColor      : BUY_COLOR,
+            pointRadius      : getPointRadiusArray( buyData ),
+        } ;
+    }
+    
+    function getSellTradesDataset() {
+        var sellData = $scope.chartData.sellData ;
+        return {
+            type             : 'scatter',
+            data             : sellData,
+            backgroundColor  : SELL_COLOR,
+            borderColor      : SELL_COLOR,
+            radius           : getPointRadiusArray( sellData ),
+        } ;
+    }
+    
+    function getAvgPriceDataset() {
+        return {
+            type             : 'scatter',
+            data             : $scope.chartData.avgData,
+            backgroundColor  : AVG_LINE_COLOR,
+            borderColor      : AVG_LINE_COLOR,
+            radius           : 5,
+            borderWidth      : 1,
+            showLine         : true,
+        } ;
+    }
+    
+    function getEodPriceDataset() {
+        
+        var eodPriceList = $scope.chartData.eodPriceList ;
+        var eodLineColor = EOD_LINE_COLOR_RED ;
+        if( eodPriceList[0] < eodPriceList.at(-1) ) {
+            eodLineColor = EOD_LINE_COLOR_GREEN ;
+        }
+        
+        return {
+            type             : 'line',
+            data             : eodPriceList,
+            borderColor      : eodLineColor,
+            backgroundColor  : eodLineColor,
+            borderWidth      : 2,
+            tension          : 0,
+            radius           : 0,
+        } ;
+    }
+    
+    function getCMPDataset() {
+        
+        var cd = $scope.chartData ;
+        var cmpColor = '#000000' ;
+        
+        if( cd.avgData.length > 0 ) {
+            cmpColor = ( cd.avgData[0].y < cd.cmpData[0].y ) ? 
+                       '#00FF00' : '#FF0000' ; 
+        }
+        
+        return {
+            type             : 'scatter',
+            data             : cd.cmpData,
+            borderColor      : cmpColor,
+            backgroundColor  : cmpColor,
+            radius           : 4,
+        } ;
+    }
+    
+    function addMADatasets( datasets ) {
+        
+        var eodPriceList = $scope.chartData.eodPriceList ;
+        
+        for( const maKey in $scope.maGraphs ) {
+            
+            const maCfg = $scope.maGraphs[maKey] ;
+            
+            if( maCfg.smaEnabled ) {
+                var seriesName = "sma-" + maKey ;
+                addMASeries( datasets, seriesName, maCfg, 
+                             getSeries( seriesName, function() {
+                                return calculateSMA( eodPriceList, 
+                                                     maCfg.window ) ;
+                             } ) ) ;
+            }
+            
+            if( maCfg.emaEnabled ) {
+                var seriesName = "ema-" + maKey ;
+                addMASeries( datasets, seriesName, maCfg, 
+                             getSeries( seriesName, function() {
+                                return calculateEMA( eodPriceList, 
+                                                     maCfg.window ) ;
+                             } ) ) ;
+            }
+        }
+    }
+    
+    function addMASeries( datasets, seriesName, maCfg, maValues ) {
+        
+        if( maValues.length > 0 ) { 
+            datasets.push( {
+                name             : seriesName,
+                type             : 'line',
+                data             : maValues,
+                borderColor      : maCfg.color ,
+                backgroundColor  : maCfg.color,
+                borderWidth      : 1,
+                tension          : 0.25,
+                radius           : 0,
+                borderDash       : maCfg.dash
+            } ) ;
+        }
+    }
+    
+    function getSeries( key, genFn ) {
+        
+        var series = null ;
+        if( seriesCache.has( key ) ) {
+            series = seriesCache.get( key ) ;
+        }
+        else {
+            series = genFn() ;
+            seriesCache.set( key, series ) ;
+        }
+        return series ;
+    }
+    
+
+    
     function getPointRadiusArray( data ) {
         
         var radiusArray = [] ;
         
         for( var i=0; i<data.length; i++ ) {
 
-            var d = data[i].q - minQuantity ;
+            var d = data[i].q - minQty ;
             var r = SCATTER_POINT_RADIUS ;
             
-            if( quantityRange > 0 ) {
-                r = ((d * RADIUS_RANGE)/quantityRange) + MIN_RADIUS ;    
+            if( qtyRange > 0 ) {
+                r = ((d * RADIUS_RANGE)/qtyRange) + MIN_RADIUS ;    
             }
             radiusArray.push( r ) ;
         }
@@ -397,27 +412,25 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     function extractQuantityRange() {
         
-        minQuantity = 99999 ;
-        maxQuantity = 0 ;
+        minQty = 99999 ;
+        maxQty = 0 ;
         
         for( var i=0; i<$scope.chartData.buyData.length; i++ ) {
-            minQuantity = Math.min( minQuantity, $scope.chartData.buyData[i].q ) ;
-            maxQuantity = Math.max( maxQuantity, $scope.chartData.buyData[i].q ) ;
+            minQty = Math.min( minQty, $scope.chartData.buyData[i].q ) ;
+            maxQty = Math.max( maxQty, $scope.chartData.buyData[i].q ) ;
         }
         
         for( var i=0; i<$scope.chartData.sellData.length; i++ ) {
-            minQuantity = Math.min( minQuantity, $scope.chartData.sellData[i].q ) ;
-            maxQuantity = Math.max( maxQuantity, $scope.chartData.sellData[i].q ) ;
+            minQty = Math.min( minQty, $scope.chartData.sellData[i].q ) ;
+            maxQty = Math.max( maxQty, $scope.chartData.sellData[i].q ) ;
         }
-        quantityRange = maxQuantity - minQuantity ;
+        qtyRange = maxQty - minQty ;
     }
     
     function calculateSMA( data, window ) {
         
         var sum = 0;
         var result = [] ;
-        
-        if( data.length < window ){ return result; }
         
         for( var i=0; i<window; ++i ) {
             sum += data[i] ;
@@ -460,8 +473,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                    '&owner='     + $scope.graphParams.ownerName )
         .then ( 
             function( response ){
-                console.log( response.data ) ;
+                
                 $scope.chartData = response.data ;
+                seriesCache.clear() ;
                 extractQuantityRange() ;
                 drawChart( true ) ;
             }

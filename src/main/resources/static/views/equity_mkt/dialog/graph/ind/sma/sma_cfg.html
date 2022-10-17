@@ -7,21 +7,21 @@
 	    </tr>
     </thead>
     <tbody>
-		<tr ng-repeat="(key, value) in maGraphs">
+		<tr ng-repeat="(window, value) in maGraphs">
 		    <td>
 		       <span ng-style="{'color':value.color, 'font-weight':700}">
-		          {{key}}
+		          {{window}}
 		       </span>
 		    </td>
 		    <td>
 			    <input type="checkbox" 
-			           ng-model="maGraphs[key].smaEnabled"
-			           ng-change="maGraphOptionsChanged( key )"/>
+			           ng-model="maGraphs[window].smaEnabled"
+			           ng-change="maGraphOptionsChanged( 'sma', window )"/>
 			</td>
             <td>
                 <input type="checkbox" 
-                       ng-model="maGraphs[key].emaEnabled"
-                       ng-change="maGraphOptionsChanged( key )"/>
+                       ng-model="maGraphs[window].emaEnabled"
+                       ng-change="maGraphOptionsChanged( 'ema', window )"/>
             </td>
 		</div>
     </tbody>
