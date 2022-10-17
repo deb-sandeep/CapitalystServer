@@ -1,8 +1,8 @@
 <div ng-repeat="(key, value) in maGraphs"
      ng-style="{'color':value.color, 'font-weight':700}">
     <input type="checkbox" 
-           ng-model="maGraphs[key].enabled"
-           ng-change="smaGraphOptionsChanged( key )"/>
+           ng-model="maGraphs[key].smaEnabled"
+           ng-change="maGraphOptionsChanged( key )"/>
     &nbsp;
     {{key}}
 </div>

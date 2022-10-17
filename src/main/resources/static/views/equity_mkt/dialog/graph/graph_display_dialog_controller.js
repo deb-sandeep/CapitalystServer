@@ -26,37 +26,37 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.maGraphs = {
        d5 : {
           window : 5,
-          enabled : true,
+          smaEnabled : true,
           color : '#0338FB',
           dash : [2,4] 
        },
        d10 : {
           window : 10,
-          enabled : true,
+          smaEnabled : true,
           color : '#C30061',
           dash : [2,4] 
        },
        d20 : {
           window : 20,
-          enabled : false,
+          smaEnabled : false,
           color : '#118788',
           dash : [2,4] 
        },
        d50 : {
           window : 50,
-          enabled : false,
+          smaEnabled : false,
           color : '#FC5D08',
           dash : [2,4] 
        },
        d100 : {
           window : 100,
-          enabled : false,
+          smaEnabled : false,
           color : '#102C99',
           dash : [2,4] 
        },
        d200 : {
           window : 200,
-          enabled : false,
+          smaEnabled : false,
           color : '#C30061',
           dash : [2,4] 
        },
@@ -121,11 +121,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return ( value < 0 ) ? "neg_amt" : "pos_amt" ;
     }
     
-    $scope.smaGraphOptionsChanged = function() {
-        console.log( $scope.maGraphs ) ;
-    }
-    
-    $scope.smaGraphOptionsChanged = function( smaType ) {
+    $scope.maGraphOptionsChanged = function( smaType ) {
         drawChart( false ) ;
     }
     
@@ -226,33 +222,29 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         } ;
     }
     
-    function getSMADataset( datasets ) {
+    function getMADataset( datasets ) {
         
         var eodPriceList = $scope.chartData.eodPriceList ;
         
-        for( const smaKey in $scope.maGraphs ) {
+        for( const maKey in $scope.maGraphs ) {
             
-            const smaCfg = $scope.maGraphs[smaKey] ;
+            const maCfg = $scope.maGraphs[maKey] ;
             
-            if( !smaCfg.enabled ) { continue ; }
+            if( !maCfg.smaEnabled ) { continue ; }
                 
-            var smaValues = calculateSMA( eodPriceList, smaCfg.window ) ;
+            var smaValues = calculateSMA( eodPriceList, maCfg.window ) ;
             
             if( smaValues.length == 0 ) { continue ; }
-            
-            while( smaValues.length != eodPriceList.length ) {
-                smaValues.unshift( null ) ;
-            }
             
             datasets.push( {
                 type             : 'line',
                 data             : smaValues,
-                borderColor      : smaCfg.color ,
-                backgroundColor  : smaCfg.color,
+                borderColor      : maCfg.color ,
+                backgroundColor  : maCfg.color,
                 borderWidth      : 1,
                 tension          : 0.25,
                 radius           : 0,
-                borderDash       : smaCfg.dash
+                borderDash       : maCfg.dash
             } ) ;
         }
     }
@@ -274,7 +266,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         datasets.push( getEodPriceDataset()   ) ;
         datasets.push( getCMPDataset()        ) ;
         
-        getSMADataset( datasets ) ;
+        getMADataset( datasets ) ;
         
         const options = {
             plugins : {
@@ -403,7 +395,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         
         for( var i=0; i<window; ++i ) {
             sum += data[i] ;
+            result.push( sum/(i+1) ) ;
         }
+        
         result.push( sum / window ) ;
         
         var steps = data.length - window - 1 ;
