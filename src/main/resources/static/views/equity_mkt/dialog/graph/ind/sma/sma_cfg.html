@@ -1,8 +1,28 @@
-<div ng-repeat="(key, value) in maGraphs"
-     ng-style="{'color':value.color, 'font-weight':700}">
-    <input type="checkbox" 
-           ng-model="maGraphs[key].smaEnabled"
-           ng-change="maGraphOptionsChanged( key )"/>
-    &nbsp;
-    {{key}}
-</div>
+<table>
+    <thead>
+	    <tr>
+	        <th width="40px"></th>
+	        <th width="35px">SMA</th>
+	        <th width="35px">EMA</th>
+	    </tr>
+    </thead>
+    <tbody>
+		<tr ng-repeat="(key, value) in maGraphs">
+		    <td>
+		       <span ng-style="{'color':value.color, 'font-weight':700}">
+		          {{key}}
+		       </span>
+		    </td>
+		    <td>
+			    <input type="checkbox" 
+			           ng-model="maGraphs[key].smaEnabled"
+			           ng-change="maGraphOptionsChanged( key )"/>
+			</td>
+            <td>
+                <input type="checkbox" 
+                       ng-model="maGraphs[key].emaEnabled"
+                       ng-change="maGraphOptionsChanged( key )"/>
+            </td>
+		</div>
+    </tbody>
+</table>
