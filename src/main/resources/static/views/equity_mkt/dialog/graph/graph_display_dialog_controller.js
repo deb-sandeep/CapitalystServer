@@ -27,36 +27,42 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
        d5 : {
           window : 5,
           smaEnabled : true,
+          emaEnabled : false,
           color : '#0338FB',
           dash : [2,4] 
        },
        d10 : {
           window : 10,
           smaEnabled : true,
+          emaEnabled : false,
           color : '#C30061',
           dash : [2,4] 
        },
        d20 : {
           window : 20,
           smaEnabled : false,
+          emaEnabled : false,
           color : '#118788',
           dash : [2,4] 
        },
        d50 : {
           window : 50,
           smaEnabled : false,
+          emaEnabled : false,
           color : '#FC5D08',
           dash : [2,4] 
        },
        d100 : {
           window : 100,
           smaEnabled : false,
+          emaEnabled : false,
           color : '#102C99',
           dash : [2,4] 
        },
        d200 : {
           window : 200,
           smaEnabled : false,
+          emaEnabled : false,
           color : '#C30061',
           dash : [2,4] 
        },
@@ -230,22 +236,41 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             
             const maCfg = $scope.maGraphs[maKey] ;
             
-            if( !maCfg.smaEnabled ) { continue ; }
-                
-            var smaValues = calculateSMA( eodPriceList, maCfg.window ) ;
+            if( !( maCfg.smaEnabled || maCfg.emaEnabled ) ) { 
+                continue ; 
+            }
             
-            if( smaValues.length == 0 ) { continue ; }
+            var maValues = null ;
             
-            datasets.push( {
-                type             : 'line',
-                data             : smaValues,
-                borderColor      : maCfg.color ,
-                backgroundColor  : maCfg.color,
-                borderWidth      : 1,
-                tension          : 0.25,
-                radius           : 0,
-                borderDash       : maCfg.dash
-            } ) ;
+            if( maCfg.smaEnabled ) {
+                maValues = calculateSMA( eodPriceList, maCfg.window ) ;
+                if( maValues.length == 0 ) { continue ; }
+                datasets.push( {
+                    type             : 'line',
+                    data             : maValues,
+                    borderColor      : maCfg.color ,
+                    backgroundColor  : maCfg.color,
+                    borderWidth      : 1,
+                    tension          : 0.25,
+                    radius           : 0,
+                    borderDash       : maCfg.dash
+                } ) ;
+            }
+            
+            if( maCfg.emaEnabled ) {
+                maValues = calculateEMA( eodPriceList, maCfg.window ) ;
+                if( maValues.length == 0 ) { continue ; }
+                datasets.push( {
+                    type             : 'line',
+                    data             : maValues,
+                    borderColor      : maCfg.color ,
+                    backgroundColor  : maCfg.color,
+                    borderWidth      : 1,
+                    tension          : 0.25,
+                    radius           : 0,
+                    borderDash       : maCfg.dash
+                } ) ;
+            }
         }
     }
     
