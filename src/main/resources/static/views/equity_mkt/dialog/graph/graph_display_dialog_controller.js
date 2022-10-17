@@ -161,11 +161,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     function drawChart( animate ) {
         
         $( '#graphDisplayDialog' ).modal( 'show' ) ;
-        
         if( chart != null ) { chart.destroy() ; }
-
-        const ctx = document.getElementById( 'eodGraph' ) ;
-        const animationDuration = animate ? 1000 : 0 ;
 
         var datasets = [] ;
         
@@ -177,71 +173,12 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         
         addMADatasets( datasets ) ;
         
-        const options = {
-            plugins : {
-                legend: {
-                    display: false,
-                },
-                tooltip: {
-                    callbacks: {
-                        title : renderTooltipTitle,
-                        label : renderTooltipLabel
-                    }
-                },
-                zoom : {
-                    zoom: {
-                        mode : 'xy',
-                        wheel : {
-                            enabled : true,
-                            speed : 0.05,
-                            modifierKey : 'ctrl',
-                        },
-                        drag : {
-                            enabled : true,
-                            modifierKey : 'meta',
-                        }
-                    },
-                    pan : {
-                        mode : 'xy',
-                        enabled : true,
-                    }
-                }
-            },
-            scales : {
-                x : {
-                    type:'time',
-                    time: { 
-                        unit: 'day',
-                        displayFormats: {
-                           'day': 'DD-MM-YY'
-                        } 
-                    },
-                    ticks: {
-                        font: {
-                            size: 10,
-                        }
-                    }
-                }  
-            },
-            animation : {
-                duration : animationDuration 
-            },
-            transitions : {
-                zoom : {
-                    animation : {
-                        duration : 1000,
-                        easing: 'easeOutCubic'
-                    }
-                }
-            }
-        } ;
-        
-        chart = new Chart( ctx, {
+        chart = new Chart( document.getElementById( 'eodGraph' ), {
             data: {
               labels: $scope.chartData.labels,
               datasets: datasets
             },
-            options: options
+            options: getChartOptions( animate )
         } ) ;
     }
     
@@ -375,8 +312,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return series ;
     }
     
-
-    
     function getPointRadiusArray( data ) {
         
         var radiusArray = [] ;
@@ -393,38 +328,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
         
         return radiusArray ;
-    }
-    
-    function renderTooltipTitle( context ) {
-        var title = context[0].label ;
-        title = title.substring( 0, title.lastIndexOf( ',' ) ) ;
-        return title ;
-    }
-    
-    function renderTooltipLabel( context ) {
-        if( context.dataset.type == 'scatter' ) {
-            if( context.raw.hasOwnProperty( 'q' ) ) {
-                return "Units = " + context.dataset.data[ context.dataIndex ].q ;
-            }
-        }
-        return "Price = " + context.formattedValue ;
-    }
-    
-    function extractQuantityRange() {
-        
-        minQty = 99999 ;
-        maxQty = 0 ;
-        
-        for( var i=0; i<$scope.chartData.buyData.length; i++ ) {
-            minQty = Math.min( minQty, $scope.chartData.buyData[i].q ) ;
-            maxQty = Math.max( maxQty, $scope.chartData.buyData[i].q ) ;
-        }
-        
-        for( var i=0; i<$scope.chartData.sellData.length; i++ ) {
-            minQty = Math.min( minQty, $scope.chartData.sellData[i].q ) ;
-            maxQty = Math.max( maxQty, $scope.chartData.sellData[i].q ) ;
-        }
-        qtyRange = maxQty - minQty ;
     }
     
     function calculateSMA( data, window ) {
@@ -460,7 +363,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
     
     // ------------------- Server comm functions -------------------------------
-    
     function fetchChartData() {
         
         console.log( "Fetching chart data for " + $scope.graphParams.symbolNse + 
@@ -475,6 +377,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             function( response ){
                 
                 $scope.chartData = response.data ;
+                
                 seriesCache.clear() ;
                 extractQuantityRange() ;
                 drawChart( true ) ;
@@ -485,4 +388,107 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             $scope.inbetweenServerCall = false ;
         }) ;
     }
+
+    // ------------------- Post server comm data processing --------------------
+    function extractQuantityRange() {
+        
+        minQty = 99999 ;
+        maxQty = 0 ;
+        
+        for( var i=0; i<$scope.chartData.buyData.length; i++ ) {
+            minQty = Math.min( minQty, $scope.chartData.buyData[i].q ) ;
+            maxQty = Math.max( maxQty, $scope.chartData.buyData[i].q ) ;
+        }
+        
+        for( var i=0; i<$scope.chartData.sellData.length; i++ ) {
+            minQty = Math.min( minQty, $scope.chartData.sellData[i].q ) ;
+            maxQty = Math.max( maxQty, $scope.chartData.sellData[i].q ) ;
+        }
+        qtyRange = maxQty - minQty ;
+    }
+    
+    // ------------------- Graph options ---------------------------------------
+    function getChartOptions( animate ) {
+        
+        const animationDuration = animate ? 1000 : 0 ;
+
+        return {
+            
+            plugins : {
+                legend: {
+                    display: false,
+                },
+                tooltip: {
+                    callbacks: {
+                        title : renderTooltipTitle,
+                        label : renderTooltipLabel
+                    }
+                },
+                zoom : {
+                    zoom: {
+                        mode : 'xy',
+                        wheel : {
+                            enabled : true,
+                            speed : 0.05,
+                            modifierKey : 'ctrl',
+                        },
+                        drag : {
+                            enabled : true,
+                            modifierKey : 'meta',
+                        }
+                    },
+                    pan : {
+                        mode : 'xy',
+                        enabled : true,
+                    }
+                }
+            },
+            
+            scales : {
+                x : {
+                    type:'time',
+                    time: { 
+                        unit: 'day',
+                        displayFormats: {
+                           'day': 'DD-MM-YY'
+                        } 
+                    },
+                    ticks: {
+                        font: {
+                            size: 10,
+                        }
+                    }
+                }  
+            },
+            
+            animation : {
+                duration : animationDuration 
+            },
+            
+            transitions : {
+                zoom : {
+                    animation : {
+                        duration : 1000,
+                        easing: 'easeOutCubic'
+                    }
+                }
+            }
+        } ;
+    }
+    
+    function renderTooltipTitle( context ) {
+        var title = context[0].label ;
+        title = title.substring( 0, title.lastIndexOf( ',' ) ) ;
+        return title ;
+    }
+    
+    function renderTooltipLabel( context ) {
+        if( context.dataset.type == 'scatter' ) {
+            if( context.raw.hasOwnProperty( 'q' ) ) {
+                return "Units = " + context.dataset.data[ context.dataIndex ].q ;
+            }
+        }
+        return "Price = " + context.formattedValue ;
+    }
+    
 } ) ;
