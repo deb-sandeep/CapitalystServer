@@ -82,31 +82,32 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             $scope.duration = newDuration ;
             
             for( key in $scope.maGraphs ) {
-                $scope.maGraphs[key].enabled = false ;
+                $scope.maGraphs[key].smaEnabled = false ;
+                $scope.maGraphs[key].emaEnabled = false ;
             }
             
             if( newDuration == '1m' || 
                 newDuration == '2m' ) {
-                $scope.maGraphs.d5.enabled   = true ;
-                $scope.maGraphs.d10.enabled  = true ;
+                $scope.maGraphs.d5.smaEnabled   = true ;
+                $scope.maGraphs.d10.smaEnabled  = true ;
             }
             else if( newDuration == '3m' |
                      newDuration == '6m' ) {
-                $scope.maGraphs.d10.enabled = true ;
-                $scope.maGraphs.d20.enabled = true ;
+                $scope.maGraphs.d10.smaEnabled = true ;
+                $scope.maGraphs.d20.smaEnabled = true ;
             }
             else if( newDuration == '1y' ) {
-                $scope.maGraphs.d20.enabled = true ;
-                $scope.maGraphs.d50.enabled = true ;
+                $scope.maGraphs.d20.smaEnabled = true ;
+                $scope.maGraphs.d50.smaEnabled = true ;
             }
             else if( newDuration == '2y' || 
                      newDuration == '3y' ) {
-                $scope.maGraphs.d50.enabled  = true ;
-                $scope.maGraphs.d100.enabled = true ;
+                $scope.maGraphs.d50.smaEnabled  = true ;
+                $scope.maGraphs.d100.smaEnabled = true ;
             }
             else if( newDuration == '5y' ) {
-                $scope.maGraphs.d100.enabled = true ;
-                $scope.maGraphs.d200.enabled = true ;
+                $scope.maGraphs.d100.smaEnabled = true ;
+                $scope.maGraphs.d200.smaEnabled = true ;
             }
             fetchChartData() ;
         }

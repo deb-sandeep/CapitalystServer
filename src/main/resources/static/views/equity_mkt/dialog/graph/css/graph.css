@@ -7,6 +7,7 @@
 .value-cell {
     padding-right:10px !important;
     width: 150px;
+    font-size: 14px;
 }
 
 .duration-btn {
