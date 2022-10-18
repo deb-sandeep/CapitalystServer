@@ -14,9 +14,13 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     // ---------------- Local variables --------------------------------------
     var chart = null ;
+    var datasets = [] ;
+    var chartOptions = null 
+    
     var minQty = 999999 ;
     var maxQty = 0 ;
     var qtyRange = 0 ;
+    
     var seriesCache = new Map() ;
     
     // ---------------- Scope variables --------------------------------------
@@ -130,7 +134,23 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
     
     $scope.maGraphOptionsChanged = function( maType, window ) {
-        drawChart( false ) ;
+        
+        const seriesName = maType + '-' + window ;
+        const maCfg      = $scope.maGraphs[window] ;
+        const visibility = maCfg[ maType + 'Enabled' ] ;
+        
+        if( visibility == true ) {
+            var series = getSeries( seriesName, () => {
+                            return maType == 'sma' ?
+                                   calculateSMA( maCfg.window ) :
+                                   calculateEMA( maCfg.window ) ;
+                         } ) ;
+                         
+            addDataset( getMADataset( seriesName, maCfg, series ) ) ;
+        }
+        else {
+            removeDataset( seriesName ) ;
+        }
     }
     
     $scope.resetZoom = function() {
@@ -158,33 +178,76 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     
-    function drawChart( animate ) {
+    function drawChart() {
         
         $( '#graphDisplayDialog' ).modal( 'show' ) ;
-        if( chart != null ) { chart.destroy() ; }
+        if( chart != null ) { 
+            chart.destroy() ; 
+            chart = null ;
+        }
 
-        var datasets = [] ;
+        datasets.length = 0 ;
+        chartOptions = getChartOptions() ;
         
-        datasets.push( getBuyTradesDataset()  ) ;
-        datasets.push( getSellTradesDataset() ) ;
-        datasets.push( getAvgPriceDataset()   ) ;
-        datasets.push( getEodPriceDataset()   ) ;
-        datasets.push( getCMPDataset()        ) ;
+        addDataset( getBuyTradesDataset()  ) ;
+        addDataset( getSellTradesDataset() ) ;
+        addDataset( getAvgPriceDataset()   ) ;
+        addDataset( getEodPriceDataset()   ) ;
+        addDataset( getCMPDataset()        ) ;
         
-        addMADatasets( datasets ) ;
+        addMADatasets() ;
         
         chart = new Chart( document.getElementById( 'eodGraph' ), {
             data: {
               labels: $scope.chartData.labels,
               datasets: datasets
             },
-            options: getChartOptions( animate )
+            options: chartOptions
         } ) ;
     }
     
+    function removeDataset( seriesName ) {
+        
+        for( var i=0; i<datasets.length; i++ ) {
+            var dataset = datasets[i] ;
+            if( dataset.hasOwnProperty( 'name' ) ) {
+                if( dataset.name == seriesName ) {
+                    datasets.splice( i, 1 ) ;
+                    chart.update() ;
+                    break ;
+                }                    
+            }
+        }
+    }
+    
+    function addDataset( dataset ) {
+        
+        datasets.push( dataset ) ;
+        if( chart != null ) {
+            chart.update() ;
+        }
+    }
+    
+    function getSeries( key, genFn ) {
+        
+        var series = null ;
+        if( seriesCache.has( key ) ) {
+            series = seriesCache.get( key ) ;
+        }
+        else {
+            series = genFn() ;
+            seriesCache.set( key, series ) ;
+        }
+        return series ;
+    }
+    
     function getBuyTradesDataset() {
-        var buyData = $scope.chartData.buyData ;
+        
+        const seriesKey = 'buy-trades' ;
+        var buyData = getSeries( seriesKey, 
+                                 () => $scope.chartData.buyData ) ;
         return {
+            name             : seriesKey,
             type             : 'scatter',
             data             : buyData,
             backgroundColor  : BUY_COLOR,
@@ -194,8 +257,12 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
     
     function getSellTradesDataset() {
-        var sellData = $scope.chartData.sellData ;
+        
+        const seriesKey = 'sell-trades' ;
+        var sellData = getSeries( seriesKey, 
+                                  () => $scope.chartData.sellData ) ;
         return {
+            name             : seriesKey,
             type             : 'scatter',
             data             : sellData,
             backgroundColor  : SELL_COLOR,
@@ -205,9 +272,14 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
     
     function getAvgPriceDataset() {
+        
+        const seriesKey = 'avg-price' ;
+        var avgPriceData = getSeries( seriesKey,
+                                      () => $scope.chartData.avgData ) ;
         return {
+            name             : seriesKey,
             type             : 'scatter',
-            data             : $scope.chartData.avgData,
+            data             : avgPriceData,
             backgroundColor  : AVG_LINE_COLOR,
             borderColor      : AVG_LINE_COLOR,
             radius           : 5,
@@ -218,13 +290,17 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     function getEodPriceDataset() {
         
-        var eodPriceList = $scope.chartData.eodPriceList ;
+        const seriesKey = 'eod-price' ;
+        var eodPriceList = getSeries( seriesKey, 
+                                      () => $scope.chartData.eodPriceList ) ;
+        
         var eodLineColor = EOD_LINE_COLOR_RED ;
         if( eodPriceList[0] < eodPriceList.at(-1) ) {
             eodLineColor = EOD_LINE_COLOR_GREEN ;
         }
         
         return {
+            name             : seriesKey,
             type             : 'line',
             data             : eodPriceList,
             borderColor      : eodLineColor,
@@ -246,6 +322,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
         
         return {
+            name             : 'cur-price',
             type             : 'scatter',
             data             : cd.cmpData,
             borderColor      : cmpColor,
@@ -254,9 +331,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         } ;
     }
     
-    function addMADatasets( datasets ) {
-        
-        var eodPriceList = $scope.chartData.eodPriceList ;
+    function addMADatasets() {
         
         for( const maKey in $scope.maGraphs ) {
             
@@ -264,52 +339,37 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             
             if( maCfg.smaEnabled ) {
                 var seriesName = "sma-" + maKey ;
-                addMASeries( datasets, seriesName, maCfg, 
-                             getSeries( seriesName, function() {
-                                return calculateSMA( eodPriceList, 
-                                                     maCfg.window ) ;
-                             } ) ) ;
+                var dataset = getMADataset( seriesName, maCfg, 
+                                     getSeries( seriesName, function() {
+                                        return calculateSMA( maCfg.window ) ;
+                                     } ) ) ;
+                addDataset( dataset ) ;
             }
             
             if( maCfg.emaEnabled ) {
                 var seriesName = "ema-" + maKey ;
-                addMASeries( datasets, seriesName, maCfg, 
-                             getSeries( seriesName, function() {
-                                return calculateEMA( eodPriceList, 
-                                                     maCfg.window ) ;
-                             } ) ) ;
+                var dataset = getMADataset( seriesName, maCfg, 
+                                     getSeries( seriesName, function() {
+                                        return calculateEMA( maCfg.window ) ;
+                                     } ) ) ;
+                addDataset( dataset ) ;
             }
         }
     }
     
-    function addMASeries( datasets, seriesName, maCfg, maValues ) {
+    function getMADataset( seriesName, maCfg, maValues ) {
         
-        if( maValues.length > 0 ) { 
-            datasets.push( {
-                name             : seriesName,
-                type             : 'line',
-                data             : maValues,
-                borderColor      : maCfg.color ,
-                backgroundColor  : maCfg.color,
-                borderWidth      : 1,
-                tension          : 0.25,
-                radius           : 0,
-                borderDash       : maCfg.dash
-            } ) ;
-        }
-    }
-    
-    function getSeries( key, genFn ) {
-        
-        var series = null ;
-        if( seriesCache.has( key ) ) {
-            series = seriesCache.get( key ) ;
-        }
-        else {
-            series = genFn() ;
-            seriesCache.set( key, series ) ;
-        }
-        return series ;
+        return {
+            name             : seriesName,
+            type             : 'line',
+            data             : maValues,
+            borderColor      : maCfg.color ,
+            backgroundColor  : maCfg.color,
+            borderWidth      : 1,
+            tension          : 0.25,
+            radius           : 0,
+            borderDash       : maCfg.dash
+        } ;
     }
     
     function getPointRadiusArray( data ) {
@@ -330,7 +390,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return radiusArray ;
     }
     
-    function calculateSMA( data, window ) {
+    function calculateSMA( window ) {
+        
+        const data = $scope.chartData.eodPriceList ;
         
         var sum = 0;
         var result = [] ;
@@ -351,8 +413,10 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return result ;
     }
     
-    function calculateEMA( data, window ) {
+    function calculateEMA( window ) {
         
+        const data = $scope.chartData.eodPriceList ;
+
         var k = 2/( window + 1 ) ;
         var emaArray = [data[0]] ;
         
@@ -378,9 +442,10 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 
                 $scope.chartData = response.data ;
                 
+                datasets.length = 0 ;
                 seriesCache.clear() ;
                 extractQuantityRange() ;
-                drawChart( true ) ;
+                drawChart() ;
             }
         )
         .finally(function() {
@@ -408,69 +473,84 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
     
     // ------------------- Graph options ---------------------------------------
-    function getChartOptions( animate ) {
+    
+    function getChartOptions() {
         
-        const animationDuration = animate ? 1000 : 0 ;
-
         return {
             
             plugins : {
-                legend: {
-                    display: false,
+                legend: { display: false },
+                tooltip: getTooltipOptions(),
+                zoom : getZoomPanOptions()
+            },
+            scales : getScaleOptions(),
+            animation : getAnimationOptions(),
+            transitions : getTransitionsOptions()
+        } ;
+    }
+    
+    function getTooltipOptions() {
+        return {
+            callbacks: {
+                title : renderTooltipTitle,
+                label : renderTooltipLabel
+            }
+        } ;
+    }
+    
+    function getZoomPanOptions() {
+        return {
+            zoom: {
+                mode : 'xy',
+                wheel : {
+                    enabled : true,
+                    speed : 0.05,
+                    modifierKey : 'ctrl',
                 },
-                tooltip: {
-                    callbacks: {
-                        title : renderTooltipTitle,
-                        label : renderTooltipLabel
-                    }
-                },
-                zoom : {
-                    zoom: {
-                        mode : 'xy',
-                        wheel : {
-                            enabled : true,
-                            speed : 0.05,
-                            modifierKey : 'ctrl',
-                        },
-                        drag : {
-                            enabled : true,
-                            modifierKey : 'meta',
-                        }
-                    },
-                    pan : {
-                        mode : 'xy',
-                        enabled : true,
-                    }
+                drag : {
+                    enabled : true,
+                    modifierKey : 'meta',
                 }
             },
-            
-            scales : {
-                x : {
-                    type:'time',
-                    time: { 
-                        unit: 'day',
-                        displayFormats: {
-                           'day': 'DD-MM-YY'
-                        } 
-                    },
-                    ticks: {
-                        font: {
-                            size: 10,
-                        }
+            pan : {
+                mode : 'xy',
+                enabled : true,
+            }
+        } ;
+    }
+    
+    function getScaleOptions() {
+        return {
+            x : {
+                type:'time',
+                time: { 
+                    unit: 'day',
+                    displayFormats: {
+                       'day': 'DD-MM-YY'
+                    } 
+                },
+                ticks: {
+                    font: {
+                        size: 10,
                     }
-                }  
-            },
-            
-            animation : {
-                duration : animationDuration 
-            },
-            
-            transitions : {
-                zoom : {
-                    animation : {
-                        duration : 1000,
-                        easing: 'easeOutCubic'
-                    }
+                }
+            }  
+        } ;
+    }
+    
+    function getAnimationOptions() {
+        return {
+            duration : 0,
+            easing: 'linear'
+        } ;
+    }
+    
+    function getTransitionsOptions() {
+        return {
+            zoom : {
+                animation : {
+                    duration : 1000,
+                    easing: 'easeOutCubic'
                 }
             }
         } ;
