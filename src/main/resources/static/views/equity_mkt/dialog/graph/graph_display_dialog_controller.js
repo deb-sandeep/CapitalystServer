@@ -23,54 +23,25 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     var seriesCache = new Map() ;
     
+    // ---------------- Object templates --------------------------------------
+    var baseMAOpts = {
+        smaEnabled : false,
+        emaEnabled : false,
+        dash       : [2,4] 
+    }
+
     // ---------------- Scope variables --------------------------------------
     $scope.chartData = null ;
     $scope.graphParams = null ;
     $scope.durationKeys = [ '5y', '3y', '2y', '1y', '6m', '3m', '2m', '1m' ] ;
     $scope.duration = '3m' ;
     $scope.maGraphs = {
-       d5 : {
-          window : 5,
-          smaEnabled : true,
-          emaEnabled : false,
-          color : '#0338FB',
-          dash : [2,4] 
-       },
-       d10 : {
-          window : 10,
-          smaEnabled : true,
-          emaEnabled : false,
-          color : '#C30061',
-          dash : [2,4] 
-       },
-       d20 : {
-          window : 20,
-          smaEnabled : false,
-          emaEnabled : false,
-          color : '#118788',
-          dash : [2,4] 
-       },
-       d50 : {
-          window : 50,
-          smaEnabled : false,
-          emaEnabled : false,
-          color : '#FC5D08',
-          dash : [2,4] 
-       },
-       d100 : {
-          window : 100,
-          smaEnabled : false,
-          emaEnabled : false,
-          color : '#102C99',
-          dash : [2,4] 
-       },
-       d200 : {
-          window : 200,
-          smaEnabled : false,
-          emaEnabled : false,
-          color : '#C30061',
-          dash : [2,4] 
-       },
+       d5  :{ ...baseMAOpts, window:   5, color: '#0338FB', smaEnabled: true },
+       d10 :{ ...baseMAOpts, window:  10, color: '#C30061', smaEnabled: true },
+       d20 :{ ...baseMAOpts, window:  20, color: '#118788' },
+       d50 :{ ...baseMAOpts, window:  50, color: '#FC5D08' },
+       d100:{ ...baseMAOpts, window: 100, color: '#102C99' },
+       d200:{ ...baseMAOpts, window: 200, color: '#C30061' },
     } ;
     
     // -----------------------------------------------------------------------
@@ -83,36 +54,36 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     } ) ;
     
     $scope.setDuration = function( newDuration ) {
+        
         if( newDuration != $scope.duration ) {
+            
             $scope.duration = newDuration ;
+            var opts = $scope.maGraphs ;
             
             for( key in $scope.maGraphs ) {
-                $scope.maGraphs[key].smaEnabled = false ;
-                $scope.maGraphs[key].emaEnabled = false ;
+                opts[key].smaEnabled = false ;
+                opts[key].emaEnabled = false ;
             }
             
-            if( newDuration == '1m' || 
-                newDuration == '2m' ) {
-                $scope.maGraphs.d5.smaEnabled   = true ;
-                $scope.maGraphs.d10.smaEnabled  = true ;
+            if( newDuration == '1m' || newDuration == '2m' ) {
+                opts.d5.smaEnabled  = true ;
+                opts.d10.smaEnabled = true ;
             }
-            else if( newDuration == '3m' |
-                     newDuration == '6m' ) {
-                $scope.maGraphs.d10.smaEnabled = true ;
-                $scope.maGraphs.d20.smaEnabled = true ;
+            else if( newDuration == '3m' || newDuration == '6m' ) {
+                opts.d10.smaEnabled = true ;
+                opts.d20.smaEnabled = true ;
             }
             else if( newDuration == '1y' ) {
-                $scope.maGraphs.d20.smaEnabled = true ;
-                $scope.maGraphs.d50.smaEnabled = true ;
+                opts.d20.smaEnabled = true ;
+                opts.d50.smaEnabled = true ;
             }
-            else if( newDuration == '2y' || 
-                     newDuration == '3y' ) {
-                $scope.maGraphs.d50.smaEnabled  = true ;
-                $scope.maGraphs.d100.smaEnabled = true ;
+            else if( newDuration == '2y' || newDuration == '3y' ) {
+                opts.d50.smaEnabled  = true ;
+                opts.d100.smaEnabled = true ;
             }
             else if( newDuration == '5y' ) {
-                $scope.maGraphs.d100.smaEnabled = true ;
-                $scope.maGraphs.d200.smaEnabled = true ;
+                opts.d100.smaEnabled = true ;
+                opts.d200.smaEnabled = true ;
             }
             fetchChartData() ;
         }
