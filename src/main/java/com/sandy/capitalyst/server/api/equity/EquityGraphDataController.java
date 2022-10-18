@@ -17,6 +17,7 @@ import org.ta4j.core.BarSeries ;
 
 import com.sandy.capitalyst.server.api.equity.helper.EquityGraphDataBuilder ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData ;
+import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
@@ -67,6 +68,27 @@ public class EquityGraphDataController {
             
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( graphData ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Getting equity portfolio.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
+    
+    @GetMapping( "/Equity/GraphData/Indicator/BollingerBands" ) 
+    public ResponseEntity<APIResponse> getIndicator( 
+          @RequestParam( name="symbolNse",  required=true ) String symbolNse,
+          @RequestParam( name="windowSize", required=true ) Integer windowSize,
+          @RequestParam( name="numStdDev",  required=true ) Integer numStdDev ) {
+        
+        try {
+            log.debug( "Symbol NSE  = " + symbolNse  ) ;
+            log.debug( "Window Size = " + windowSize ) ;
+            log.debug( "Num Std Dev = " + numStdDev  ) ;
+            
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( APIResponse.SUCCESS ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Getting equity portfolio.", e ) ;

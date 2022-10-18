@@ -22,8 +22,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     var maxQty = 0 ;
     var qtyRange = 0 ;
     
-    var seriesCache = new Map() ;
-    
     // ---------------- Object templates --------------------------------------
     var baseMAOpts = {
         smaEnabled : false,
@@ -34,6 +32,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     // ---------------- Scope variables --------------------------------------
     $scope.graphParams = null ; // Input to fetch the chart data
     $scope.chartData = null ;   // Obtained from server
+    
+    $scope.seriesCache = new Map() ;
     
     $scope.durationKeys = [ '5y', '3y', '2y', '1y', '6m', '3m', '2m', '1m' ] ;
     $scope.duration = '3m' ;
@@ -48,9 +48,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     } ;
     
     $scope.bollingerOptions = {
-        upperBand : { enabled: true, color: '#FC5D08' },
-        lowerBand : { enabled: true, color: '#102C99' },
-        smaBand   : { enabled: true, color: '#C30061' }
+        upper : { enabled: true, color: '#FC5D08' },
+        lower : { enabled: true, color: '#102C99' },
+        sma   : { enabled: true, color: '#C30061' }
     } ;
     
     // -----------------------------------------------------------------------
@@ -133,6 +133,11 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
     }
     
+    $scope.bollingerGraphOptionsChanged = function( curveName ) {
+        console.log( "Bollinger curve " + curveName ) ;
+        console.log( "   " + $scope.bollingerOptions[ curveName ].enabled ) ;
+    }
+    
     $scope.resetZoom = function() {
         if( chart != null ) {
             chart.resetZoom() ;
@@ -147,10 +152,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             return $scope.chartData.holding.currentMktPrice ;
         }
         return $scope.chartData.equityMaster.close ;
-    }
-    
-    $scope.bollinger = function() {
-        console.log( "Bollinger" ) ;
     }
     
     // --- [END] Scope functions
@@ -211,12 +212,12 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     function getSeries( key, genFn ) {
         
         var series = null ;
-        if( seriesCache.has( key ) ) {
-            series = seriesCache.get( key ) ;
+        if( $scope.seriesCache.has( key ) ) {
+            series = $scope.seriesCache.get( key ) ;
         }
         else {
             series = genFn() ;
-            seriesCache.set( key, series ) ;
+            $scope.seriesCache.set( key, series ) ;
         }
         return series ;
     }
@@ -423,7 +424,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 $scope.chartData = response.data ;
                 
                 datasets.length = 0 ;
-                seriesCache.clear() ;
+                $scope.seriesCache.clear() ;
                 extractQuantityRange() ;
                 drawChart() ;
             }

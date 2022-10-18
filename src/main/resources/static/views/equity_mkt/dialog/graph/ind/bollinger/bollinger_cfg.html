@@ -4,7 +4,7 @@
             <td style="width:60%">Num bars</td>
             <td style="width:40%">
                <input type="numeric"
-                      ng-model="config.barCount"
+                      ng-model="config.windowSize"
                       style="width:100%;"/>
             </td>
         </tr>
@@ -20,15 +20,31 @@
     <div style="text-align:right;">
         <button type="button"
                 class="btn btn-info indicator-cfg-btn"
-                ng-click="test()"
-                style="color:red;">
-           <span class="glyphicon glyphicon-remove"></span>
-        </button>
-        <button type="button"
-                class="btn btn-info indicator-cfg-btn"
-                ng-click="test()"
+                ng-click="fetchBollingerBands()"
                 style="color:green;">
            <span class="glyphicon glyphicon-ok"></span>
         </button>
     </div>
+	<table ng-show="seriesCache.has('bollinger-upper')">
+	    <thead>
+	        <tr>
+	            <th width="90px"></th>
+	            <th width="35px">Show</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr ng-repeat="(curveName, options) in bollingerOptions">
+	            <td>
+	               <span ng-style="{'color':options.color, 'font-size':11, 'font-weight':700}">
+	                  {{curveName | titlecase }} Band
+	               </span>
+	            </td>
+	            <td>
+	                <input type="checkbox" 
+	                       ng-model="options.enabled"
+	                       ng-change="bollingerGraphOptionsChanged( curveName )"/>
+	            </td>
+	        </div>
+	    </tbody>
+	</table>
 </div>

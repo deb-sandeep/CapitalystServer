@@ -21,3 +21,16 @@ capitalystNgApp.filter( "amt", function() {
         return fmt ;
     }
 }) ;
+
+capitalystNgApp.filter('titlecase', function() {
+    
+    return function( input ) {
+      if( !input || typeof input !== 'string' ) {
+        return '' ;
+      }
+
+      return input.toLowerCase().split(' ').map( value => {
+        return value.charAt(0).toUpperCase() + value.substring(1) ;
+      }).join(' ') ;
+    }
+}) ;
