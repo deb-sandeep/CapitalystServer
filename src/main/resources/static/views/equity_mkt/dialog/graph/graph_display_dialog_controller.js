@@ -48,20 +48,22 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     } ;
     
     $scope.bollingerOptions = {
-        upper : { enabled: true, color: '#FC5D08' },
-        lower : { enabled: true, color: '#102C99' },
-        sma   : { enabled: true, color: '#C30061' }
+        upper  : { enabled: true, color: '#cfcccc', dash:[]    },
+        middle : { enabled: true, color: '#3d54ff', dash:[2,4] },
+        lower  : { enabled: true, color: '#cfcccc', dash:[]    },
     } ;
     
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
-    console.log( "Loading GraphDisplayDialogController" ) ;
     
+    // Catching the event when the graph icon is pressed on any of the pages
     $scope.$on( 'graphDialogDisplay', function( _event, args ) {
         $scope.graphParams = args ;
         fetchChartData() ;
     } ) ;
     
+    // The time duration has been changed by the user. Fetch the graph
+    // data afresh.
     $scope.setDuration = function( newDuration ) {
         
         if( newDuration != $scope.duration ) {
@@ -98,21 +100,26 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
     }
     
+    // Selected duration button is decorated differently via dynamic CSS
     $scope.getDurationBtnClass = function( duration ) {
         if( $scope.duration == duration ) {
             return "sel-duration-btn" ;
         }
         return null ;
     }
-    
+
+    // The graph dialog is being hidden by user action    
     $scope.hideGraphDialog = function( holding ) {
         $( '#graphDisplayDialog' ).modal( 'hide' ) ;
     }
     
+    // Negative and positive amounts are rendered differently.
     $scope.getAmtClass = function( value ) {
         return ( value < 0 ) ? "neg_amt" : "pos_amt" ;
     }
     
+    // Moving average graph options have changed. Add or remove based on
+    // selected visibility.
     $scope.maGraphOptionsChanged = function( maType, window ) {
         
         const seriesName = maType + '-' + window ;
@@ -126,16 +133,25 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                                    calculateEMA( maCfg.window ) ;
                          } ) ;
                          
-            addDataset( getMADataset( seriesName, maCfg, series ) ) ;
+            plotSeries( getMADataset( seriesName, maCfg, series ) ) ;
         }
         else {
-            removeDataset( seriesName ) ;
+            eraseSeries( seriesName ) ;
         }
     }
     
+    // Bollinger curve visibility options changed
     $scope.bollingerGraphOptionsChanged = function( curveName ) {
-        console.log( "Bollinger curve " + curveName ) ;
-        console.log( "   " + $scope.bollingerOptions[ curveName ].enabled ) ;
+        plotBollingerBand( curveName ) ;
+    }
+    
+    // Plot all the bollinger bands - upper, middle and lower.
+    $scope.plotBollingerBands = function() {
+        
+        eraseMASerieses() ;
+        for( const key in $scope.bollingerOptions ) {
+            plotBollingerBand( key ) ;
+        }
     }
     
     $scope.resetZoom = function() {
@@ -144,6 +160,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
     }
     
+    // Gets the current market price. If we have a holding the CMP might be
+    // refreshed intraday, hence the special handling.
     $scope.getCurrentMktPrice = function() {
         if( $scope.chartData == null ) {
             return 0 ;
@@ -154,14 +172,13 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return $scope.chartData.equityMaster.close ;
     }
     
-    // --- [END] Scope functions
-
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     
     function drawChart() {
         
         $( '#graphDisplayDialog' ).modal( 'show' ) ;
+        
         if( chart != null ) { 
             chart.destroy() ; 
             chart = null ;
@@ -187,41 +204,44 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         } ) ;
     }
     
-    function removeDataset( seriesName ) {
+    function plotBollingerBand( bandName ) {
         
-        for( var i=0; i<datasets.length; i++ ) {
-            var dataset = datasets[i] ;
-            if( dataset.hasOwnProperty( 'name' ) ) {
-                if( dataset.name == seriesName ) {
-                    datasets.splice( i, 1 ) ;
-                    chart.update() ;
-                    break ;
-                }                    
-            }
+        const cfg = $scope.bollingerOptions[ bandName ] ;
+        const seriesName = "bollinger-" + bandName ;
+        
+        if( cfg.enabled ) {
+            plotSeries( getBollingerDataset( seriesName, cfg ) ) ;
+        }
+        else {
+            eraseSeries( seriesName ) ;
         }
     }
     
-    function addDataset( dataset ) {
+    function eraseMASerieses() {
         
-        datasets.push( dataset ) ;
+        for( key in $scope.maGraphs ) {
+            $scope.maGraphs[key].smaEnabled = false ;
+            $scope.maGraphs[key].emaEnabled = false ;
+            
+            eraseSeries( 'sma-' + key ) ;
+            eraseSeries( 'ema-' + key ) ;
+        }
+    }
+    
+    function plotSeries( dataset ) {
+        addDataset( dataset ) ;
         if( chart != null ) {
             chart.update() ;
         }
     }
     
-    function getSeries( key, genFn ) {
-        
-        var series = null ;
-        if( $scope.seriesCache.has( key ) ) {
-            series = $scope.seriesCache.get( key ) ;
+    function eraseSeries( seriesName ) {
+        if( removeDataset( seriesName ) ) {
+            chart.update() ;
         }
-        else {
-            series = genFn() ;
-            $scope.seriesCache.set( key, series ) ;
-        }
-        return series ;
     }
     
+    // ------------------- Dataset creationfunctions ---------------------------
     function getBuyTradesDataset() {
         
         const seriesKey = 'buy-trades' ;
@@ -353,6 +373,57 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         } ;
     }
     
+    function getBollingerDataset( seriesName, cfg ) {
+        
+        var values = $scope.seriesCache.get( seriesName ) ;
+        return {
+            name             : seriesName,
+            type             : 'line',
+            data             : values,
+            borderColor      : cfg.color ,
+            backgroundColor  : cfg.color,
+            borderWidth      : 1,
+            tension          : 0.55,
+            radius           : 0,
+            borderDash       : cfg.dash
+        } ;
+    }
+    
+    // ------------------- Series management utility functions -----------------
+    function addDataset( dataset ) {
+        removeDataset( dataset.name ) ;
+        datasets.push( dataset ) ;
+    }
+    
+    function removeDataset( seriesName ) {
+        
+        var removed = false ;
+        for( var i=0; i<datasets.length; i++ ) {
+            var dataset = datasets[i] ;
+            if( dataset.hasOwnProperty( 'name' ) ) {
+                if( dataset.name == seriesName ) {
+                    datasets.splice( i, 1 ) ;
+                    removed = true ;
+                    break ;
+                }                    
+            }
+        }
+        return removed ;
+    }
+    
+    function getSeries( key, genFn ) {
+        
+        var series = null ;
+        if( $scope.seriesCache.has( key ) ) {
+            series = $scope.seriesCache.get( key ) ;
+        }
+        else {
+            series = genFn() ;
+            $scope.seriesCache.set( key, series ) ;
+        }
+        return series ;
+    }
+    
     function getPointRadiusArray( data ) {
         
         var radiusArray = [] ;
@@ -371,6 +442,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return radiusArray ;
     }
     
+    // ------------------- Insitu series calculation functions -----------------
     function calculateSMA( window ) {
         
         const data = $scope.chartData.eodPriceList ;

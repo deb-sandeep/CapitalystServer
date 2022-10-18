@@ -1,5 +1,9 @@
 package com.sandy.capitalyst.server.api.equity ;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR ;
+import static org.springframework.http.HttpStatus.OK ;
+import static org.springframework.http.ResponseEntity.status ;
+
 import java.text.SimpleDateFormat ;
 import java.util.Date ;
 import java.util.HashMap ;
@@ -8,16 +12,17 @@ import java.util.Map ;
 import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
-import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
 import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 import org.ta4j.core.BarSeries ;
+import org.ta4j.core.Indicator ;
+import org.ta4j.core.indicators.bollinger.BollingerBandFacade ;
+import org.ta4j.core.indicators.numeric.NumericIndicator ;
 
 import com.sandy.capitalyst.server.api.equity.helper.EquityGraphDataBuilder ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
@@ -66,18 +71,16 @@ public class EquityGraphDataController {
             
             BAR_SERIES_CACHE.put( symbolNse, builder.getBarSeries() ) ;
             
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( graphData ) ;
+            return status( OK ).body( graphData ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Getting equity portfolio.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
+            return status( INTERNAL_SERVER_ERROR ).body( null ) ;
         }
     }
     
     @GetMapping( "/Equity/GraphData/Indicator/BollingerBands" ) 
-    public ResponseEntity<APIResponse> getIndicator( 
+    public ResponseEntity<Map<String, Double[]>> getIndicator( 
           @RequestParam( name="symbolNse",  required=true ) String symbolNse,
           @RequestParam( name="windowSize", required=true ) Integer windowSize,
           @RequestParam( name="numStdDev",  required=true ) Integer numStdDev ) {
@@ -87,14 +90,33 @@ public class EquityGraphDataController {
             log.debug( "Window Size = " + windowSize ) ;
             log.debug( "Num Std Dev = " + numStdDev  ) ;
             
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( APIResponse.SUCCESS ) ;
+            BarSeries series = BAR_SERIES_CACHE.get( symbolNse ) ;
+            
+            if( series == null ) {
+                log.error( "Cached bar series not found." ) ;
+                return status( INTERNAL_SERVER_ERROR ).body( null ) ;            
+            }
+
+            BollingerBandFacade bbf = null ;
+            bbf = new BollingerBandFacade( series, windowSize, numStdDev ) ;
+            
+            Map<String, Double[]> seriesValues = new HashMap<>() ;
+            seriesValues.put( "bollinger-upper" , getValues( bbf.upper()  )) ;
+            seriesValues.put( "bollinger-lower" , getValues( bbf.lower()  )) ;
+            seriesValues.put( "bollinger-middle", getValues( bbf.middle() )) ;
+            
+            return status( OK ).body( seriesValues ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Getting equity portfolio.", e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
+            return status( INTERNAL_SERVER_ERROR ).body( null ) ;
         }
+    }
+    
+    private Double[] getValues( NumericIndicator indicator ) {
+        int numElements = indicator.getBarSeries().getBarCount() ;
+        Double[] values = Indicator.toDouble( indicator, 0, numElements ) ;
+        return values ;
     }
     
     private Date getFromDate( final Date toDate, final String key ) {
