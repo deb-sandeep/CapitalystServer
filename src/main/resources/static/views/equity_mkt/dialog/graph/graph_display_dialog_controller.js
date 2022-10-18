@@ -12,6 +12,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     const MAX_RADIUS           = 7 ;
     const RADIUS_RANGE         = MAX_RADIUS - MIN_RADIUS ;
     
+    
     // ---------------- Local variables --------------------------------------
     var chart = null ;
     var datasets = [] ;
@@ -31,17 +32,25 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
 
     // ---------------- Scope variables --------------------------------------
-    $scope.chartData = null ;
-    $scope.graphParams = null ;
+    $scope.graphParams = null ; // Input to fetch the chart data
+    $scope.chartData = null ;   // Obtained from server
+    
     $scope.durationKeys = [ '5y', '3y', '2y', '1y', '6m', '3m', '2m', '1m' ] ;
     $scope.duration = '3m' ;
+    
     $scope.maGraphs = {
-       d5  :{ ...baseMAOpts, window:   5, color: '#0338FB', smaEnabled: true },
-       d10 :{ ...baseMAOpts, window:  10, color: '#C30061', smaEnabled: true },
-       d20 :{ ...baseMAOpts, window:  20, color: '#118788' },
-       d50 :{ ...baseMAOpts, window:  50, color: '#FC5D08' },
-       d100:{ ...baseMAOpts, window: 100, color: '#102C99' },
-       d200:{ ...baseMAOpts, window: 200, color: '#C30061' },
+        d5  :{ ...baseMAOpts, window:   5, color: '#0338FB', smaEnabled: true },
+        d10 :{ ...baseMAOpts, window:  10, color: '#C30061', smaEnabled: true },
+        d20 :{ ...baseMAOpts, window:  20, color: '#118788' },
+        d50 :{ ...baseMAOpts, window:  50, color: '#FC5D08' },
+        d100:{ ...baseMAOpts, window: 100, color: '#102C99' },
+        d200:{ ...baseMAOpts, window: 200, color: '#C30061' },
+    } ;
+    
+    $scope.bollingerOptions = {
+        upperBand : { enabled: true, color: '#FC5D08' },
+        lowerBand : { enabled: true, color: '#102C99' },
+        smaBand   : { enabled: true, color: '#C30061' }
     } ;
     
     // -----------------------------------------------------------------------
