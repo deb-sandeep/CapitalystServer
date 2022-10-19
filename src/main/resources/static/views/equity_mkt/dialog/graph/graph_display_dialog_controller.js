@@ -383,7 +383,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             borderColor      : cfg.color ,
             backgroundColor  : cfg.color,
             borderWidth      : 1,
-            tension          : 0.55,
+            tension          : 0.25,
             radius           : 0,
             borderDash       : cfg.dash
         } ;
