@@ -12,7 +12,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     const MAX_RADIUS           = 7 ;
     const RADIUS_RANGE         = MAX_RADIUS - MIN_RADIUS ;
     
-    
     // ---------------- Local variables --------------------------------------
     var chart = null ;
     var datasets = [] ;
@@ -21,6 +20,13 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     var minQty = 999999 ;
     var maxQty = 0 ;
     var qtyRange = 0 ;
+    
+    var footerChartDivProperties = {
+        macdChartDiv : {
+            visible : false,
+            height : 100,
+        },
+    } ;
     
     // ---------------- Object templates --------------------------------------
     var baseMAOpts = {
@@ -179,6 +185,18 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
     }
     
+    $scope.displayChartDiv = function( divId ) {
+        
+        var occupiedFooterHeight = 0 ;
+        for( chartDivId in footerChartDivProperties ) {
+            console.log( chartDivId ) ;
+        }
+    }
+    
+    $scope.hideChartDiv = function( divId ) {
+        
+    }
+    
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     
@@ -200,14 +218,13 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         
         addMADatasets() ;
         
-        chart = new Chart( document.getElementById( 'eodGraph' ), {
+        chart = new Chart( document.getElementById( 'eodChartCanvas' ), {
             data: {
               labels: $scope.chartData.labels,
               datasets: datasets
             },
             options: chartOptions
         } ) ;
-        chart.render() ;
     }
     
     function plotBollingerBand( bandName ) {

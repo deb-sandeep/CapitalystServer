@@ -12,6 +12,14 @@ capitalystNgApp.controller( 'MACDController',
     
     // -------------------------------------------------------------------------
     // --- [START] Scope functions ---------------------------------------------
+    $scope.hideMACDChart = function() {
+        
+        document.getElementById( "eodChartDiv"  ).style.height  = "600px";
+        document.getElementById( "macdChartDiv" ).style.display = "none";
+        
+        $scope.$parent.repaintChart() ;
+    }
+    
     $scope.fetchMACDBands = function() {
         
         const symbol = $scope.$parent.graphParams.symbolNse ;
@@ -25,7 +33,10 @@ capitalystNgApp.controller( 'MACDController',
             function( response ){
                 console.log( response.data ) ;
                 
-                document.getElementById( "primaryCanvasDiv" ).style.height = "500px";
+                $scope.$parent.displayChartDiv( 'macdChartDiv' ) ;
+                
+                document.getElementById( "eodChartDiv"  ).style.height  = "500px";
+                document.getElementById( "macdChartDiv" ).style.display = "block";
                 
                 $scope.$parent.repaintChart() ;
             }

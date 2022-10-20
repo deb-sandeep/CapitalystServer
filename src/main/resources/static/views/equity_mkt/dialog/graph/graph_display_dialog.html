@@ -27,11 +27,12 @@
        </div>
     </div>
     
-    <div id="graphDiv" class="modal-body">
-        <div id="primaryCanvasDiv">
-	        <canvas id="eodGraph">
-	            [No canvas support]
-	        </canvas>
+    <div id="chartDiv" class="modal-body">
+        <div id="eodChartDiv">
+	        <canvas id="eodChartCanvas"></canvas>
+        </div>
+        <div id="macdChartDiv">
+            <canvas id="macdChartCanvas"></canvas>
         </div>
         <div id="indicatorsDiv"
              ng-include="'dialog/graph/ind/indicator_menu.html'">
