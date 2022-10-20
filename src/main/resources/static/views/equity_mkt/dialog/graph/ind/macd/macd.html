@@ -1,0 +1,36 @@
+<div ng-controller="MACDController">
+    <table>
+        <tr>
+            <td style="width:60%">Min window</td>
+            <td style="width:40%">
+               <input type="numeric"
+                      ng-model="config.minWindowSize"
+                      style="width:100%;"/>
+            </td>
+        </tr>
+        <tr>
+            <td>Max window</td>
+            <td>
+               <input type="numeric"
+                      ng-model="config.maxWindowSize"
+                      style="width:100%;"/>
+            </td>
+        </tr>
+        <tr>
+            <td>Signal window</td>
+            <td>
+               <input type="numeric"
+                      ng-model="config.signalWindowSize"
+                      style="width:100%;"/>
+            </td>
+        </tr>
+    </table>
+    <div style="text-align:right;">
+        <button type="button"
+                class="btn btn-info indicator-cfg-btn"
+                ng-click="fetchMACDBands()"
+                style="color:green;">
+           <span class="glyphicon glyphicon-ok"></span>
+        </button>
+    </div>
+</div>

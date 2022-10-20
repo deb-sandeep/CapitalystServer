@@ -1,31 +1,29 @@
-capitalystNgApp.controller( 'BollingerCfgController', 
+capitalystNgApp.controller( 'MACDController', 
                             function( $scope, $http ) {
     
     // ---------------- Local variables ----------------------------------------
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
-        windowSize : 10,
-        numStdDev : 2    
+        minWindowSize    : 12,
+        maxWindowSize    : 26,
+        signalWindowSize : 9    
     } ;
     
     // -------------------------------------------------------------------------
     // --- [START] Scope functions ---------------------------------------------
-    $scope.fetchBollingerBands = function() {
+    $scope.fetchMACDBands = function() {
         
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
-        $http.get( '/Equity/GraphData/Indicator/BollingerBands' + 
+        $http.get( '/Equity/GraphData/Indicator/MACD' + 
                    '?symbolNse='  + symbol +
-                   '&windowSize=' + $scope.config.windowSize +
-                   '&numStdDev='  + $scope.config.numStdDev  )
+                   '&minWindowSize=' + $scope.config.minWindowSize +
+                   '&maxWindowSize=' + $scope.config.maxWindowSize +
+                   '&signalWindowSize=' + $scope.config.signalWindowSize )
         .then ( 
             function( response ){
-                setSeries( "bollinger-upper",  response ) ;         
-                setSeries( "bollinger-middle", response ) ;         
-                setSeries( "bollinger-lower",  response ) ;
-                
-                $scope.$parent.plotBollingerBands() ;         
+                console.log( response.data ) ;         
             }
         ) ;
     }
@@ -33,9 +31,6 @@ capitalystNgApp.controller( 'BollingerCfgController',
 
     // -------------------------------------------------------------------------
     // --- [START] Local functions ---------------------------------------------
-    function setSeries( seriesName, response ) {
-        $scope.$parent.seriesCache.set( seriesName, response.data[ seriesName ] ) ;
-    }
     
     // ------------------- Server comm functions -------------------------------
     
