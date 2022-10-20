@@ -5,9 +5,9 @@ capitalystNgApp.controller( 'MACDController',
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
-        minWindowSize    : 12,
-        maxWindowSize    : 26,
-        signalWindowSize : 9    
+        minWindowSize : 12,
+        maxWindowSize : 26,
+        sigWindowSize : 9    
     } ;
     
     // -------------------------------------------------------------------------
@@ -20,7 +20,7 @@ capitalystNgApp.controller( 'MACDController',
                    '?symbolNse='  + symbol +
                    '&minWindowSize=' + $scope.config.minWindowSize +
                    '&maxWindowSize=' + $scope.config.maxWindowSize +
-                   '&signalWindowSize=' + $scope.config.signalWindowSize )
+                   '&sigWindowSize=' + $scope.config.sigWindowSize )
         .then ( 
             function( response ){
                 console.log( response.data ) ;         
