@@ -17,13 +17,17 @@ capitalystNgApp.controller( 'MACDController',
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
         $http.get( '/Equity/GraphData/Indicator/MACD' + 
-                   '?symbolNse='  + symbol +
+                   '?symbolNse=' + symbol +
                    '&minWindowSize=' + $scope.config.minWindowSize +
                    '&maxWindowSize=' + $scope.config.maxWindowSize +
                    '&sigWindowSize=' + $scope.config.sigWindowSize )
         .then ( 
             function( response ){
-                console.log( response.data ) ;         
+                console.log( response.data ) ;
+                
+                document.getElementById( "primaryCanvasDiv" ).style.height = "500px";
+                
+                $scope.$parent.repaintChart() ;
             }
         ) ;
     }

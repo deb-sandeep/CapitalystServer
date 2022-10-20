@@ -45,25 +45,41 @@
     background-color: lightblue;
 }
 
+:root {
+	--dialogWidth : 1300px;
+	--primaryChartHeight : 600px;
+	--chartWidth : 1100px;
+	--indDivWidth : 200px;
+}
+
+#graphDialog {
+	width: var( --dialogWidth );
+}
+
 #graphDiv {
-	height: 560px;
+	height: var( --primaryChartHeight ) ;
 	padding: 5px 15px 5px 15px;
 }
 
-#graphCanvasDiv {
+#primaryCanvasDiv {
     position: absolute;
     top: 0px;
     left: 0px;
-    width: 1100px;
-    height: 560px;
+    width: var( --chartWidth ) ;
+    height: var( --primaryChartHeight ) ;
+}
+
+#eodGraph {
+	width: 100% ;
+	height: 100% ;
 }
 
 #indicatorsDiv {
     position: absolute;
     top: 0px;
     right: 0px;
-    width: 200px;
-    height: 560px;
+    width: var( --indDivWidth ) ;
+    height: var( --primaryChartHeight ) ;
     background-color: #fafafa;
 }
 

@@ -59,6 +59,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     // Catching the event when the graph icon is pressed on any of the pages
     $scope.$on( 'graphDialogDisplay', function( _event, args ) {
         $scope.graphParams = args ;
+        $( '#graphDisplayDialog' ).modal( 'show' ) ;
         fetchChartData() ;
     } ) ;
     
@@ -172,12 +173,16 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return $scope.chartData.equityMaster.close ;
     }
     
+    $scope.repaintChart = function() {
+        if( chart != null ) {
+            chart.render() ;
+        }
+    }
+    
     // -----------------------------------------------------------------------
     // --- [START] Local functions -------------------------------------------
     
     function drawChart() {
-        
-        $( '#graphDisplayDialog' ).modal( 'show' ) ;
         
         if( chart != null ) { 
             chart.destroy() ; 
@@ -202,6 +207,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             },
             options: chartOptions
         } ) ;
+        chart.render() ;
     }
     
     function plotBollingerBand( bandName ) {
@@ -538,7 +544,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             },
             scales : getScaleOptions(),
             animation : getAnimationOptions(),
-            transitions : getTransitionsOptions()
+            transitions : getTransitionsOptions(),
+            responsive : true,
+            maintainAspectRatio: false
         } ;
     }
     
