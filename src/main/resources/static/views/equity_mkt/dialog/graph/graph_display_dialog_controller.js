@@ -25,14 +25,11 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         footer : {
             // Total height of footer. Sum of heights of all visible footer charts.
             height : 0,
-            
-            // Num of visible charts. Used for yIndex calculation of new charts
-            numVisibleCharts : 0  
         },
         macd : {
             visible : false,
-            height : 100,
-            yIndex : -1,     // Updated when chart is made visible
+            height  : 100,
+            bottom  : -1,     // Updated when chart is made visible
         },
     } ;
     
@@ -210,15 +207,14 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         
         // Changes to the DOM of chart which is to be made visible
         chartDiv.style.display = "block" ;
-        chartDiv.style.bottom = curFooterHeight ;
+        chartDiv.style.bottom = curFooterHeight + "px" ;
         
         // Updating the meta information
         chartMeta.visible = true ;
-        chartMeta.yIndex = footerChartsMeta.footer.numVisibleCharts ;
+        chartMeta.bottom = curFooterHeight ;
         
         // Updating the footer meta
         footerChartsMeta.footer.height = newFooterHeight ;
-        footerChartsMeta.footer.numVisibleCharts += 1 ;
     }
     
     $scope.hideFooterChart = function( chartId ) {
@@ -232,22 +228,20 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         var curFooterHeight   = footerChartsMeta.footer.height ;
         var newFooterHeight   = curFooterHeight - chartMeta.height ;
         var newEodChartHeight = eodChartDiv.clientHeight + chartMeta.height ;
-        var chartYIndex       = chartMeta.yIndex ;
+        var chartBottom       = chartMeta.bottom ;
         
         // Changes to the DOM of EOD chart
         eodChartDiv.style.height = newEodChartHeight + "px" ;
         
         // Changes to the DOM of chart which is to be hidden
         chartDiv.style.display = "none" ;
-        chartDiv.style.bottom = 0 ;
         
         // Updating the meta information
         chartMeta.visible = false ;
-        chartMeta.yIndex = -1 ;
+        chartMeta.bottom = -1 ;
         
         // Updating the footer meta
         footerChartsMeta.footer.height = newFooterHeight ;
-        footerChartsMeta.footer.numVisibleCharts -= 1 ;
         
         // If there are other footer charts which are visible, we need to
         // shift down the ones whose yIndex is greater than the one we removed
@@ -256,10 +250,10 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             if( id == 'footer' ) continue ;
             
             var meta = footerChartsMeta[ id ] ;
-            if( meta.visible && meta.yIndex > chartYIndex ) {
+            if( meta.visible && meta.bottom > chartBottom ) {
                 var chartDiv = document.getElementById( id + "ChartDiv" ) ;
-                chartDiv.style.bottom -= chartMeta.height ;
-                meta.yIndex -= 1 ;
+                meta.bottom -= chartMeta.height ;
+                chartDiv.style.bottom = meta.bottom + "px" ;
             }
         }
     }

@@ -34,6 +34,7 @@ capitalystNgApp.controller( 'MACDController',
             }
         ) ;
     }
+    
     // --- [END] Scope functions
 
     // -------------------------------------------------------------------------
