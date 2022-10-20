@@ -21,8 +21,11 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     var maxQty = 0 ;
     var qtyRange = 0 ;
     
-    var footerChartDivProperties = {
-        macdChartDiv : {
+    var footerChartProps = {
+        footer : {
+            height : 0    
+        },
+        macd : {
             visible : false,
             height : 100,
         },
@@ -185,12 +188,26 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
     }
     
-    $scope.displayChartDiv = function( divId ) {
+    $scope.displayFooterChart = function( chartId ) {
         
-        var occupiedFooterHeight = 0 ;
-        for( chartDivId in footerChartDivProperties ) {
-            console.log( chartDivId ) ;
+        var chartProps = footerChartProps[ chartId ] ;
+        if( chartProps.visible ) {
+            return ;
         }
+        
+        var eodDiv = document.getElementById( "eodChartDiv"  ) ;
+        var chartDiv = document.getElementById( chartId + "ChartDiv" ) ;
+        
+        var curFooterHeight = footerChartProps.footer.height ;
+        var newFooterHeight = curFooterHeight + chartProps.height ;
+        
+        eodDiv.style.height = ( eodDiv.clientHeight - chartProps.height ) + "px" ;
+        
+        chartDiv.style.display = "block" ;
+        chartDiv.style.bottom = curFooterHeight ;
+        
+        chartProps.visible = true ;
+        footerChartProps.footer.height = newFooterHeight ;
     }
     
     $scope.hideChartDiv = function( divId ) {
