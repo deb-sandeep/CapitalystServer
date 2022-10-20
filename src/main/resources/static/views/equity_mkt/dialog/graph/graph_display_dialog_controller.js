@@ -21,13 +21,18 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     var maxQty = 0 ;
     var qtyRange = 0 ;
     
-    var footerChartProps = {
+    var footerChartsMeta = {
         footer : {
-            height : 0    
+            // Total height of footer. Sum of heights of all visible footer charts.
+            height : 0,
+            
+            // Num of visible charts. Used for yIndex calculation of new charts
+            numVisibleCharts : 0  
         },
         macd : {
             visible : false,
             height : 100,
+            yIndex : -1,     // Updated when chart is made visible
         },
     } ;
     
@@ -188,30 +193,75 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
     }
     
-    $scope.displayFooterChart = function( chartId ) {
+    $scope.showFooterChart = function( chartId ) {
         
-        var chartProps = footerChartProps[ chartId ] ;
-        if( chartProps.visible ) {
-            return ;
-        }
+        var chartMeta = footerChartsMeta[ chartId ] ;
+        if( chartMeta.visible ) { return ; }
         
-        var eodDiv = document.getElementById( "eodChartDiv"  ) ;
-        var chartDiv = document.getElementById( chartId + "ChartDiv" ) ;
+        var eodChartDiv = document.getElementById( "eodChartDiv"  ) ;
+        var chartDiv    = document.getElementById( chartId + "ChartDiv" ) ;
         
-        var curFooterHeight = footerChartProps.footer.height ;
-        var newFooterHeight = curFooterHeight + chartProps.height ;
+        var curFooterHeight   = footerChartsMeta.footer.height ;
+        var newFooterHeight   = curFooterHeight + chartMeta.height ;
+        var newEodChartHeight = eodChartDiv.clientHeight - chartMeta.height ;
         
-        eodDiv.style.height = ( eodDiv.clientHeight - chartProps.height ) + "px" ;
+        // Changes to the DOM of EOD chart
+        eodChartDiv.style.height = newEodChartHeight + "px" ;
         
+        // Changes to the DOM of chart which is to be made visible
         chartDiv.style.display = "block" ;
         chartDiv.style.bottom = curFooterHeight ;
         
-        chartProps.visible = true ;
-        footerChartProps.footer.height = newFooterHeight ;
+        // Updating the meta information
+        chartMeta.visible = true ;
+        chartMeta.yIndex = footerChartsMeta.footer.numVisibleCharts ;
+        
+        // Updating the footer meta
+        footerChartsMeta.footer.height = newFooterHeight ;
+        footerChartsMeta.footer.numVisibleCharts += 1 ;
     }
     
-    $scope.hideChartDiv = function( divId ) {
+    $scope.hideFooterChart = function( chartId ) {
         
+        var chartMeta = footerChartsMeta[ chartId ] ;
+        if( !chartMeta.visible ) { return ; }
+        
+        var eodChartDiv = document.getElementById( "eodChartDiv"  ) ;
+        var chartDiv    = document.getElementById( chartId + "ChartDiv" ) ;
+        
+        var curFooterHeight   = footerChartsMeta.footer.height ;
+        var newFooterHeight   = curFooterHeight - chartMeta.height ;
+        var newEodChartHeight = eodChartDiv.clientHeight + chartMeta.height ;
+        var chartYIndex       = chartMeta.yIndex ;
+        
+        // Changes to the DOM of EOD chart
+        eodChartDiv.style.height = newEodChartHeight + "px" ;
+        
+        // Changes to the DOM of chart which is to be hidden
+        chartDiv.style.display = "none" ;
+        chartDiv.style.bottom = 0 ;
+        
+        // Updating the meta information
+        chartMeta.visible = false ;
+        chartMeta.yIndex = -1 ;
+        
+        // Updating the footer meta
+        footerChartsMeta.footer.height = newFooterHeight ;
+        footerChartsMeta.footer.numVisibleCharts -= 1 ;
+        
+        // If there are other footer charts which are visible, we need to
+        // shift down the ones whose yIndex is greater than the one we removed
+        for( id in footerChartsMeta ) {
+            
+            if( id == 'footer' ) continue ;
+            
+            var meta = footerChartsMeta[ id ] ;
+            if( meta.visible && meta.yIndex > chartYIndex ) {
+                var chartDiv = document.getElementById( id + "ChartDiv" ) ;
+                chartDiv.style.bottom -= chartMeta.height ;
+                meta.yIndex -= 1 ;
+            }
+        }
     }
     
     // -----------------------------------------------------------------------
