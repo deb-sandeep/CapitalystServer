@@ -11,6 +11,14 @@ capitalystNgApp.controller( 'BollingerCfgController',
     
     // -------------------------------------------------------------------------
     // --- [START] Scope functions ---------------------------------------------
+    $scope.$on( "eodGraphPreRender", function( _event, args ) {
+        console.log( "eodGraphPreRender event received in Bollinger" ) ;        
+    } ) ;
+    
+    $scope.$on( "eodGraphPostRender", function( _event, args ) {
+        console.log( "eodGraphPostRender event received in Bollinger" ) ;        
+    } ) ;
+    
     $scope.fetchBollingerBands = function() {
         
         const symbol = $scope.$parent.graphParams.symbolNse ;

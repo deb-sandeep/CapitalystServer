@@ -82,32 +82,43 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             
             $scope.duration = newDuration ;
             var opts = $scope.maGraphs ;
+            var anyMAEnabled = false ;
             
             for( key in $scope.maGraphs ) {
-                opts[key].smaEnabled = false ;
-                opts[key].emaEnabled = false ;
+                
+                if( opts[key].smaEnabled || opts[key].emaEnabled ) {
+                    anyMAEnabled = true ;
+                    opts[key].smaEnabled = false ;
+                    opts[key].emaEnabled = false ;
+                }
             }
             
-            if( newDuration == '1m' || newDuration == '2m' ) {
-                opts.d5.smaEnabled  = true ;
-                opts.d10.smaEnabled = true ;
+            // If we have been observing MA and the duration changed, 
+            // we draw MA on the new curve but intelligently.
+            if( anyMAEnabled ) {
+                if( newDuration == '1m' || newDuration == '2m' ) {
+                    opts.d5.smaEnabled  = true ;
+                    opts.d10.smaEnabled = true ;
+                }
+                else if( newDuration == '3m' || newDuration == '6m' ) {
+                    opts.d10.smaEnabled = true ;
+                    opts.d20.smaEnabled = true ;
+                }
+                else if( newDuration == '1y' ) {
+                    opts.d20.smaEnabled = true ;
+                    opts.d50.smaEnabled = true ;
+                }
+                else if( newDuration == '2y' || newDuration == '3y' ) {
+                    opts.d50.smaEnabled  = true ;
+                    opts.d100.smaEnabled = true ;
+                }
+                else if( newDuration == '5y' ) {
+                    opts.d100.smaEnabled = true ;
+                    opts.d200.smaEnabled = true ;
+                }
             }
-            else if( newDuration == '3m' || newDuration == '6m' ) {
-                opts.d10.smaEnabled = true ;
-                opts.d20.smaEnabled = true ;
-            }
-            else if( newDuration == '1y' ) {
-                opts.d20.smaEnabled = true ;
-                opts.d50.smaEnabled = true ;
-            }
-            else if( newDuration == '2y' || newDuration == '3y' ) {
-                opts.d50.smaEnabled  = true ;
-                opts.d100.smaEnabled = true ;
-            }
-            else if( newDuration == '5y' ) {
-                opts.d100.smaEnabled = true ;
-                opts.d200.smaEnabled = true ;
-            }
+            
+            // Freshly fetch the graph data for the new duration.
             fetchChartData() ;
         }
     }
@@ -260,14 +271,62 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
     
     // -----------------------------------------------------------------------
-    // --- [START] Local functions -------------------------------------------
+    // ------------------- Server comm functions -------------------------------
+    function fetchChartData() {
+        
+        console.log( "Fetching chart data for " + $scope.graphParams.symbolNse + 
+                     " and owner "              + $scope.graphParams.ownerName ) ;
+        
+        $scope.inbetweenServerCall = true ;
+        $http.get( '/Equity/GraphData' + 
+                   '?duration='  + $scope.duration + 
+                   '&symbolNse=' + $scope.graphParams.symbolNse + 
+                   '&owner='     + $scope.graphParams.ownerName )
+        .then ( 
+            function( response ){
+                
+                $scope.chartData = response.data ;
+                
+                datasets.length = 0 ;
+                $scope.seriesCache.clear() ;
+                extractQuantityRange() ;
+                
+                drawChart() ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+            $scope.inbetweenServerCall = false ;
+        }) ;
+    }
+
+    // ------------------- Post server comm data processing --------------------
+    function extractQuantityRange() {
+        
+        minQty = 99999 ;
+        maxQty = 0 ;
+        
+        for( var i=0; i<$scope.chartData.buyData.length; i++ ) {
+            minQty = Math.min( minQty, $scope.chartData.buyData[i].q ) ;
+            maxQty = Math.max( maxQty, $scope.chartData.buyData[i].q ) ;
+        }
+        
+        for( var i=0; i<$scope.chartData.sellData.length; i++ ) {
+            minQty = Math.min( minQty, $scope.chartData.sellData[i].q ) ;
+            maxQty = Math.max( maxQty, $scope.chartData.sellData[i].q ) ;
+        }
+        qtyRange = maxQty - minQty ;
+    }
     
+    // ------------------- Chart drawing functions -----------------------------
     function drawChart() {
         
         if( chart != null ) { 
             chart.destroy() ; 
             chart = null ;
         }
+        
+        $scope.$broadcast( 'eodGraphPreRender', null ) ;
 
         datasets.length = 0 ;
         chartOptions = getChartOptions() ;
@@ -287,6 +346,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             },
             options: chartOptions
         } ) ;
+        
+        $scope.$broadcast( 'eodGraphPostRender', null ) ;
     }
     
     function plotBollingerBand( bandName ) {
@@ -562,52 +623,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             emaArray.push( k*data[i] + emaArray[i - 1]*(1 - k) ) ;
         }
         return emaArray;
-    }
-    
-    // ------------------- Server comm functions -------------------------------
-    function fetchChartData() {
-        
-        console.log( "Fetching chart data for " + $scope.graphParams.symbolNse + 
-                     " and owner "              + $scope.graphParams.ownerName ) ;
-        
-        $scope.inbetweenServerCall = true ;
-        $http.get( '/Equity/GraphData' + 
-                   '?duration='  + $scope.duration + 
-                   '&symbolNse=' + $scope.graphParams.symbolNse + 
-                   '&owner='     + $scope.graphParams.ownerName )
-        .then ( 
-            function( response ){
-                
-                $scope.chartData = response.data ;
-                
-                datasets.length = 0 ;
-                $scope.seriesCache.clear() ;
-                extractQuantityRange() ;
-                drawChart() ;
-            }
-        )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-            $scope.inbetweenServerCall = false ;
-        }) ;
-    }
-
-    // ------------------- Post server comm data processing --------------------
-    function extractQuantityRange() {
-        
-        minQty = 99999 ;
-        maxQty = 0 ;
-        
-        for( var i=0; i<$scope.chartData.buyData.length; i++ ) {
-            minQty = Math.min( minQty, $scope.chartData.buyData[i].q ) ;
-            maxQty = Math.max( maxQty, $scope.chartData.buyData[i].q ) ;
-        }
-        
-        for( var i=0; i<$scope.chartData.sellData.length; i++ ) {
-            minQty = Math.min( minQty, $scope.chartData.sellData[i].q ) ;
-            maxQty = Math.max( maxQty, $scope.chartData.sellData[i].q ) ;
-        }
-        qtyRange = maxQty - minQty ;
     }
     
     // ------------------- Graph options ---------------------------------------
