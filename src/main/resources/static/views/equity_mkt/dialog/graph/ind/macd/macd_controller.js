@@ -133,6 +133,7 @@ capitalystNgApp.controller( 'MACDController',
             type             : 'line',
             data             : macdHistData,
             radius           : 0,
+            borderWidth      : 0,
             fill : {
                 target: 'origin',
                 above: 'rgba(0, 255, 0, 0.5)',

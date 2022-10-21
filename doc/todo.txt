@@ -1,3 +1,7 @@
 https://www1.nseindia.com/content/indices/ind_close_all_16052022.csv
 
 https://www.nseindia.com/api/equity-stockIndices?csv=true&index=NIFTY TOTAL MARKET
+
+1. All additional indicators should be applied by default when graph changes
+2. When additional graph is hidden it should be destroyed
+3. 

@@ -47,12 +47,12 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.seriesCache = new Map() ;
     
     $scope.durationKeys = [ '5y', '3y', '2y', '1y', '6m', '3m', '2m', '1m' ] ;
-    $scope.duration = '3m' ;
+    $scope.duration = '6m' ;
     
     $scope.maGraphs = {
-        d5  :{ ...baseMAOpts, window:   5, color: '#0338FB', smaEnabled: true },
+        d5  :{ ...baseMAOpts, window:   5, color: '#0338FB' },
         d10 :{ ...baseMAOpts, window:  10, color: '#C30061', smaEnabled: true },
-        d20 :{ ...baseMAOpts, window:  20, color: '#118788' },
+        d20 :{ ...baseMAOpts, window:  20, color: '#118788', smaEnabled: true },
         d50 :{ ...baseMAOpts, window:  50, color: '#FC5D08' },
         d100:{ ...baseMAOpts, window: 100, color: '#102C99' },
         d200:{ ...baseMAOpts, window: 200, color: '#C30061' },
@@ -169,6 +169,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.resetZoom = function() {
         if( chart != null ) {
             chart.resetZoom() ;
+            syncChartXAxisRange() ;
         }
     }
     
@@ -648,15 +649,32 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 drag : {
                     enabled : true,
                     modifierKey : 'meta',
-                }
+                },
+                onZoom: syncChartXAxisRange            
             },
             pan : {
                 mode : 'xy',
                 enabled : true,
+                onPan: syncChartXAxisRange   
             }
         } ;
     }
     
+    function syncChartXAxisRange() {
+        
+        var scaleRanges = chart.getDatasetMeta(0)._scaleRanges ;
+        
+        Chart.helpers.each( Chart.instances, function( instance ) {
+            
+            var instanceXScale = instance.config._config.options.scales.x ;
+            
+            instanceXScale.min = scaleRanges.xmin ;
+            instanceXScale.max = scaleRanges.xmax ;
+            
+            instance.update();
+        } ) ;
+    }
+        
     function getScaleOptions() {
         return {
             x : {
