@@ -9,6 +9,18 @@ capitalystNgApp.controller( 'MACDController',
     var macdLineData = null ;
     var macdSigData  = null ;
     var macdHistData = null ;
+    
+    function resetState() {
+        
+        if( chart != null ) {
+            chart.destroy() ;
+        }
+
+        datasets.length = 0 ;
+        macdLineData = null ;
+        macdSigData = null ;
+        macdHistData = null ;
+    }
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
@@ -23,11 +35,23 @@ capitalystNgApp.controller( 'MACDController',
     } ) ;
 
     $scope.$on( "eodGraphPostRender", function( _event, args ) {
+        
+        if( $scope.$parent.isFooterChartVisible( 'macd') ) {
+            $scope.showMACDChart() ;
+        }
     } ) ;
 
     $scope.hideMACDChart = function() {
         
         $scope.$parent.hideFooterChart( 'macd' ) ;
+        
+        if( chart != null ) {
+            chart.destroy() ;
+            datasets.length = 0 ;
+            macdLineData = null ;
+            macdSigData = null ;
+            macdHistData = null ;
+        }
     }
     
     $scope.showMACDChart = function() {
@@ -41,7 +65,6 @@ capitalystNgApp.controller( 'MACDController',
                    '&sigWindowSize=' + $scope.config.sigWindowSize )
         .then ( 
             function( response ){
-                console.log( response.data ) ;
                 
                 macdLineData = response.data[ 'macd-line'   ] ;
                 macdSigData  = response.data[ 'macd-signal' ] ;

@@ -201,6 +201,12 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return (getDatasetIndex( seriesName ) != -1) ;
     }
     
+    $scope.isFooterChartVisible = function( chartId ) {
+        
+        var chartMeta = footerChartsMeta[ chartId ] ;
+        return chartMeta.visible ;
+    }
+    
     $scope.showFooterChart = function( chartId ) {
         
         var chartMeta = footerChartsMeta[ chartId ] ;
