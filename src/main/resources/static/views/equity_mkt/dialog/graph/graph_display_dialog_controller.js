@@ -163,11 +163,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
     }
     
-    // Bollinger curve visibility options changed
-    $scope.bollingerGraphOptionsChanged = function( curveName ) {
-        plotBollingerBand( curveName ) ;
-    }
-    
     // Plot all the bollinger bands - upper, middle and lower.
     $scope.plotBollingerBands = function() {
         
@@ -200,6 +195,10 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         if( chart != null ) {
             chart.render() ;
         }
+    }
+    
+    $scope.isSeriesVisible = function( seriesName ) {
+        return (getDatasetIndex( seriesName ) != -1) ;
     }
     
     $scope.showFooterChart = function( chartId ) {
@@ -285,6 +284,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         .then ( 
             function( response ){
                 
+                $scope.$broadcast( 'eodGraphPreDestroy', null ) ;
+        
                 $scope.chartData = response.data ;
                 
                 datasets.length = 0 ;
@@ -325,8 +326,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             chart.destroy() ; 
             chart = null ;
         }
-        
-        $scope.$broadcast( 'eodGraphPreRender', null ) ;
 
         datasets.length = 0 ;
         chartOptions = getChartOptions() ;
@@ -467,7 +466,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             cmpColor = ( cd.avgData[0].y < cd.cmpData[0].y ) ? 
                        '#00FF00' : '#FF0000' ; 
         }
-        
         return {
             name             : 'cur-price',
             type             : 'scatter',
@@ -544,17 +542,25 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     function removeDataset( seriesName ) {
         
         var removed = false ;
+        var index = getDatasetIndex( seriesName ) ;
+        if( index != -1 ) {
+            datasets.splice( index, 1 ) ;
+            removed = true ;            
+        }
+        return removed ;
+    }
+    
+    function getDatasetIndex( seriesName ) {
+        
         for( var i=0; i<datasets.length; i++ ) {
             var dataset = datasets[i] ;
             if( dataset.hasOwnProperty( 'name' ) ) {
                 if( dataset.name == seriesName ) {
-                    datasets.splice( i, 1 ) ;
-                    removed = true ;
-                    break ;
+                    return i ;
                 }                    
             }
         }
-        return removed ;
+        return -1 ;
     }
     
     function getSeries( key, genFn ) {

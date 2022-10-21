@@ -2,6 +2,7 @@ capitalystNgApp.controller( 'BollingerCfgController',
                             function( $scope, $http ) {
     
     // ---------------- Local variables ----------------------------------------
+    var visibleFlag = false ;    
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
@@ -11,12 +12,15 @@ capitalystNgApp.controller( 'BollingerCfgController',
     
     // -------------------------------------------------------------------------
     // --- [START] Scope functions ---------------------------------------------
-    $scope.$on( "eodGraphPreRender", function( _event, args ) {
-        console.log( "eodGraphPreRender event received in Bollinger" ) ;        
+    $scope.$on( "eodGraphPreDestroy", function( _event, args ) {
+        visibleFlag = isIndicatorVisible() ;
     } ) ;
     
     $scope.$on( "eodGraphPostRender", function( _event, args ) {
-        console.log( "eodGraphPostRender event received in Bollinger" ) ;        
+        console.log( "eodGraphPostRender event received in Bollinger" ) ;
+        if( visibleFlag ) {
+            $scope.fetchBollingerBands() ;
+        }        
     } ) ;
     
     $scope.fetchBollingerBands = function() {
@@ -43,6 +47,12 @@ capitalystNgApp.controller( 'BollingerCfgController',
     // --- [START] Local functions ---------------------------------------------
     function setSeries( seriesName, response ) {
         $scope.$parent.seriesCache.set( seriesName, response.data[ seriesName ] ) ;
+    }
+    
+    function isIndicatorVisible() {
+        return ( $scope.$parent.isSeriesVisible( "bollinger-upper" ) || 
+                 $scope.$parent.isSeriesVisible( "bollinger-middle" ) || 
+                 $scope.$parent.isSeriesVisible( "bollinger-lower" ) ) ;
     }
     
     // ------------------- Server comm functions -------------------------------

@@ -19,12 +19,10 @@ capitalystNgApp.controller( 'MACDController',
     
     // -------------------------------------------------------------------------
     // --- [START] Scope functions ---------------------------------------------
-    $scope.$on( "eodGraphPreRender", function( _event, args ) {
-        console.log( "eodGraphPreRender event received in MACD" ) ;        
+    $scope.$on( "eodGraphPreDestroy", function( _event, args ) {
     } ) ;
 
     $scope.$on( "eodGraphPostRender", function( _event, args ) {
-        console.log( "eodGraphPostRender event received in MACD" ) ;        
     } ) ;
 
     $scope.hideMACDChart = function() {
