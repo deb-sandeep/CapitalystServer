@@ -2,6 +2,7 @@ capitalystNgApp.controller( 'MACDController',
                             function( $scope, $http ) {
     
     // ---------------- Local variables ----------------------------------------
+    
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
@@ -17,7 +18,7 @@ capitalystNgApp.controller( 'MACDController',
         $scope.$parent.hideFooterChart( 'macd' ) ;
     }
     
-    $scope.fetchMACDBands = function() {
+    $scope.showMACDChart = function() {
         
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
@@ -34,7 +35,6 @@ capitalystNgApp.controller( 'MACDController',
             }
         ) ;
     }
-    
     // --- [END] Scope functions
 
     // -------------------------------------------------------------------------

@@ -5,7 +5,7 @@ capitalystNgApp.controller( 'BollingerCfgController',
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
-        windowSize : 10,
+        windowSize : 20,
         numStdDev : 2    
     } ;
     
