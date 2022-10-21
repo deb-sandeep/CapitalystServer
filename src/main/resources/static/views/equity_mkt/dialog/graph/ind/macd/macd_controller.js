@@ -2,7 +2,13 @@ capitalystNgApp.controller( 'MACDController',
                             function( $scope, $http ) {
     
     // ---------------- Local variables ----------------------------------------
+    var chart = null ;
+    var datasets = [] ;
+    var chartOptions = null ;
     
+    var macdLineData = null ;
+    var macdSigData  = null ;
+    var macdHistData = null ;
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
@@ -31,7 +37,13 @@ capitalystNgApp.controller( 'MACDController',
             function( response ){
                 console.log( response.data ) ;
                 
+                macdLineData = response.data[ 'macd-line'   ] ;
+                macdSigData  = response.data[ 'macd-signal' ] ;
+                macdHistData = response.data[ 'macd-hist'   ] ;
+                
                 $scope.$parent.showFooterChart( 'macd' ) ;
+                
+                drawChart() ;
             }
         ) ;
     }
@@ -39,7 +51,171 @@ capitalystNgApp.controller( 'MACDController',
 
     // -------------------------------------------------------------------------
     // --- [START] Local functions ---------------------------------------------
+    function drawChart() {
+        
+        if( chart != null ) { 
+            chart.destroy() ; 
+            chart = null ;
+        }
+
+        datasets.length = 0 ;
+        chartOptions = getChartOptions() ;
+        
+        addDataset( getMACDLineDataset() ) ;
+        addDataset( getMACDSignalDataset() ) ;
+        addDataset( getMACDHistDataset()   ) ;
+        
+        chart = new Chart( document.getElementById( 'macdChartCanvas' ), {
+            data: {
+              labels: $scope.$parent.chartData.labels,
+              datasets: datasets
+            },
+            options: chartOptions
+        } ) ;
+    }
+        
+    function addDataset( dataset ) {
+        removeDataset( dataset.name ) ;
+        datasets.push( dataset ) ;
+    }
     
-    // ------------------- Server comm functions -------------------------------
+    function removeDataset( seriesName ) {
+        
+        var removed = false ;
+        for( var i=0; i<datasets.length; i++ ) {
+            var dataset = datasets[i] ;
+            if( dataset.hasOwnProperty( 'name' ) ) {
+                if( dataset.name == seriesName ) {
+                    datasets.splice( i, 1 ) ;
+                    removed = true ;
+                    break ;
+                }                    
+            }
+        }
+        return removed ;
+    }
+    
+    // ------------------- Dataset creation functions --------------------------
+
+    function getMACDLineDataset() {
+        
+        return {
+            name             : 'macd-line',
+            type             : 'line',
+            data             : macdLineData,
+            borderColor      : 'grey',
+            backgroundColor  : 'grey',
+            borderWidth      : 1,
+            tension          : 0,
+            radius           : 0,
+            yAxisID          : 'y',
+        } ;
+    }
+    
+    function getMACDSignalDataset() {
+        
+        return {
+            name             : 'macd-signal',
+            type             : 'line',
+            data             : macdSigData,
+            borderColor      : 'red',
+            backgroundColor  : 'red',
+            borderWidth      : 1,
+            tension          : 0,
+            radius           : 0,
+        } ;
+    }
+    
+    function getMACDHistDataset() {
+        
+        return {
+            name             : 'macd-hist',
+            type             : 'line',
+            data             : macdHistData,
+            radius           : 0,
+            fill : {
+                target: 'origin',
+                above: 'rgba(0, 255, 0, 0.5)',
+                below: 'rgba(255, 0, 0, 0.5)'
+            }
+        } ;
+    }
+    
+    // ------------------- Graph options ---------------------------------------
+    function getChartOptions() {
+        
+        return {
+            
+            plugins : {
+                autocolors:false,
+                legend: { display: false },
+                annotation: getAnnotationOptions()
+            },
+            scales : getScaleOptions(),
+            animation : getAnimationOptions(),
+            transitions : getTransitionsOptions(),
+            responsive : true,
+            maintainAspectRatio: false
+        } ;
+    }
+    
+    function getAnnotationOptions() {
+        
+        return {
+            annotations: {
+                line1: {
+                    type: 'line',
+                    yMin: 0,
+                    yMax: 0,
+                    borderColor: 'rgb(150, 150, 150)',
+                    borderWidth: 1,
+                }
+            }
+        } ;
+    }
+    
+    function getScaleOptions() {
+        return {
+            x : {
+                display: true,
+                type: 'time',
+                position: 'left',
+                time: { 
+                    unit: 'day',
+                    displayFormats: {
+                       'day': 'DD-MM-YY'
+                    } 
+                },
+                ticks: {
+                    display: false,
+                    font: {
+                        size: 10,
+                    }
+                },
+                grid: {
+                    display: false,
+                    color: 'rgba(255,255,255,1.0)',
+                }
+            },
+        } ;
+    }
+    
+    function getAnimationOptions() {
+        return {
+            duration : 0,
+            easing: 'linear'
+        } ;
+    }
+    
+    function getTransitionsOptions() {
+        return {
+            zoom : {
+                animation : {
+                    duration : 1000,
+                    easing: 'easeOutCubic'
+                }
+            }
+        } ;
+    }
     
 } ) ;

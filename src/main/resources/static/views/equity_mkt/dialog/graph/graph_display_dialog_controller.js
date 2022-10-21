@@ -325,7 +325,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
     }
     
-    // ------------------- Dataset creationfunctions ---------------------------
+    // ------------------- Dataset creation functions --------------------------
     function getBuyTradesDataset() {
         
         const seriesKey = 'buy-trades' ;
@@ -610,7 +610,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     }
     
     // ------------------- Graph options ---------------------------------------
-    
     function getChartOptions() {
         
         return {
