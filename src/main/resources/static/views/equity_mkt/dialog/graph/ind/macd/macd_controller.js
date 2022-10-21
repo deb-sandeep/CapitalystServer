@@ -165,8 +165,8 @@ capitalystNgApp.controller( 'MACDController',
             borderWidth      : 0,
             fill : {
                 target: 'origin',
-                above: 'rgba(0, 255, 0, 0.5)',
-                below: 'rgba(255, 0, 0, 0.5)'
+                above: 'rgba(0, 255, 0, 0.3)',
+                below: 'rgba(255, 0, 0, 0.3)'
             }
         } ;
     }

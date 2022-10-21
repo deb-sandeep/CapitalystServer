@@ -5,7 +5,10 @@ import static org.springframework.http.HttpStatus.OK ;
 import static org.springframework.http.ResponseEntity.status ;
 import static org.ta4j.core.indicators.numeric.NumericIndicator.of ;
 
+import java.util.Arrays ;
+import java.util.Collections ;
 import java.util.HashMap ;
+import java.util.List ;
 import java.util.Map ;
 
 import org.apache.log4j.Logger ;
@@ -57,10 +60,20 @@ public class MACDController extends AbstractIndicatorController {
             sigNumInd  = NumericIndicator.of( sigInd ) ;
             histInd    = macdNumInd.minus( sigNumInd ) ;
             
+            Double[] lineValues = getValues( of( macdNumInd )) ;
+            Double[] signValues = getValues( of( sigInd     )) ;
+            Double[] histValues = getValues( histInd ) ;
+            
+            double scale = getHistScalingFactor( lineValues, signValues, histValues ) ;
+            scale = Math.max( 1.0, scale ) ;
+            for( int i=0; i<histValues.length; i++ ) {
+                histValues[i] *= scale ;
+            }
+            
             Map<String, Double[]> seriesMap = new HashMap<>() ;
-            seriesMap.put( "macd-line"  , getValues( of( macdNumInd ))) ;
-            seriesMap.put( "macd-signal", getValues( of( sigInd     ))) ;
-            seriesMap.put( "macd-hist",   getValues( histInd )) ;
+            seriesMap.put( "macd-line"  , lineValues ) ;
+            seriesMap.put( "macd-signal", signValues ) ;
+            seriesMap.put( "macd-hist",   histValues ) ;
             
             return status( OK ).body( seriesMap ) ;
         }
@@ -68,5 +81,29 @@ public class MACDController extends AbstractIndicatorController {
             log.error( "Error :: Getting equity portfolio.", e ) ;
             return status( INTERNAL_SERVER_ERROR ).body( null ) ;
         }
+    }
+    
+    private double getHistScalingFactor( Double[] arrayA, Double[] arrayB,
+                                        Double[] histArray ) {
+        
+        List<Double> listA = Arrays.asList( arrayA ) ;
+        List<Double> listB = Arrays.asList( arrayB ) ;
+        List<Double> listH = Arrays.asList( histArray ) ;
+        
+        double maxA = Collections.max( listA ) ;
+        double maxB = Collections.max( listB ) ;
+        double maxH = Collections.max( listH ) ;
+        
+        double minA = Collections.min( listA ) ;
+        double minB = Collections.min( listB ) ;
+        double minH = Collections.min( listH ) ;
+        
+        double maxAB = Math.max( maxA, maxB ) ;
+        double minAB = Math.min( minA, minB ) ;
+        
+        double plusYRatio = maxAB/maxH ;
+        double negYRatio  = minAB/minH ;
+        
+        return Math.min( Math.abs( plusYRatio ), Math.abs( negYRatio ) ) ;
     }
 }
