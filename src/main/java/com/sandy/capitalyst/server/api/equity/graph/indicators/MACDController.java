@@ -3,7 +3,6 @@ package com.sandy.capitalyst.server.api.equity.graph.indicators ;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR ;
 import static org.springframework.http.HttpStatus.OK ;
 import static org.springframework.http.ResponseEntity.status ;
-import static org.ta4j.core.indicators.numeric.NumericIndicator.of ;
 
 import java.util.Arrays ;
 import java.util.Collections ;
@@ -37,20 +36,21 @@ public class MACDController extends AbstractIndicatorController {
             @RequestParam( name="maxWindowSize", required=true ) Integer maxWindowSize,
             @RequestParam( name="sigWindowSize", required=true ) Integer sigWindowSize ) {
         
+        ClosePriceIndicator cpInd      = null ;
+        MACDIndicator       macdInd    = null ;
+        EMAIndicator        sigInd     = null ;
+        NumericIndicator    macdNumInd = null ;
+        NumericIndicator    sigNumInd  = null ;
+        NumericIndicator    histInd    = null ;
+        BarSeries           series     = null ;
+        
+        log.debug( "Symbol NSE      = " + symbolNse  ) ;
+        log.debug( "Min window size = " + minWindowSize ) ;
+        log.debug( "Max window size = " + maxWindowSize ) ;
+        log.debug( "Sig window size = " + sigWindowSize ) ;
+        
         try {
-            ClosePriceIndicator cpInd      = null ;
-            MACDIndicator       macdInd    = null ;
-            EMAIndicator        sigInd     = null ;
-            NumericIndicator    macdNumInd = null ;
-            NumericIndicator    sigNumInd  = null ;
-            NumericIndicator    histInd    = null ;
-            
-            log.debug( "Symbol NSE      = " + symbolNse  ) ;
-            log.debug( "Min window size = " + minWindowSize ) ;
-            log.debug( "Max window size = " + maxWindowSize ) ;
-            log.debug( "Sig window size = " + sigWindowSize ) ;
-            
-            BarSeries series = BarSeriesCache.instance().get( symbolNse ) ;
+            series = BarSeriesCache.instance().get( symbolNse ) ;
             
             cpInd   = new ClosePriceIndicator( series ) ;
             macdInd = new MACDIndicator( cpInd, minWindowSize, maxWindowSize ) ;
@@ -60,9 +60,9 @@ public class MACDController extends AbstractIndicatorController {
             sigNumInd  = NumericIndicator.of( sigInd ) ;
             histInd    = macdNumInd.minus( sigNumInd ) ;
             
-            Double[] lineValues = getValues( of( macdNumInd )) ;
-            Double[] signValues = getValues( of( sigInd     )) ;
-            Double[] histValues = getValues( histInd ) ;
+            Double[] lineValues = getValues( macdNumInd ) ;
+            Double[] signValues = getValues( sigNumInd  ) ;
+            Double[] histValues = getValues( histInd    ) ;
             
             double scale = getHistScalingFactor( lineValues, signValues, histValues ) ;
             scale = Math.max( 1.0, scale ) ;

@@ -31,6 +31,11 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             height  : 125,
             bottom  : -1,     // Updated when chart is made visible
         },
+        rsi : {
+            visible : false,
+            height  : 125,
+            bottom  : -1,
+        },
     } ;
     
     // ---------------- Object templates --------------------------------------
