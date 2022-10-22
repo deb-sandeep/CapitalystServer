@@ -170,8 +170,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     // Plot all the bollinger bands - upper, middle and lower.
     $scope.plotBollingerBands = function() {
-        
-        eraseMASerieses() ;
         for( const key in $scope.bollingerOptions ) {
             plotBollingerBand( key ) ;
         }

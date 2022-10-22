@@ -23,6 +23,10 @@ capitalystNgApp.controller( 'BollingerCfgController',
         }        
     } ) ;
     
+    $scope.hideBollingerBands = function() {
+        enableBollingerBands( false ) ;         
+    }
+    
     $scope.fetchBollingerBands = function() {
         
         const symbol = $scope.$parent.graphParams.symbolNse ;
@@ -37,7 +41,7 @@ capitalystNgApp.controller( 'BollingerCfgController',
                 setSeries( "bollinger-middle", response ) ;         
                 setSeries( "bollinger-lower",  response ) ;
                 
-                $scope.$parent.plotBollingerBands() ;         
+                enableBollingerBands( true ) ;         
             }
         ) ;
     }
@@ -53,6 +57,15 @@ capitalystNgApp.controller( 'BollingerCfgController',
         return ( $scope.$parent.isSeriesVisible( "bollinger-upper" ) || 
                  $scope.$parent.isSeriesVisible( "bollinger-middle" ) || 
                  $scope.$parent.isSeriesVisible( "bollinger-lower" ) ) ;
+    }
+    
+    function enableBollingerBands( enable ) {
+        
+        $scope.$parent.bollingerOptions.upper.enabled  = enable ;
+        $scope.$parent.bollingerOptions.middle.enabled = enable ;
+        $scope.$parent.bollingerOptions.lower.enabled  = enable ;
+        
+        $scope.$parent.plotBollingerBands() ;
     }
     
     // ------------------- Server comm functions -------------------------------
