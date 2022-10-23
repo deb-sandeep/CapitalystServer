@@ -1,5 +1,5 @@
 capitalystNgApp.controller( 'GraphDisplayDialogController', 
-                            function( $scope, $http ) {
+                            function( $scope, $http, $window ) {
     
     const BUY_COLOR            = '#256BEF' ;
     const SELL_COLOR           = '#E7871C' ;
@@ -276,6 +276,12 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 chartDiv.style.bottom = meta.bottom + "px" ;
             }
         }
+    }
+    
+    $scope.showMCChart = function() {
+        $window.open( "https://www.moneycontrol.com/mc/stock/chart" + 
+                      "?exchangeId=" + $scope.graphParams.symbolNse + 
+                      "&ex=NSE" ) ;
     }
     
     // -----------------------------------------------------------------------
