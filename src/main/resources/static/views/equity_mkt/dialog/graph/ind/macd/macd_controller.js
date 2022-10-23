@@ -132,8 +132,8 @@ capitalystNgApp.controller( 'MACDController',
             name             : 'macd-line',
             type             : 'line',
             data             : macdLineData,
-            borderColor      : 'grey',
-            backgroundColor  : 'grey',
+            borderColor      : 'blue',
+            backgroundColor  : 'blue',
             borderWidth      : 1,
             tension          : 0,
             radius           : 0,
@@ -227,6 +227,16 @@ capitalystNgApp.controller( 'MACDController',
                     color: 'rgba(255,255,255,1.0)',
                 }
             },
+            y : {
+                ticks: {
+                    font: {
+                        family: 'courier'
+                    },
+                    callback: function( value, index, ticks ) {
+                        return ('' + value).padStart( 6, ' ' ) ;
+                    }
+                }
+            }
         } ;
     }
     

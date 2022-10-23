@@ -220,6 +220,16 @@ capitalystNgApp.controller( 'RSIController',
                     color: 'rgba(255,255,255,1.0)',
                 }
             },
+            y : {
+                ticks: {
+                    font: {
+                        family: 'courier'
+                    },
+                    callback: function( value, index, ticks ) {
+                        return ('' + value).padStart( 6, ' ' ) ;
+                    }
+                }
+            }
         } ;
     }
     

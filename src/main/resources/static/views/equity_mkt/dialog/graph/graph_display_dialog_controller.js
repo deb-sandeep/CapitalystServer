@@ -720,8 +720,22 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                         size: 10,
                     }
                 }
-            }  
+            },
+            y : {
+                ticks: {
+                    font: {
+                        family: 'courier'
+                    },
+                    callback: function( value, index, ticks ) {
+                        return ('' + value).padStart( 6, ' ' ) ;
+                    }
+                }
+            }
         } ;
+    }
+    
+    function renderYTick( value, index, ticks ) {
+        return ('' + value).padStart( 10, ' ' ) ;
     }
     
     function getAnimationOptions() {
