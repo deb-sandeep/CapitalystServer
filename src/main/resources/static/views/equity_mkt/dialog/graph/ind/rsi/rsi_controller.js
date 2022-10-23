@@ -226,7 +226,7 @@ capitalystNgApp.controller( 'RSIController',
                         family: 'courier'
                     },
                     callback: function( value, index, ticks ) {
-                        return ('' + value).padStart( 6, ' ' ) ;
+                        return ('' + Math.round(value)).padStart( 6, ' ' ) ;
                     }
                 }
             }
