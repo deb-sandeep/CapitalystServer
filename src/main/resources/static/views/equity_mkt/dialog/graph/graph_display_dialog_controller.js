@@ -249,12 +249,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         var newEodChartHeight = eodChartDiv.clientHeight + chartMeta.height ;
         var chartBottom       = chartMeta.bottom ;
         
-        // Changes to the DOM of EOD chart
-        eodChartDiv.style.height = newEodChartHeight + "px" ;
-        
-        // Changes to the DOM of chart which is to be hidden
-        chartDiv.style.display = "none" ;
-        
         // Updating the meta information
         chartMeta.visible = false ;
         chartMeta.bottom = -1 ;
@@ -262,6 +256,12 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         // Updating the footer meta
         footerChartsMeta.footer.height = newFooterHeight ;
         
+        // Changes to the DOM of EOD chart
+        eodChartDiv.style.height = newEodChartHeight + "px" ;
+        
+        // Changes to the DOM of chart which is to be hidden
+        chartDiv.style.display = "none" ;
+
         // If there are other footer charts which are visible, we need to
         // shift down the ones whose yIndex is greater than the one we removed
         for( id in footerChartsMeta ) {
