@@ -353,7 +353,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         
         addMADatasets() ;
         
-        Chart.defaults.color = '#e0e0e0' ;
+        Chart.defaults.color = '#b0b0b0' ;
         Chart.defaults.borderColor = '#4d4d4d' ;
         
         chart = new Chart( document.getElementById( 'eodChartCanvas' ), {

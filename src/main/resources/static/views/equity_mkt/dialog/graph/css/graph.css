@@ -1,13 +1,25 @@
+:root {
+    --dialogWidth : 1300px;
+    --primaryChartHeight : 600px;
+    --chartWidth : 1100px;
+    --indDivWidth : 200px;
+    --canvasBackground : #32333b;
+}
+
 .label-cell {
     width: 150px;
     text-align: left;
-    background-color: #eafffb;
+    background-color: #42454f !important;
+    color:white;
+    border-color:#535664!important;
 }
 
 .value-cell {
     padding-right:10px !important;
     width: 150px;
     font-size: 14px;
+    color: lightgrey;
+    border-color:#535664!important;
 }
 
 .duration-btn {
@@ -27,9 +39,9 @@
     
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
-    background-color: white;
+    background-color: #42454f !important;
     margin-right:5px;
-    border-color: #c9c9c9;
+    border-color: #515462;
     width: 20px;
     font-size: 12px;
 }
@@ -43,14 +55,6 @@
 
 .sel-duration-btn {
     background-color: lightblue;
-}
-
-:root {
-	--dialogWidth : 1300px;
-	--primaryChartHeight : 600px;
-	--chartWidth : 1100px;
-	--indDivWidth : 200px;
-	--canvasBackground : #32333b;
 }
 
 #graphDialog {
@@ -112,13 +116,49 @@
     right: 0px;
     width: var( --indDivWidth ) ;
     height: var( --primaryChartHeight ) ;
-    background-color: #fafafa;
+    background-color: var( --canvasBackground ) ;
+}
+
+.panel {
+    background-color: var( --canvasBackground ) ;
+}
+
+.panel-heading {
+	background-color: #42454f !important;
+    color: white !important;
+    font-weight:600;
 }
 
 .panel-title {
-	font-size:12px;
+	font-size:13px;
+}
+
+.panel-default {
+	border-color: #42454f !important;
 }
 
 .indicator-options {
 	padding: 2px 2px 2px 10px;
+    background-color: var( --canvasBackground ) ;
+	color: white;
 }
+
+#indicatorsPanel {
+     font-size:11px ;
+     padding:5px ; 
+     background-color:var( --canvasBackground ) ;
+}
+
+input {
+	background-color: #42454f !important;
+	font: white !important;
+}
+
+input[type="checkbox"] {
+    accent-color: #42454f !important;
+}
+
+#graphDialogFooter {
+    background-color: var( --canvasBackground ) ;
+}
+

@@ -89,11 +89,11 @@ pre {
 }
 
 .neg_amt {
-    color:red;
+    color:red !important;
 }
 
 .pos_amt {
-    color:#295f19;
+    color:#295f19 !important;
 }
 
 .selected_row {

@@ -47,7 +47,8 @@
         </div>
     </div>
     
-    <div class="modal-footer"
+    <div id="graphDialogFooter"
+         class="modal-footer"
          style="padding: 5px 50px 5px 50px;">
 	    <table class="table table-bordered table-compact"
 	           style="margin-bottom:5px;">
@@ -60,7 +61,8 @@
 	               <td class="label-cell">Current Price</td>
 	               <td class="value-cell fixed-font">{{getCurrentMktPrice() | amt}}</td>
                    <td class="label-cell">Trend</td>
-	               <td style="text-align:center;">
+	               <td class="value-cell"
+	                   style="text-align:center;">
 	                   <span ng-if="chartData.indicators.trend == 'VERY BULLISH'"
 	                         class="glyphicon glyphicon-arrow-up"
 	                         style="color:green;"></span>
