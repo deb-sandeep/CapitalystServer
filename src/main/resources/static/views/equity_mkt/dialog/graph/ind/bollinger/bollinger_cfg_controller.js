@@ -7,7 +7,8 @@ capitalystNgApp.controller( 'BollingerCfgController',
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
         windowSize : 20,
-        numStdDev : 2    
+        numStdDev : 2,
+        enableFlag : false 
     } ;
     
     // -------------------------------------------------------------------------
@@ -22,6 +23,16 @@ capitalystNgApp.controller( 'BollingerCfgController',
             $scope.fetchBollingerBands() ;
         }        
     } ) ;
+    
+    $scope.enableFlagUpdated = function() {
+        console.log( "Enable flag = " + $scope.config.enableFlag ) ;
+        if( $scope.config.enableFlag ) {
+            $scope.fetchBollingerBands() ;
+        }
+        else {
+            $scope.hideBollingerBands() ;
+        }
+    }
     
     $scope.hideBollingerBands = function() {
         enableBollingerBands( false ) ;         
@@ -66,6 +77,7 @@ capitalystNgApp.controller( 'BollingerCfgController',
         $scope.$parent.bollingerOptions.lower.enabled  = enable ;
         
         $scope.$parent.plotBollingerBands() ;
+        $scope.config.enableFlag = enable ;
     }
     
     // ------------------- Server comm functions -------------------------------

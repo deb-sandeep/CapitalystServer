@@ -1,7 +1,11 @@
 <div class="panel-heading">
   <h4 class="panel-title">
+    <input type="checkbox" 
+           ng-model="config.enableFlag"
+           ng-change="enableFlagUpdated()"/>
+    &nbsp;
     <a data-target="#bollinger" data-toggle="collapse">
-    Bollinger Bands
+    Bollinger Bands {{config.enableFlag}}
     </a>
   </h4>
 </div>

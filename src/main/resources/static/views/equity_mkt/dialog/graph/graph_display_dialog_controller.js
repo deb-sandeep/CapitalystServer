@@ -669,18 +669,18 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
                 const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
                 const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
-                console.log( dataX + " - " + dataY ) ;
-                console.log( elements ) ;
-                console.log( c ) ;
+                //console.log( dataX + " - " + dataY ) ;
+                //console.log( elements ) ;
+                //console.log( c ) ;
             },
             onHover: ( e, elements, c ) => {
                 
                 const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
                 const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
                 const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
-                console.log( dataX + " - " + dataY ) ;
-                console.log( elements ) ;
-                console.log( c ) ;
+                //console.log( dataX + " - " + dataY ) ;
+                //console.log( elements ) ;
+                //console.log( c ) ;
             }
         } ;
     }
