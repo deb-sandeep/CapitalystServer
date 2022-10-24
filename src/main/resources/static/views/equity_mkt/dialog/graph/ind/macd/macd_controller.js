@@ -26,7 +26,8 @@ capitalystNgApp.controller( 'MACDController',
     $scope.config = {
         minWindowSize : 12,
         maxWindowSize : 26,
-        sigWindowSize : 9    
+        sigWindowSize : 9,
+        enableFlag    : false
     } ;
     
     // -------------------------------------------------------------------------
@@ -41,9 +42,19 @@ capitalystNgApp.controller( 'MACDController',
         }
     } ) ;
 
+    $scope.enableFlagUpdated = function() {
+        if( $scope.config.enableFlag ) {
+            $scope.showMACDChart() ;
+        }
+        else {
+            $scope.hideMACDChart() ;
+        }
+    }
+    
     $scope.hideMACDChart = function() {
         
         $scope.$parent.hideFooterChart( 'macd' ) ;
+        $scope.config.enableFlag = false ;
         
         if( chart != null ) {
             chart.destroy() ;

@@ -25,7 +25,6 @@ capitalystNgApp.controller( 'BollingerCfgController',
     } ) ;
     
     $scope.enableFlagUpdated = function() {
-        console.log( "Enable flag = " + $scope.config.enableFlag ) ;
         if( $scope.config.enableFlag ) {
             $scope.fetchBollingerBands() ;
         }
