@@ -60,7 +60,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         d20 :{ ...baseMAOpts, window:  20, color: '#1ceaea', smaEnabled: true },
         d50 :{ ...baseMAOpts, window:  50, color: '#fc8e04' },
         d100:{ ...baseMAOpts, window: 100, color: '#49bed0' },
-        d200:{ ...baseMAOpts, window: 200, color: '#fc00a5' },
     } ;
     
     $scope.bollingerOptions = {
@@ -663,7 +662,26 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             animation : getAnimationOptions(),
             transitions : getTransitionsOptions(),
             responsive : true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            events: ['click', 'mousemove'],
+            onClick: ( e, elements, c ) => {
+                
+                const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
+                const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
+                const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
+                console.log( dataX + " - " + dataY ) ;
+                console.log( elements ) ;
+                console.log( c ) ;
+            },
+            onHover: ( e, elements, c ) => {
+                
+                const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
+                const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
+                const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
+                console.log( dataX + " - " + dataY ) ;
+                console.log( elements ) ;
+                console.log( c ) ;
+            }
         } ;
     }
     
