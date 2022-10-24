@@ -25,6 +25,7 @@ capitalystNgApp.controller( 'RSIController',
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
         windowSize : 14,
+        enableFlag : false,
     } ;
     
     // -------------------------------------------------------------------------
@@ -39,9 +40,19 @@ capitalystNgApp.controller( 'RSIController',
         }
     } ) ;
 
+    $scope.enableFlagUpdated = function() {
+        if( $scope.config.enableFlag ) {
+            $scope.showRSIChart() ;
+        }
+        else {
+            $scope.hideRSIChart() ;
+        }
+    }
+    
     $scope.hideRSIChart = function() {
         
         $scope.$parent.hideFooterChart( CHART_ID ) ;
+        $scope.config.enableFlag = false ;
         
         if( chart != null ) {
             chart.destroy() ;
@@ -63,6 +74,7 @@ capitalystNgApp.controller( 'RSIController',
                 rsiLineData = response.data[ RSI_LINE_DS_ID ] ;
                 
                 $scope.$parent.showFooterChart( CHART_ID ) ;
+                $scope.config.enableFlag = true ;
                 
                 drawChart() ;
             }

@@ -1,5 +1,9 @@
 <div class="panel-heading">
   <h4 class="panel-title">
+    <input type="checkbox" 
+           ng-model="config.enableFlag"
+           ng-change="enableFlagUpdated()"/>
+    &nbsp;
     <a data-target="#rsi" data-toggle="collapse">
     RSI
     </a>

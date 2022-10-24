@@ -82,6 +82,7 @@ capitalystNgApp.controller( 'MACDController',
                 macdHistData = response.data[ 'macd-hist'   ] ;
                 
                 $scope.$parent.showFooterChart( 'macd' ) ;
+                $scope.config.enableFlag = true ;
                 
                 drawChart() ;
             }
