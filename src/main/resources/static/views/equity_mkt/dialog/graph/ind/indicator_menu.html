@@ -5,18 +5,9 @@
        ng-include="'dialog/graph/ind/sma/sma_cfg.html'">
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-target="#bollinger" data-toggle="collapse">
-        Bollinger Bands
-        </a>
-      </h4>
-    </div>
-    <div id="bollinger" 
-         class="panel-collapse collapse in form indicator-options"
-         ng-include="'dialog/graph/ind/bollinger/bollinger_cfg.html'">
-    </div>
+  <div class="panel panel-default"
+       ng-include="'dialog/graph/ind/bollinger/bollinger_cfg.html'"
+       ng-controller="BollingerCfgController">
   </div>
 
   <div class="panel panel-default">
