@@ -10,46 +10,18 @@
        ng-controller="BollingerCfgController">
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-target="#macd" data-toggle="collapse">
-        MACD
-        </a>
-      </h4>
-    </div>
-    <div id="macd" 
-         class="panel-collapse collapse in form indicator-options"
-         ng-include="'dialog/graph/ind/macd/macd.html'">
-    </div>
+  <div class="panel panel-default"
+       ng-include="'dialog/graph/ind/macd/macd.html'"
+       ng-controller="MACDController">
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-target="#rsi" data-toggle="collapse">
-        RSI
-        </a>
-      </h4>
-    </div>
-    <div id="rsi" 
-         class="panel-collapse collapse in form indicator-options"
-         ng-include="'dialog/graph/ind/rsi/rsi.html'">
-    </div>
+  <div class="panel panel-default"
+       ng-include="'dialog/graph/ind/rsi/rsi.html'"
+       ng-controller="RSIController">
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-target="#measure" data-toggle="collapse">
-        Measure
-        </a>
-      </h4>
-    </div>
-    <div id="measure" 
-         class="panel-collapse collapse in form indicator-options"
-         ng-include="'dialog/graph/ind/measure/measure.html'">
-    </div>
+  <div class="panel panel-default"
+       ng-include="'dialog/graph/ind/measure/measure.html'">
   </div>
 
 </div>

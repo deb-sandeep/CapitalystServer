@@ -1,21 +1,35 @@
-<input type="checkbox" ng-model="$parent.enableMeasure"/>
-&nbsp; - &nbsp;Enable measure
-<p/>
-<table>
-    <thead>
-	    <tr>
-	        <th width="100px"></th>
-	        <th width="50px"></th>
-	    </tr>
-    </thead>
-    <tbody>
-		<tr>
-		    <td>% Change</td>
-		    <td>45.4 %</td>
-		</tr>
-		<tr>
-		    <td># Days</td>
-		    <td>20</td>
-		</tr>
-    </tbody>
-</table>
+<div class="panel-heading">
+  <h4 class="panel-title">
+    <a data-target="#measure" data-toggle="collapse">
+    Measure
+    </a>
+  </h4>
+</div>
+
+<div id="measure" 
+     class="panel-collapse collapse in form indicator-options">
+	<input type="checkbox" ng-model="$parent.enableMeasure"/>
+	&nbsp; - &nbsp;Enable measure
+	<p/>
+	<table>
+	    <thead>
+	        <tr>
+	            <th width="100px"></th>
+	            <th width="50px"></th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr>
+	            <td>% Change</td>
+	            <td>45.4 %</td>
+	        </tr>
+	        <tr>
+	            <td># Days</td>
+	            <td>20</td>
+	        </tr>
+	    </tbody>
+	</table>
+</div>
+
+
+
