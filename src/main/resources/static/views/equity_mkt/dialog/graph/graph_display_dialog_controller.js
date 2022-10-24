@@ -1,11 +1,11 @@
 capitalystNgApp.controller( 'GraphDisplayDialogController', 
                             function( $scope, $http, $window ) {
     
-    const BUY_COLOR            = '#256BEF' ;
+    const BUY_COLOR            = '#0191ff' ;
     const SELL_COLOR           = '#E7871C' ;
     const EOD_LINE_COLOR       = '#B5B7B5' ;
-    const EOD_LINE_COLOR_GREEN = '#CAE5CD' ;
-    const EOD_LINE_COLOR_RED   = '#FFDDD4' ;
+    const EOD_LINE_COLOR_GREEN = '#adc5b3' ;
+    const EOD_LINE_COLOR_RED   = '#c4aba7' ;
     const AVG_LINE_COLOR       = '#ABABAB' ;
     const SCATTER_POINT_RADIUS = 5 ;
     const MIN_RADIUS           = 2 ;
@@ -55,18 +55,18 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.duration = '6m' ;
     
     $scope.maGraphs = {
-        d5  :{ ...baseMAOpts, window:   5, color: '#0338FB' },
-        d10 :{ ...baseMAOpts, window:  10, color: '#C30061', smaEnabled: true },
-        d20 :{ ...baseMAOpts, window:  20, color: '#118788', smaEnabled: true },
-        d50 :{ ...baseMAOpts, window:  50, color: '#FC5D08' },
-        d100:{ ...baseMAOpts, window: 100, color: '#102C99' },
-        d200:{ ...baseMAOpts, window: 200, color: '#C30061' },
+        d5  :{ ...baseMAOpts, window:   5, color: '#00baff' },
+        d10 :{ ...baseMAOpts, window:  10, color: '#f6009b', smaEnabled: true },
+        d20 :{ ...baseMAOpts, window:  20, color: '#1ceaea', smaEnabled: true },
+        d50 :{ ...baseMAOpts, window:  50, color: '#fc8e04' },
+        d100:{ ...baseMAOpts, window: 100, color: '#49bed0' },
+        d200:{ ...baseMAOpts, window: 200, color: '#fc00a5' },
     } ;
     
     $scope.bollingerOptions = {
-        upper  : { enabled: true, color: '#cfcccc', dash:[]    },
-        middle : { enabled: true, color: '#3d54ff', dash:[2,4] },
-        lower  : { enabled: true, color: '#cfcccc', dash:[]    },
+        upper  : { enabled: true, color: '#139f9f', dash:[]    },
+        middle : { enabled: true, color: '#e2e92b', dash:[2,4] },
+        lower  : { enabled: true, color: '#139f9f', dash:[]    },
     } ;
     
     // -----------------------------------------------------------------------
@@ -353,6 +353,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         
         addMADatasets() ;
         
+        Chart.defaults.color = '#e0e0e0' ;
+        Chart.defaults.borderColor = '#4d4d4d' ;
+        
         chart = new Chart( document.getElementById( 'eodChartCanvas' ), {
             data: {
               labels: $scope.chartData.labels,
@@ -466,7 +469,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             data             : eodPriceList,
             borderColor      : eodLineColor,
             backgroundColor  : eodLineColor,
-            borderWidth      : 2,
+            borderWidth      : 1,
             tension          : 0,
             radius           : 0,
         } ;

@@ -50,6 +50,7 @@
 	--primaryChartHeight : 600px;
 	--chartWidth : 1100px;
 	--indDivWidth : 200px;
+	--canvasBackground : #32333b;
 }
 
 #graphDialog {
@@ -72,6 +73,7 @@
 #eodChartCanvas {
 	width: 100% ;
 	height: 100% ;
+    background-color: var( --canvasBackground ) ;
 }
 
 #macdChartDiv {
@@ -86,6 +88,7 @@
 #macdChartCanvas {
 	width: 100%;
 	height: 100%;
+	background-color: var( --canvasBackground ) ;
 }
 
 #rsiChartDiv {
@@ -100,6 +103,7 @@
 #rsiChartCanvas {
 	width: 100%;
 	height: 100%;
+    background-color: var( --canvasBackground ) ;
 }
 
 #indicatorsDiv {
