@@ -291,15 +291,20 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                       "&ex=NSE" ) ;
     }
     
-    $scope.measureEnableFlagChanged = function() {
-        
-        if( $scope.measureConfig.enabled == false ) {
-            deleteMeasureAnnotation( 'all' ) ;
-            chart.update() ;
-        }
+    // ------------------- Document events ======-------------------------------
+    document.onkeydown = (event) => {
+        if( event.ctrlKey && event.key == "m" ) {
+            if( !$scope.measureConfig.enabled ) {
+                $scope.measureConfig.enabled = true ;
+            }
+            else {
+                $scope.measureConfig.enabled = false ;
+                deleteMeasureAnnotation( 'all' ) ;
+                chart.update() ;
+            }
+        }     
     }
     
-    // -----------------------------------------------------------------------
     // ------------------- Server comm functions -------------------------------
     function fetchChartData() {
         
@@ -759,14 +764,63 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
            backgroundColor : 'rgba(90, 93, 107, 0.25)',
         } ;
         
+        addMeasureDetailsAnnotation( start, end ) ;
+    }
+    
+    function addMeasureDetailsAnnotation( start, end ) {
         
+        const minX  = Math.min( start.x, end.x ) ;
+        const maxX  = Math.max( start.x, end.x ) ;
+        const minY  = Math.min( start.y, end.y ) ;
+        const maxY  = Math.max( start.y, end.y ) ;
+
+        const startDate   = new Date( minX ) ;
+        const endDate     = new Date( maxX ) ;
+        const numDays     = Math.floor((maxX - minX)/(1000*60*60*24)) ; 
+        const priceChg    = end.y - start.y ;
+        const priceChgPct = (priceChg / start.y)*100 ; 
+        
+        //content.push( "Start date : " + startDate.toLocaleDateString() ) ;
+        //content.push( "End date   : " + endDate.toLocaleDateString() ) ;
+        const pctChgStr = Number( priceChgPct ).toFixed( 1 ) + "%        " ;
+        const numDayStr = numDays + " days" ;
+        
+        annotations[ 'measurePriceChgDetails' ] = {
+            type      : 'label',
+            xValue    : maxX,
+            yValue    : maxY,
+            content   : pctChgStr,
+            textAlign : 'left',
+            color     : 'white',
+            font   : {
+              size   : 12,
+              family : 'courier'
+            },
+            backgroundColor: 'rgba(0,0,0,0.0)',
+        } ;
+        
+        annotations[ 'measureNumDaysDetails' ] = {
+            type      : 'label',
+            xValue    : (maxX+minX)/2,
+            yValue    : minY,
+            content   : numDayStr,
+            textAlign : 'center',
+            color     : 'white',
+            font   : {
+              size   : 12,
+              family : 'courier'
+            },
+            backgroundColor: 'rgba(0,0,0,0.0)',
+        } ;
     }
     
     function deleteMeasureAnnotation( name ) {
         if( name == 'all' ) {
-            deleteMeasureAnnotation( 'measureStart'  ) ;
-            deleteMeasureAnnotation( 'measureEnd'    ) ;
-            deleteMeasureAnnotation( 'measureRegion' ) ;
+            for( name in annotations ) {
+                if( name.startsWith( 'measure' ) ) {
+                    deleteMeasureAnnotation( name  ) ;
+                }
+            }
         }
         else if( annotations.hasOwnProperty( name ) ) {
             delete annotations[ name ] ;
