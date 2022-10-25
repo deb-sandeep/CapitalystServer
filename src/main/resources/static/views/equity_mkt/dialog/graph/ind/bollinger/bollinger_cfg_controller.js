@@ -2,7 +2,6 @@ capitalystNgApp.controller( 'BollingerCfgController',
                             function( $scope, $http ) {
     
     // ---------------- Local variables ----------------------------------------
-    var visibleFlag = false ;    
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
@@ -14,14 +13,10 @@ capitalystNgApp.controller( 'BollingerCfgController',
     // -------------------------------------------------------------------------
     // --- [START] Scope functions ---------------------------------------------
     $scope.$on( "eodGraphPreDestroy", function( _event, args ) {
-        visibleFlag = isIndicatorVisible() ;
     } ) ;
     
     $scope.$on( "eodGraphPostRender", function( _event, args ) {
-        console.log( "eodGraphPostRender event received in Bollinger" ) ;
-        if( visibleFlag ) {
-            $scope.fetchBollingerBands() ;
-        }        
+        $scope.fetchBollingerBands() ;
     } ) ;
     
     $scope.enableFlagUpdated = function() {

@@ -57,20 +57,20 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     
     $scope.maGraphs = {
         d5  :{ ...baseMAOpts, window:   5, color: '#00baff' },
-        d10 :{ ...baseMAOpts, window:  10, color: '#f6009b', smaEnabled: true },
-        d20 :{ ...baseMAOpts, window:  20, color: '#1ceaea', smaEnabled: true },
+        d10 :{ ...baseMAOpts, window:  10, color: '#00ea50', smaEnabled: true, dash:[2,2] },
+        d20 :{ ...baseMAOpts, window:  20, color: '#ff00a1' },
         d50 :{ ...baseMAOpts, window:  50, color: '#fc8e04' },
         d100:{ ...baseMAOpts, window: 100, color: '#49bed0' },
     } ;
     
     $scope.bollingerOptions = {
-        upper  : { enabled: true, color: '#139f9f', dash:[]    },
-        middle : { enabled: true, color: '#e2e92b', dash:[2,4] },
-        lower  : { enabled: true, color: '#139f9f', dash:[]    },
+        upper  : { enabled: false, color: '#139f9f', dash:[]    },
+        middle : { enabled: false, color: '#ff00a1', dash:[2,2] },
+        lower  : { enabled: false, color: '#139f9f', dash:[]    },
     } ;
     
     $scope.measureConfig = {
-        enabled : false,
+        enabled : true,
         currentMode : null,
         start : { x : 0, y : 0 },
         end   : { x : 0, y : 0 },
@@ -94,7 +94,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             
             $scope.duration = newDuration ;
             var opts = $scope.maGraphs ;
-            var anyMAEnabled = false ;
             
             for( key in $scope.maGraphs ) {
                 
@@ -105,32 +104,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 }
             }
             
-            // If we have been observing MA and the duration changed, 
-            // we draw MA on the new curve but intelligently.
-            if( anyMAEnabled ) {
-                if( newDuration == '1m' || newDuration == '2m' ) {
-                    opts.d5.smaEnabled  = true ;
-                    opts.d10.smaEnabled = true ;
-                }
-                else if( newDuration == '3m' || newDuration == '6m' ) {
-                    opts.d10.smaEnabled = true ;
-                    opts.d20.smaEnabled = true ;
-                }
-                else if( newDuration == '1y' ) {
-                    opts.d20.smaEnabled = true ;
-                    opts.d50.smaEnabled = true ;
-                }
-                else if( newDuration == '2y' || newDuration == '3y' ) {
-                    opts.d50.smaEnabled  = true ;
-                    opts.d100.smaEnabled = true ;
-                }
-                else if( newDuration == '5y' ) {
-                    opts.d100.smaEnabled = true ;
-                    opts.d200.smaEnabled = true ;
-                }
-            }
+            opts.d10.smaEnabled = true ;
             
-            // Freshly fetch the graph data for the new duration.
             fetchChartData() ;
         }
     }
@@ -364,6 +339,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         }
 
         datasets.length = 0 ;
+        annotations = {} ;
         chartOptions = getChartOptions() ;
         
         addDataset( getBuyTradesDataset()  ) ;
