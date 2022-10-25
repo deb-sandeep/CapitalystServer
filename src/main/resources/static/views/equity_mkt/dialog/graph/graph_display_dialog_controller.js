@@ -669,7 +669,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         
         const p = getMouseCoordinates( event ) ;
         if( $scope.measureConfig.enabled ) {
-            handleMeasureEvent( 'click', p ) ;
+            handleMeasureClickEvent( p ) ;
         }
     }
     
@@ -677,37 +677,42 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         
         const p = getMouseCoordinates( event ) ;
         if( $scope.measureConfig.enabled ) {
-            handleMeasureEvent( 'hover', p ) ;
+            handleMeasureHoverEvent( p ) ;
         }
     }
     
-    function handleMeasureEvent( action, p ) {
+    function handleMeasureClickEvent( p ) {
         
-        const config = $scope.measureConfig ;
-        
-        if( action == 'click' ) {
-            
-            const curMode = config.currentMode ;
-             
-            if( curMode == null || curMode == 'seeking-start' ) {
-                config.start = p ;
-                config.currentMode = 'seeking-end' ;
+        const config  = $scope.measureConfig ;
+        const curMode = config.currentMode ;
+         
+        if( curMode == null || curMode == 'seeking-start' ) {
+            config.start = p ;
+            config.currentMode = 'seeking-end' ;
 
-                addMeasureStartAnnotation( p ) ;
-                deleteMeasureAnnotation( 'measureEnd' ) ;
-            }
-            else if( curMode == 'seeking-end' ) {
-                config.end = p ;
-                config.currentMode = 'seeking-start' ;
-
-                addMeasureEndAnnotation( p ) ;
-            }
-            
+            addMeasureStartAnnotation( p ) ;
+            deleteMeasureAnnotation( 'measureEnd' ) ;
             chart.update() ;
         }
-        else {
-            
+        else if( curMode == 'seeking-end' ) {
+            config.end = p ;
+            config.currentMode = 'seeking-start' ;
+
+            addMeasureEndAnnotation( p ) ;
+            chart.update() ;
         }
+    }
+    
+    function handleMeasureHoverEvent( p ) {
+        
+        const config  = $scope.measureConfig ;
+        const curMode = config.currentMode ;
+         
+        if( curMode == 'seeking-end' ) {
+            config.end = p ;
+            addMeasureRegionAnnotation( p ) ;
+        }
+        chart.update() ;
     }
     
     function addMeasureStartAnnotation( p ) {
@@ -716,7 +721,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
            xValue : p.x,
            yValue : p.y,
            radius : 3,
-           borderColor : 'cyan',
+           
+           borderColor     : 'cyan',
            backgroundColor : 'cyan',
         } ;
     }
@@ -727,15 +733,40 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
            xValue : p.x,
            yValue : p.y,
            radius : 3,
-           borderColor : 'red',
+           
+           borderColor     : 'red',
            backgroundColor : 'red',
         } ;
     }
     
+    function addMeasureRegionAnnotation() {
+        
+        const start = $scope.measureConfig.start ;
+        const end   = $scope.measureConfig.end ;
+        const minX  = Math.min( start.x, end.x ) ;
+        const maxX  = Math.max( start.x, end.x ) ;
+        const minY  = Math.min( start.y, end.y ) ;
+        const maxY  = Math.max( start.y, end.y ) ;
+        
+        annotations[ 'measureRegion' ] = {
+           type : 'box',
+           xMin : minX,
+           xMax : maxX,
+           yMin : minY,
+           yMax : maxY,
+           
+           borderColor     : 'rgba(90, 93, 107, 0.25)',
+           backgroundColor : 'rgba(90, 93, 107, 0.25)',
+        } ;
+        
+        
+    }
+    
     function deleteMeasureAnnotation( name ) {
         if( name == 'all' ) {
-            deleteMeasureAnnotation( 'measureStart' ) ;
-            deleteMeasureAnnotation( 'measureEnd' ) ;
+            deleteMeasureAnnotation( 'measureStart'  ) ;
+            deleteMeasureAnnotation( 'measureEnd'    ) ;
+            deleteMeasureAnnotation( 'measureRegion' ) ;
         }
         else if( annotations.hasOwnProperty( name ) ) {
             delete annotations[ name ] ;
