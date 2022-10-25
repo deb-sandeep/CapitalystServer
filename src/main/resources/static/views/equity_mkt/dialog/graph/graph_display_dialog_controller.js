@@ -294,12 +294,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.measureEnableFlagChanged = function() {
         
         if( $scope.measureConfig.enabled == false ) {
-            if( annotations.hasOwnProperty( 'measureStart' ) ) {
-                delete annotations[ 'measureStart' ] ;
-            }
-            if( annotations.hasOwnProperty( 'measureEnd' ) ) {
-                delete annotations[ 'measureStart' ] ;
-            }
+            deleteMeasureAnnotation( 'all' ) ;
             chart.update() ;
         }
     }
@@ -669,6 +664,94 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         return emaArray;
     }
     
+    // ------------------- Mouse handling --------------------------------------
+    function handleMouseClick( event ) {
+        
+        const p = getMouseCoordinates( event ) ;
+        if( $scope.measureConfig.enabled ) {
+            handleMeasureEvent( 'click', p ) ;
+        }
+    }
+    
+    function handleMouseHover( event ) {
+        
+        const p = getMouseCoordinates( event ) ;
+        if( $scope.measureConfig.enabled ) {
+            handleMeasureEvent( 'hover', p ) ;
+        }
+    }
+    
+    function handleMeasureEvent( action, p ) {
+        
+        const config = $scope.measureConfig ;
+        
+        if( action == 'click' ) {
+            
+            const curMode = config.currentMode ;
+             
+            if( curMode == null || curMode == 'seeking-start' ) {
+                config.start = p ;
+                config.currentMode = 'seeking-end' ;
+
+                addMeasureStartAnnotation( p ) ;
+                deleteMeasureAnnotation( 'measureEnd' ) ;
+            }
+            else if( curMode == 'seeking-end' ) {
+                config.end = p ;
+                config.currentMode = 'seeking-start' ;
+
+                addMeasureEndAnnotation( p ) ;
+            }
+            
+            chart.update() ;
+        }
+        else {
+            
+        }
+    }
+    
+    function addMeasureStartAnnotation( p ) {
+        annotations[ 'measureStart' ] = {
+           type   : 'point',
+           xValue : p.x,
+           yValue : p.y,
+           radius : 3,
+           borderColor : 'cyan',
+           backgroundColor : 'cyan',
+        } ;
+    }
+    
+    function addMeasureEndAnnotation( p ) {
+        annotations[ 'measureEnd' ] = {
+           type   : 'point',
+           xValue : p.x,
+           yValue : p.y,
+           radius : 3,
+           borderColor : 'red',
+           backgroundColor : 'red',
+        } ;
+    }
+    
+    function deleteMeasureAnnotation( name ) {
+        if( name == 'all' ) {
+            deleteMeasureAnnotation( 'measureStart' ) ;
+            deleteMeasureAnnotation( 'measureEnd' ) ;
+        }
+        else if( annotations.hasOwnProperty( name ) ) {
+            delete annotations[ name ] ;
+        }
+    }
+    
+    function getMouseCoordinates( event ) {
+        
+        const relPos = Chart.helpers.getRelativePosition(event, chart) ;
+        
+        return { 
+            x: chart.scales.x.getValueForPixel( relPos.x ) , 
+            y: chart.scales.y.getValueForPixel( relPos.y ) , 
+        } ;
+    }
+    
     // ------------------- Graph options ---------------------------------------
     function getChartOptions() {
         
@@ -692,48 +775,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             onClick: handleMouseClick,
             onHover: handleMouseHover,
         } ;
-    }
-    
-    function handleMouseClick( event ) {
-        
-        const p = getMouseCoordinates( event ) ;
-        if( $scope.measureConfig.enabled ) {
-            handleMeasureEvent( 'click', p ) ;
-        }
-    }
-    
-    function handleMouseHover( event ) {
-        
-        const p = getMouseCoordinates( event ) ;
-        if( $scope.measureConfig.enabled ) {
-            handleMeasureEvent( 'hover', p ) ;
-        }
-    }
-    
-    function handleMeasureEvent( action, p ) {
-        
-        if( action == 'click' ) {
-            annotations['measureStart'] = {
-               type : 'point',
-               xValue : p.x,
-               yValue : p.y,
-               radius : 5, 
-            } ;
-            chart.update() ;
-        }
-        else {
-            
-        }
-        
-    }
-    
-    function getMouseCoordinates( event ) {
-        
-        const canvasPosition = Chart.helpers.getRelativePosition(event, chart) ;
-        const dataX = chart.scales.x.getValueForPixel(canvasPosition.x) ;
-        const dataY = chart.scales.y.getValueForPixel(canvasPosition.y) ;
-        
-        return { x: dataX, y: dataY } ;
     }
     
     function getTooltipOptions() {
