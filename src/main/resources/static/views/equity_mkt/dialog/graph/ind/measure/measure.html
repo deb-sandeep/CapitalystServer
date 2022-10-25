@@ -8,7 +8,9 @@
 
 <div id="measure" 
      class="panel-collapse collapse in form indicator-options">
-	<input type="checkbox" ng-model="$parent.enableMeasure"/>
+	<input type="checkbox" 
+	       ng-model="$parent.measureConfig.enabled"
+	       ng-change="measureEnableFlagChanged()" />
 	&nbsp; - &nbsp;Enable measure
 	<p/>
 	<table>

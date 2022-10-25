@@ -15,7 +15,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     // ---------------- Local variables --------------------------------------
     var chart = null ;
     var datasets = [] ;
-    var chartOptions = null 
+    var chartOptions = null ;
+    var annotations = {} ;
     
     var minQty = 999999 ;
     var maxQty = 0 ;
@@ -66,6 +67,13 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         upper  : { enabled: true, color: '#139f9f', dash:[]    },
         middle : { enabled: true, color: '#e2e92b', dash:[2,4] },
         lower  : { enabled: true, color: '#139f9f', dash:[]    },
+    } ;
+    
+    $scope.measureConfig = {
+        enabled : false,
+        currentMode : null,
+        start : { x : 0, y : 0 },
+        end   : { x : 0, y : 0 },
     } ;
     
     // -----------------------------------------------------------------------
@@ -281,6 +289,19 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         $window.open( "https://www.moneycontrol.com/mc/stock/chart" + 
                       "?exchangeId=" + $scope.graphParams.symbolNse + 
                       "&ex=NSE" ) ;
+    }
+    
+    $scope.measureEnableFlagChanged = function() {
+        
+        if( $scope.measureConfig.enabled == false ) {
+            if( annotations.hasOwnProperty( 'measureStart' ) ) {
+                delete annotations[ 'measureStart' ] ;
+            }
+            if( annotations.hasOwnProperty( 'measureEnd' ) ) {
+                delete annotations[ 'measureStart' ] ;
+            }
+            chart.update() ;
+        }
     }
     
     // -----------------------------------------------------------------------
@@ -656,7 +677,11 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             plugins : {
                 legend: { display: false },
                 tooltip: getTooltipOptions(),
-                zoom : getZoomPanOptions()
+                zoom : getZoomPanOptions(),
+                autocolors : false,
+                annotation : {
+                    annotations : annotations,
+                },
             },
             scales : getScaleOptions(),
             animation : getAnimationOptions(),
@@ -664,25 +689,51 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             responsive : true,
             maintainAspectRatio: false,
             events: ['click', 'mousemove'],
-            onClick: ( e, elements, c ) => {
-                
-                const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
-                const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
-                const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
-                //console.log( dataX + " - " + dataY ) ;
-                //console.log( elements ) ;
-                //console.log( c ) ;
-            },
-            onHover: ( e, elements, c ) => {
-                
-                const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
-                const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
-                const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
-                //console.log( dataX + " - " + dataY ) ;
-                //console.log( elements ) ;
-                //console.log( c ) ;
-            }
+            onClick: handleMouseClick,
+            onHover: handleMouseHover,
         } ;
+    }
+    
+    function handleMouseClick( event ) {
+        
+        const p = getMouseCoordinates( event ) ;
+        if( $scope.measureConfig.enabled ) {
+            handleMeasureEvent( 'click', p ) ;
+        }
+    }
+    
+    function handleMouseHover( event ) {
+        
+        const p = getMouseCoordinates( event ) ;
+        if( $scope.measureConfig.enabled ) {
+            handleMeasureEvent( 'hover', p ) ;
+        }
+    }
+    
+    function handleMeasureEvent( action, p ) {
+        
+        if( action == 'click' ) {
+            annotations['measureStart'] = {
+               type : 'point',
+               xValue : p.x,
+               yValue : p.y,
+               radius : 5, 
+            } ;
+            chart.update() ;
+        }
+        else {
+            
+        }
+        
+    }
+    
+    function getMouseCoordinates( event ) {
+        
+        const canvasPosition = Chart.helpers.getRelativePosition(event, chart) ;
+        const dataX = chart.scales.x.getValueForPixel(canvasPosition.x) ;
+        const dataY = chart.scales.y.getValueForPixel(canvasPosition.y) ;
+        
+        return { x: dataX, y: dataY } ;
     }
     
     function getTooltipOptions() {
