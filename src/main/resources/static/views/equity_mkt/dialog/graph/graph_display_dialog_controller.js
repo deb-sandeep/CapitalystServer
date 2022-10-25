@@ -302,6 +302,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 deleteMeasureAnnotation( 'all' ) ;
                 chart.update() ;
             }
+            $scope.$digest() ;
         }     
     }
     
@@ -783,7 +784,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         //content.push( "Start date : " + startDate.toLocaleDateString() ) ;
         //content.push( "End date   : " + endDate.toLocaleDateString() ) ;
         const pctChgStr = Number( priceChgPct ).toFixed( 1 ) + "%        " ;
-        const numDayStr = numDays + " days" ;
+        const numDayStr = getDurationStr( numDays ) ;
         
         annotations[ 'measurePriceChgDetails' ] = {
             type      : 'label',
@@ -812,6 +813,29 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             },
             backgroundColor: 'rgba(0,0,0,0.0)',
         } ;
+    }
+    
+    function getDurationStr( numDays ) {
+        
+        var str = "" ;
+        
+        if( numDays > 365 ) {
+            var numYears = Math.floor( numDays/365 ) ;
+            str = numYears + "y " ;
+            numDays -= numYears * 365 ;
+        }
+        
+        if( numDays > 30 ) {
+            var numMonths = Math.floor( numDays/30 ) ;
+            str += numMonths + "m ";
+            numDays -= numMonths * 30 ;
+        }
+        
+        if( numDays > 0 ) {
+            str += numDays + "d" ;
+        }
+        
+        return str ;
     }
     
     function deleteMeasureAnnotation( name ) {

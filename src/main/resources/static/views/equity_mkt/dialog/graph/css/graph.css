@@ -117,6 +117,15 @@ input[type="checkbox"] {
      background-color:var( --canvasBackground ) ;
 }
 
+#modeIconPanel {
+	height:30px;
+	padding: 5px;
+	border-style: solid;
+	border-color: #515462;
+	border-width: 1px;
+	color: #fff57d;
+}
+
 .indicator-options {
     padding: 2px 2px 2px 10px;
     background-color: var( --canvasBackground ) ;

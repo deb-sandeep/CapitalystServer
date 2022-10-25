@@ -1,5 +1,10 @@
 <div id="indicatorsPanel"
      class="panel-group" id="acc">
+     
+  <div id="modeIconPanel">
+        <i ng-show="$parent.$parent.measureConfig.enabled"
+           class="fa-solid fa-pen-ruler"></i>
+  </div>
   
   <div class="panel panel-default"
        ng-include="'dialog/graph/ind/sma/sma_cfg.html'">
