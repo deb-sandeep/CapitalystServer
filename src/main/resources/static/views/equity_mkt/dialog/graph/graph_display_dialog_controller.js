@@ -266,19 +266,20 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                       "&ex=NSE" ) ;
     }
     
-    // ------------------- Document events ======-------------------------------
-    document.onkeydown = (event) => {
-        if( event.ctrlKey && event.key == "m" ) {
-            if( !$scope.measureConfig.enabled ) {
-                $scope.measureConfig.enabled = true ;
-            }
-            else {
-                $scope.measureConfig.enabled = false ;
-                deleteMeasureAnnotation( 'all' ) ;
-                chart.update() ;
-            }
-            $scope.$digest() ;
-        }     
+    $scope.toggleMeasureMode = function() {
+        
+        if( !$scope.measureConfig.enabled ) {
+            $scope.measureConfig.enabled = true ;
+        }
+        else {
+            $scope.measureConfig.enabled = false ;
+            deleteMeasureAnnotation( 'all' ) ;
+            chart.update() ;
+        }
+    }
+    
+    $scope.modeButtonEnabledClass = function( enabled ) {
+        return enabled ? "mode-btn-enabled" : "mode-btn-disabled" ;
     }
     
     // ------------------- Server comm functions -------------------------------
@@ -737,8 +738,8 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
            yMin : minY,
            yMax : maxY,
            
-           borderColor     : 'rgba(90, 93, 107, 0.25)',
-           backgroundColor : 'rgba(90, 93, 107, 0.25)',
+           borderColor     : 'rgba(90, 93, 107, 0.3)',
+           backgroundColor : 'rgba(90, 93, 107, 0.3)',
         } ;
         
         addMeasureDetailsAnnotation( start, end ) ;

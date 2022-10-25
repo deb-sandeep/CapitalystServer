@@ -123,7 +123,6 @@ input[type="checkbox"] {
 	border-style: solid;
 	border-color: #515462;
 	border-width: 1px;
-	color: #fff57d;
 }
 
 .indicator-options {
@@ -133,7 +132,6 @@ input[type="checkbox"] {
 }
 
 .indicator-cfg-btn {
-    
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
     background-color: var( --headingColor ) !important;
@@ -159,6 +157,14 @@ input[type="checkbox"] {
 
 .panel-default {
 	border-color: var( --headingColor ) !important;
+}
+
+.mode-btn-enabled {
+    color: #fff57d;	
+}
+
+.mode-btn-disabled {
+    color: #6c7469; 
 }
 
 /* ---------------- Footer style -------------------------------------------- */
