@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.equity.graph.internal.BarSeriesCache ;
-import com.sandy.capitalyst.server.api.equity.helper.EquityGraphDataBuilder ;
+import com.sandy.capitalyst.server.api.equity.graph.internal.EquityGraphDataBuilder ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;

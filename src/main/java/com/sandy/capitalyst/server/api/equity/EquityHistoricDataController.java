@@ -10,7 +10,11 @@ import java.util.List ;
 
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
+import org.springframework.core.io.ByteArrayResource ;
+import org.springframework.core.io.Resource ;
+import org.springframework.http.HttpHeaders ;
 import org.springframework.http.HttpStatus ;
+import org.springframework.http.MediaType ;
 import org.springframework.http.ResponseEntity ;
 import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.PathVariable ;
@@ -21,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile ;
 
 import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter.ImportResult ;
+import com.sandy.capitalyst.server.api.equity.helper.EquityHistoricDataCSVGenerator ;
 import com.sandy.capitalyst.server.core.log.IndentUtil ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQDataMeta ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataMetaRepo ;
@@ -56,6 +61,35 @@ public class EquityHistoricDataController {
         }
         catch( Exception e ) {
             log.error( "Error :: Getting equity portfolio.", e ) ;
+            return ResponseEntity.status( INTERNAL_SERVER_ERROR ).body( null ) ;
+        }
+    }
+    
+    @GetMapping( "/Equity/HistoricData/{symbol}" ) 
+    public ResponseEntity<Resource> getHistoricData( 
+        @PathVariable String symbol,
+        @RequestParam( name="period", defaultValue="6m" ) String period ) {
+
+        EquityHistoricDataCSVGenerator csvGen = null ;
+        ByteArrayResource resource = null ;
+        String csvContent = null ;
+        String fileName = null ;
+        
+        try {
+            
+            csvGen     = new EquityHistoricDataCSVGenerator( symbol, period ) ;
+            csvContent = csvGen.getCsv() ;
+            resource   = new ByteArrayResource( csvContent.getBytes() ) ;
+            fileName   = symbol + "-" + period + "-historic.csv" ; 
+            
+            return ResponseEntity
+                    .ok()
+                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName )
+                    .contentType( MediaType.parseMediaType("application/csv") )
+                    .body( resource ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Getting historic data.", e ) ;
             return ResponseEntity.status( INTERNAL_SERVER_ERROR ).body( null ) ;
         }
     }

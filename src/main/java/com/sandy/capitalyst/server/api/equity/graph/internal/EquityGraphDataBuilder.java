@@ -1,4 +1,4 @@
-package com.sandy.capitalyst.server.api.equity.helper ;
+package com.sandy.capitalyst.server.api.equity.graph.internal ;
 
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 
@@ -13,6 +13,7 @@ import org.apache.log4j.Logger ;
 import org.ta4j.core.BarSeries ;
 import org.ta4j.core.BaseBarSeries ;
 
+import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVOBuilder ;
 import com.sandy.capitalyst.server.api.equity.vo.FamilyEquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData.DayPriceData ;

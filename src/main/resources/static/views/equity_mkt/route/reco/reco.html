@@ -7,7 +7,7 @@
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
-                <th colspan="11" style="text-align:center;">
+                <th colspan="12" style="text-align:center;">
                     Performance % &nbsp;&nbsp;
                     <span class="glyphicon glyphicon-refresh"
                           ng-click="refreshTTM()"></span>
@@ -76,6 +76,7 @@
                 <th ng-click="sort('perf3Y')" style="width:40px;">
                     3Y
                 </th>
+                <th></th>
             </tr>
         </thead>
         
@@ -203,6 +204,10 @@
                <td class="fixed-font small-font" style="text-align:right;"
                    ng-class="getCellClass( 'perf3Y', reco.indicators.pricePerf3Y )">
                     {{reco.indicators.pricePerf3Y | number:1}}
+               </td>
+               <td>
+                   <span class="glyphicon glyphicon-save"
+                         ng-click="downloadHistoricData( reco.symbolNse )"></span>
                </td>
             </tr>
         </tbody>
