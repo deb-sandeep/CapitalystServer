@@ -128,10 +128,10 @@ capitalystNgApp.controller( 'RecoController',
     
     $scope.downloadHistoricData = function( symbolNse ) {
         
-        $http.get( '/Equity/HistoricData/' + symbolNse + '?period=6m' )
+        $http.get( '/Equity/HistoricData/' + symbolNse + '?period=2y' )
         .then(
             function( response ) {
-                const filename = symbolNse + "-EOD-6m.csv" ;
+                const filename = symbolNse + "-EOD-2y.csv" ;
                 const a = document.createElement( "a" ) ;
                 
                 a.href = "data:text/csv," + response.data;
