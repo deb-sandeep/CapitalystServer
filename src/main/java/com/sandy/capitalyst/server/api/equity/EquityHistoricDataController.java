@@ -27,6 +27,8 @@ import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter.ImportResult ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHistoricDataCSVGenerator ;
 import com.sandy.capitalyst.server.core.log.IndentUtil ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPConfig ;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQDataMeta ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataMetaRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
@@ -36,6 +38,9 @@ public class EquityHistoricDataController {
 
     private static final Logger log = Logger.getLogger( EquityHistoricDataController.class ) ;
     
+    public static final String CFG_GRP_NAME = "EquityHistDataExporter" ;
+    public static final String CFG_EXPORT_PERIOD = "export_period" ;
+
     @Autowired
     private HistoricEQDataMetaRepo hedmRepo = null ;
     
@@ -66,9 +71,7 @@ public class EquityHistoricDataController {
     }
     
     @GetMapping( "/Equity/HistoricData/{symbol}" ) 
-    public ResponseEntity<Resource> getHistoricData( 
-        @PathVariable String symbol,
-        @RequestParam( name="period", defaultValue="6m" ) String period ) {
+    public ResponseEntity<Resource> getHistoricData( @PathVariable String symbol ) {
 
         EquityHistoricDataCSVGenerator csvGen = null ;
         ByteArrayResource resource = null ;
@@ -76,6 +79,10 @@ public class EquityHistoricDataController {
         String fileName = null ;
         
         try {
+            
+            NVPManager nvpMgr = NVPManager.instance() ;
+            NVPConfig exportPeriod = nvpMgr.getConfig( CFG_GRP_NAME, CFG_EXPORT_PERIOD, "2y" ) ;
+            String period = exportPeriod.getValue() ;
             
             csvGen     = new EquityHistoricDataCSVGenerator( symbol, period ) ;
             csvContent = csvGen.getCsv() ;
