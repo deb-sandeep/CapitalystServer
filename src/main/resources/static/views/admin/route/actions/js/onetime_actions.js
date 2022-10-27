@@ -22,6 +22,7 @@ capitalystNgApp.controller( 'OneTimeActionsController',
         'HistPrevCloseUpdater'   : new OTAStat( 'HistPrevCloseUpdater'   ),
         'EquityTradeUpdater'     : new OTAStat( 'EquityTradeUpdater'     ),
         'HistoricEQDataImporter' : new OTAStat( 'HistoricEQDataImporter' ),
+        'HistoricIdxDataImporter': new OTAStat( 'HistoricIdxDataImporter'),
     } ;
     
     // -----------------------------------------------------------------------
