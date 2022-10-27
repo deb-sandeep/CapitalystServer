@@ -18,6 +18,7 @@ public class IndexMaster {
     private Integer id = null ;
     
     private String name = null ;
+    private Boolean histEnabled = Boolean.FALSE ;
     private String type = null ;
     private String includedStocksUrl = null ;
     private String description = null ;
