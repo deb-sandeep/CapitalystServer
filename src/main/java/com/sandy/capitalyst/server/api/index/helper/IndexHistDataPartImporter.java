@@ -6,8 +6,10 @@ import static com.sandy.capitalyst.server.core.util.StringUtil.DD_MMM_YYYY ;
 import java.util.Date ;
 import java.util.List ;
 
+import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
+import com.sandy.capitalyst.server.api.index.helper.IndexHistDataImporter.ImportResult ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.dao.index.HistoricIdxDataMeta ;
@@ -40,7 +42,7 @@ public class IndexHistDataPartImporter {
     public static final String CFG_IGNORE_SYMBOLS   = "ignore_indexes" ;
     
     public static final String CFG_DEF_EOD_START_DATE  = "01-01-2014" ;
-    public static final int    CFG_DEF_SCOOP_SIZE_DAYS = 365 ;
+    public static final int    CFG_DEF_SCOOP_SIZE_DAYS = 364 ;
     
     private NVPConfigGroup cfg = null ;
     
@@ -57,7 +59,7 @@ public class IndexHistDataPartImporter {
     }
     
     private void loadRepositories() {
-        //eodRepo       = getBean( HistoricIdxDataRepo.class ) ;     
+        eodRepo       = getBean( HistoricIdxDataRepo.class ) ;     
         idxMasterRepo = getBean( IndexMasterRepo.class ) ;
         eodMetaRepo   = getBean( HistoricIdxDataMetaRepo.class ) ;
     }
@@ -80,7 +82,7 @@ public class IndexHistDataPartImporter {
                 log.info( "- All symbols have required historic data." ) ;
             }
             else {
-                log.debug( "- Importing historic data for idx " + meta.getIndexName() ) ;
+                importHistoricValues( meta ) ;
             } 
         }
         finally {
@@ -147,5 +149,36 @@ public class IndexHistDataPartImporter {
             }
         }
         return meta ;
+    }
+
+    private ImportResult importHistoricValues( HistoricIdxDataMeta meta ) 
+        throws Exception {
+        
+        IndexHistDataImporter  importer = null ;
+        ImportResult           result   = null ;
+        
+        Date toDate   = meta.getEarliestEodDate() ;
+        Date fromDate = null ;
+        
+        toDate   = toDate == null ? new Date() : toDate ;
+        fromDate = DateUtils.addDays( toDate, -scoopSizeInDays ) ;
+        
+        importer = new IndexHistDataImporter( meta.getIndex(), fromDate, toDate ) ;
+
+        result = importer.execute() ;
+        
+        if( result.getNumRecordsFounds() == 0 ) {
+            meta.setEarliestEodDate( earliestEodStartDateLimit ) ;
+        }
+        else {
+            meta.setEarliestEodDate( fromDate ) ;
+        }
+        
+        meta.setNumRecords( eodRepo.getNumRecords( meta.getIndex() ) ) ;
+        meta.setLastUpdate( new Date() ) ;
+        
+        eodMetaRepo.save( meta ) ;
+        
+        return result ;
     }
 }

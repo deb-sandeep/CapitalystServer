@@ -36,7 +36,7 @@ public class EquityHistDataPartImporter {
     
     private static final Logger log = Logger.getLogger( EquityHistDataPartImporter.class ) ;
     
-    public static final String CFG_GRP_NAME         = "EquityHistDataImporter" ;
+    public static final String CFG_GRP_NAME         = "IndexHistDataImporter" ;
     public static final String CFG_EOD_START_DATE   = "eod_bar_start_date" ;
     public static final String CFG_SCOOP_SIZE_DAYS  = "scoop_size_in_days" ;
     public static final String CFG_IGNORE_SYMBOLS   = "ignore_symbols" ;
