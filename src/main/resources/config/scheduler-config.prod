@@ -8,6 +8,12 @@ jobConfigs:
      description : Refreshes latest price for equity
      cronSchedule : 0 0 */6 * * ?
 
+   - identity : NSEIndexEODImportJob
+     active : true
+     className : ${basePackageName}.equity.idxrefresh.NSEIndexEODImportJob
+     description : Refreshes latest index values
+     cronSchedule : 0 0 */6 * * ?
+
    - identity : MFNavRefreshJob
      active : true
      className : ${basePackageName}.mf.eodrefresh.MFEODNAVRefreshJob
