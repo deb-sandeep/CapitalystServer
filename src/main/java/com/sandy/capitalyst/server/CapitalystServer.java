@@ -22,6 +22,7 @@ import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
 import com.sandy.capitalyst.server.daemon.equity.histeodupdate.EquityHistDataImporterDaemon ;
 import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.PortfolioMarketPriceUpdater ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
+import com.sandy.capitalyst.server.daemon.index.histeodupdate.IndexHistDataImporterDaemon ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
@@ -40,9 +41,10 @@ public class CapitalystServer
     
     public static String CFG_GRP_APP = "Capitalyst" ;
     
-    public static String CFG_RUN_CMP_DAEMON      = "run_portfolio_cmp_updater" ;
-    public static String CFG_RUN_BATCH_DAEMON    = "run_batch_daemon" ;
-    public static String CFG_RUN_HIST_EOD_DAEMON = "run_hist_eod_daemon" ;
+    public static String CFG_RUN_CMP_DAEMON          = "run_portfolio_cmp_updater" ;
+    public static String CFG_RUN_BATCH_DAEMON        = "run_batch_daemon" ;
+    public static String CFG_RUN_EQ_HIST_EOD_DAEMON  = "run_eq_hist_eod_daemon" ;
+    public static String CFG_RUN_IDX_HIST_EOD_DAEMON = "run_idx_hist_eod_daemon" ;
     
     public static ApplicationContext getAppContext() {
         return APP_CTX ;
@@ -130,20 +132,36 @@ public class CapitalystServer
         runCMPUpdateDaemon = nvpCfg.getBoolValue( CFG_RUN_CMP_DAEMON, true ) ;
         initializeBreeze( cfg.getBreezeCfgFile(), runCMPUpdateDaemon ) ;
         
-        initializeHistEoDUpdateDaemon( nvpCfg ) ;
+        initializeEquityHistEoDUpdateDaemon( nvpCfg ) ;
+        initializeIndexHistEoDUpdateDaemon( nvpCfg ) ;
     }
     
-    private void initializeHistEoDUpdateDaemon( NVPConfigGroup nvpCfg ) {
+    private void initializeEquityHistEoDUpdateDaemon( NVPConfigGroup nvpCfg ) {
         
         boolean runDaemon = true ;
         EquityHistDataImporterDaemon histEoDDaemon = null ;
         
-        runDaemon = nvpCfg.getBoolValue( CFG_RUN_HIST_EOD_DAEMON, true ) ;
+        runDaemon = nvpCfg.getBoolValue( CFG_RUN_EQ_HIST_EOD_DAEMON, true ) ;
         
         if( runDaemon ) {
             
-            log.debug( "Starting historic eod update daemon." ) ;
+            log.debug( "Starting historic Equity eod update daemon." ) ;
             histEoDDaemon = new EquityHistDataImporterDaemon() ;
+            histEoDDaemon.start() ;
+        }
+    }
+    
+    private void initializeIndexHistEoDUpdateDaemon( NVPConfigGroup nvpCfg ) {
+        
+        boolean runDaemon = true ;
+        IndexHistDataImporterDaemon histEoDDaemon = null ;
+        
+        runDaemon = nvpCfg.getBoolValue( CFG_RUN_IDX_HIST_EOD_DAEMON, true ) ;
+        
+        if( runDaemon ) {
+            
+            log.debug( "Starting historic Index eod update daemon." ) ;
+            histEoDDaemon = new IndexHistDataImporterDaemon() ;
             histEoDDaemon.start() ;
         }
     }

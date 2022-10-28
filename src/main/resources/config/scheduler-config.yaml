@@ -12,13 +12,13 @@ jobConfigs:
      active : true
      className : ${basePackageName}.equity.idxrefresh.NSEIndexEODImportJob
      description : Refreshes latest index values
-     cronSchedule : 0 0 */6 * * ?
+     cronSchedule : 0 5 */6 * * ?
 
    - identity : MFNavRefreshJob
      active : true
      className : ${basePackageName}.mf.eodrefresh.MFEODNAVRefreshJob
      description : Refreshes latest NAV for MF
-     cronSchedule : 0 0 */6 * * ?
+     cronSchedule : 0 7 */6 * * ?
 
    - identity : IDirectSymbolMappingJob
      active : true

@@ -186,12 +186,12 @@ public class IndexHistDataImporter {
         }
         
         Date   date          = RES_SDF.parse   ( row[0].trim() ) ;
-        float  open          = Float.parseFloat( row[1].trim() ) ;
-        float  high          = Float.parseFloat( row[2].trim() ) ;
-        float  low           = Float.parseFloat( row[3].trim() ) ;
-        float  close         = Float.parseFloat( row[4].trim() ) ;
-        long   totalTradeQty = Long.parseLong  ( row[5].trim() ) ;
-        
+        float  open          = Float.parseFloat( sanitize( row[1].trim() )) ;
+        float  high          = Float.parseFloat( sanitize( row[2].trim() )) ;
+        float  low           = Float.parseFloat( sanitize( row[3].trim() )) ;
+        float  close         = Float.parseFloat( sanitize( row[4].trim() )) ;
+        long   totalTradeQty = Long.parseLong  ( sanitize( row[5].trim() )) ;        
+
         histRow = histRepo.findByIndexAndDate( index, date ) ;
         
         if( histRow == null ) {
@@ -210,7 +210,17 @@ public class IndexHistDataImporter {
             results.numAdditions++ ;
             histRepo.saveAndFlush( histRow ) ;
         }
-        
         return histRow ;
+    }
+
+    private String sanitize( String str ) {
+        if( str.equals( "-" ) ) return "0" ;
+        try {
+            Double.parseDouble( str ) ;
+        }
+        catch( Exception e ) {
+            return "0" ;
+        }
+        return str ;
     }
 }
