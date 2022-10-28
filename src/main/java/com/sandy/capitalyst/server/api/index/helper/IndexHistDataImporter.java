@@ -138,7 +138,11 @@ public class IndexHistDataImporter {
     
     private String getRawHistoricData() throws Exception {
         
-        String encodedIdx = URLEncoder.encode( index.getName(), "UTF-8" ) ;
+        String translatedIdxName = IndexHistKeyMap.translate( index.getName() ) ;
+        String encodedIdx = URLEncoder.encode( translatedIdxName, "UTF-8" ) ;
+        
+        log.debug( "- Translated index name = " + translatedIdxName ) ;
+        
         String url = NSE_HISTORIC_DATA_URL
                         .replace( "{indexName}", encodedIdx )
                         .replace( "{fromDate}", REQ_SDF.format( fromDate ) )
