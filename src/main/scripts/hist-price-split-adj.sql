@@ -1,6 +1,6 @@
-SET @SPLIT_RATIO = 100 ;
-SET @SYMBOL_NSE  = 'SETFGOLD' collate utf8mb4_unicode_ci ;
-SET @SPLIT_DATE  = '2020-08-31' ;
+SET @SPLIT_RATIO = 1.46 ;
+SET @SYMBOL_NSE  = 'GAIL' collate utf8mb4_unicode_ci ;
+SET @SPLIT_DATE  = '2022-09-07' ;
 
 SELECT id, symbol, date, open, high, low, close, prev_close
 FROM historic_eq_data

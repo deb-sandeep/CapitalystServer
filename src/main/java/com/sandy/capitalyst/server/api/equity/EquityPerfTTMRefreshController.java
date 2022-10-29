@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityTTMPerfUpdater ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.core.log.IndentUtil ;
+import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 
@@ -50,6 +51,8 @@ public class EquityPerfTTMRefreshController {
                 todayCandles.forEach( updater::addTodayEODCandle ) ;
                 
                 updater.updateTTMPerfMeasures() ;
+                
+                RecoManager.instance().setEquityDataUpdated( true ) ;
             }
             return success() ;
         }
