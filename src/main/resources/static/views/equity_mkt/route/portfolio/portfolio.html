@@ -92,7 +92,7 @@
                </td>
                <td class="fixed-font amt"
                    ng-class="getAmtClass(holding.patPct)">
-                   {{holding.patPct | amt}}%
+                   {{holding.patPct | number:1}}%
                </td>
                <td class="fixed-font amt"
                    ng-class="getAmtClass(holding.dayGain)">
@@ -174,7 +174,7 @@
                 </th>
                 <th class="fixed-font amt"
                     ng-class="getAmtClass(allTotal.patPct)">
-                    {{allTotal.patPct | amt}}%
+                    {{allTotal.patPct | number:1}}%
                 </th>
                 <th class="fixed-font amt"
                     ng-class="getAmtClass(allTotal.dayGain)">
@@ -207,7 +207,7 @@
                 </th>
                 <th class="fixed-font amt"
                     ng-class="getAmtClass(allTotal.patPct)">
-                    {{selTotal.patPct | amt}}%
+                    {{selTotal.patPct | number:1}}%
                 </th>
                 <th class="fixed-font amt"
                     ng-class="getAmtClass(allTotal.dayGain)">

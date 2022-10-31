@@ -1,8 +1,8 @@
 capitalystNgApp.controller( 'GraphDisplayDialogController', 
                             function( $scope, $http, $window ) {
     
-    const BUY_COLOR            = '#0191ff' ;
-    const SELL_COLOR           = '#E7871C' ;
+    const BUY_COLOR            = '#00f0ff' ;
+    const SELL_COLOR           = '#ffc300' ;
     const EOD_LINE_COLOR       = '#B5B7B5' ;
     const EOD_LINE_COLOR_GREEN = '#adc5b3' ;
     const EOD_LINE_COLOR_RED   = '#c4aba7' ;

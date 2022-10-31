@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.api.equity.graph.internal ;
 
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 
+import java.util.ArrayList ;
 import java.util.Calendar ;
 import java.util.Date ;
 import java.util.List ;
@@ -17,7 +18,6 @@ import com.sandy.capitalyst.server.api.equity.helper.EquityHoldingVOBuilder ;
 import com.sandy.capitalyst.server.api.equity.vo.FamilyEquityHoldingVO ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData ;
 import com.sandy.capitalyst.server.api.equity.vo.GraphData.DayPriceData ;
-import com.sandy.capitalyst.server.api.equity.vo.GraphData.TradeData ;
 import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
@@ -38,9 +38,8 @@ public class EquityGraphDataBuilder {
     static final Logger log = Logger.getLogger( EquityGraphDataBuilder.class ) ;
     
     private class DataHolder {
-        HistoricEQData histData  = null ;
-        EquityTrade    buyTrade  = null ;
-        EquityTrade    sellTrade = null ;
+        HistoricEQData    histData = null ;
+        List<EquityTrade> trades   = new ArrayList<>() ;
     }
     
     private EquityTradeRepo      etRepo   = null ;
@@ -133,21 +132,12 @@ public class EquityGraphDataBuilder {
         else {
             List<EquityTrade> trades = etRepo.findTrades( symbolIcici, ownerName ) ;
             trades.forEach( trade -> {
-                
                 if( data.containsKey( trade.getTradeDate() ) ) {
-                    
                     DataHolder holder = data.get( trade.getTradeDate() ) ;
-                    
-                    if( trade.getAction().equals( "Buy" ) ) {
-                        holder.buyTrade = trade ;
-                    }
-                    else {
-                        holder.sellTrade = trade ;
-                    }
+                    holder.trades.add( trade ) ;
                 }
             } ) ;
         }
-
     }
 
     private void populateEoDPriceList( GraphData graphData,
@@ -163,24 +153,8 @@ public class EquityGraphDataBuilder {
                                       Map<Date, DataHolder> data ) {
         
         data.forEach( (date,holding) -> { 
-            
-            if( !(holding.buyTrade == null && holding.sellTrade == null) ) {
-                
-                EquityTrade et = holding.buyTrade != null ? holding.buyTrade : 
-                                                            holding.sellTrade ;
-
-                TradeData t = new TradeData() ;
-                
-                t.setX( et.getTradeDate().getTime() ) ;
-                t.setY( et.getValueAtCost() / et.getQuantity() ) ;
-                t.setQ( et.getQuantity() ) ;
-                
-                if( et.getAction().equals( "Buy" ) ) {
-                    graphData.getBuyData().add( t ) ;
-                }
-                else {
-                    graphData.getSellData().add( t ) ;
-                }
+            if( !holding.trades.isEmpty() ) {
+                holding.trades.forEach( graphData::addTrade ) ;
             }
         } ) ;
     }
