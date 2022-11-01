@@ -54,7 +54,7 @@
                </td>
                <td class="fixed-font amt" 
                    ng-class="getAmtClass(holding.profitLossAmtPctAfterTax)">
-                   {{holding.profitLossAmtPctAfterTax | amt}}%
+                   {{holding.profitLossAmtPctAfterTax | number:1}}%
                </td>
                <td class="fixed-font amt">
                    {{holding.ltcgQualPct | amt}}%
@@ -62,7 +62,7 @@
                <td class="fixed-font amt">{{holding.avgHoldingMonths | amt}}</td>
                <td class="fixed-font amt"
                    ng-class="getAmtClass(holding.yearlyGrowthPct)">
-                   {{holding.yearlyGrowthPct | amt}}%
+                   {{holding.yearlyGrowthPct | number:1}}%
                </td>
                <td>
                 {{holding.lastUpdate | date : "dd MMM"}}
