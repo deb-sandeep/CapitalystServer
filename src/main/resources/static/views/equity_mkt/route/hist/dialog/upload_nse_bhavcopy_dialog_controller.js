@@ -1,4 +1,4 @@
-capitalystNgApp.controller( 'UploadEquityEODController', 
+capitalystNgApp.controller( 'UploadNSEBhavcopyController', 
         function( $scope, $http, Upload, $timeout ) {
     
     // ---------------- Local variables --------------------------------------
@@ -11,7 +11,7 @@ capitalystNgApp.controller( 'UploadEquityEODController',
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
-    console.log( "Loading UploadEquityEODController" ) ;
+    console.log( "Loading UploadNSEBhavcopyController" ) ;
     // --- [END] Controller initialization -----------------------------------
     
     // -----------------------------------------------------------------------
@@ -22,7 +22,7 @@ capitalystNgApp.controller( 'UploadEquityEODController',
         $scope.files = files ;
         if( files && files.length ) {
             Upload.upload( {
-                url: '/Equity/EquityHistoricEODData/FileUpload',
+                url: '/Equity/NSEBhavcopy/FileUpload',
                 arrayKey:'',
                 data: {
                     files: files
@@ -47,7 +47,7 @@ capitalystNgApp.controller( 'UploadEquityEODController',
     
     $scope.hideDialog = function() {
         resetState() ;
-        $( '#uploadEquityHistoryDialog' ).modal( 'hide' ) ;
+        $( '#uploadNSEBhavcopyDialog' ).modal( 'hide' ) ;
         $scope.$parent.refreshTable() ;
     }
     

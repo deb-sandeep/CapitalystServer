@@ -1,13 +1,20 @@
 <div id="nav-panel">
     <button class="btn btn-primary btn-sm"
-            ng-click="showUploadDialog()">
+            ng-click="showEquityHistoricDataUploadDialog()">
       <span class="glyphicon glyphicon-cloud-upload"></span>
       Upload equity historic data
     </button>
     
     <button class="btn btn-primary btn-sm"
-            ng-click="showCreditEntries()">
-      Edit Credit Entries
+            ng-click="showNSEBhavcopyUploadDialog()">
+      <span class="glyphicon glyphicon-cloud-upload"></span>
+      Upload NSE Bhavcopy
+    </button>
+    
+    <button class="btn btn-primary btn-sm"
+            ng-click="showBSEBhavcopyUploadDialog()">
+      <span class="glyphicon glyphicon-cloud-upload"></span>
+      Upload BSE Bhavcopy
     </button>
 </div>
 
@@ -52,4 +59,18 @@
      role="dialog"
      data-backdrop="static"
      ng-include="'route/hist/dialog/upload_hist_data_dialog.html'">
+</div>
+
+<div id="uploadNSEBhavcopyDialog"
+     class="modal"
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/hist/dialog/upload_nse_bhavcopy_dialog.html'">
+</div>
+
+<div id="uploadBSEBhavcopyDialog"
+     class="modal"
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/hist/dialog/upload_bse_bhavcopy_dialog.html'">
 </div>

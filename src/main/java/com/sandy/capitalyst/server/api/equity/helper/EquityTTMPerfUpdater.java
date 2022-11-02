@@ -151,6 +151,7 @@ public class EquityTTMPerfUpdater {
             updateMilestonePerf( milestone, date ) ;
         }
 
+        log.debug( "-> Saving all perf records." ) ;
         perfMap.values().forEach( perfRepo::saveAndFlush ) ;
         
         RecoManager.instance().setEquityDataUpdated( true ) ;

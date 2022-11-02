@@ -20,6 +20,18 @@ public interface HistoricEQDataRepo
         public float getClose() ;
     }
     
+    @Query( nativeQuery = true,
+            value = 
+            "SELECT date "
+          + "FROM historic_eq_data h "
+          + "WHERE "
+          + "   symbol = 'NIFTYBEES' "
+          + "ORDER BY "
+          + "   date DESC "
+          + "LIMIT 1 "
+    )
+    Date findLatestRecordDate() ;
+    
     List<HistoricEQData> findBySymbolAndDate( String symbol, Date date ) ;
     
     @Query( nativeQuery = true,

@@ -1,19 +1,29 @@
 <div class="modal-dialog" 
      style="width:700px;"
-     ng-controller="UploadEquityEODController">
+     ng-controller="UploadNSEBhavcopyController">
      
   <div class="modal-content" >
     <div class="modal-header" style="background-color:#E5E5E5;padding:5px">
-      <h4 class="modal-title">Upload Equity Historic EOD</h4>
+      <h4 class="modal-title">Upload NSE Bhav Copies</h4>
     </div>
 
 	<div class="modal-body"
 		style="background-color: #FEFEFE; padding: 5px">
 		
         <span style="height:10px;display:block;"></span>
-        Uploads historic data for a single equity. The data can be downloaded
-        from <a target="_blank" href="https://www1.nseindia.com/products/content/equities/equities/eq_security.htm">here</a>.
-        Please ensure the 'Security wise price volume data' format is downloaded.
+        Uploads multiple NSE bhavcopies. The data can be downloaded
+        from <a target="_blank" href="https://www1.nseindia.com/products/content/equities/equities/archieve_eq.htm">here</a>.
+        Please ensure the 'Bhavcopy' csv format is uploaded.
+
+        <span style="height:5px;display:block;"></span>
+        <span style="color:red;">NOTE:</span>
+        Uploading NSE bhavcopy is an exception scenario. Capitalyst is
+        tuned for tracking NSE market automatically every day. However 
+        (very infrequently) NSE fails to publish bhavcopies in time. During 
+        these scenarios, a manually downloaded NSE bhavcopy can be uploaded
+        at a later point in time. If the bhavcopy is the latest, the holding 
+        and TTM performance will be auto updated.
+
         <span style="height:10px;display:block;"></span>
         
         <button ngf-select="uploadFiles($files)" multiple>Select Files</button>
@@ -33,26 +43,22 @@
 	    <table class="table table-bordered table-compact">
 	       <thead>
 	            <tr class="success">
-	                <th colspan="2"></th>
-	                <th colspan="4"># Records</th>
+	                <th colspan="2">File</th>
+	                <th colspan="2"># Records</th>
 	            </tr>
 	            <tr class="success">
-	                <th width="250px">File</th>
-	                <th width="60px">Symbol</th>
+                    <th width="250px">Name</th>
+                    <th width="60px">Date</th>
 	                <th width="60px">Found</th>
 	                <th width="60px">Imported</th>
-	                <th width="60px">Deleted</th>
-	                <th width="60px">Modified</th>
 	            </tr>
 	       </thead>
 	       <tbody>
             <tr ng-repeat="result in results">
                <td>{{result.fileName}}</td>
-               <td>{{result.symbol}}</td>
-               <td>{{result.numRecordsFounds}}</td>
-               <td>{{result.numAdditions}}</td>
-               <td>{{result.numDeletions}}</td>
-               <td>{{result.numModified}}</td>
+               <td>{{result.bhavcopyDate | date}}</td>
+               <td>{{result.numRecordsFound}}</td>
+               <td>{{result.numRecordsImported}}</td>
             </tr>
 	       </tbody>
 	    </table>

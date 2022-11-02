@@ -28,8 +28,16 @@ capitalystNgApp.controller( 'HistEODController', function( $scope, $http ) {
         fetchAllHistoricMeta() ;
     }
     
-    $scope.showUploadDialog = function() {
+    $scope.showEquityHistoricDataUploadDialog = function() {
         $( '#uploadEquityHistoryDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.showNSEBhavcopyUploadDialog = function() {
+        $( '#uploadNSEBhavcopyDialog' ).modal( 'show' ) ;
+    }
+    
+    $scope.showBSEBhavcopyUploadDialog = function() {
+        $( '#uploadBSEBhavcopyDialog' ).modal( 'show' ) ;
     }
     
     // --- [END] Scope functions

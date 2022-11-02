@@ -26,6 +26,9 @@ import org.springframework.web.multipart.MultipartFile ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHistDataImporter.ImportResult ;
 import com.sandy.capitalyst.server.api.equity.helper.EquityHistoricDataCSVGenerator ;
+import com.sandy.capitalyst.server.api.equity.helper.bhavcopy.BSEBhavcopyImporter ;
+import com.sandy.capitalyst.server.api.equity.helper.bhavcopy.BhavcopyImportResult ;
+import com.sandy.capitalyst.server.api.equity.helper.bhavcopy.NSEBhavcopyImporter ;
 import com.sandy.capitalyst.server.core.log.IndentUtil ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfig ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
@@ -101,8 +104,8 @@ public class EquityHistoricDataController {
         }
     }
 
-    @PostMapping( "/Equity/HistoricData/FileUpload" ) 
-    public ResponseEntity<List<ImportResult>> uploadAccountStatements( 
+    @PostMapping( "/Equity/EquityHistoricEODData/FileUpload" ) 
+    public ResponseEntity<List<ImportResult>> uploadEquityHistoricEODRecords( 
                     @RequestParam( "files" ) MultipartFile[] multipartFiles ) {
         
         try {
@@ -140,6 +143,80 @@ public class EquityHistoricDataController {
         finally {
             IndentUtil.i_clear() ;
         }
+    }
+    
+    @PostMapping( "/Equity/NSEBhavcopy/FileUpload" ) 
+    public ResponseEntity<List<BhavcopyImportResult>> uploadNSEBhavcopies( 
+                    @RequestParam( "files" ) MultipartFile[] multipartFiles ) {
+        
+        List<BhavcopyImportResult> results = null ;
+        
+        try {
+            results = importBhavcopies( multipartFiles, "NSE" ) ;
+            return status( HttpStatus.OK ).body( results ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR ).body( null ) ;
+        }
+        finally {
+            IndentUtil.i_clear() ;
+        }
+    }
+    
+    @PostMapping( "/Equity/BSEBhavcopy/FileUpload" ) 
+    public ResponseEntity<List<BhavcopyImportResult>> uploadBSEBhavcopies( 
+            @RequestParam( "files" ) MultipartFile[] multipartFiles ) {
+        
+        List<BhavcopyImportResult> results = null ;
+        
+        try {
+            results = importBhavcopies( multipartFiles, "BSE" ) ;
+            return status( HttpStatus.OK ).body( results ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR ).body( null ) ;
+        }
+        finally {
+            IndentUtil.i_clear() ;
+        }
+    }
+    
+    private List<BhavcopyImportResult> importBhavcopies( 
+                            MultipartFile[] multipartFiles, String exchange ) 
+        throws Exception {
+        
+        log.debug( "!! Uploading " + exchange + " Bhavcopy files" ) ;
+        
+        String fileContents = null ;
+        BhavcopyImportResult result = null ;
+        List<BhavcopyImportResult> results = new ArrayList<>() ;
+        
+        for( MultipartFile file : multipartFiles ) {
+            
+            log.debug( "!> Processing file : " + file.getOriginalFilename() + " >" ) ;
+            
+            fileContents = new String( file.getBytes() ) ;
+            
+            if( exchange.equals( "NSE" ) ) {
+                result = new NSEBhavcopyImporter().importContents( fileContents ) ;
+            }
+            else {
+                result = new BSEBhavcopyImporter().importContents( fileContents ) ;
+            }
+            result.setFileName( file.getOriginalFilename() ) ;
+            
+            results.add( result ) ;
+            
+            log.debug( "- Processed symbol     = " + result.getFileName() ) ;
+            log.debug( "- Num records found    = " + result.getNumRecordsFound() ) ;
+            log.debug( "- Num records imported = " + result.getNumRecordsImported() ) ;
+            
+            log.debug( "- Done! <<" ) ;
+        }
+        
+        return results ;
     }
     
     private void updateMeta( String symbol ) {
