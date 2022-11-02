@@ -4,14 +4,19 @@
      
   <div class="modal-content" >
     <div class="modal-header" style="background-color:#E5E5E5;padding:5px">
-      <h4 class="modal-title">Upload Equity EOD</h4>
+      <h4 class="modal-title">Upload Equity Historic EOD</h4>
     </div>
 
 	<div class="modal-body"
 		style="background-color: #FEFEFE; padding: 5px">
+		
+        <span style="height:10px;display:block;"></span>
+        Uploads historic data for a single equity. The data can be downloaded
+        from <a target="_blank" href="https://www1.nseindia.com/products/content/equities/equities/eq_security.htm">here</a>.
+        Please ensure the 'Security wise price volume data' format is downloaded.
         <span style="height:10px;display:block;"></span>
         
-        <button ngf-select="uploadFiles($files)" multiple>Select Files</button>
+        <button ngf-select="uploadEquityHistoricFiles($files)" multiple>Select Files</button>
 		
 		<br>
 	    Files:

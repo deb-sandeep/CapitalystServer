@@ -18,7 +18,7 @@ capitalystNgApp.controller( 'UploadEquityEODController',
     // --- [START] Scope event listeners -------------------------------------
     
     // --- [START] Scope functions -------------------------------------------
-    $scope.uploadFiles = function( files ) {
+    $scope.uploadEquityHistoricFiles = function( files ) {
         $scope.files = files ;
         if( files && files.length ) {
             Upload.upload( {
