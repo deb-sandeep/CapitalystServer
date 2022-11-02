@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.api.ledger;
 
 import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
+import java.util.Calendar ;
 import java.util.Date ;
 import java.util.HashMap ;
 import java.util.Iterator ;
@@ -29,6 +30,7 @@ import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
+import com.sandy.capitalyst.server.dao.ledger.DebitCreditAssoc ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.repo.DebitCreditAssocRepo ;
@@ -140,6 +142,9 @@ public class LedgerRestController {
         
         try {
             List<LedgerEntry> entries = null ;
+            List<LedgerEntry> returnValue = new ArrayList<>() ;
+            
+            startOfMonth = DateUtils.truncate( startOfMonth, Calendar.DAY_OF_MONTH ) ;
             
             Date endOfMonth = DateUtils.addMonths( startOfMonth, 1 ) ;
             
@@ -153,7 +158,27 @@ public class LedgerRestController {
                                                            endOfMonth ) ;
             }
             
-            return status( HttpStatus.OK ).body( entries ) ;
+            // The debit entries can be compensated by associated credit 
+            // entries. Made the adjustments and add only those debit entries
+            // which have valid debit amount (<0)
+            if( entries != null && !entries.isEmpty() ) {
+                entries.forEach( entry -> {
+                    List<DebitCreditAssoc> creditAssocs = null ;
+                    creditAssocs = dcaRepo.findByDebitTxnId( entry.getId() ) ;
+                    
+                    if( creditAssocs != null && !creditAssocs.isEmpty() ) {
+                        creditAssocs.forEach( credit ->{
+                            entry.setAmount( entry.getAmount() + credit.getAmount() ) ;
+                        } ) ;
+                    }
+                    
+                    if( entry.getAmount() < 0 ) {
+                        returnValue.add( entry ) ;
+                    }
+                } ) ;
+            }
+            
+            return status( HttpStatus.OK ).body( returnValue ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;

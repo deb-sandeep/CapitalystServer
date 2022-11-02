@@ -2,6 +2,8 @@ package com.sandy.capitalyst.server.api.budget.vo;
 
 import java.util.Date ;
 
+import org.apache.commons.lang.time.DateUtils ;
+
 import lombok.Data ;
 
 @Data
@@ -16,7 +18,8 @@ public class BudgetCell {
     
     public BudgetCell( String monthName, Date startOfMonth ) {
         this.monthName = monthName ;
-        this.startOfMonth = startOfMonth ;
+        this.startOfMonth = DateUtils.addHours( startOfMonth, 5 ) ;
+        this.startOfMonth = DateUtils.addMinutes( this.startOfMonth, 30 ) ;
     }
     
     public int getRemaining() {
