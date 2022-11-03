@@ -54,10 +54,12 @@
                   <td class="numeric">
                       {{txn.valuePostTax | amt }}
                   </td>
-                  <td class="numeric">
+                  <td class="numeric"
+                      ng-class="getAmtClass( txn.pat )">
                       {{txn.pat | amt }}
                   </td>
-                  <td class="numeric">
+                  <td class="numeric"
+                      ng-class="getAmtClass( txn.patPct )">
                       {{txn.patPct | number : 1 }}%
                   </td>
                   <td class="numeric">
@@ -82,10 +84,12 @@
                   <th class="numeric">
                       {{totalValuePostTax | amt }}
                   </th>
-                  <th class="numeric">
+                  <th class="numeric"
+                      ng-class="getAmtClass( totalPAT )">
                       {{totalPAT | amt }}
                   </th>
-                  <th class="numeric">
+                  <th class="numeric"
+                      ng-class="getAmtClass( totalPAT )">
                       {{(totalPAT/totalCost)*100 | number : 1 }}%
                   </th>
                   <th></th>
@@ -106,10 +110,12 @@
                   <th class="numeric">
                       {{selectedTxnsMktValue | amt }}
                   </th>
-                  <th class="numeric">
+                  <th class="numeric"
+                      ng-class="getAmtClass( selectedTxnsPAT )">
                       {{selectedTxnsPAT | amt }}
                   </th>
-                  <th class="numeric">
+                  <th class="numeric"
+                      ng-class="getAmtClass( selectedTxnsPATPct )">
                       {{selectedTxnsPATPct | number : 1 }}%
                   </th>
                   <th></th>
