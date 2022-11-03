@@ -1,9 +1,9 @@
 <div style="padding: 0px; margin: 10px" align="center">
-    <table class="table table-bordered table-compact js-sort-table"
+    <table class="table table-bordered table-compact"
            style="width: auto !important;">
         <thead>
             <tr class="success">
-                <th class="js-sort-none">
+                <th>
                     <span class="glyphicon glyphicon-resize-full"
                           ng-if="holdingType == 'Family'"
                           ng-click="changeHoldingType( 'Individual' )">
@@ -13,25 +13,47 @@
                           ng-click="changeHoldingType( 'Family' )">
                     </span>
                 </th>
-                <th ng-if="holdingType == 'Individual'">Owner</th>
+                <th ng-if="holdingType == 'Individual'"
+                    ng-click="sort('owner')">
+                    Owner
+                </th>
                 <th></th>
-                <th>Company</th>
+                <th ng-click="sort('symbol')">
+                    Company
+                </th>
                 <th></th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th class="js-sort-number">LTCG%</th>
-                <th class="js-sort-number">Cost price</th>
-                <th class="js-sort-number">Mkt Value</th>
-                <th class="js-sort-number">Sell Value</th>
-                <th class="js-sort-number">PAT</th>
-                <th class="js-sort-number">PAT %</th>
-                <th class="js-sort-number">D-Change</th>
-                <th class="js-sort-none"
-                    ng-click="toggleSparkline()">
+                <th ng-click="sort('quantity')">
+                    Qty
+                </th>
+                <th ng-click="sort('price')">
+                    Price
+                </th>
+                <th ng-click="sort('ltcgPct')">
+                    LTCG%
+                </th>
+                <th ng-click="sort('costPrice')">
+                    Cost price
+                </th>
+                <th ng-click="sort('mktValue')">
+                    Mkt Value
+                </th>
+                <th ng-click="sort('sellValue')">
+                    Sell Value
+                </th>
+                <th ng-click="sort('pat')">
+                    PAT
+                </th>
+                <th ng-click="sort('patPct')">
+                    PAT %
+                </th>
+                <th ng-click="sort('dayChange')">
+                    D-Change
+                </th>
+                <th ng-click="toggleSparkline()">
                     Trend
                 </th>
-                <th class="js-sort-none">C</th>
-                <th class="js-sort-none">L</th>
+                <th ng-click="sort('trend')">C</th>
+                <th ng-click="sort('prevTrend')">L</th>
                 <th>
                     <span class="glyphicon glyphicon-refresh"
                           ng-click="triggerJob()">

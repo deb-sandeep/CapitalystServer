@@ -26,6 +26,8 @@ import com.sandy.common.util.StringUtil ;
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;
 
+import static com.sandy.capitalyst.server.core.util.StringUtil.DD_MM_YYYY ;
+
 public abstract class AbstractBhavcopyImporter {
     
     private static final Logger log = Logger.getLogger( AbstractBhavcopyImporter.class ) ;
@@ -76,6 +78,8 @@ public abstract class AbstractBhavcopyImporter {
         contentReader = new StringReader( content ) ;
         
         settings.detectFormatAutomatically() ;
+        
+        log.debug( "- Parsing CSV contents" ) ;
         csvData = new CsvParser( settings ).parseAll( contentReader ) ;
         
         results = new BhavcopyImportResult() ;
@@ -95,15 +99,22 @@ public abstract class AbstractBhavcopyImporter {
             }
             
             if( bhavcopyDate == null ) {
+                
                 bhavcopyDate = getBhavcopyDate( record ) ;
                 results.setBhavcopyDate( bhavcopyDate ) ;
                 
+                log.debug( "- Bhavcopy date detected " + 
+                           DD_MM_YYYY.format( bhavcopyDate ) );
+                
                 latestRecDt = ecRepo.findLatestRecordDate() ;
                 if( latestRecDt.before( bhavcopyDate ) ) {
+                    
+                    log.debug( "-> Bhavcopy is the latest." ) ;
                     isLatest = true ;
                 }
             }
             
+            log.debug( "-> Updating " + em.getSymbol() ) ;
             candle = buildEquityCandle( record, bhavcopyDate ) ;
             
             em.setClose( candle.getClose() ) ;
@@ -133,7 +144,7 @@ public abstract class AbstractBhavcopyImporter {
                     
                     if( holding.getLastUpdate().before( bhavcopyDate ) ) {
                         
-                        log.debug( "Updating daily gain. Holding " + holding.getId() ) ;
+                        log.debug( "-> Updating daily gain. Holding " + holding.getId() ) ;
                         dgUpdater.updateEDG( holding, candle ) ;
                         
                         holding.setCurrentMktPrice( candle.getClose() ) ;
@@ -160,6 +171,8 @@ public abstract class AbstractBhavcopyImporter {
     protected abstract HistoricEQData buildEquityCandle( String[] record, Date date ) ;
 
     private Map<String, List<EquityHolding>> loadHoldingsMap() {
+        
+        log.debug( "- Loading holdings map." ) ;
         
         List<EquityHolding> holdings = ehRepo.findNonZeroHoldings() ;
         Map<String, List<EquityHolding>> holdingsMap = new HashMap<>() ;

@@ -152,7 +152,10 @@ public class EquityTTMPerfUpdater {
         }
 
         log.debug( "-> Saving all perf records." ) ;
-        perfMap.values().forEach( perfRepo::saveAndFlush ) ;
+        perfMap.values().forEach( record -> {
+            log.debug( "->> Saving " + record.getSymbolNse() ) ;
+            perfRepo.saveAndFlush( record ) ;
+        } ) ;
         
         RecoManager.instance().setEquityDataUpdated( true ) ;
         

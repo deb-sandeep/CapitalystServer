@@ -2,7 +2,19 @@ capitalystNgApp.controller( 'PortfolioController',
     function( $scope, $http ) {
     
     // ---------------- Local variables --------------------------------------
+    var sortDir = {
+        symbol : 'asc'
+    } ;
+    
     var curSparklineView = "Discrete" ;
+    
+    var trendScore = {
+        'VERY BULLISH' : 5,
+        'BULLISH'      : 4,
+        'NEUTRAL'      : 3,
+        'BEARISH'      : 2,
+        'VERY BEARISH' : 1        
+    } ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Equity Portfolio" ;
@@ -122,6 +134,10 @@ capitalystNgApp.controller( 'PortfolioController',
                            "Cumulative" : "Discrete" ;
         setVisibleSLData() ;
         paintSparklines() ;
+    }
+    
+    $scope.sort = function( field ) {
+        sortTable( field ) ;
     }
     
     // --- [END] Scope functions
@@ -415,4 +431,137 @@ capitalystNgApp.controller( 'PortfolioController',
         }) ;
     }
     
+    // ---------------------- Sorting functions --------------------------------
+
+    function sortTable( field ) {
+        
+        var dir = sortDir[ field ] ;
+        var newDir = ( dir == "asc" ) ? "desc" : "asc" ;
+        sortDir[ field ] = newDir ; 
+        
+        if( field == "owner" ) {
+            $scope.equityHoldings.sort( ownerSort ) ;
+        }
+        else if( field == "symbol" ) {
+            $scope.equityHoldings.sort( symbolSort ) ;
+        }
+        else if( field == "quantity" ) {
+            $scope.equityHoldings.sort( quantitySort ) ;
+        }
+        else if( field == "price" ) {
+            $scope.equityHoldings.sort( priceSort ) ;
+        }
+        else if( field == "ltcgPct" ) {
+            $scope.equityHoldings.sort( ltcgPctSort ) ;
+        }
+        else if( field == "costPrice" ) {
+            $scope.equityHoldings.sort( costPriceSort ) ;
+        }
+        else if( field == "mktValue" ) {
+            $scope.equityHoldings.sort( mktValueSort ) ;
+        }
+        else if( field == "sellValue" ) {
+            $scope.equityHoldings.sort( sellValueSort ) ;
+        }
+        else if( field == "pat" ) {
+            $scope.equityHoldings.sort( patSort ) ;
+        }
+        else if( field == "patPct" ) {
+            $scope.equityHoldings.sort( patPctSort ) ;
+        }
+        else if( field == "dayChange" ) {
+            $scope.equityHoldings.sort( dayChangeSort ) ;
+        }
+        else if( field == "trend" ) {
+            $scope.equityHoldings.sort( trendSort ) ;
+        }
+        else if( field == "prevTrend" ) {
+            $scope.equityHoldings.sort( prevTrendSort ) ;
+        }
+    }    
+    
+    function ownerSort( h1, h2 ) {
+        return sortDir[ "owner"] == "asc" ?
+            ( h1.ownerName.localeCompare( h2.ownerName ) ) :
+            ( h2.ownerName.localeCompare( h2.ownerName ) ) ;
+    }
+    
+    function symbolSort( h1, h2 ) {
+        return sortDir[ "symbol"] == "asc" ?
+            ( h1.symbolIcici.localeCompare( h2.symbolIcici ) ) :
+            ( h2.symbolIcici.localeCompare( h1.symbolIcici ) ) ;
+    }
+    
+    function quantitySort( h1, h2 ) {
+        return sortDir[ "quantity"] == "asc" ?
+            ( h1.quantity - h2.quantity ) :
+            ( h2.quantity - h1.quantity ) ;
+    }
+
+    function priceSort( h1, h2 ) {
+        return sortDir[ "price"] == "asc" ?
+            ( h1.currentMktPrice - h2.currentMktPrice ) :
+            ( h2.currentMktPrice - h1.currentMktPrice ) ;
+    }
+    
+    function ltcgPctSort( h1, h2 ) {
+        
+        let h1Pct = (h1.ltcgQty/h1.quantity)*100 ;
+        let h2Pct = (h2.ltcgQty/h2.quantity)*100 ;
+        
+        return sortDir[ "ltcgPct" ] == "asc" ? 
+               (h1Pct - h2Pct) : (h2Pct - h1Pct) ;
+    }
+    
+    function costPriceSort( h1, h2 ) {
+        return sortDir[ "costPrice" ] == "asc" ?
+        ( h1.valueAtCost - h2.valueAtCost ) :
+        ( h2.valueAtCost - h1.valueAtCost ) ;
+    }
+    
+    function mktValueSort( h1, h2 ) {
+        return sortDir[ "mktValue" ] == "asc" ?
+            ( h1.valueAtMktPrice - h2.valueAtMktPrice ) :
+            ( h2.valueAtMktPrice - h1.valueAtMktPrice ) ;
+    }
+    
+    function sellValueSort( h1, h2 ) {
+        
+        let h1SellVal = h1.valueAtCost + h1.pat ;
+        let h2SellVal = h2.valueAtCost + h2.pat ;
+        
+        return sortDir[ "sellValue" ] == "asc" ?
+               (h1SellVal - h2SellVal) : (h2SellVal - h1SellVal) ;
+    }
+    
+    function patSort( h1, h2 ) {
+        return sortDir[ "pat" ] == "asc" ?
+            ( h1.pat - h2.pat ) :
+            ( h2.pat - h1.pat ) ;
+    }
+    
+    function patPctSort( h1, h2 ) {
+        return sortDir[ "patPct" ] == "asc" ?
+            ( h1.patPct - h2.patPct ) :
+            ( h2.patPct - h1.patPct ) ;
+    }
+    
+    function dayChangeSort( h1, h2 ) {
+        return sortDir[ "dayChange" ] == "asc" ?
+            ( h1.dayGain - h2.dayGain ) :
+            ( h2.dayGain - h1.dayGain ) ;
+    }
+    
+    function trendSort( h1, h2 ) {
+        return sortDir[ "trend"] == "asc" ?
+            ( trendScore[h1.indicators.trend] - trendScore[h2.indicators.trend] ) :
+            ( trendScore[h2.indicators.trend] - trendScore[h1.indicators.trend] ) ;
+    }
+        
+    function prevTrendSort( h1, h2 ) {
+        return sortDir[ "prevTrend"] == "asc" ?
+            ( trendScore[h1.indicators.prevTrend] - trendScore[h2.indicators.prevTrend] ) :
+            ( trendScore[h2.indicators.prevTrend] - trendScore[h1.indicators.prevTrend] ) ;
+    }
+        
 } ) ;
