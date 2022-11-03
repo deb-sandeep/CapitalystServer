@@ -1,6 +1,9 @@
 package com.sandy.capitalyst.server.api.equity.helper.bhavcopy;
 
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+import static com.sandy.capitalyst.server.core.util.StringUtil.DD_MM_YYYY ;
+import static org.apache.commons.lang.time.DateUtils.addMinutes ;
+import static org.apache.commons.lang.StringUtils.* ;
 
 import java.io.StringReader ;
 import java.util.ArrayList ;
@@ -26,8 +29,6 @@ import com.sandy.common.util.StringUtil ;
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;
 
-import static com.sandy.capitalyst.server.core.util.StringUtil.DD_MM_YYYY ;
-
 public abstract class AbstractBhavcopyImporter {
     
     private static final Logger log = Logger.getLogger( AbstractBhavcopyImporter.class ) ;
@@ -39,12 +40,19 @@ public abstract class AbstractBhavcopyImporter {
     private EquityMasterRepo       emRepo  = null ;
     private EquityHoldingRepo      ehRepo  = null ;
     private IndexEquityRepo        ieRepo  = null ;
-
+    
+    private Date    bhavcopyDate   = null ;
+    private Date    bhavcopyDayEnd = null ;
+    private boolean isLatestBhavcopy       = false ;
+    
+    private BhavcopyImportResult results = null ;
+    
     private EquityDailyGainUpdater dgUpdater = null ;
     
     private List<String> nifty200Stocks = new ArrayList<>() ;
+    private Map<String, List<EquityHolding>> holdingsMap = null ;
     
-    public AbstractBhavcopyImporter() {
+    protected AbstractBhavcopyImporter() {
         
         ecRepo  = getBean( HistoricEQDataRepo.class     ) ;
         ecmRepo = getBean( HistoricEQDataMetaRepo.class ) ;
@@ -56,66 +64,31 @@ public abstract class AbstractBhavcopyImporter {
         
         nifty200Stocks.addAll( ieRepo.findEquitiesForIndex( NIFTY_200_IDX_NAME ) ) ;
     }
-
+    
     public BhavcopyImportResult importContents( String content ) 
         throws Exception {
         
-        Date                 bhavcopyDate = null ;
-        List<String[]>       csvData      = null ;
-        CsvParserSettings    settings     = null ;
-        EquityTTMPerfUpdater ttmUpdater   = null ;
-        StringReader         contentReader= null ;
-        BhavcopyImportResult results      = null ;
-        HistoricEQData       candle       = null ;
-        Date                 latestRecDt  = null ;
-        boolean              isLatest     = false ;
+        EquityTTMPerfUpdater ttmUpdater     = null ;
+        HistoricEQData       candle         = null ;
+        List<String[]>       csvData        = null ;
         
-        Map<String, List<EquityHolding>> holdingsMap = null ;
+        holdingsMap = loadHoldingsMap() ;
+        ttmUpdater  = new EquityTTMPerfUpdater() ;
         
-        holdingsMap   = loadHoldingsMap() ;
-        ttmUpdater    = new EquityTTMPerfUpdater() ;
-        settings      = new CsvParserSettings() ;
-        contentReader = new StringReader( content ) ;
-        
-        settings.detectFormatAutomatically() ;
-        
-        log.debug( "- Parsing CSV contents" ) ;
-        csvData = new CsvParser( settings ).parseAll( contentReader ) ;
-        
-        results = new BhavcopyImportResult() ;
-        results.setNumRecordsFound( csvData.size()-1 ) ;
+        csvData = getFilteredCSVRows( content ) ;
+
+        this.results = new BhavcopyImportResult() ;
+        this.results.setBhavcopyDate( this.bhavcopyDate ) ;
+        this.results.setNumRecordsFound( csvData.size() ) ;
         
         for( int i=1;i<csvData.size(); i++ ) {
             
             String[] record = csvData.get( i ) ;
             
-            if( !shouldProcessRecord( record ) ) {
-                continue ;
-            }
-            
             EquityMaster em = getEquityMaster( record ) ;
-            if( em == null ) {
-                continue ;
-            }
+            if( em == null ) continue ;
             
-            if( bhavcopyDate == null ) {
-                
-                bhavcopyDate = getBhavcopyDate( record ) ;
-                results.setBhavcopyDate( bhavcopyDate ) ;
-                
-                log.debug( "- Bhavcopy date detected " + 
-                           DD_MM_YYYY.format( bhavcopyDate ) );
-                
-                latestRecDt = ecRepo.findLatestRecordDate() ;
-                if( latestRecDt.before( bhavcopyDate ) ) {
-                    
-                    log.debug( "-> Bhavcopy is the latest." ) ;
-                    isLatest = true ;
-                }
-            }
-            
-            log.debug( "-> Updating " + em.getSymbol() ) ;
-            candle = buildEquityCandle( record, bhavcopyDate ) ;
+            candle = buildEquityCandle( record, this.bhavcopyDate ) ;
             
             em.setClose( candle.getClose() ) ;
             em.setPrevClose( candle.getPrevClose() ) ;
@@ -132,44 +105,46 @@ public abstract class AbstractBhavcopyImporter {
                 
                 updateEquityHistMeta( em.getSymbol() ) ;
                 
-                if( isLatest ) {
+                if( this.isLatestBhavcopy ) {
                     updateEquityISINMapping( em.getSymbol(), em.getIsin() ) ;
                     ttmUpdater.addTodayEODCandle( candle ) ;
                 }
             }
             
-            if( isLatest && holdingsMap.containsKey( em.getSymbol() ) ) {
-                
-                for( EquityHolding holding : holdingsMap.get( em.getSymbol() ) ) {
-                    
-                    if( holding.getLastUpdate().before( bhavcopyDate ) ) {
-                        
-                        log.debug( "-> Updating daily gain. Holding " + holding.getId() ) ;
-                        dgUpdater.updateEDG( holding, candle ) ;
-                        
-                        holding.setCurrentMktPrice( candle.getClose() ) ;
-                        holding.setLastUpdate( new Date() ) ;
-                        ehRepo.saveAndFlush( holding ) ;
-                    }
-                }
-            }
+            updateHoldings( em, candle ) ;
         }
         
-        if( isLatest ) {
+        if( this.isLatestBhavcopy ) {
             ttmUpdater.updateTTMPerfMeasures() ;
         }
         
         return results ;
     }
-    
-    protected abstract Date getBhavcopyDate( String[] record ) throws Exception ;
-    
-    protected abstract boolean shouldProcessRecord( String[] record ) ;
-    
-    protected abstract EquityMaster getEquityMaster( String[] record ) ;
-    
-    protected abstract HistoricEQData buildEquityCandle( String[] record, Date date ) ;
 
+    private void updateHoldings( EquityMaster em, HistoricEQData candle ) {
+        
+        String symbol = em.getSymbol() ;
+        
+        if( this.isLatestBhavcopy && holdingsMap.containsKey( symbol ) ) {
+            
+            for( EquityHolding holding : holdingsMap.get( symbol ) ) {
+                
+                if( holding.getLastUpdate().before( bhavcopyDayEnd ) ) {
+                    
+                    log.debug( "-> Updating daily gain. " + 
+                               rightPad( holding.getSymbolNse(), 11 ) + ". " + 
+                               "ID = " + holding.getId() ) ;
+                    
+                    dgUpdater.updateEDG( holding, candle ) ;
+                    
+                    holding.setCurrentMktPrice( candle.getClose() ) ;
+                    holding.setLastUpdate( new Date() ) ;
+                    ehRepo.saveAndFlush( holding ) ;
+                }
+            }
+        }
+    }
+    
     private Map<String, List<EquityHolding>> loadHoldingsMap() {
         
         log.debug( "- Loading holdings map." ) ;
@@ -189,6 +164,55 @@ public abstract class AbstractBhavcopyImporter {
             }
         }
         return holdingsMap ;
+    }
+
+    private List<String[]> getFilteredCSVRows( String content ) 
+        throws Exception {
+        
+        StringReader      contentReader  = null ;
+        CsvParserSettings settings       = null ;
+        List<String[]>    csvData        = null ;
+        List<String[]>    filteredRecords= new ArrayList<>() ;
+        
+        contentReader = new StringReader( content ) ;
+        settings      = new CsvParserSettings() ;
+
+        log.debug( "- Parsing CSV contents" ) ;
+        settings.detectFormatAutomatically() ;
+        csvData = new CsvParser( settings ).parseAll( contentReader ) ;
+        log.debug( "-> Total rows = " + csvData.size() ) ;
+        
+        // Skip the header, index 0
+        for( int i=1;i<csvData.size(); i++ ) {
+            String[] record = csvData.get( i ) ;
+            
+            if( this.bhavcopyDate == null ) {
+                extractBhavcopyDate( record ) ;
+            }
+            
+            if( shouldProcessRecord( record ) ) {
+                filteredRecords.add( record ) ;
+            }
+        }
+        
+        log.debug( "-> Num filtered CSV rows = " + filteredRecords.size() ) ;
+        return filteredRecords ;
+    }
+    
+    private void extractBhavcopyDate( String[] record ) 
+        throws Exception {
+        
+        this.bhavcopyDate   = getBhavcopyDate( record ) ;
+        this.bhavcopyDayEnd = addMinutes( this.bhavcopyDate, 23*60+59 ) ;
+        
+        log.debug( "- Bhavcopy date detected " + 
+                   DD_MM_YYYY.format( this.bhavcopyDate ) );
+        
+        Date latestRepoRecordDt = ecRepo.findLatestRecordDate() ;
+        if( !latestRepoRecordDt.after( this.bhavcopyDayEnd ) ) {
+            log.debug( "-> Bhavcopy is the latest." ) ;
+            this.isLatestBhavcopy = true ;
+        }
     }
 
     private void updateEquityISINMapping( String symbol, String isin ) {
@@ -238,4 +262,12 @@ public abstract class AbstractBhavcopyImporter {
             ecmRepo.saveAndFlush( meta ) ;
         }
     }
+
+    protected abstract Date getBhavcopyDate( String[] record ) throws Exception ;
+    
+    protected abstract boolean shouldProcessRecord( String[] record ) ;
+    
+    protected abstract EquityMaster getEquityMaster( String[] record ) ;
+    
+    protected abstract HistoricEQData buildEquityCandle( String[] record, Date date ) ;
 }

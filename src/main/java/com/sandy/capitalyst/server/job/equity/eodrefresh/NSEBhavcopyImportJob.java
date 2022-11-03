@@ -78,7 +78,7 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
             throws Exception {
         
         Date latestAvailableBhavcopyDate = downloader.getLatestBhavcopyDate() ;
-        return latestAvailableBhavcopyDate.before( lastImportDate ) ;
+        return latestAvailableBhavcopyDate.after( lastImportDate ) ;
     }
     
     private String getBhavcopyContents() throws Exception {

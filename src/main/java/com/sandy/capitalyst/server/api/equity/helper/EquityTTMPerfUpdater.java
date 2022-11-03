@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat ;
 import java.util.Calendar ;
 import java.util.Date ;
 import java.util.HashMap ;
+import java.util.Iterator ;
 import java.util.List ;
 import java.util.Map ;
 
@@ -151,11 +152,24 @@ public class EquityTTMPerfUpdater {
             updateMilestonePerf( milestone, date ) ;
         }
 
-        log.debug( "-> Saving all perf records." ) ;
-        perfMap.values().forEach( record -> {
-            log.debug( "->> Saving " + record.getSymbolNse() ) ;
+        log.debug( "- Saving all perf records." ) ;
+        
+        int   numRecords   = perfMap.size() ;
+        int   curRecord    = -1 ;
+        float pctCompleted = 0 ;
+        
+        Iterator<EquityTTMPerf> iter = perfMap.values().iterator() ; 
+        while( iter.hasNext() ) {
+            EquityTTMPerf record = iter.next() ;
             perfRepo.saveAndFlush( record ) ;
-        } ) ;
+            
+            curRecord++ ;
+            
+            if( curRecord % 50 == 0 ) {
+                pctCompleted = (((float)curRecord)/numRecords)*100 ;
+                log.debug( "->> " + Math.ceil( pctCompleted ) + "% completed." ) ;
+            }
+        }
         
         RecoManager.instance().setEquityDataUpdated( true ) ;
         
@@ -225,16 +239,13 @@ public class EquityTTMPerfUpdater {
     private void updateMilestonePerf( String perfField, Date date ) 
         throws Exception {
         
-        log.debug( "- Updating TTM " + perfField + " @" + SDF.format( date ) ) ;
+        log.debug( "- Updating TTM " + perfField + " @ " + SDF.format( date ) ) ;
      
         List<ClosePrice>        histEODList = null ;
         Map<String, ClosePrice> histEODMap  = new HashMap<>() ;
         
         histEODList = histRepo.getClosePriceNearestToDate( date ) ;
         histEODList.forEach( i -> { histEODMap.put( i.getSymbol(), i ) ; } ) ;
-        
-        log.debug( "-> Closest eod record " + 
-                   SDF.format( histEODList.get( 0 ).getDate() ) ) ;
         
         for( HistoricEQData candle : todayCandles.values() ) {
             
