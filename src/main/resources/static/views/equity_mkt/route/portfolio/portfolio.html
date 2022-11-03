@@ -202,15 +202,15 @@
                 <th class="fixed-font amt">{{selTotal.mktValue    | amt}}</th>
                 <th class="fixed-font amt">{{selTotal.valueAtCost + selTotal.pat | amt}}</th>
                 <th class="fixed-font amt"
-                    ng-class="getAmtClass(allTotal.pat)">
+                    ng-class="getAmtClass(selTotal.pat)">
                     {{selTotal.pat | amt}}
                 </th>
                 <th class="fixed-font amt"
-                    ng-class="getAmtClass(allTotal.patPct)">
+                    ng-class="getAmtClass(selTotal.patPct)">
                     {{selTotal.patPct | number:1}}%
                 </th>
                 <th class="fixed-font amt"
-                    ng-class="getAmtClass(allTotal.dayGain)">
+                    ng-class="getAmtClass(selTotal.dayGain)">
                     {{selTotal.dayGain | amt}}
                 </th>
                 <th>
