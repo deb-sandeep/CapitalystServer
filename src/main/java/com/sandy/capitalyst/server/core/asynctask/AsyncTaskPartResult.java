@@ -10,7 +10,18 @@ import lombok.Data ;
 @Data
 public class AsyncTaskPartResult {
 
+    private AsyncTaskRunStatus runState = null ;
     private AsyncTaskProgress progress = null ;
     private List<AsyncTaskMessage> messages = new ArrayList<>() ;
     private Map<String, Object> returnValues = new HashMap<>() ;
+    
+    public boolean isComplete() {
+        return runState != null && 
+               runState == AsyncTaskRunStatus.COMPLETED ;
+    }
+    
+    public boolean isExecuting() {
+        return runState != null && 
+               runState == AsyncTaskRunStatus.EXECUTING ;
+    }
 }

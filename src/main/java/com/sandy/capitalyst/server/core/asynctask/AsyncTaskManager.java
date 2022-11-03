@@ -40,9 +40,10 @@ public class AsyncTaskManager {
         handle.setSubmitTime( new Date() ) ;
         
         AsyncTaskWrapper wrapper = new AsyncTaskWrapper( task, handle ) ;
+        task.setTaskWrapper( wrapper ) ;
+        taskMap.put( handle.getTaskId(), wrapper ) ;
         
         try {
-            taskMap.put( handle.getTaskId(), wrapper ) ;
             executor.execute( task ) ;
         }
         catch( Exception e ) {
@@ -60,14 +61,17 @@ public class AsyncTaskManager {
         AsyncTaskWrapper taskWrapper = taskMap.get( taskId ) ;
         
         if( taskWrapper == null ) {
-            partResult.getMessages()
-                      .add( new AsyncTaskMessage( "Task does not exist." ) ) ;
+            throw new AsyncTaskException( "Task does not exist" ) ;
         }
         else {
             taskWrapper.populatePartResult( partResult ) ;
         }
         
         return partResult ;
+    }
+    
+    public void cleanTaskContext( String taskId ) {
+        taskMap.remove( taskId ) ;
     }
     
     private String generateTaskId( AsyncTask task ) {

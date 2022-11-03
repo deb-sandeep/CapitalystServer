@@ -51,6 +51,7 @@ public class AsyncTaskWrapper {
         }
     }
     
+    @SuppressWarnings( "incomplete-switch" )
     public synchronized long getElapsedTimeSinceExecution() {
         switch( runStatus ) {
             case YET_TO_EXECUTE:
@@ -97,6 +98,7 @@ public class AsyncTaskWrapper {
     
     public synchronized void populatePartResult( AsyncTaskPartResult partResult ) {
         
+        partResult.setRunState( this.runStatus ) ;
         partResult.setProgress( this.progress ) ;
         partResult.getReturnValues().putAll( this.results ) ;
         partResult.getMessages().addAll( this.messages ) ;

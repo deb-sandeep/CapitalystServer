@@ -18,18 +18,22 @@ public class IndentUtil {
     @SuppressWarnings( "unchecked" )
     public static void i_reset() {
         
-        MDC.getContext().values().forEach( item -> {
-            Indent indent = ( Indent )item ;
-            indent.resetIndent() ;
-        } ) ;
+        if( MDC.getContext() != null ) {
+            MDC.getContext().values().forEach( item -> {
+                Indent indent = ( Indent )item ;
+                indent.resetIndent() ;
+            } ) ;
+        }
     }
     
     @SuppressWarnings( "unchecked" )
     public static void i_clear() {
         
-        MDC.getContext().values().forEach( item -> {
-            Indent indent = ( Indent )item ;
-            indent.clearIndent() ;
-        } ) ;
+        if( MDC.getContext() != null ) {
+            MDC.getContext().values().forEach( item -> {
+                Indent indent = ( Indent )item ;
+                indent.clearIndent() ;
+            } ) ;
+        }
     }
 }
