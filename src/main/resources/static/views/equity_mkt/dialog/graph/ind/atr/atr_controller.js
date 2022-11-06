@@ -1,14 +1,16 @@
-capitalystNgApp.controller( 'MACDController', 
+capitalystNgApp.controller( 'ATRController', 
                             function( $scope, $http ) {
+    
+    // ---------------- Constants ----------------------------------------------
+    const CHART_ID = "atr" ;
+    const ATR_LINE_DS_ID = "atr-line" ;
     
     // ---------------- Local variables ----------------------------------------
     var chart = null ;
     var datasets = [] ;
     var chartOptions = null ;
     
-    var macdLineData = null ;
-    var macdSigData  = null ;
-    var macdHistData = null ;
+    var atrLineData = null ;
     
     function resetState() {
         
@@ -17,17 +19,13 @@ capitalystNgApp.controller( 'MACDController',
         }
 
         datasets.length = 0 ;
-        macdLineData = null ;
-        macdSigData = null ;
-        macdHistData = null ;
+        atrLineData = null ;
     }
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
-        minWindowSize : 12,
-        maxWindowSize : 26,
-        sigWindowSize : 9,
-        enableFlag    : false
+        windowSize : 14,
+        enableFlag : false,
     } ;
     
     // -------------------------------------------------------------------------
@@ -37,51 +35,45 @@ capitalystNgApp.controller( 'MACDController',
 
     $scope.$on( "eodGraphPostRender", function( _event, args ) {
         
-        if( $scope.$parent.isFooterChartVisible( 'macd') ) {
-            $scope.showMACDChart() ;
+        if( $scope.$parent.isFooterChartVisible( CHART_ID ) ) {
+            $scope.showATRChart() ;
         }
     } ) ;
 
     $scope.enableFlagUpdated = function() {
         if( $scope.config.enableFlag ) {
-            $scope.showMACDChart() ;
+            $scope.showATRChart() ;
         }
         else {
-            $scope.hideMACDChart() ;
+            $scope.hideATRChart() ;
         }
     }
     
-    $scope.hideMACDChart = function() {
+    $scope.hideATRChart = function() {
         
-        $scope.$parent.hideFooterChart( 'macd' ) ;
+        $scope.$parent.hideFooterChart( CHART_ID ) ;
         $scope.config.enableFlag = false ;
         
         if( chart != null ) {
             chart.destroy() ;
             datasets.length = 0 ;
-            macdLineData = null ;
-            macdSigData = null ;
-            macdHistData = null ;
+            atrLineData = null ;
         }
     }
     
-    $scope.showMACDChart = function() {
+    $scope.showATRChart = function() {
         
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
-        $http.get( '/Equity/GraphData/Indicator/MACD' + 
+        $http.get( '/Equity/GraphData/Indicator/ATR' + 
                    '?symbolNse=' + symbol +
-                   '&minWindowSize=' + $scope.config.minWindowSize +
-                   '&maxWindowSize=' + $scope.config.maxWindowSize +
-                   '&sigWindowSize=' + $scope.config.sigWindowSize )
+                   '&windowSize=' + $scope.config.windowSize )
         .then ( 
             function( response ){
                 
-                macdLineData = response.data[ 'macd-line'   ] ;
-                macdSigData  = response.data[ 'macd-signal' ] ;
-                macdHistData = response.data[ 'macd-hist'   ] ;
+                atrLineData = response.data[ ATR_LINE_DS_ID ] ;
                 
-                $scope.$parent.showFooterChart( 'macd' ) ;
+                $scope.$parent.showFooterChart( CHART_ID ) ;
                 $scope.config.enableFlag = true ;
                 
                 drawChart() ;
@@ -102,11 +94,10 @@ capitalystNgApp.controller( 'MACDController',
         datasets.length = 0 ;
         chartOptions = getChartOptions() ;
         
-        addDataset( getMACDLineDataset() ) ;
-        addDataset( getMACDSignalDataset() ) ;
-        addDataset( getMACDHistDataset()   ) ;
+        addDataset( getATRLineDataset() ) ;
         
-        var canvas = document.getElementById( 'macdChartCanvas' ) ;
+        var canvas = document.getElementById( CHART_ID + 'ChartCanvas' ) ;
+        
         chart = new Chart( canvas, {
             data: {
               labels: $scope.$parent.chartData.labels,
@@ -117,7 +108,7 @@ capitalystNgApp.controller( 'MACDController',
         
         paintChartName( canvas ) ;
     }
-        
+    
     function paintChartName( canvas ) {
         
         var ctx = canvas.getContext( "2d" ) ;
@@ -125,7 +116,7 @@ capitalystNgApp.controller( 'MACDController',
         
         ctx.font = "12px Courier" ;
         ctx.fillStyle = "white" ;
-        ctx.fillText( "MACD", 60, 10 ) ;
+        ctx.fillText( "ATR", 60, 10 ) ;
         
         ctx.fillStyle = oldColor ;
     }
@@ -153,48 +144,18 @@ capitalystNgApp.controller( 'MACDController',
     
     // ------------------- Dataset creation functions --------------------------
 
-    function getMACDLineDataset() {
+    function getATRLineDataset() {
         
         return {
-            name             : 'macd-line',
+            name             : ATR_LINE_DS_ID,
             type             : 'line',
-            data             : macdLineData,
-            borderColor      : '#3aaee9',
-            backgroundColor  : '#3aaee9',
+            data             : atrLineData,
+            borderColor      : '#FD8135',
+            backgroundColor  : '#FD8135',
             borderWidth      : 1,
             tension          : 0,
             radius           : 0,
             yAxisID          : 'y',
-        } ;
-    }
-    
-    function getMACDSignalDataset() {
-        
-        return {
-            name             : 'macd-signal',
-            type             : 'line',
-            data             : macdSigData,
-            borderColor      : '#d36b1b',
-            backgroundColor  : '#d36b1b',
-            borderWidth      : 1,
-            tension          : 0,
-            radius           : 0,
-        } ;
-    }
-    
-    function getMACDHistDataset() {
-        
-        return {
-            name             : 'macd-hist',
-            type             : 'line',
-            data             : macdHistData,
-            radius           : 0,
-            borderWidth      : 0,
-            fill : {
-                target: 'origin',
-                above: 'rgba(0, 255, 0, 0.3)',
-                below: 'rgba(255, 0, 0, 0.3)'
-            }
         } ;
     }
     
@@ -284,5 +245,4 @@ capitalystNgApp.controller( 'MACDController',
             }
         } ;
     }
-    
 } ) ;

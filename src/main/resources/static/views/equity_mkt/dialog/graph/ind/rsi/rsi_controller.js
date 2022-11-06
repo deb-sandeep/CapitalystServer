@@ -97,13 +97,28 @@ capitalystNgApp.controller( 'RSIController',
         addDataset( getRSISellTriggerLineDataset() ) ;
         addDataset( getRSIBuyTriggerLineDataset()  ) ;
         
-        chart = new Chart( document.getElementById( CHART_ID + 'ChartCanvas' ), {
+        var canvas = document.getElementById( CHART_ID + 'ChartCanvas' ) ;
+        chart = new Chart( canvas, {
             data: {
               labels: $scope.$parent.chartData.labels,
               datasets: datasets
             },
             options: chartOptions
         } ) ;
+        
+        paintChartName( canvas ) ;
+    }
+        
+    function paintChartName( canvas ) {
+        
+        var ctx = canvas.getContext( "2d" ) ;
+        var oldColor = ctx.fillStyle ;
+        
+        ctx.font = "12px Courier" ;
+        ctx.fillStyle = "white" ;
+        ctx.fillText( "RSI", 60, 10 ) ;
+        
+        ctx.fillStyle = oldColor ;
     }
         
     function addDataset( dataset ) {

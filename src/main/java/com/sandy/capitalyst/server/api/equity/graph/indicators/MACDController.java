@@ -78,7 +78,7 @@ public class MACDController extends AbstractIndicatorController {
             return status( OK ).body( seriesMap ) ;
         }
         catch( Exception e ) {
-            log.error( "Error :: Getting equity portfolio.", e ) ;
+            log.error( "Error :: Getting MACD indicator values.", e ) ;
             return status( INTERNAL_SERVER_ERROR ).body( null ) ;
         }
     }

@@ -48,7 +48,7 @@ public class BollingerBandsController extends AbstractIndicatorController {
             return status( OK ).body( seriesValues ) ;
         }
         catch( Exception e ) {
-            log.error( "Error :: Getting equity portfolio.", e ) ;
+            log.error( "Error :: Getting Bollinger indicator values.", e ) ;
             return status( INTERNAL_SERVER_ERROR ).body( null ) ;
         }
     }

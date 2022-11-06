@@ -1,14 +1,18 @@
-capitalystNgApp.controller( 'MACDController', 
+capitalystNgApp.controller( 'ADXController', 
                             function( $scope, $http ) {
+    
+    // ---------------- Constants ----------------------------------------------
+    const CHART_ID = "adx" ;
+    const ADX_LINE_DS_ID = "adx-line" ;
     
     // ---------------- Local variables ----------------------------------------
     var chart = null ;
     var datasets = [] ;
     var chartOptions = null ;
     
-    var macdLineData = null ;
-    var macdSigData  = null ;
-    var macdHistData = null ;
+    var adxLineData = null ;
+    var plusDILineData = null ;
+    var minusDILineData = null ;
     
     function resetState() {
         
@@ -17,17 +21,16 @@ capitalystNgApp.controller( 'MACDController',
         }
 
         datasets.length = 0 ;
-        macdLineData = null ;
-        macdSigData = null ;
-        macdHistData = null ;
+        adxLineData = null ;
+        plusDILineData = null ;
+        minusDILineData = null ;
     }
 
     // ---------------- Scope variables ----------------------------------------
     $scope.config = {
-        minWindowSize : 12,
-        maxWindowSize : 26,
-        sigWindowSize : 9,
-        enableFlag    : false
+        diWindowSize : 14,
+        adxWindowSize : 14,
+        enableFlag : false,
     } ;
     
     // -------------------------------------------------------------------------
@@ -37,51 +40,50 @@ capitalystNgApp.controller( 'MACDController',
 
     $scope.$on( "eodGraphPostRender", function( _event, args ) {
         
-        if( $scope.$parent.isFooterChartVisible( 'macd') ) {
-            $scope.showMACDChart() ;
+        if( $scope.$parent.isFooterChartVisible( CHART_ID ) ) {
+            $scope.showADXChart() ;
         }
     } ) ;
 
     $scope.enableFlagUpdated = function() {
         if( $scope.config.enableFlag ) {
-            $scope.showMACDChart() ;
+            $scope.showADXChart() ;
         }
         else {
-            $scope.hideMACDChart() ;
+            $scope.hideADXChart() ;
         }
     }
     
-    $scope.hideMACDChart = function() {
+    $scope.hideADXChart = function() {
         
-        $scope.$parent.hideFooterChart( 'macd' ) ;
+        $scope.$parent.hideFooterChart( CHART_ID ) ;
         $scope.config.enableFlag = false ;
         
         if( chart != null ) {
             chart.destroy() ;
             datasets.length = 0 ;
-            macdLineData = null ;
-            macdSigData = null ;
-            macdHistData = null ;
+            adxLineData = null ;
+            plusDILineData = null ;
+            minusDILineData = null ;
         }
     }
     
-    $scope.showMACDChart = function() {
+    $scope.showADXChart = function() {
         
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
-        $http.get( '/Equity/GraphData/Indicator/MACD' + 
+        $http.get( '/Equity/GraphData/Indicator/ADX' + 
                    '?symbolNse=' + symbol +
-                   '&minWindowSize=' + $scope.config.minWindowSize +
-                   '&maxWindowSize=' + $scope.config.maxWindowSize +
-                   '&sigWindowSize=' + $scope.config.sigWindowSize )
+                   '&diWindowSize=' + $scope.config.diWindowSize + 
+                   '&adxWindowSize=' + $scope.config.adxWindowSize )
         .then ( 
             function( response ){
                 
-                macdLineData = response.data[ 'macd-line'   ] ;
-                macdSigData  = response.data[ 'macd-signal' ] ;
-                macdHistData = response.data[ 'macd-hist'   ] ;
+                adxLineData     = response.data[ ADX_LINE_DS_ID ] ;
+                plusDILineData  = response.data[ "plus-di"      ] ;
+                minusDILineData = response.data[ "minus-di"     ] ;
                 
-                $scope.$parent.showFooterChart( 'macd' ) ;
+                $scope.$parent.showFooterChart( CHART_ID ) ;
                 $scope.config.enableFlag = true ;
                 
                 drawChart() ;
@@ -102,11 +104,11 @@ capitalystNgApp.controller( 'MACDController',
         datasets.length = 0 ;
         chartOptions = getChartOptions() ;
         
-        addDataset( getMACDLineDataset() ) ;
-        addDataset( getMACDSignalDataset() ) ;
-        addDataset( getMACDHistDataset()   ) ;
+        addDataset( getADXLineDataset() ) ;
+        addDataset( getDIPlusLineDataset() ) ;
+        addDataset( getDIMinusLineDataset() ) ;
         
-        var canvas = document.getElementById( 'macdChartCanvas' ) ;
+        var canvas = document.getElementById( CHART_ID + 'ChartCanvas' ) ;
         chart = new Chart( canvas, {
             data: {
               labels: $scope.$parent.chartData.labels,
@@ -125,7 +127,7 @@ capitalystNgApp.controller( 'MACDController',
         
         ctx.font = "12px Courier" ;
         ctx.fillStyle = "white" ;
-        ctx.fillText( "MACD", 60, 10 ) ;
+        ctx.fillText( "ADX", 60, 10 ) ;
         
         ctx.fillStyle = oldColor ;
     }
@@ -153,14 +155,14 @@ capitalystNgApp.controller( 'MACDController',
     
     // ------------------- Dataset creation functions --------------------------
 
-    function getMACDLineDataset() {
+    function getADXLineDataset() {
         
         return {
-            name             : 'macd-line',
+            name             : ADX_LINE_DS_ID,
             type             : 'line',
-            data             : macdLineData,
-            borderColor      : '#3aaee9',
-            backgroundColor  : '#3aaee9',
+            data             : adxLineData,
+            borderColor      : '#CACBC9',
+            backgroundColor  : '#CACBC9',
             borderWidth      : 1,
             tension          : 0,
             radius           : 0,
@@ -168,33 +170,33 @@ capitalystNgApp.controller( 'MACDController',
         } ;
     }
     
-    function getMACDSignalDataset() {
+    function getDIPlusLineDataset() {
         
         return {
-            name             : 'macd-signal',
+            name             : "di-plus",
             type             : 'line',
-            data             : macdSigData,
-            borderColor      : '#d36b1b',
-            backgroundColor  : '#d36b1b',
+            data             : plusDILineData,
+            borderColor      : '#53C100',
+            backgroundColor  : '#53C100',
             borderWidth      : 1,
             tension          : 0,
             radius           : 0,
+            yAxisID          : 'y',
         } ;
     }
     
-    function getMACDHistDataset() {
+    function getDIMinusLineDataset() {
         
         return {
-            name             : 'macd-hist',
+            name             : "di-minus",
             type             : 'line',
-            data             : macdHistData,
+            data             : minusDILineData,
+            borderColor      : '#AE0031',
+            backgroundColor  : '#AE0031',
+            borderWidth      : 1,
+            tension          : 0,
             radius           : 0,
-            borderWidth      : 0,
-            fill : {
-                target: 'origin',
-                above: 'rgba(0, 255, 0, 0.3)',
-                below: 'rgba(255, 0, 0, 0.3)'
-            }
+            yAxisID          : 'y',
         } ;
     }
     

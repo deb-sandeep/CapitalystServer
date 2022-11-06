@@ -29,12 +29,22 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         },
         macd : {
             visible : false,
-            height  : 125,
+            height  : 100,
             bottom  : -1,     // Updated when chart is made visible
         },
         rsi : {
             visible : false,
+            height  : 100,
+            bottom  : -1,
+        },
+        adx : {
+            visible : false,
             height  : 125,
+            bottom  : -1,
+        },
+        atr : {
+            visible : false,
+            height  : 100,
             bottom  : -1,
         },
     } ;

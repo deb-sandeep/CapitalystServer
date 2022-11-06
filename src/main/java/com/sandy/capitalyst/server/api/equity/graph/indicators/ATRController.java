@@ -13,27 +13,25 @@ import org.springframework.web.bind.annotation.GetMapping ;
 import org.springframework.web.bind.annotation.RequestParam ;
 import org.springframework.web.bind.annotation.RestController ;
 import org.ta4j.core.BarSeries ;
-import org.ta4j.core.indicators.RSIIndicator ;
-import org.ta4j.core.indicators.helpers.ClosePriceIndicator ;
+import org.ta4j.core.indicators.ATRIndicator ;
 import org.ta4j.core.indicators.numeric.NumericIndicator ;
 
 import com.sandy.capitalyst.server.api.equity.graph.internal.AbstractIndicatorController ;
 import com.sandy.capitalyst.server.api.equity.graph.internal.BarSeriesCache ;
 
 @RestController
-public class RSIController extends AbstractIndicatorController {
+public class ATRController extends AbstractIndicatorController {
 
-    private static final Logger log = Logger.getLogger( RSIController.class ) ;
+    private static final Logger log = Logger.getLogger( ATRController.class ) ;
     
-    @GetMapping( "/Equity/GraphData/Indicator/RSI" ) 
+    @GetMapping( "/Equity/GraphData/Indicator/ATR" ) 
     public ResponseEntity<Map<String, Double[]>> getRSI( 
             @RequestParam( name="symbolNse",  required=true ) String  symbolNse,
             @RequestParam( name="windowSize", required=true ) Integer windowSize ) {
         
-        BarSeries           barSeries  = null ;
-        ClosePriceIndicator cpInd      = null ;
-        RSIIndicator        rsiInd     = null ;
-        Double[]            lineValues = null ;
+        BarSeries    barSeries  = null ;
+        ATRIndicator atrInd     = null ;
+        Double[]     lineValues = null ;
         
         log.debug( "Symbol NSE  = " + symbolNse  ) ;
         log.debug( "Window size = " + windowSize ) ;
@@ -41,18 +39,17 @@ public class RSIController extends AbstractIndicatorController {
         try {
             barSeries = BarSeriesCache.instance().get( symbolNse ) ;
             
-            cpInd  = new ClosePriceIndicator( barSeries ) ;
-            rsiInd = new RSIIndicator( cpInd, windowSize ) ;
+            atrInd = new ATRIndicator( barSeries, windowSize ) ;
             
-            lineValues = getValues( NumericIndicator.of( rsiInd ) ) ;
+            lineValues = getValues( NumericIndicator.of( atrInd ) ) ;
             
             Map<String, Double[]> seriesMap = new HashMap<>() ;
-            seriesMap.put( "rsi-line", lineValues ) ;
+            seriesMap.put( "atr-line", lineValues ) ;
             
             return status( OK ).body( seriesMap ) ;
         }
         catch( Exception e ) {
-            log.error( "Error :: Getting RSI values.", e ) ;
+            log.error( "Error :: Getting ATR indicator values.", e ) ;
             return status( INTERNAL_SERVER_ERROR ).body( null ) ;
         }
     }
