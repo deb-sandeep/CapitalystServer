@@ -199,12 +199,19 @@ public class EquityGraphDataBuilder {
             lastUpdate = DateUtils.truncate( lastUpdate, Calendar.DAY_OF_MONTH ) ;
             
             if( !data.containsKey( lastUpdate ) ) {
+                
                 HistoricEQData histData = new HistoricEQData() ;
-                histData.setClose( holding.getCurrentMktPrice() ) ;
-                histData.setDate( lastUpdate ) ;
+                float cmp = holding.getCurrentMktPrice() ;
+                
+                histData.setDate ( lastUpdate ) ;
+                histData.setOpen ( cmp        ) ;
+                histData.setHigh ( cmp        ) ;
+                histData.setLow  ( cmp        ) ;
+                histData.setClose( cmp        ) ;
                 
                 DataHolder holder = new DataHolder() ;
                 holder.histData = histData ;
+                
                 data.put( lastUpdate, holder ) ;
             }
         }
