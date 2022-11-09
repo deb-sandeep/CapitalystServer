@@ -147,6 +147,10 @@ public class LedgerRestController {
             startOfMonth = DateUtils.truncate( startOfMonth, Calendar.DAY_OF_MONTH ) ;
             
             Date endOfMonth = DateUtils.addMonths( startOfMonth, 1 ) ;
+            endOfMonth = DateUtils.addSeconds( endOfMonth, -1 ) ;
+            
+            log.debug( "Start of month = " + startOfMonth ) ;
+            log.debug( "End of month   = " + endOfMonth   ) ;
             
             if( StringUtil.isNotEmptyOrNull( l2CatName ) ) {
                 entries = lRepo.findDebitEntriesForPeriod( l1CatName, l2CatName, 
@@ -154,7 +158,8 @@ public class LedgerRestController {
                                                            endOfMonth ) ;
             }
             else {
-                entries = lRepo.findDebitEntriesForPeriod( l1CatName, startOfMonth, 
+                entries = lRepo.findDebitEntriesForPeriod( l1CatName, 
+                                                           startOfMonth, 
                                                            endOfMonth ) ;
             }
             
@@ -174,6 +179,7 @@ public class LedgerRestController {
                     
                     if( entry.getAmount() < 0 ) {
                         returnValue.add( entry ) ;
+                        log.debug( entry ) ;
                     }
                 } ) ;
             }
