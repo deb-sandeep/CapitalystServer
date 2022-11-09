@@ -74,9 +74,15 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     } ;
     
     $scope.bollingerOptions = {
-        upper  : { enabled: false, color: '#139f9f', dash:[]    },
+        upper  : { enabled: false, color: '#b95c55', dash:[]    },
         middle : { enabled: false, color: '#ff00a1', dash:[2,2] },
-        lower  : { enabled: false, color: '#139f9f', dash:[]    },
+        lower  : { enabled: false, color: '#19a592', dash:[]    },
+    } ;
+    
+    $scope.keltnerOptions = {
+        upper  : { enabled: false, color: '#9c2822', dash:[]    },
+        middle : { enabled: false, color: '#ff00a1', dash:[2,2] },
+        lower  : { enabled: false, color: '#09762f', dash:[]    },
     } ;
     
     $scope.measureConfig = {
@@ -164,6 +170,13 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
     $scope.plotBollingerBands = function() {
         for( const key in $scope.bollingerOptions ) {
             plotBollingerBand( key ) ;
+        }
+    }
+    
+    // Plot all the Keltner channel - upper, middle and lower.
+    $scope.plotKeltnerChannel = function() {
+        for( const key in $scope.keltnerOptions ) {
+            plotKeltnerChannel( key ) ;
         }
     }
     
@@ -381,7 +394,34 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         const seriesName = "bollinger-" + bandName ;
         
         if( cfg.enabled ) {
-            plotSeries( getBollingerDataset( seriesName, cfg ) ) ;
+            var dataset = getSeriesDataset( seriesName, cfg ) ;
+            if( bandName == "upper" ) {
+                dataset[ "fill" ] = {
+                    target: '+2',
+                    above: 'rgba(100, 100, 100, 0.1)'
+                } ;
+            }
+            plotSeries( dataset ) ;
+        }
+        else {
+            eraseSeries( seriesName ) ;
+        }
+    }
+    
+    function plotKeltnerChannel( bandName ) {
+        
+        const cfg = $scope.keltnerOptions[ bandName ] ;
+        const seriesName = "keltner-" + bandName ;
+        
+        if( cfg.enabled ) {
+            var dataset = getSeriesDataset( seriesName, cfg ) ;
+            if( bandName == "upper" ) {
+                dataset[ "fill" ] = {
+                    target: '+2',
+                    above: 'rgba(70, 98, 100, 0.1)'
+                } ;
+            }
+            plotSeries( dataset ) ;
         }
         else {
             eraseSeries( seriesName ) ;
@@ -543,7 +583,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         } ;
     }
     
-    function getBollingerDataset( seriesName, cfg ) {
+    function getSeriesDataset( seriesName, cfg ) {
         
         var values = $scope.seriesCache.get( seriesName ) ;
         return {
@@ -934,6 +974,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                     font: {
                         size: 10,
                     }
+                },
+                grid: {
+                    color: '#343434',
                 }
             },
             y : {
@@ -944,6 +987,9 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                     callback: function( value, index, ticks ) {
                         return ('' + Math.round(value)).padStart( 6, ' ' ) ;
                     }
+                },
+                grid: {
+                    color: '#343434',
                 }
             }
         } ;
