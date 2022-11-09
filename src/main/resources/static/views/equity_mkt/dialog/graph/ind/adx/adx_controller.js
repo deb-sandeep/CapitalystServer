@@ -182,6 +182,11 @@ capitalystNgApp.controller( 'ADXController',
             tension          : 0,
             radius           : 0,
             yAxisID          : 'y',
+            fill             : {
+                target: '+1',
+                above: 'rgba(0,  255, 0, 0.1)',
+                below: 'rgba(255,  0, 0, 0.1)',
+            }
         } ;
     }
     
