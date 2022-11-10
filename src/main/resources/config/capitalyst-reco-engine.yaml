@@ -6,7 +6,7 @@ screenerCfgs:
    - id : ManualInclusionScreener
      priority : 99
      attributes :
-        nseSymbols : ATGL, ADANIPORTS, ADANITRANS, ADANIGREEN, NIFTYBEES, SETFGOLD
+        nseSymbols : ADANIPORTS, ADANITRANS, ADANIGREEN, NIFTYBEES, SETFGOLD
         
    - id : IndexScreener
      priority : 98
@@ -17,11 +17,11 @@ screenerCfgs:
      priority : 90
      attributes :
         includedMCInsights : MID RANGE, MID-RANGE, STRONG
-        minMcEssentialScore : 50
+        minMcEssentialScore : 40
         minMarketCap : 20000
         betaRange : 0.3:1.7
         minCagrEbit : 5
-        minPiotroskiScore : 5
+        minPiotroskiScore : 4
 
 attributeEvaluatorCfgs:
    - id : GoodnessEvaluator
