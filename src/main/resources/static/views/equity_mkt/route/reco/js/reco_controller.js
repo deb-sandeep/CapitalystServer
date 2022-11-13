@@ -10,6 +10,8 @@ capitalystNgApp.controller( 'RecoController',
        health  : new Gradient( new UniformGradient() ),
        mc      : new Gradient( new UniformGradient() ),
        
+       rsi     : new Gradient( new UniformGradient( GR_GRADIENT ) ),
+       
        perf1D  : new Gradient( new ThresholdGradient() ), 
        perf1W  : new Gradient( new ThresholdGradient() ), 
        perf2W  : new Gradient( new ThresholdGradient() ), 
@@ -171,6 +173,7 @@ capitalystNgApp.controller( 'RecoController',
                     gradientMgr['health' ].addValue( reco.goodnessScore ) ;
                     gradientMgr['mc'     ].addValue( reco.indicators.mcEssentialScore ) ;
                     gradientMgr['cagr'   ].addValue( reco.indicators.cagrEbit ) ;
+                    gradientMgr['rsi'    ].addValue( reco.techIndicators[0].level ) ;
                     
                     gradientMgr['perf1D' ].addValue( reco.ttmPerf.perf1d  ) ;
                     gradientMgr['perf1W' ].addValue( reco.ttmPerf.perf1w  ) ;
@@ -247,6 +250,9 @@ capitalystNgApp.controller( 'RecoController',
         }    
         else if( field == "trend" ) {
             $scope.recommendations.sort( trendSort ) ;
+        }    
+        else if( field == "rsi" ) {
+            $scope.recommendations.sort( rsiSort ) ;
         }    
         else if( field == "perf1D" ) {
             $scope.recommendations.sort( perf1DSort ) ;
@@ -356,6 +362,12 @@ capitalystNgApp.controller( 'RecoController',
             ( trendScore[r2.indicators.trend] - trendScore[r1.indicators.trend] ) ;
     }
         
+    function rsiSort( r1, r2 ) {
+        return sortDir["rsi"] == "asc" ?
+            ( r1.techIndicators[0].level - r2.techIndicators[0].level ) :
+            ( r2.techIndicators[0].level - r1.techIndicators[0].level ) ;
+    }
+    
     function perf1DSort( r1, r2 ) {
         return sortDir["perf1D"] == "asc" ?
             ( r1.ttmPerf.perf1d - r2.ttmPerf.perf1d ) :

@@ -7,7 +7,7 @@
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
-                <th colspan="12" style="text-align:center;">
+                <th colspan="13" style="text-align:center;">
                     Performance % &nbsp;&nbsp;
                     <span class="glyphicon glyphicon-refresh"
                           ng-click="refreshTTM()"></span>
@@ -45,6 +45,9 @@
                 </th>
                 <th ng-click="sort('trend')">
                     <i class="fa-solid fa-chart-line"></i>
+                </th>
+                <th ng-click="sort('rsi')" style="width:40px;">
+                    RSI
                 </th>
                 <th ng-click="sort('perf1D')" style="width:40px;">
                     1D
@@ -164,6 +167,10 @@
                    <span ng-if="reco.indicators.trend == 'VERY BEARISH'"
                          class="glyphicon glyphicon-arrow-down"
                          style="color:red;"></span>
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'rsi', reco.techIndicators[0].level )">
+                    {{reco.techIndicators[0].level | number:1}}
                </td>
                <td class="fixed-font small-font" style="text-align:right;"
                    ng-class="getCellClass( 'perf1D', reco.ttmPerf.perf1d )">

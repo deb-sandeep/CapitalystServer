@@ -4,7 +4,11 @@ const G_GRADIENT =
               
 const RG_GRADIENT = 
     [ 'red10' , 'red8',   'red6',   'red4',   'red2', 
-      'green4', 'green4', 'green6', 'green8', 'green10' ] ;
+      'green2', 'green4', 'green6', 'green8', 'green10' ] ;
+    
+const GR_GRADIENT = 
+    [ 'green10', 'green8', 'green6', 'green4', 'green2', 
+      'red2',    'red4',   'red6',   'red8',   'red10' ] ;
     
 function UniformGradient( gradientMap ) {
     
@@ -77,7 +81,7 @@ function Gradient( gradientMapper ) {
         } ) ;
         
         if( gradientMapper == null ) {
-            gradientMapper = new UniformGradient( GREEN_GRADIENT ) ;
+            gradientMapper = new UniformGradient( G_GRADIENT ) ;
         }
         
         gradientMapper.generateGradient( this.values, 
