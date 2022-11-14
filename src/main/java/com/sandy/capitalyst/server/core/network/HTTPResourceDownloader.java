@@ -3,13 +3,18 @@ package com.sandy.capitalyst.server.core.network;
 import java.io.BufferedReader ;
 import java.io.InputStream ;
 import java.io.InputStreamReader ;
+import java.net.CookieManager ;
+import java.net.CookiePolicy ;
+import java.net.HttpCookie ;
 import java.util.HashMap ;
+import java.util.List ;
 import java.util.Map ;
 
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 
+import okhttp3.JavaNetCookieJar ;
 import okhttp3.OkHttpClient ;
 import okhttp3.Request ;
 import okhttp3.Response ;
@@ -28,14 +33,40 @@ public class HTTPResourceDownloader {
         return instance ;
     }
     
+    private CookieManager cookieManager = null ;
+    private JavaNetCookieJar cookieJar = null ;
+    
     private HTTPResourceDownloader() {
         initializeHttpClient() ;
     }
     
     private void initializeHttpClient() {
         
+        cookieManager = new CookieManager() ;
+        cookieManager.setCookiePolicy( CookiePolicy.ACCEPT_ALL ) ;
+        
+        cookieJar = new JavaNetCookieJar( cookieManager ) ;
+        
         okhttp3.OkHttpClient.Builder builder = new OkHttpClient.Builder() ;
-        client = builder.cache(null).build() ;
+        client = builder.cache( null )
+                        .cookieJar( cookieJar )
+                        .build() ;
+    }
+    
+    public boolean hasCookie( String name ) {
+        
+        List<HttpCookie> cookies = null ;
+        cookies = cookieManager.getCookieStore().getCookies() ;
+        
+        if( cookies != null && !cookies.isEmpty() ) {
+            for( HttpCookie cookie : cookies ) {
+                if( cookie.getName().equals( name ) && 
+                    !cookie.hasExpired() ) {
+                    return true ;
+                }
+            }
+        }
+        return false ;
     }
     
     public String getResource( String url ) 
@@ -91,7 +122,7 @@ public class HTTPResourceDownloader {
         Request request = builder.build() ;
         Response response = client.newCall( request ).execute() ;
         long endTime = System.currentTimeMillis() ;
-        
+
         int responseCode = response.code() ;
         log.debug( "Response code = " + responseCode ) ;
         
