@@ -34,7 +34,7 @@ public class EQIntradayImporter {
     
     public EQIntradayImporter() {}
     
-    private List<ITDSnapshot> getITDSnapshots() throws Exception {
+    private List<ITDSnapshot> getITDSnapshots() {
         
         List<ITDSnapshot> snapshots = new ArrayList<>() ;
         
@@ -51,27 +51,30 @@ public class EQIntradayImporter {
     
     private void collateEquityITDSnapshot( List<ITDSnapshot> snapshots,
                                            String url,
-                                           ITDSnapshotBuilder builder ) 
-            throws Exception {
-        
-        String       jsonStr   = downloadIntradaySnapshotJSON( url ) ;
-        ObjectMapper objMapper = new ObjectMapper() ;
-        JsonNode     jsonRoot  = objMapper.readTree( jsonStr ) ;
-        
-        Date timestamp = SDF.parse( jsonRoot.get( "timestamp" ).asText() ) ;
-        
-        JsonNode dataNode  = jsonRoot.get( "data" ) ;
-        for( int i=1; i<dataNode.size(); i++ ) {
+                                           ITDSnapshotBuilder builder ) {
+        try {
+            String       jsonStr   = downloadIntradaySnapshotJSON( url ) ;
+            ObjectMapper objMapper = new ObjectMapper() ;
+            JsonNode     jsonRoot  = objMapper.readTree( jsonStr ) ;
             
-            JsonNode jsonNode = dataNode.get( i ) ;
-            ITDSnapshot snapshot = builder.buildSnapshot( jsonNode ) ;
+            Date timestamp = SDF.parse( jsonRoot.get( "timestamp" ).asText() ) ;
             
-            if( snapshot != null ) {
-                if( snapshot.getLastUpdateTime() == null ) {
-                    snapshot.setLastUpdateTime( timestamp ) ;
+            JsonNode dataNode  = jsonRoot.get( "data" ) ;
+            for( int i=1; i<dataNode.size(); i++ ) {
+                
+                JsonNode jsonNode = dataNode.get( i ) ;
+                ITDSnapshot snapshot = builder.buildSnapshot( jsonNode ) ;
+                
+                if( snapshot != null ) {
+                    if( snapshot.getLastUpdateTime() == null ) {
+                        snapshot.setLastUpdateTime( timestamp ) ;
+                    }
+                    snapshots.add( snapshot ) ;
                 }
-                snapshots.add( snapshot ) ;
             }
+        }
+        catch( Exception e ) {
+            log.error( "Error obtaining ITD snapshot. " + e.getMessage() ) ;
         }
     }
     
@@ -145,9 +148,10 @@ public class EQIntradayImporter {
     
     public static void main( String[] args ) throws Exception {
         
-        for( int i=0; i<2; i++ ) {
+        for( int i=0; i<5; i++ ) {
             List<ITDSnapshot> snapshots = new EQIntradayImporter().getITDSnapshots() ;
             log.debug( "Snapshots obtained. # = " + snapshots.size() ) ;
+            Thread.sleep( 10000 ) ;
         }
     }
 }
