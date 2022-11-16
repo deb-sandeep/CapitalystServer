@@ -1,7 +1,7 @@
-authority: www.nseindia.com
-method: GET
-path: /api/equity-stockIndices?index=NIFTY+TOTAL+MARKET
-scheme: https
+:authority: www.nseindia.com
+:method: GET
+:path: /api/etf
+:scheme: https
 accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
 accept-language: en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7
 sec-ch-ua: "Chromium";v="106", "Not;A=Brand";v="99"

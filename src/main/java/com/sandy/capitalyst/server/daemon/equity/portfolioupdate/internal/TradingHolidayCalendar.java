@@ -10,6 +10,7 @@ import java.util.HashMap ;
 import java.util.Map ;
 
 import org.apache.log4j.Logger ;
+import org.springframework.stereotype.Component ;
 
 import com.fasterxml.jackson.annotation.JsonFormat ;
 import com.fasterxml.jackson.databind.JsonNode ;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory ;
 
 import lombok.Data ;
 
+@Component
 public class TradingHolidayCalendar {
 
     static final Logger log = Logger.getLogger( TradingHolidayCalendar.class ) ;

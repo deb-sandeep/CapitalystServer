@@ -33,8 +33,8 @@ public class HTTPResourceDownloader {
         return instance ;
     }
     
-    private CookieManager cookieManager = null ;
-    private JavaNetCookieJar cookieJar = null ;
+    private CookieManager    cookieManager  = null ;
+    private JavaNetCookieJar cookieJar      = null ;
     
     private HTTPResourceDownloader() {
         initializeHttpClient() ;
@@ -48,8 +48,10 @@ public class HTTPResourceDownloader {
         cookieJar = new JavaNetCookieJar( cookieManager ) ;
         
         okhttp3.OkHttpClient.Builder builder = new OkHttpClient.Builder() ;
+        
         client = builder.cache( null )
                         .cookieJar( cookieJar )
+                        .retryOnConnectionFailure( true )
                         .build() ;
     }
     
@@ -67,6 +69,22 @@ public class HTTPResourceDownloader {
             }
         }
         return false ;
+    }
+    
+    public String getCookieValue( String name ) {
+        
+        List<HttpCookie> cookies = null ;
+        cookies = cookieManager.getCookieStore().getCookies() ;
+        
+        if( cookies != null && !cookies.isEmpty() ) {
+            for( HttpCookie cookie : cookies ) {
+                if( cookie.getName().equals( name ) && 
+                    !cookie.hasExpired() ) {
+                    return cookie.getValue() ;
+                }
+            }
+        }
+        return null ;
     }
     
     public String getResource( String url ) 
@@ -118,26 +136,29 @@ public class HTTPResourceDownloader {
             }
         }
         
-        long startTime = System.currentTimeMillis() ;
+        byte[] responseBody = null ;
         Request request = builder.build() ;
-        Response response = client.newCall( request ).execute() ;
-        long endTime = System.currentTimeMillis() ;
+        
+        long startTime = System.currentTimeMillis() ;
+        try( Response response = client.newCall( request ).execute() ) {
 
-        int responseCode = response.code() ;
-        log.debug( "Response code = " + responseCode ) ;
-        
-        int timeTaken = (int)( endTime - startTime ) ;
-        log.debug( "Time taken = " + timeTaken + " millis" ) ;
-        
-        if( responseCode == 404 ) {
-            throw new HTTPException404() ;
+            long endTime = System.currentTimeMillis() ;
+
+            int responseCode = response.code() ;
+            log.debug( "Response code = " + responseCode ) ;
+            
+            int timeTaken = (int)( endTime - startTime ) ;
+            log.debug( "Time taken = " + timeTaken + " millis" ) ;
+            
+            if( responseCode == 404 ) {
+                throw new HTTPException404() ;
+            }
+            
+            long contentLength = response.body().contentLength() ;
+            log.debug( "Content length = " + (int)(contentLength/1024) + " KB" ) ;
+            
+            responseBody = response.body().bytes() ;
         }
-        
-        long contentLength = response.body().contentLength() ;
-        log.debug( "Content length = " + (int)(contentLength/1024) + " KB" ) ;
-        
-        byte[] responseBody = response.body().bytes() ;
-        response.body().close() ;
         
         return responseBody ;
     }
@@ -160,7 +181,7 @@ public class HTTPResourceDownloader {
         while( line != null ) {
             if( StringUtil.isNotEmptyOrNull( line ) ) {
                 if( !line.trim().startsWith( "#" ) ) {
-                    String[] parts = line.trim().split( ":" ) ;
+                    String[] parts = line.trim().split( ": " ) ;
                     headers.put( parts[0].trim(), parts[1].trim() ) ;
                 }
             }

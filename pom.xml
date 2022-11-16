@@ -157,7 +157,6 @@
 		  <version>3.14.1</version>
 		</dependency>
 		
-        <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-urlconnection -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp-urlconnection</artifactId>
