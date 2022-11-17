@@ -26,6 +26,7 @@ public class EquityITDImporterDaemon extends Thread {
     
     public static final String CFG_PAUSE_REFRESH_FLAG = "pause_refresh" ;
     public static final String CFG_LIVE_REFRESH_DELAY = "refresh_delay_secs" ;
+    public static final String CFG_LIVE_REFRESH_RND   = "refresh_delay_random" ;
     public static final String CFG_PRINT_DEBUG_STMT   = "debug_enable" ;
     public static final String CFG_FORCE_MKT_OPEN     = "force_mkt_open" ;
     
@@ -48,10 +49,11 @@ public class EquityITDImporterDaemon extends Thread {
     @Autowired
     private EquityITDSnapshotService snapshotService = null ;
     
-    private boolean pauseRefresh = false ;
-    private int     refreshDelay = 30 ;
-    private boolean debugEnable  = true ;
-    private boolean forceMktOpen = false ;
+    private boolean pauseRefresh       = false ;
+    private int     refreshDelay       = 30 ;
+    private int     refreshDelayRandom = 15 ;
+    private boolean debugEnable        = true ;
+    private boolean forceMktOpen       = false ;
     
     public EquityITDImporterDaemon() {}
 
@@ -70,23 +72,17 @@ public class EquityITDImporterDaemon extends Thread {
                         if( debugEnable ) {
                             log.debug( "Portfolio CMP refresh paused." ) ;
                         }
+                        TimeUnit.SECONDS.sleep( refreshDelay ) ;
                     }
                     else {
                         if( debugEnable ) {
                             log.debug( "" ) ;
                             log.debug( "Getting Equity ITD snapshot" ) ;
                         }
-                        
                         snapshots = snapshotService.getSnapshots() ;
-                        if( snapshots != null && !snapshots.isEmpty() ) {
-                            processSnapshots( snapshots ) ;
-                        }
+                        processSnapshots( snapshots ) ;
+                        randomSleep() ;
                     }
-                    
-                    if( debugEnable ) {
-                        log.debug( "Sleeping for " + refreshDelay + " sec." ) ;
-                    }
-                    TimeUnit.SECONDS.sleep( refreshDelay ) ;
                 }
                 else {
                     TimeUnit.MINUTES.sleep( 2 ) ;
@@ -111,15 +107,32 @@ public class EquityITDImporterDaemon extends Thread {
         }
     }
     
+    private void randomSleep() throws Exception {
+        
+        int rndSleep = (int)( Math.random()*refreshDelayRandom ) ;
+        rndSleep *= Math.random() < 0.5 ? -1 : 1 ;
+        int sleepDur = refreshDelay + rndSleep ;
+
+        if( sleepDur < MIN_REFRESH_DELAY ) {
+            sleepDur = MIN_REFRESH_DELAY ;
+        }
+        
+        if( debugEnable ) {
+            log.debug( "Sleeping for " + sleepDur + " sec." ) ;
+        }
+        TimeUnit.SECONDS.sleep( sleepDur ) ;
+    }
+    
     private void refreshConfiguration() {
         
         NVPManager nvpMgr = NVPManager.instance() ;
         NVPConfigGroup cfg = nvpMgr.getConfigGroup( CFG_GRP_NAME ) ; ;
 
-        pauseRefresh = cfg.getBoolValue( CFG_PAUSE_REFRESH_FLAG, pauseRefresh ) ;
-        refreshDelay = cfg.getIntValue ( CFG_LIVE_REFRESH_DELAY, refreshDelay ) ;
-        debugEnable  = cfg.getBoolValue( CFG_PRINT_DEBUG_STMT,   debugEnable  ) ;
-        forceMktOpen = cfg.getBoolValue( CFG_FORCE_MKT_OPEN,     forceMktOpen ) ;
+        pauseRefresh       = cfg.getBoolValue( CFG_PAUSE_REFRESH_FLAG, pauseRefresh       ) ;
+        refreshDelay       = cfg.getIntValue ( CFG_LIVE_REFRESH_DELAY, refreshDelay       ) ;
+        refreshDelayRandom = cfg.getIntValue ( CFG_LIVE_REFRESH_RND,   refreshDelayRandom ) ;
+        debugEnable        = cfg.getBoolValue( CFG_PRINT_DEBUG_STMT,   debugEnable        ) ;
+        forceMktOpen       = cfg.getBoolValue( CFG_FORCE_MKT_OPEN,     forceMktOpen       ) ;
         
         // Hardening - Prevents accidental setting of refresh delay to a lower
         // value which will result in a tight loop and API rate threshold
@@ -127,6 +140,11 @@ public class EquityITDImporterDaemon extends Thread {
         if( refreshDelay < MIN_REFRESH_DELAY ) {
             refreshDelay = MIN_REFRESH_DELAY ;
             cfg.setValue( CFG_LIVE_REFRESH_DELAY, MIN_REFRESH_DELAY ) ;
+        }
+        
+        if( (refreshDelay - refreshDelayRandom) < 15 ) {
+            refreshDelayRandom = 0 ;
+            cfg.setValue( CFG_LIVE_REFRESH_RND, 0 ) ;
         }
     }
     
@@ -136,6 +154,8 @@ public class EquityITDImporterDaemon extends Thread {
     }
     
     private void processSnapshots( List<ITDSnapshot> snapshots ) {
+        
+        if( snapshots == null || snapshots.isEmpty() ) return ;
         
         if( debugEnable ) {
             log.debug( "- Saving " + snapshots.size() + " EQ ITD snapshots" ) ;
