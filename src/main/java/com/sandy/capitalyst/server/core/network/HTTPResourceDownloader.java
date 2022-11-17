@@ -3,18 +3,13 @@ package com.sandy.capitalyst.server.core.network;
 import java.io.BufferedReader ;
 import java.io.InputStream ;
 import java.io.InputStreamReader ;
-import java.net.CookieManager ;
-import java.net.CookiePolicy ;
-import java.net.HttpCookie ;
 import java.util.HashMap ;
-import java.util.List ;
 import java.util.Map ;
 
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 
-import okhttp3.JavaNetCookieJar ;
 import okhttp3.OkHttpClient ;
 import okhttp3.Request ;
 import okhttp3.Response ;
@@ -33,58 +28,17 @@ public class HTTPResourceDownloader {
         return instance ;
     }
     
-    private CookieManager    cookieManager  = null ;
-    private JavaNetCookieJar cookieJar      = null ;
-    
     private HTTPResourceDownloader() {
         initializeHttpClient() ;
     }
     
     private void initializeHttpClient() {
         
-        cookieManager = new CookieManager() ;
-        cookieManager.setCookiePolicy( CookiePolicy.ACCEPT_ALL ) ;
-        
-        cookieJar = new JavaNetCookieJar( cookieManager ) ;
-        
         okhttp3.OkHttpClient.Builder builder = new OkHttpClient.Builder() ;
         
         client = builder.cache( null )
-                        .cookieJar( cookieJar )
                         .retryOnConnectionFailure( true )
                         .build() ;
-    }
-    
-    public boolean hasCookie( String name ) {
-        
-        List<HttpCookie> cookies = null ;
-        cookies = cookieManager.getCookieStore().getCookies() ;
-        
-        if( cookies != null && !cookies.isEmpty() ) {
-            for( HttpCookie cookie : cookies ) {
-                if( cookie.getName().equals( name ) && 
-                    !cookie.hasExpired() ) {
-                    return true ;
-                }
-            }
-        }
-        return false ;
-    }
-    
-    public String getCookieValue( String name ) {
-        
-        List<HttpCookie> cookies = null ;
-        cookies = cookieManager.getCookieStore().getCookies() ;
-        
-        if( cookies != null && !cookies.isEmpty() ) {
-            for( HttpCookie cookie : cookies ) {
-                if( cookie.getName().equals( name ) && 
-                    !cookie.hasExpired() ) {
-                    return cookie.getValue() ;
-                }
-            }
-        }
-        return null ;
     }
     
     public String getResource( String url ) 
@@ -99,28 +53,39 @@ public class HTTPResourceDownloader {
         return getResource( url, headers ) ;
     }
     
+    public String getResource( String url, String headerResourceName,
+                               Map<String, String> cookies ) 
+            throws Exception {
+        
+        Map<String, String> headers = loadHeaders( headerResourceName ) ;
+        byte[] contents = getResourceAsBytes( url, headers, cookies ) ;
+        return new String( contents ) ;
+    }
+    
     public byte[] getResourceAsBytes( String url ) 
         throws Exception {
         
         Map<String, String> headers = null ;
-        return getResourceAsBytes( url, headers ) ;
+        return getResourceAsBytes( url, headers, null ) ;
     }
     
     public byte[] getResourceAsBytes( String url, String headerResourceName ) 
         throws Exception {
         
         Map<String, String> headers = loadHeaders( headerResourceName ) ;
-        return getResourceAsBytes( url, headers ) ;
+        return getResourceAsBytes( url, headers, null ) ;
     }
         
     public String getResource( String url, Map<String, String> headers ) 
         throws Exception {
         
-        byte[] contents = getResourceAsBytes( url, headers ) ;
+        byte[] contents = getResourceAsBytes( url, headers, null ) ;
         return new String( contents ) ;
     }
     
-    private byte[] getResourceAsBytes( String url , Map<String, String> headers )
+    private byte[] getResourceAsBytes( String url , 
+                                       Map<String, String> headers,
+                                       Map<String, String> cookies )
         throws Exception {
         
         okhttp3.Request.Builder builder = null ;
@@ -134,6 +99,12 @@ public class HTTPResourceDownloader {
                 builder.addHeader( key, value ) ;
                 log.debug( "\tHeader : " + key + " :: " + value ) ;
             }
+        }
+        
+        if( cookies != null && !cookies.isEmpty() ) {
+            String cookieHdrVal = collateCookieHeaderValue( cookies ) ;
+            builder.addHeader( "cookie", cookieHdrVal ) ;
+            log.debug( "\tHeader : cookie :: " + cookieHdrVal ) ;
         }
         
         byte[] responseBody = null ;
@@ -161,6 +132,17 @@ public class HTTPResourceDownloader {
         }
         
         return responseBody ;
+    }
+    
+    private String collateCookieHeaderValue( Map<String, String> cookies ) {
+        StringBuilder sb = new StringBuilder() ;
+        cookies.forEach( (key,value) -> {
+            sb.append( key )
+              .append( "=" )
+              .append( value )
+              .append( "; " ) ;
+        } ) ;
+        return sb.toString() ;
     }
     
     private Map<String, String> loadHeaders( String headerResourceName ) 

@@ -3,13 +3,18 @@ package com.sandy.capitalyst.server.daemon.equity.intraday;
 import static com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon.CFG_GRP_NAME ;
 import static com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon.CFG_PRINT_DEBUG_STMT ;
 
+import java.io.File ;
+import java.io.FileReader ;
 import java.net.SocketTimeoutException ;
 import java.text.ParseException ;
 import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
 import java.util.Date ;
+import java.util.HashMap ;
 import java.util.HashSet ;
 import java.util.List ;
+import java.util.Map ;
+import java.util.Properties ;
 import java.util.Set ;
 
 import javax.annotation.PostConstruct ;
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Component ;
 
 import com.fasterxml.jackson.databind.JsonNode ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
+import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
@@ -42,9 +48,6 @@ public class EquityITDSnapshotService {
     private static final String ETF_ITD_URL = 
         "https://www.nseindia.com/api/etf" ;
     
-    private static final String COOKIE_FETCH_URL =
-        "https://www.nseindia.com/market-data/live-equity-market" ;
-    
     @Data
     public static class ITDSnapshot {
 
@@ -66,9 +69,6 @@ public class EquityITDSnapshotService {
     @Autowired
     private EquityMasterRepo emRepo = null ;
     
-    //@Autowired
-    //private IntradaySnapshotNetworkClient httpClient = null ;
-    
     @FunctionalInterface
     private static interface ITDSnapshotBuilder {
         ITDSnapshot buildSnapshot( JsonNode node ) ;
@@ -77,6 +77,8 @@ public class EquityITDSnapshotService {
     private Set<String> qualifiedStocks = new HashSet<>() ;
     
     private boolean debugEnable  = true ;
+    
+    private File cookieFile = null ;
 
     public EquityITDSnapshotService() {}
     
@@ -84,6 +86,10 @@ public class EquityITDSnapshotService {
     public void init() {
         
         log.debug( "Initializing Equity ITD snapshot service." ) ;
+        
+        cookieFile = new File( CapitalystServer.getConfig().getWorkspaceDir(),
+                               "cookies/nse-itd-cookie.properties" ) ;
+        
         ehRepo.findNonZeroHoldings()
               .forEach( h -> qualifiedStocks.add( h.getSymbolNse() ) ) ;
         
@@ -161,11 +167,11 @@ public class EquityITDSnapshotService {
         }
         catch( SocketTimeoutException ste ) {
             
-            log.debug( "Socket timeout.", ste ) ;
+            log.debug( "->  Socket timeout." ) ;
             
             if( remainingTries > 0 ) {
                 if( debugEnable ) {
-                    log.debug( "-> Timeout detected. Retrying" ) ;
+                    log.debug( "->  Timeout detected. Retrying" ) ;
                 }
                 try {
                     Thread.sleep( 2000 ) ;
@@ -229,35 +235,39 @@ public class EquityITDSnapshotService {
                                                  String headerFile ) 
         throws Exception {
         
-        String response = null ;
-        
-        HTTPResourceDownloader httpClient = HTTPResourceDownloader.instance() ;
-        
-        if( !httpClient.hasCookie( "nseappid" ) ) {
-            if( debugEnable ) {
-                log.debug( "-> Obtaining cookies" ) ;
-            }
-            
-            httpClient.getResource( COOKIE_FETCH_URL, "itd-cookie-page.txt" ) ;
-            
-            if( debugEnable ) {
-                log.debug( "->> Cookies obtained." ) ;
-                log.debug( "->>  nsit     = " + httpClient.getCookieValue( "nsit"    ) ) ;
-                log.debug( "->>  nseappid = " + httpClient.getCookieValue( "nseappid" ) ) ;
-            }
-        }
-        
         if( debugEnable ) {
             log.info( "-> Downloading intraday data." ) ;
         }
         
-        response = httpClient.getResource( url, headerFile ) ;
+        String response = null ;
+        HTTPResourceDownloader httpClient = HTTPResourceDownloader.instance() ;
+        Map<String, String> cookies = loadCookies() ;
+        
+        response = httpClient.getResource( url, headerFile, cookies ) ;
         
         if( debugEnable ) {
             log.debug( "->> Response " + response.length() + " bytes." ) ;
         }
         
         return response ;
+    }
+    
+    private Map<String, String> loadCookies() {
+        
+        Map<String, String> cookies = new HashMap<>() ;
+        try {
+            if( cookieFile.exists() ) {
+                Properties props = new Properties() ;
+                props.load( new FileReader( cookieFile ) ) ;
+                props.forEach( (key,value)-> {
+                    cookies.put( key.toString(), value.toString() ) ;
+                }) ;
+            }
+        }
+        catch( Exception e ) {
+            log.error( "Error loading nse itd cookies", e ) ;
+        }
+        return cookies ;
     }
     
     private void refreshConfiguration() {
