@@ -21,6 +21,8 @@ import com.sandy.capitalyst.server.api.equity.vo.GraphData.DayPriceData ;
 import com.sandy.capitalyst.server.api.equity.vo.IndividualEquityHoldingVO ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeCred ;
+import com.sandy.capitalyst.server.daemon.equity.intraday.EquityLTPRepository ;
+import com.sandy.capitalyst.server.daemon.equity.intraday.EquityLTPRepository.LTP ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
@@ -47,6 +49,7 @@ public class EquityGraphDataBuilder {
     private EquityHoldingRepo    ehRepo   = null ;
     private EquityIndicatorsRepo eiRepo   = null ;
     private HistoricEQDataRepo   hedRepo  = null ;
+    private EquityLTPRepository  ltpRepo  = null ;
     
     private BarSeries barSeries = null ;
     
@@ -57,6 +60,7 @@ public class EquityGraphDataBuilder {
         ehRepo   = getBean( EquityHoldingRepo.class    ) ;
         eiRepo   = getBean( EquityIndicatorsRepo.class ) ;
         hedRepo  = getBean( HistoricEQDataRepo.class   ) ;
+        ltpRepo  = getBean( EquityLTPRepository.class  ) ;
     }
     
     public GraphData constructGraphData( Date fromDate, Date toDate, 
@@ -187,21 +191,34 @@ public class EquityGraphDataBuilder {
     // graph data.
     private void populateLatestCMP( Map<Date, DataHolder> data, String symbolNse ) {
         
-        List<EquityHolding> holdings = null ;
-        EquityHolding holding = null ;
+        List<EquityHolding> holdings    = null ;
+        EquityHolding       holding     = null ;
+        LTP                 ltp         = null ;
+        Date                lastUpdate  = null ;
+        float               cmp         = 0 ;
         
         holdings = ehRepo.findBySymbolNse( symbolNse ) ;
+        ltp = ltpRepo.getLTP( symbolNse ) ;
         
         if( holdings != null && !holdings.isEmpty() ) {
-            holding = holdings.get( 0 ) ;
             
-            Date lastUpdate = holding.getLastUpdate() ;
+            holding = holdings.get( 0 ) ;
+            lastUpdate = holding.getLastUpdate() ;
+            cmp = holding.getCurrentMktPrice() ;
+        }
+        else if( ltp != null ) {
+                
+            lastUpdate = ltp.getTime() ;
+            cmp = ltp.getPrice() ;
+        }
+        
+        if( lastUpdate != null ) {
+            
             lastUpdate = DateUtils.truncate( lastUpdate, Calendar.DAY_OF_MONTH ) ;
             
             if( !data.containsKey( lastUpdate ) ) {
                 
                 HistoricEQData histData = new HistoricEQData() ;
-                float cmp = holding.getCurrentMktPrice() ;
                 
                 histData.setDate ( lastUpdate ) ;
                 histData.setOpen ( cmp        ) ;

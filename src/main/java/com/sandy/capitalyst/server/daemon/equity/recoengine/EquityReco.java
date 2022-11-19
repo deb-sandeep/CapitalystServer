@@ -3,6 +3,7 @@ package com.sandy.capitalyst.server.daemon.equity.recoengine;
 import java.util.ArrayList ;
 import java.util.List ;
 
+import com.sandy.capitalyst.server.daemon.equity.intraday.EquityLTPRepository.LTP ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
@@ -32,6 +33,7 @@ public class EquityReco {
     private List<EquityHolding>       holdings       = new ArrayList<>() ;
     private List<EquityTechIndicator> techIndicators = null ;
     private EquityTTMPerf             ttmPerf        = null ;
+    private LTP                       ltp            = null ;
     
     private float goodnessScore = 0 ;
     private boolean monitored = false ;

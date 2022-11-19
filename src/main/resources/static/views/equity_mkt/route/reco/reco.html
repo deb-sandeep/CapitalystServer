@@ -7,11 +7,15 @@
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
-                <th colspan="13" style="text-align:center;">
+                <th colspan="2" style="text-align:center;">
+                    Indicator
+                </th>
+                <th colspan="11" style="text-align:center;">
                     Performance % &nbsp;&nbsp;
                     <span class="glyphicon glyphicon-refresh"
                           ng-click="refreshTTM()"></span>
                 </th>
+                <th></th>
             </tr>
             <tr class="success">
                 <th ng-click="sort('health')">
@@ -48,6 +52,9 @@
                 </th>
                 <th ng-click="sort('rsi')" style="width:40px;">
                     RSI
+                </th>
+                <th ng-click="sort('perfLTP')" style="width:40px;">
+                    LTP
                 </th>
                 <th ng-click="sort('perf1D')" style="width:40px;">
                     1D
@@ -171,6 +178,10 @@
                <td class="fixed-font small-font" style="text-align:right;"
                    ng-class="getCellClass( 'rsi', reco.techIndicators[0].level )">
                     {{reco.techIndicators[0].level | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perfLTP', reco.ltp.pchange )">
+                    {{reco.ltp.pchange | number:1}}
                </td>
                <td class="fixed-font small-font" style="text-align:right;"
                    ng-class="getCellClass( 'perf1D', reco.ttmPerf.perf1d )">

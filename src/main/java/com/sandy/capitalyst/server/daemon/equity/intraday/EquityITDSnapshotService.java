@@ -69,6 +69,9 @@ public class EquityITDSnapshotService {
     @Autowired
     private EquityMasterRepo emRepo = null ;
     
+    @Autowired
+    private EquityLTPRepository ltpRepo = null ;
+    
     @FunctionalInterface
     private static interface ITDSnapshotBuilder {
         ITDSnapshot buildSnapshot( JsonNode node ) ;
@@ -161,6 +164,7 @@ public class EquityITDSnapshotService {
                             snapshot.setTime( timestamp ) ;
                         }
                         snapshots.add( snapshot ) ;
+                        ltpRepo.addSnapshot( snapshot ) ;
                     }
                 }
             }

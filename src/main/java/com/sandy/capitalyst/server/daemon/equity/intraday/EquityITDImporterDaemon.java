@@ -49,6 +49,9 @@ public class EquityITDImporterDaemon extends Thread {
     @Autowired
     private EquityITDSnapshotService snapshotService = null ;
     
+    @Autowired
+    private EquityLTPRepository ltpRepository = null ;
+    
     private boolean pauseRefresh       = false ;
     private int     refreshDelay       = 30 ;
     private int     refreshDelayRandom = 15 ;
@@ -70,7 +73,7 @@ public class EquityITDImporterDaemon extends Thread {
                     
                     if( pauseRefresh ) {
                         if( debugEnable ) {
-                            log.debug( "Portfolio CMP refresh paused." ) ;
+                            log.debug( "Equity ITD refresh paused." ) ;
                         }
                         TimeUnit.SECONDS.sleep( refreshDelay ) ;
                     }
@@ -181,6 +184,8 @@ public class EquityITDImporterDaemon extends Thread {
                     itd.setTotalTradedVol ( s.getTotalVol() ) ;
                     
                     itdRepo.save( itd ) ;
+                    ltpRepository.addSnapshot( s ) ;
+                    
                     numSaved++ ;
                 }
             }

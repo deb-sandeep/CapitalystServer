@@ -15,6 +15,7 @@ import java.util.Map ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.api.equity.helper.EquityTTMPerfUpdater ;
+import com.sandy.capitalyst.server.daemon.equity.intraday.EquityLTPRepository ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
@@ -41,6 +42,8 @@ public abstract class AbstractBhavcopyImporter {
     private EquityHoldingRepo      ehRepo  = null ;
     private IndexEquityRepo        ieRepo  = null ;
     
+    private EquityLTPRepository ltpRepository = null ;
+    
     private Date    bhavcopyDate   = null ;
     private Date    bhavcopyDayEnd = null ;
     private boolean isLatestBhavcopy       = false ;
@@ -59,6 +62,8 @@ public abstract class AbstractBhavcopyImporter {
         emRepo  = getBean( EquityMasterRepo.class       ) ;
         ehRepo  = getBean( EquityHoldingRepo.class      ) ;
         ieRepo  = getBean( IndexEquityRepo.class        ) ;
+        
+        ltpRepository = getBean( EquityLTPRepository.class ) ;
         
         dgUpdater = new EquityDailyGainUpdater() ;
         
@@ -106,6 +111,7 @@ public abstract class AbstractBhavcopyImporter {
                 updateEquityHistMeta( em.getSymbol() ) ;
                 
                 if( this.isLatestBhavcopy ) {
+                    ltpRepository.addSnapshot( candle ) ;
                     updateEquityISINMapping( em.getSymbol(), em.getIsin() ) ;
                     ttmUpdater.addTodayEODCandle( candle ) ;
                 }

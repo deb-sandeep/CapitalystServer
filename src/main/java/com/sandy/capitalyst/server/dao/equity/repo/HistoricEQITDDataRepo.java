@@ -20,4 +20,16 @@ public interface HistoricEQITDDataRepo
     )
     HistoricEQITDData getITDData( @Param( "emId" ) int emId, 
                                   @Param( "time" ) Date time ) ;
+    
+    @Query( nativeQuery = true,
+            value = 
+            "SELECT * " 
+          + "FROM " 
+          + "   historic_eq_itd_data itd "
+          + "WHERE "
+          + "   em_id = :emId "
+          + "ORDER BY time DESC "
+          + "LIMIT 1 "
+    )
+    HistoricEQITDData getLatestITDData( @Param( "emId" ) int emId ) ;
 }

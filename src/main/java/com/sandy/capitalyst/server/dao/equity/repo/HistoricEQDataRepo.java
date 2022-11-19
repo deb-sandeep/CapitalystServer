@@ -32,6 +32,8 @@ public interface HistoricEQDataRepo
     )
     Date findLatestRecordDate() ;
     
+    List<HistoricEQData> findByDate( Date date ) ;
+    
     List<HistoricEQData> findBySymbolAndDate( String symbol, Date date ) ;
     
     @Query( nativeQuery = true,

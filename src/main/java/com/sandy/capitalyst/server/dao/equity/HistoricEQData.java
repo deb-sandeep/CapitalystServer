@@ -63,4 +63,8 @@ public class HistoricEQData {
                       .amount    ( DecimalNum.valueOf( totalTradeVal ) )
                       .build() ;
     }
+    
+    public float getPctChange() {
+        return ((close-prevClose)/prevClose)*100 ;
+    }
 }

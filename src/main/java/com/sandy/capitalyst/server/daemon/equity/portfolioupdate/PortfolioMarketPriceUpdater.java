@@ -18,6 +18,7 @@ import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
+import com.sandy.capitalyst.server.daemon.equity.intraday.EquityLTPRepository ;
 import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.internal.TradingHolidayCalendar ;
 import com.sandy.capitalyst.server.daemon.util.EventRateMonitor ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
@@ -54,6 +55,7 @@ public class PortfolioMarketPriceUpdater extends Thread {
     private EventRateMonitor cmpUpdateERM = new EventRateMonitor( 300, 5 ) ;
     
     private EquityHoldingRepo ehRepo = null ;
+    private EquityLTPRepository ltpRepository = null ;
     
     private boolean pauseRefresh = false ;
     private int     refreshDelay = 10 ;
@@ -64,8 +66,9 @@ public class PortfolioMarketPriceUpdater extends Thread {
     public void initialize() throws Exception {
         
         this.holidayCalendar = new TradingHolidayCalendar() ;
-        this.api = new BreezeGetPortfolioHoldingsAPI() ;
-        this.ehRepo = getBean( EquityHoldingRepo.class ) ;
+        this.api             = new BreezeGetPortfolioHoldingsAPI() ;
+        this.ehRepo          = getBean( EquityHoldingRepo.class ) ;
+        this.ltpRepository   = getBean( EquityLTPRepository.class ) ;
     }
     
     public void run() {
@@ -241,6 +244,7 @@ public class PortfolioMarketPriceUpdater extends Thread {
             eh.setLastUpdate( curTime ) ;
             
             ehRepo.save( eh ) ;
+            ltpRepository.addSnapshot( eh ) ;
         }
     }
 }

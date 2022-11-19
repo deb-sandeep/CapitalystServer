@@ -78,7 +78,7 @@ public class NSEBhavcopyDownloader {
         File destFile = getDestinationFile( entry.getName() ) ;
         FileOutputStream fOs = new FileOutputStream( destFile ) ;
         
-        byte[] bytesIn = new byte[BUFFER_SIZE];
+        byte[] bytesIn = new byte[BUFFER_SIZE] ;
         int read = 0;
         while ((read = zipIn.read(bytesIn)) != -1) {
             fOs.write(bytesIn, 0, read);

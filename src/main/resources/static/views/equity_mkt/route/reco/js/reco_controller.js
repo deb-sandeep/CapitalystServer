@@ -12,6 +12,7 @@ capitalystNgApp.controller( 'RecoController',
        
        rsi     : new Gradient( new UniformGradient( GR_GRADIENT ) ),
        
+       perfLTP : new Gradient( new ThresholdGradient() ),
        perf1D  : new Gradient( new ThresholdGradient() ), 
        perf1W  : new Gradient( new ThresholdGradient() ), 
        perf2W  : new Gradient( new ThresholdGradient() ), 
@@ -170,11 +171,19 @@ capitalystNgApp.controller( 'RecoController',
                     
                     $scope.recommendations.push( reco ) ;
                     
-                    gradientMgr['health' ].addValue( reco.goodnessScore ) ;
-                    gradientMgr['mc'     ].addValue( reco.indicators.mcEssentialScore ) ;
-                    gradientMgr['cagr'   ].addValue( reco.indicators.cagrEbit ) ;
-                    gradientMgr['rsi'    ].addValue( reco.techIndicators[0].level ) ;
+                    if( reco.ltp == null ) {
+                        reco.ltp = {
+                            pchange : reco.ttmPerf.perf1d,
+                            price : reco.indicators.currentPrice
+                        }
+                    }
                     
+                    gradientMgr['health'].addValue( reco.goodnessScore ) ;
+                    gradientMgr['mc'    ].addValue( reco.indicators.mcEssentialScore ) ;
+                    gradientMgr['cagr'  ].addValue( reco.indicators.cagrEbit ) ;
+                    gradientMgr['rsi'   ].addValue( reco.techIndicators[0].level ) ;
+                    
+                    gradientMgr['perfLTP'].addValue( reco.ltp.pchange ) ;
                     gradientMgr['perf1D' ].addValue( reco.ttmPerf.perf1d  ) ;
                     gradientMgr['perf1W' ].addValue( reco.ttmPerf.perf1w  ) ;
                     gradientMgr['perf2W' ].addValue( reco.ttmPerf.perf2w  ) ;
@@ -254,6 +263,9 @@ capitalystNgApp.controller( 'RecoController',
         else if( field == "rsi" ) {
             $scope.recommendations.sort( rsiSort ) ;
         }    
+        else if( field == "perfLTP" ) {
+            $scope.recommendations.sort( perfLTPSort ) ;
+        }
         else if( field == "perf1D" ) {
             $scope.recommendations.sort( perf1DSort ) ;
         }
@@ -366,6 +378,12 @@ capitalystNgApp.controller( 'RecoController',
         return sortDir["rsi"] == "asc" ?
             ( r1.techIndicators[0].level - r2.techIndicators[0].level ) :
             ( r2.techIndicators[0].level - r1.techIndicators[0].level ) ;
+    }
+    
+    function perfLTPSort( r1, r2 ) {
+        return sortDir["perfLTP"] == "asc" ?
+            ( r1.ltp.pchange - r2.ltp.pchange ) :
+            ( r2.ltp.pchange - r1.ltp.pchange ) ;
     }
     
     function perf1DSort( r1, r2 ) {
