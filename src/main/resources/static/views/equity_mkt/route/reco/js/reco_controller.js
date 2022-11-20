@@ -3,7 +3,7 @@ capitalystNgApp.controller( 'RecoController',
     
     // ---------------- Local variables --------------------------------------
     var sortDir = {
-        health : 'asc'
+        perfLTP : 'asc'
     } ;
     
     var gradientMgr = {
@@ -106,6 +106,9 @@ capitalystNgApp.controller( 'RecoController',
             } ) ;
             console.log( "Reinitializing gradieng manager." ) ;
             gradientMgr['perfLTP'].initialize() ;
+            
+            sortDir[ "perfLTP" ] = "asc" ; 
+            sortTable( "perfLTP" ) ;
         } )
         .finally(function() {
             $scope.ttmRefreshTriggered = false ;
@@ -180,9 +183,6 @@ capitalystNgApp.controller( 'RecoController',
                     
                     var reco = response.data[i] ;
 
-                    // This is temp for 16th Sep. Can be removed on 19th EOD                    
-                    reco.ttmPerf.perf1d = computePerf1d( reco.equityMaster ) ;
-                    
                     $scope.recommendations.push( reco ) ;
                     
                     if( reco.ltp == null ) {
@@ -212,7 +212,8 @@ capitalystNgApp.controller( 'RecoController',
                 
                 initializeGradientMgrs() ;
                 
-                sortTable( "health" ) ;
+                sortDir[ "perfLTP" ] = "asc" ; 
+                sortTable( "perfLTP" ) ;
             }, 
             function(){
                 $scope.$parent.addErrorAlert( "Error fetching eq recos." ) ;
@@ -221,10 +222,6 @@ capitalystNgApp.controller( 'RecoController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
-    }
-    
-    function computePerf1d( em ) {
-        return ( (em.close - em.prevClose )/em.prevClose )*100 ;
     }
     
     function initializeGradientMgrs() {
