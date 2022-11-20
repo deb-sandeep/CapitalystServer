@@ -42,6 +42,8 @@ capitalystNgApp.controller( 'RecoController',
     $scope.recommendations = [] ;
     $scope.selectedStock = null ;
     
+    $scope.ttmRefreshTriggered = false ;
+    
     function resetState() {
         $scope.recommendations.length = 0 ;
     } ;
@@ -85,16 +87,28 @@ capitalystNgApp.controller( 'RecoController',
         }) ;
     }
     
-    $scope.refreshTTM = function() {
+    $scope.refreshLTP = function() {
         
         $scope.ttmRefreshTriggered = true ;
-        $http.post( '/Equity/PerfTTMRefresh' )
+        $http.get( '/Equity/LTP' )
         .then( function( response ) {
-                console.log( response.data ) ;
+            console.log( "Received latest LTPs" ) ;
+            console.log( response.data ) ;
+            
+            gradientMgr['perfLTP'].clear() ;
+            $scope.recommendations.forEach( reco => {
+                var ltp = response.data[ reco.equityMaster.symbol ] ;
+                if( ltp != null ) {
+                    reco.ltp = ltp ;
+                    reco.indicators.currentPrice = ltp.price ;
+                    gradientMgr['perfLTP'].addValue( reco.ltp.pchange ) ;
+                }    
+            } ) ;
+            console.log( "Reinitializing gradieng manager." ) ;
+            gradientMgr['perfLTP'].initialize() ;
         } )
         .finally(function() {
             $scope.ttmRefreshTriggered = false ;
-            fetchRecoDataFromServer() ;
         }) ;
     }
     

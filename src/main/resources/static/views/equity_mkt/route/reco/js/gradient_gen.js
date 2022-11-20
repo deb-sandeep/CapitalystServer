@@ -75,6 +75,10 @@ function Gradient( gradientMapper ) {
         this.values.push( val ) ;
     }
     
+    this.clear = function() {
+        this.values.length = 0 ;
+    }
+    
     this.initialize = function() {
         this.values.sort( function( a, b ){
             return a-b ;

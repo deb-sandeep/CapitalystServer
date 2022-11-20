@@ -124,6 +124,10 @@ public class EquityLTPRepository {
     public LTP getLTP( String symbol ) {
         return itdSnapshots.get( symbol ) ;
     }
+    
+    public Map<String, LTP> getLTPs() {
+        return itdSnapshots ;
+    }
 
     @PostConstruct
     public void init() {
