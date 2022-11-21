@@ -1,7 +1,5 @@
 package com.sandy.capitalyst.server ;
 
-import java.io.File ;
-
 import org.apache.log4j.Logger ;
 import org.springframework.beans.BeansException ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -9,24 +7,13 @@ import org.springframework.boot.SpringApplication ;
 import org.springframework.boot.autoconfigure.SpringBootApplication ;
 import org.springframework.context.ApplicationContext ;
 import org.springframework.context.ApplicationContextAware ;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry ;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer ;
 
-import com.sandy.capitalyst.server.breeze.Breeze ;
-import com.sandy.capitalyst.server.breeze.listener.InvStatsPersistListener ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
-import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
-import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
-import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
-import com.sandy.capitalyst.server.daemon.equity.histeodupdate.EquityHistDataImporterDaemon ;
-import com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon ;
-import com.sandy.capitalyst.server.daemon.equity.portfolioupdate.PortfolioMarketPriceUpdater ;
-import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
-import com.sandy.capitalyst.server.daemon.index.histeodupdate.IndexHistDataImporterDaemon ;
-import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
-import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
+import com.sandy.capitalyst.server.init.DaemonInitializer ;
+import com.sandy.capitalyst.server.init.DevModeInitializer ;
+import com.sandy.capitalyst.server.init.StartupTasksExecutor ;
 import com.sandy.common.bus.EventBus ;
 
 @SpringBootApplication
@@ -48,10 +35,6 @@ public class CapitalystServer
     public static String CFG_RUN_IDX_HIST_EOD_DAEMON = "run_idx_hist_eod_daemon" ;
     public static String CFG_RUN_EQ_ITD_DAEMON       = "run_eq_itd_daemon" ;
     
-    public static ApplicationContext getAppContext() {
-        return APP_CTX ;
-    }
-
     public static CapitalystConfig getConfig() {
         if( APP_CTX == null ) return null ;
         return (CapitalystConfig) APP_CTX.getBean( "config" ) ;
@@ -61,26 +44,25 @@ public class CapitalystServer
         return APP_CTX.getBean( type ) ;
     }
 
-    public static CapitalystServer getApp() {
-        return APP ;
-    }
+    public static ApplicationContext getAppContext() { return APP_CTX ; }
+
+    public static CapitalystServer getApp() { return APP ; }
     
-    public static boolean isInServerMode() {
-        return APP != null ;
-    }
+    public static boolean isInServerMode() { return APP != null ; }
 
     // ---------------- Instance methods start ------------------------------
     @Autowired
-    private AccountRepo aiRepo = null ;
-    
-    @Autowired
-    private LedgerRepo ledgerRepo = null ;
-    
-    @Autowired
     private CapitalystJobScheduler scheduler = null ;
     
-    private NVPManager nvpManger = null ;
-
+    @Autowired
+    private StartupTasksExecutor startupTaskExecutor = null ;
+    
+    @Autowired
+    private DaemonInitializer daemonInitializer = null ;
+    
+    @Autowired
+    private DevModeInitializer devModeInitializer = null ;
+    
     public CapitalystServer() {
         APP = this ;
     }
@@ -90,169 +72,30 @@ public class CapitalystServer
     }
     
     public void initialize() throws Exception {
-        
-        this.nvpManger = NVPManager.instance() ;
-
-        CapitalystConfig cfg = CapitalystServer.getConfig() ;
-        NVPConfigGroup   nvpCfg = nvpManger.getConfigGroup( CFG_GRP_APP ) ;
-        
-        if( cfg.isRunClassificationOnStartup() ) {
-            
-            log.debug( "Running Ledger Classifier" ) ;
-            LEClassifier classifier = new LEClassifier() ;
-            classifier.runClassification() ;
-        }
-        else {
-            log.debug( "Skipping Ledger Classifier" ) ;
-        }
-        
-        log.debug( "Updating account balances" ) ;
-        updateAccountBalanceOnStartup() ;
-        
-        initializeDaemons( cfg, nvpCfg ) ;
-    }
-    
-    private void initializeDaemons( CapitalystConfig cfg, NVPConfigGroup nvpCfg ) 
-        throws Exception {
-        
-        if( cfg.isInitializeRecoMgrOnStart() ) {
-            log.debug( "Initilizaing recommendation manager." ) ;
-            initializeRecoManager() ;
-        }
-        
-        boolean startBatchDaemon = true ;
-        startBatchDaemon = nvpCfg.getBoolValue( CFG_RUN_BATCH_DAEMON, true ) ;
-        if( startBatchDaemon ) {
-            log.debug( "Initializing scheduler" ) ;
-            scheduler.initialize() ;
-        }
-        else {
-            log.debug( "Skipping scheduler initialization" ) ;
-        }
-        
-        boolean runCMPUpdateDaemon = true ;
-        runCMPUpdateDaemon = nvpCfg.getBoolValue( CFG_RUN_CMP_DAEMON, true ) ;
-        initializeBreeze( cfg.getBreezeCfgFile(), runCMPUpdateDaemon ) ;
-        
-        initializeEquityHistEoDUpdateDaemon( nvpCfg ) ;
-        initializeIndexHistEoDUpdateDaemon( nvpCfg ) ;
-        initializeEquityITDDaemon( nvpCfg ) ;
-    }
-    
-    private void initializeEquityHistEoDUpdateDaemon( NVPConfigGroup nvpCfg ) {
-        
-        boolean runDaemon = true ;
-        EquityHistDataImporterDaemon daemon = null ;
-        
-        runDaemon = nvpCfg.getBoolValue( CFG_RUN_EQ_HIST_EOD_DAEMON, true ) ;
-        
-        if( runDaemon ) {
-            
-            log.debug( "Starting historic Equity eod update daemon." ) ;
-            daemon = new EquityHistDataImporterDaemon() ;
-            daemon.start() ;
-        }
-    }
-    
-    private void initializeIndexHistEoDUpdateDaemon( NVPConfigGroup nvpCfg ) {
-        
-        boolean runDaemon = true ;
-        IndexHistDataImporterDaemon daemon = null ;
-        
-        runDaemon = nvpCfg.getBoolValue( CFG_RUN_IDX_HIST_EOD_DAEMON, true ) ;
-        
-        if( runDaemon ) {
-            
-            log.debug( "Starting historic Index eod update daemon." ) ;
-            daemon = new IndexHistDataImporterDaemon() ;
-            daemon.start() ;
-        }
-    }
-    
-    private void initializeEquityITDDaemon( NVPConfigGroup nvpCfg ) {
-        
-        boolean runDaemon = true ;
-        EquityITDImporterDaemon daemon = null ;
-        
-        runDaemon = nvpCfg.getBoolValue( CFG_RUN_EQ_ITD_DAEMON, true ) ;
-        
-        if( runDaemon ) {
-            
-            log.debug( "Starting equity ITD daemon." ) ;
-            daemon = getBean( EquityITDImporterDaemon.class ) ;
-            daemon.start() ;
-        }
-    }
-    
-    private void initializeBreeze( File cfgPath, boolean runDaemon ) 
-            throws Exception {
-        
-        InvStatsPersistListener statPersist = new InvStatsPersistListener() ;
-        
-        Breeze breeze = Breeze.instance() ;
-        breeze.addInvocationListener( statPersist ) ;
-        breeze.initialize( cfgPath ) ;
-        
-        if( runDaemon ) {
-            log.debug( "Initilizaing Portfolio CMP updater." ) ;
-            PortfolioMarketPriceUpdater pmpUpdater = null ;
-            pmpUpdater = PortfolioMarketPriceUpdater.instance() ;
-            pmpUpdater.initialize() ;
-            pmpUpdater.start() ;
-        }
-        
-        log.debug( "  Breeze initialized." ) ;
-    }
-    
-    private void initializeRecoManager() {
-        
-        Thread t = new Thread() {
-            public void run() {
-                try {
-                    Thread.sleep( 1000 ) ;
-                    RecoManager.instance().getAllRecos() ;
-                    log.debug( "Recommendation manager initialized" ) ;
-                }
-                catch( Exception e ) {
-                    log.error( "Reco manager initialization failed.", e ) ;
-                }
-            }
-        } ;
-        t.start() ;
-    }
-    
-    private void updateAccountBalanceOnStartup() {
-        for( Account account : aiRepo.findAll() ) {
-            Float balance = this.ledgerRepo.getAccountBalance( account.getId() ) ;
-            if( balance != null ) {
-                account.setBalance( balance ) ;
-                this.aiRepo.save( account ) ;
-            }
-        }
+        devModeInitializer.initialize() ;
+        startupTaskExecutor.initialize() ;
+        daemonInitializer.initialize() ;
     }
     
     @Override
-    public void setApplicationContext( ApplicationContext applicationContext )
+    public void setApplicationContext( ApplicationContext appCtx )
             throws BeansException {
-        APP_CTX = applicationContext ;
+        APP_CTX = appCtx ;
     }
 
-    @Override
-    public void addResourceHandlers( ResourceHandlerRegistry registry ) {
-    }
-    
     // --------------------- Main method ---------------------------------------
 
     public static void main( String[] args ) throws Exception {
         
         long startTime = System.currentTimeMillis() ;
+        log.debug( "Starting Capitalyst Server.." ) ;
+
         log.debug( "Starting Spring Booot..." ) ;
         SpringApplication.run( CapitalystServer.class, args ) ;
 
-        log.debug( "Starting Capitalyst Server.." ) ;
-        CapitalystServer app = CapitalystServer.getAppContext()
-                                               .getBean( CapitalystServer.class ) ;
-        app.initialize() ;
+        log.debug( "\n" ) ;
+        log.debug( "Initializeing Capitalyst Server App..." ) ;
+        getBean( CapitalystServer.class ).initialize() ;
         long endTime = System.currentTimeMillis() ;
         
         int timeTaken = (int)(( endTime - startTime )/1000) ;

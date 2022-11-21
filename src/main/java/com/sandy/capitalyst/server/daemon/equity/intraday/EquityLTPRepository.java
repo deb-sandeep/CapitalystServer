@@ -55,6 +55,10 @@ public class EquityLTPRepository {
             this.price     = snapshot.getPrice() ;
             this.pchange   = snapshot.getPChange() ;
             this.time      = snapshot.getTime() ;
+            
+            if( this.pchange != this.pchange ) {
+                this.pchange = 0 ;
+            }
         }
         
         private LTP( HistoricEQData histEod ) {
@@ -65,6 +69,10 @@ public class EquityLTPRepository {
             this.time      = histEod.getDate() ;
             
             this.time = DateUtils.addHours( this.time, 16 ) ;
+            
+            if( this.pchange != this.pchange ) {
+                this.pchange = 0 ;
+            }
         }
         
         public LTP( EquityHolding h ) {
@@ -76,6 +84,10 @@ public class EquityLTPRepository {
             this.price     = h.getCurrentMktPrice() ;
             this.pchange   = (dayGainPerShare / lastClose)*100 ;
             this.time      = h.getLastUpdate() ;
+            
+            if( this.pchange != this.pchange ) {
+                this.pchange = 0 ;
+            }
         }
     }
     
@@ -116,7 +128,6 @@ public class EquityLTPRepository {
         else {
             if( ltp.getTime().after( existingLTP.getTime() ) ) {
                 itdSnapshots.put( symbolNse, ltp ) ;
-                log.debug( "    > " + symbolNse ) ;
             }
         }
     }
@@ -136,7 +147,7 @@ public class EquityLTPRepository {
         loadLatestEndOfDayPrice() ;
         loadHoldingCMP() ;
         loadITDSnapshots() ;
-        log.debug( "quity LTP repository initialized" ) ;
+        log.debug( "Equity LTP repository initialized" ) ;
     }
     
     private void loadLatestEndOfDayPrice() {
@@ -171,7 +182,6 @@ public class EquityLTPRepository {
                 ltp.time    = itd.getTime() ;
                 ltp.price   = itd.getPrice() ;
                 ltp.pchange = itd.getPChange() ;
-                log.debug( "    > " + symbol ) ;
                 counter[0]++ ;
             }
         } ) ;
