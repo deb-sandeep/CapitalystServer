@@ -1,19 +1,16 @@
 package com.sandy.capitalyst.server.init;
 
+import static com.sandy.capitalyst.server.CapitalystServer.CFG_GRP_APP ;
 import static com.sandy.capitalyst.server.CapitalystServer.CFG_RUN_BATCH_DAEMON ;
+import static com.sandy.capitalyst.server.CapitalystServer.CFG_RUN_CMP_DAEMON ;
 import static com.sandy.capitalyst.server.CapitalystServer.CFG_RUN_EQ_HIST_EOD_DAEMON ;
 import static com.sandy.capitalyst.server.CapitalystServer.CFG_RUN_EQ_ITD_DAEMON ;
-import static com.sandy.capitalyst.server.CapitalystServer.* ;
+import static com.sandy.capitalyst.server.CapitalystServer.CFG_RUN_IDX_HIST_EOD_DAEMON ;
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
-import static com.sandy.capitalyst.server.CapitalystServer.getConfig ;
-
-import java.io.File ;
 
 import org.apache.log4j.Logger ;
 import org.springframework.stereotype.Component ;
 
-import com.sandy.capitalyst.server.breeze.Breeze ;
-import com.sandy.capitalyst.server.breeze.listener.InvStatsPersistListener ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
@@ -101,15 +98,10 @@ public class DaemonInitializer {
         throws Exception {
         
         boolean runDaemon = true ;
-        File cfgPath = getConfig().getBreezeCfgFile() ;
         
         runDaemon = nvpCfg.getBoolValue( CFG_RUN_CMP_DAEMON, true ) ;
         
         if( runDaemon ) {
-            Breeze breeze = Breeze.instance() ;
-            breeze.addInvocationListener( new InvStatsPersistListener() ) ;
-            breeze.initialize( cfgPath ) ;
-            
             log.debug( "Initilizaing Portfolio CMP updater." ) ;
             PortfolioMarketPriceUpdater pmpUpdater = null ;
             pmpUpdater = PortfolioMarketPriceUpdater.instance() ;

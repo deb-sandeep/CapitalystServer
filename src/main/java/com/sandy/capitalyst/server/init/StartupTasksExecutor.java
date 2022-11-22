@@ -1,10 +1,16 @@
 package com.sandy.capitalyst.server.init;
 
+import static com.sandy.capitalyst.server.CapitalystServer.getConfig ;
+
+import java.io.File ;
+
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.stereotype.Component ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
+import com.sandy.capitalyst.server.breeze.Breeze ;
+import com.sandy.capitalyst.server.breeze.listener.InvStatsPersistListener ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
@@ -51,6 +57,9 @@ public class StartupTasksExecutor {
         else {
             log.debug( "Startup Task :: DevMode :: Not initializing reco mgr." ) ;
         }
+        
+        log.debug( "Startup Task :: Initializing Breeze subsystem" ) ; 
+        initializeBreeze() ;
     }
 
     private void initializeRecoManager() {
@@ -79,5 +88,13 @@ public class StartupTasksExecutor {
                 this.aiRepo.save( account ) ;
             }
         }
+    }
+    
+    private void initializeBreeze() throws Exception {
+        
+        File cfgPath = getConfig().getBreezeCfgFile() ;
+        Breeze breeze = Breeze.instance() ;
+        breeze.addInvocationListener( new InvStatsPersistListener() ) ;
+        breeze.initialize( cfgPath ) ;
     }
 }

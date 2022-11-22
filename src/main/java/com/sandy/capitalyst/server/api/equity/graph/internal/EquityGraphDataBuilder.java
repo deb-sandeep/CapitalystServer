@@ -197,7 +197,7 @@ public class EquityGraphDataBuilder {
         Date                lastUpdate  = null ;
         float               cmp         = 0 ;
         
-        holdings = ehRepo.findBySymbolNse( symbolNse ) ;
+        holdings = ehRepo.findNonZeroHoldingsForNSESymbol( symbolNse ) ;
         ltp = ltpRepo.getLTP( symbolNse ) ;
         
         if( holdings != null && !holdings.isEmpty() ) {
