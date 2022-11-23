@@ -46,6 +46,7 @@ public class SavingAccountRestController {
             accountTypes.add( AccountType.SAVING.name() ) ;
             accountTypes.add( AccountType.CREDIT.name() ) ;
             accountTypes.add( AccountType.CURRENT.name() ) ;
+            accountTypes.add( AccountType.NBFC_FD.name() ) ;
             
             allAccounts = accountRepo.findByAccountTypeIn( accountTypes ) ;
             

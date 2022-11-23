@@ -27,6 +27,7 @@ public class RefData {
         values.add( "ICICI" ) ;
         values.add( "SBI" ) ;
         values.add( "HOME" ) ;
+        values.add( "BAFINS" ) ;
         return values ;
     }
     
@@ -39,6 +40,7 @@ public class RefData {
         values.add( "LINKED_FD" ) ;
         values.add( "CREDIT" ) ;
         values.add( "PPF" ) ;
+        values.add( "NBFC_FD" ) ;
         return values ;
     }
     

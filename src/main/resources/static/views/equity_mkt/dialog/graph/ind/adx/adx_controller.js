@@ -9,6 +9,7 @@ capitalystNgApp.controller( 'ADXController',
     var chart = null ;
     var datasets = [] ;
     var chartOptions = null ;
+    var fresh = true ;
     
     var adxLineData = null ;
     var plusDILineData = null ;
@@ -40,7 +41,12 @@ capitalystNgApp.controller( 'ADXController',
 
     $scope.$on( "eodGraphPostRender", function( _event, args ) {
         
-        if( $scope.$parent.isFooterChartVisible( CHART_ID ) ) {
+        if( fresh ) {
+            fresh = false ;
+            $scope.config.enableFlag = true ;
+            $scope.enableFlagUpdated() ;
+        }
+        else if( $scope.$parent.isFooterChartVisible( CHART_ID ) ) {
             $scope.showADXChart() ;
         }
     } ) ;

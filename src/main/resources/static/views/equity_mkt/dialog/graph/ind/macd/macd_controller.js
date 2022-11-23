@@ -10,6 +10,8 @@ capitalystNgApp.controller( 'MACDController',
     var macdSigData  = null ;
     var macdHistData = null ;
     
+    var fresh = true ;
+    
     function resetState() {
         
         if( chart != null ) {
@@ -37,7 +39,12 @@ capitalystNgApp.controller( 'MACDController',
 
     $scope.$on( "eodGraphPostRender", function( _event, args ) {
         
-        if( $scope.$parent.isFooterChartVisible( 'macd') ) {
+        if( fresh ) {
+            fresh = false ;
+            $scope.config.enableFlag = true ;
+            $scope.enableFlagUpdated() ;
+        }
+        else if( $scope.$parent.isFooterChartVisible( 'macd') ) {
             $scope.showMACDChart() ;
         }
     } ) ;

@@ -9,6 +9,7 @@ capitalystNgApp.controller( 'RSIController',
     var chart = null ;
     var datasets = [] ;
     var chartOptions = null ;
+    var fresh = true ;
     
     var rsiLineData = null ;
     
@@ -35,7 +36,12 @@ capitalystNgApp.controller( 'RSIController',
 
     $scope.$on( "eodGraphPostRender", function( _event, args ) {
         
-        if( $scope.$parent.isFooterChartVisible( CHART_ID ) ) {
+        if( fresh ) {
+            fresh = false ;
+            $scope.config.enableFlag = true ;
+            $scope.enableFlagUpdated() ;
+        }
+        else if( $scope.$parent.isFooterChartVisible( CHART_ID ) ) {
             $scope.showRSIChart() ;
         }
     } ) ;
