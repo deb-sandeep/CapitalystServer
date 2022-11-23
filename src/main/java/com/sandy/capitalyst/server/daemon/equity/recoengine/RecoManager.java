@@ -118,12 +118,15 @@ public class RecoManager {
         EquityReco reco = null ;
         EquityIndicators ind = null ;
         EquityTTMPerf ttmPerf = null ;
+        int totalNumStocks = 0 ;
+        int numStocksProcessed = 0 ;
         
         recommendations.clear() ;
         allRecos.clear() ;
         screenedRecos.clear() ;
         
-        Iterable<EquityMaster> allStocks = emRepo.findAll() ;
+        List<EquityMaster> allStocks = emRepo.findAll() ;
+        totalNumStocks = allStocks.size() ;
         
         for( EquityMaster em : allStocks ) {
             
@@ -141,6 +144,13 @@ public class RecoManager {
                     screenedRecos.add( reco ) ;
                     statsMgr.assimilate( reco ) ;
                 }
+            }
+            
+            numStocksProcessed++ ;
+            int pctCompleted = (int)(((float)numStocksProcessed / totalNumStocks)*100) ; 
+            
+            if( numStocksProcessed % 50 == 0 ) {
+                log.debug( "   " + pctCompleted + "% completed." ) ;
             }
         }
         

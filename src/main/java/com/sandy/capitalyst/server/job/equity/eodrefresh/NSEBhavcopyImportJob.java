@@ -28,7 +28,7 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
     private NSEBhavcopyDownloader downloader = new NSEBhavcopyDownloader() ;
 
     @Override
-    protected void executeJob( JobExecutionContext context,
+    public void executeJob( JobExecutionContext context,
                                JobState state ) 
         throws Exception {
         

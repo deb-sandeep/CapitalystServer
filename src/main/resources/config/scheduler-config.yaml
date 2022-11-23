@@ -25,4 +25,10 @@ jobConfigs:
      className : ${basePackageName}.equity.idirectmap.ICICIDirectSymbolMappingJob
      description : Refreshes ICICI Direct symbol mapping
      cronSchedule : 0 0 9 * * ?
+
+   - identity : CorpusSnapshotJob
+     active : true
+     className : ${basePackageName}.corpus.CorpusSnapshotJob
+     description : Takes a snapshot of total corpus on a daily basis
+     cronSchedule : 0 0 */3 * * ?
      

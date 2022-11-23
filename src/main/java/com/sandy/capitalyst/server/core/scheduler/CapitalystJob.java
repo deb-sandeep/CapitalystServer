@@ -11,6 +11,7 @@ import org.quartz.JobExecutionException ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory ;
 import com.sandy.capitalyst.server.CapitalystServer ;
+import com.sandy.capitalyst.server.core.log.IndentUtil ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.job.JobEntry ;
 import com.sandy.capitalyst.server.dao.job.JobRunEntry ;
@@ -45,7 +46,8 @@ public abstract class CapitalystJob implements Job {
         mapper.findAndRegisterModules() ;
 
         jobIdentity = context.getJobDetail().getKey().getName() ;
-        log.debug( "Executing Job - " + jobIdentity ) ;
+        IndentUtil.i_clear() ;
+        log.debug( "Executing Job - " + jobIdentity + " >" ) ;
         
         getJPARepositories() ;
         jobEntry = getJobEntry( jobIdentity ) ;
@@ -68,6 +70,7 @@ public abstract class CapitalystJob implements Job {
         }
         finally {
             duration = (int)(( System.currentTimeMillis() - startTime )/1000) ;
+            IndentUtil.i_clear() ;
         }
         
         saveJobState( duration, remarks, startDate, result, 
@@ -132,7 +135,7 @@ public abstract class CapitalystJob implements Job {
         // Default no-op
     }
     
-    protected abstract void executeJob( JobExecutionContext context,
+    public abstract void executeJob( JobExecutionContext context,
                                         JobState state ) 
         throws Exception ;
 

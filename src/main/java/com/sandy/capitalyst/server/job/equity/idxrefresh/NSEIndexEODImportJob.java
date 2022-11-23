@@ -21,7 +21,7 @@ public class NSEIndexEODImportJob extends CapitalystJob {
     private static final String KEY_LAST_IMPORT_DATE = "LAST_IMPORT_DATE" ;
     
     @Override
-    protected void executeJob( JobExecutionContext context,
+    public void executeJob( JobExecutionContext context,
                                JobState state ) 
         throws Exception {
         

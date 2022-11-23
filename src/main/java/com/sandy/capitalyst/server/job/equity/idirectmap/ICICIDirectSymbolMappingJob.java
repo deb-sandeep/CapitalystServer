@@ -24,7 +24,7 @@ public class ICICIDirectSymbolMappingJob extends CapitalystJob {
     private static final Logger log = Logger.getLogger( ICICIDirectSymbolMappingJob.class ) ;
     
     @Override
-    protected void executeJob( JobExecutionContext context,
+    public void executeJob( JobExecutionContext context,
                                JobState state ) 
         throws Exception {
         
