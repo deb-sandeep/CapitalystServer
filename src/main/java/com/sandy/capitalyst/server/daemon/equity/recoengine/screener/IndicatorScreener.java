@@ -47,6 +47,7 @@ public class IndicatorScreener extends Screener {
     private int          minMarketCap         = 0 ;
     private float        minBeta              = Float.NEGATIVE_INFINITY ;
     private float        maxBeta              = Float.POSITIVE_INFINITY ;
+    private float        maxPe                = Float.POSITIVE_INFINITY ;
     private float        minCagrEbit          = Float.NEGATIVE_INFINITY ;
     private int          minPiotroskiScore    = 0 ;
     
@@ -73,6 +74,10 @@ public class IndicatorScreener extends Screener {
             minBeta = Float.parseFloat( parts[0] ) ;
             maxBeta = Float.parseFloat( parts[1] ) ;
         }
+    }
+    
+    public void setMaxPe( int maxPe ) {
+        this.maxPe = maxPe ;
     }
     
     public void setMinCagrEbit( float val ) {
@@ -110,6 +115,10 @@ public class IndicatorScreener extends Screener {
         
         if( ind.getPiotroskiScore() < this.minPiotroskiScore ) {
             return reject( "Piotroski score disqualifed. " + ind.getPiotroskiScore() ) ;
+        }
+        
+        if( ind.getPe() > this.maxPe ) {
+            return reject( "PE disqualified. " + ind.getPe() ) ;
         }
         
         return accept( "Indicator screeners passed." ) ;
