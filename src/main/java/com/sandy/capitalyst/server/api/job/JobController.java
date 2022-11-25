@@ -27,7 +27,7 @@ public class JobController {
                                  .body( APIResponse.SUCCESS ) ;
         }
         catch( Exception e ) {
-            log.error( "Error :: Saving account data.", e ) ;
+            log.error( "Error :: Triggering Job " + jobName, e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( null ) ;
         }

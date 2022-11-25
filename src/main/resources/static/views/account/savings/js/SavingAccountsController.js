@@ -114,6 +114,19 @@ capitalystNgApp.controller( 'SavingAccountsController',
                                 csAccIds ;
     }
     
+    $scope.corpusSnapshot = function() {
+        
+        $http.post( '/Job/TriggerNow/CorpusSnapshotJob' )
+        .then ( 
+            function( response ){
+                alert( "Job triggered. Refresh after some time." ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error triggering job." ) ;
+            }
+        ) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------

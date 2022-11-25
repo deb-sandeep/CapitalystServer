@@ -30,5 +30,5 @@ jobConfigs:
      active : true
      className : ${basePackageName}.corpus.CorpusSnapshotJob
      description : Takes a snapshot of total corpus on a daily basis
-     cronSchedule : 0 0 */3 * * ?
+     cronSchedule : 0 0 * * * ?
      
