@@ -12,7 +12,9 @@ import com.sandy.capitalyst.server.api.equity.vo.EquityBuyTxnVO ;
 import com.sandy.capitalyst.server.api.equity.vo.EquitySellTxnVO ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
+import com.sandy.capitalyst.server.dao.equity.SebiPenalty ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
+import com.sandy.capitalyst.server.dao.equity.repo.SebiPenaltyRepo ;
 
 public class EquitySellTxnVOListBuilder {
     
@@ -43,6 +45,7 @@ public class EquitySellTxnVOListBuilder {
         aggregateBuyDayTxns( eh ) ;
         aggregateSellDayTxns( eh ) ;
         associateBuyTxnsWithSellTxns() ;
+        addSebiPenaltyIfAny() ;
         
         return sellTxnVOList ;
     }
@@ -129,6 +132,19 @@ public class EquitySellTxnVOListBuilder {
                 }
                 
                 sellQtyLeft -= redeemQty ;
+            }
+        }
+    }
+    
+    private void addSebiPenaltyIfAny() {
+        
+        SebiPenaltyRepo spRepo = getBean( SebiPenaltyRepo.class ) ;
+        
+        for( EquitySellTxnVO sellTxn : sellTxnVOList ) {
+            SebiPenalty penalty = spRepo.findByOrderId( sellTxn.getOrderId() ) ;
+            if( penalty != null ) {
+                sellTxn.setPat( sellTxn.getPat() - penalty.getPenaltyAmt() ) ;
+                sellTxn.setPatPct( (sellTxn.getPat() / sellTxn.getValueAtCostPrice())*100 );
             }
         }
     }
