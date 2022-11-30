@@ -44,10 +44,10 @@ public class MACDController extends AbstractIndicatorController {
         NumericIndicator    histInd    = null ;
         BarSeries           series     = null ;
         
-        log.debug( "Symbol NSE      = " + symbolNse  ) ;
-        log.debug( "Min window size = " + minWindowSize ) ;
-        log.debug( "Max window size = " + maxWindowSize ) ;
-        log.debug( "Sig window size = " + sigWindowSize ) ;
+        log.debug( "Symbol NSE     = " + symbolNse  ) ;
+        log.debug( "Min window size= " + minWindowSize ) ;
+        log.debug( "Max window size= " + maxWindowSize ) ;
+        log.debug( "Sig window size= " + sigWindowSize ) ;
         
         try {
             series = BarSeriesCache.instance().get( symbolNse ) ;

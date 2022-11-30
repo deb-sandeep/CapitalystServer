@@ -39,9 +39,15 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
             if( StringUtil.isEmptyOrNull( col0Val ) ) {
                 return false ;
             }
+            else if( col0Val.trim().startsWith( "Transaction Details" ) ) {
+                return false ;
+            }
             return true ;
         }
     }
+    
+    private int startRow = 0 ;
+    private float balance = 0 ;
     
     @Override
     public List<LedgerEntry> parseLedgerEntries( Account account, 
@@ -55,11 +61,13 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
         
         XLSWrapper wrapper = new XLSWrapper( file ) ;
         List<LedgerEntry> entries = new ArrayList<>() ;
-        List<XLSRow> rows = wrapper.getRows( new RowFilter(), 14, 3, 11 ) ;
+        List<XLSRow> rows = null ;
         
-        float balance = extractBalance( file ) ;
+        extractBalanceAndStartRow( file ) ;
+        rows = wrapper.getRows( new RowFilter(), startRow, 3, 11 ) ;
         
         XLSUtil.printRows( rows ) ;
+        
         for( XLSRow row : rows ) {
             entries.add( constructLedgerEntry( account, row, balance ) ) ;
         }
@@ -73,7 +81,7 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
         return entries ;
     }
     
-    public float extractBalance( File xlsFile ) throws Exception {
+    private void extractBalanceAndStartRow( File xlsFile ) throws Exception {
         
         Workbook workbook = null ;
         FileInputStream fIs = null ;
@@ -82,24 +90,46 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
             fIs = new FileInputStream( xlsFile ) ;
             workbook = new HSSFWorkbook( fIs ) ; 
             Sheet sheet = workbook.getSheetAt( 0 ) ;
-            Row row = sheet.getRow( 6 ) ;
-            Cell cell = row.getCell( 7 ) ;
             
-            String cellVal = cell.getStringCellValue() ;
-            boolean isDebit = cellVal.endsWith( "Dr." ) ;
-            cellVal = cellVal.substring( 4, cellVal.length()-4 ) ;
-            cellVal = cellVal.replace( ",", "" ) ;
-            Float val = Float.parseFloat( cellVal ) ;
-            
-            if( isDebit ) {
-                val *= -1 ;
-            }
-            return val ;
+            this.startRow = getStartRow( sheet ) ;
+            this.balance = extractBalance( sheet ) ;
         }
         finally {
             fIs.close() ;
             workbook.close() ;
         }
+    }
+    
+    private int getStartRow( Sheet sheet ) throws Exception {
+        
+        Row row = sheet.getRow( 12 ) ;
+        Cell cell = row.getCell( 2 ) ;
+        
+        String cellVal = cell.getStringCellValue() ;
+        
+        if( cellVal.trim().equals( "Transaction Details" ) ) {
+            log.debug( "Last statement detected" ) ;
+            return 13 ;
+        }
+        log.debug( "Current statement detected" ) ;
+        return 14 ;
+    }
+    
+    public float extractBalance( Sheet sheet ) throws Exception {
+        
+        Row row = sheet.getRow( 6 ) ;
+        Cell cell = row.getCell( 7 ) ;
+        
+        String cellVal = cell.getStringCellValue() ;
+        boolean isDebit = cellVal.endsWith( "Dr." ) ;
+        cellVal = cellVal.substring( 4, cellVal.length()-4 ) ;
+        cellVal = cellVal.replace( ",", "" ) ;
+        Float val = Float.parseFloat( cellVal ) ;
+        
+        if( isDebit ) {
+            val *= -1 ;
+        }
+        return val ;
     }
     
     private LedgerEntry constructLedgerEntry( Account account, 

@@ -27,6 +27,11 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
             // Total height of footer. Sum of heights of all visible footer charts.
             height : 0,
         },
+        adx : {
+            visible : false,
+            height  : 125,
+            bottom  : -1,
+        },
         macd : {
             visible : false,
             height  : 100,
@@ -35,11 +40,6 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         rsi : {
             visible : false,
             height  : 100,
-            bottom  : -1,
-        },
-        adx : {
-            visible : false,
-            height  : 125,
             bottom  : -1,
         },
         atr : {
