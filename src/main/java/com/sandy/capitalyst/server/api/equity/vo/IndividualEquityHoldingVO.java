@@ -141,8 +141,9 @@ public class IndividualEquityHoldingVO extends EquityHolding {
         
         int stcgQty = super.getQuantity() - ltcgQty ;
         
-        float ltcgCost = 0, ltcgValue = 0, ltcgProfit = 0, ltcgTax = 0 ;
-        float stcgCost = 0, stcgValue = 0, stcgProfit = 0, stcgTax = 0 ;
+        float ltcgCost, ltcgValue, ltcgProfit, ltcgTax ;
+        float stcgCost, stcgValue, stcgProfit, stcgTax ;
+        float surcharge, cess ;
         
         ltcgCost   = ltcgQty * super.getAvgCostPrice() ;
         ltcgValue  = ltcgQty * super.getCurrentMktPrice() ;
@@ -152,9 +153,12 @@ public class IndividualEquityHoldingVO extends EquityHolding {
         stcgCost   = stcgQty * super.getAvgCostPrice() ;
         stcgValue  = stcgQty * super.getCurrentMktPrice() ;
         stcgProfit = stcgValue - stcgCost ;
-        stcgTax    = stcgProfit > 0 ? 0.3f * stcgProfit : 0 ;
+        stcgTax    = stcgProfit > 0 ? 0.15f * stcgProfit : 0 ;
         
-        taxAmount    = ltcgTax + stcgTax ;
+        surcharge  = (ltcgTax + stcgTax) * 0.15f ;
+        cess       = (ltcgTax + stcgTax + surcharge) * 0.04f ;
+        
+        taxAmount    = ltcgTax + stcgTax + surcharge + cess ;
         valuePostTax = valueAtMktPrice - taxAmount - sellTotalTxnCharges ;
         pat          = valuePostTax - valueAtCost ;
         patPct       = ( pat / valueAtCost ) * 100 ; 

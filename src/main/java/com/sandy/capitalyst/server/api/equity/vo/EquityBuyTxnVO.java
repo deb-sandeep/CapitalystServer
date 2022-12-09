@@ -135,7 +135,12 @@ public class EquityBuyTxnVO extends EquityTxn {
         value  = quantityLeft * parentHolding.getCurrentMktPrice() ;
         profit = value - cost ;
         if( profit > 0 ) {
-            taxAmount = ltcgQuailifed ? 0.1f * profit : 0.3f * profit ;
+            taxAmount = ltcgQuailifed ? 0.1f * profit : 0.15f * profit ;
+            
+            float surcharge = taxAmount * 0.15f ;
+            float cess = (taxAmount + surcharge) * 0.04f ;
+            
+            taxAmount += ( surcharge + cess ) ;
         }
         
         valuePostTax = valueAtMktPrice - taxAmount - sellBrokerage ;

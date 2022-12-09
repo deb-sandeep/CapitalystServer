@@ -174,8 +174,11 @@ public class MFPortfolioBuilder {
             stcgTaxAmt = (float)(0.3 * profitLossForSTCGQty) ;
         }
         
-        float totalTax = ltcgTaxAmt + stcgTaxAmt ;
-        holding.setValueAtNavAfterTax( numUnits*holding.getCurrentNav() - totalTax ) ;
+        float totalTax  = ltcgTaxAmt + stcgTaxAmt ;
+        float surcharge = totalTax * 0.15f ;
+        float cess      = ( totalTax + surcharge ) * 0.04f ;
+        
+        holding.setValueAtNavAfterTax( numUnits*holding.getCurrentNav() - totalTax - surcharge - cess ) ;
         holding.setProfitLossAmtAfterTax( holding.getValueAtNavAfterTax() - holding.getValueAtCost() ) ;
         holding.setProfitLossAmtPctAfterTax( ( holding.getProfitLossAmtAfterTax() * 100 )/holding.getValueAtCost() ) ;
     }

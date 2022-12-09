@@ -120,8 +120,13 @@ public class EquitySellTxnVO extends EquityTxn {
             if( profit > 0 ) {
                 boolean ltcgQualified = qualifiesForLTCG() ;
                 taxAmount = ltcgQualified ? 0.1f * profit : 
-                                            0.3f * profit ;
+                                            0.15f * profit ;
             }
+            
+            float surcharge = taxAmount * 0.15f ;
+            float cess = (taxAmount + surcharge) * 0.04f ;
+            
+            taxAmount += ( surcharge + cess ) ;
             
             valuePostTax = valueAtMktPrice - taxAmount - sellTotalTxnCharges ;
             pat          = valuePostTax - valueAtCostPrice ;
