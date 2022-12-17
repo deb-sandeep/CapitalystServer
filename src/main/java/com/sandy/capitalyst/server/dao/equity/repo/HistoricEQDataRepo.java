@@ -4,15 +4,19 @@ import java.util.Date ;
 import java.util.List ;
 
 import org.springframework.data.jpa.repository.JpaRepository ;
+import org.springframework.data.jpa.repository.Modifying ;
 import org.springframework.data.jpa.repository.Query ;
 import org.springframework.data.repository.CrudRepository ;
 import org.springframework.data.repository.query.Param ;
+import org.springframework.transaction.annotation.Transactional ;
 
+import com.sandy.capitalyst.server.dao.IDCompressor ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 
 public interface HistoricEQDataRepo 
     extends CrudRepository<HistoricEQData, Integer>,
-            JpaRepository<HistoricEQData, Integer>{
+            JpaRepository<HistoricEQData, Integer>, 
+            IDCompressor {
     
     public static interface ClosePrice {
         public Date getDate() ;
@@ -124,4 +128,29 @@ public interface HistoricEQDataRepo
           + "   h.symbol = :symbol "
     )
     int getNumRecords( @Param( "symbol" ) String symbol ) ;
+    
+    @Query( nativeQuery = true,
+            value = 
+            "SELECT "  
+          + "   * " 
+          + "FROM " 
+          + "   historic_eq_data "
+          + "ORDER BY " 
+          + "   id ASC "
+          + "LIMIT ?2 OFFSET ?1 "
+    )
+    List<HistoricEQData> getBatchOfRecords( Integer offset, Integer numRecords ) ;
+    
+    @Transactional
+    @Modifying( clearAutomatically = true )
+    @Query( nativeQuery = true,
+            value = 
+            "UPDATE "  
+          + "   historic_eq_data " 
+          + "SET " 
+          + "   id = ?2 "
+          + "WHERE " 
+          + "   id = ?1 "
+    )
+    void changeID( Integer oldId, Integer newId ) ;
 }

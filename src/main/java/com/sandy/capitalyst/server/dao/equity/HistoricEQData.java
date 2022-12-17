@@ -11,20 +11,33 @@ import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
+import javax.persistence.TableGenerator ;
 
 import org.ta4j.core.Bar ;
 import org.ta4j.core.BaseBar ;
 import org.ta4j.core.num.DecimalNum ;
+
+import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
 
 import lombok.Data ;
 
 @Data
 @Entity
 @Table( name = "historic_eq_data" )
-public class HistoricEQData {
+public class HistoricEQData implements EntityWithNumericID {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @TableGenerator(
+        name            = "eodPkGen", 
+        table           = "id_gen", 
+        pkColumnName    = "gen_key", 
+        valueColumnName = "gen_value", 
+        pkColumnValue   = "historic_eq_data_id",
+        initialValue    = 1,
+        allocationSize  = 1 )    
+    @GeneratedValue( 
+        strategy=GenerationType.TABLE, 
+        generator="eodPkGen" )
     private Integer id = null ;
     
     private String symbol = null ;

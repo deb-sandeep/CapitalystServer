@@ -105,7 +105,7 @@ public class NVP {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder( "NVP [\n" ) ; 
+        StringBuilder builder = new StringBuilder( "IDGen [\n" ) ; 
         builder.append( "   group = " + this.groupName   + "\n" ) ;
         builder.append( "   name  = " + this.configName  + "\n" ) ;
         builder.append( "   value = " + this.value       + "\n" ) ;

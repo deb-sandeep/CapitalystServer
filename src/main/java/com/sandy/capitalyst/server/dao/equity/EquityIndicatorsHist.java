@@ -8,16 +8,29 @@ import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
+import javax.persistence.TableGenerator ;
+
+import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
 
 import lombok.Data ;
 
 @Data
 @Entity
 @Table( name = "equity_indicators_hist" )
-public class EquityIndicatorsHist {
+public class EquityIndicatorsHist implements EntityWithNumericID {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @TableGenerator(
+        name            = "eihPkGen", 
+        table           = "id_gen", 
+        pkColumnName    = "gen_key", 
+        valueColumnName = "gen_value", 
+        pkColumnValue   = "equity_ind_hist_id",
+        initialValue    = 1,
+        allocationSize  = 1 )    
+    @GeneratedValue( 
+        strategy=GenerationType.TABLE, 
+        generator="eihPkGen" )
     private Integer id = null ;
     
     private String isin           = null ;

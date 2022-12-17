@@ -52,6 +52,11 @@ public class NVPConfigGroup {
         return cfg ; 
     }
     
+    public String getStringValue( String cfgKey, String defaultValue ) {
+        NVPConfig cfg = getNVPConfig( cfgKey, defaultValue ) ;
+        return cfg.getValue() ;
+    }
+    
     public Integer getIntValue( String cfgKey, int defaultValue ) {
         NVPConfig cfg = getNVPConfig( cfgKey, Integer.toString( defaultValue ) ) ;
         return cfg.getIntValue() ;

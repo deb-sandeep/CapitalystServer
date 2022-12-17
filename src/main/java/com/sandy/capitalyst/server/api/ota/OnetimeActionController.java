@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.api.ota.action.OTA ;
 import com.sandy.capitalyst.server.api.ota.action.emrefresh.EquityMasterRefreshOTA ;
 import com.sandy.capitalyst.server.api.ota.action.eqhistupdate.HistoricEQDataImporterOTA ;
+import com.sandy.capitalyst.server.api.ota.action.idcompressor.IDCompressorOTA ;
 import com.sandy.capitalyst.server.api.ota.action.idirectmap.IDirectSymbolMappingOTA ;
 import com.sandy.capitalyst.server.api.ota.action.idxhistupdate.HistoricIdxDataImporterOTA ;
 import com.sandy.capitalyst.server.api.ota.action.idxrefresh.IndexMasterRefreshOTA ;
@@ -47,6 +48,7 @@ public class OnetimeActionController {
         otaMap.put( IDirectSymbolMappingOTA.NAME,   IDirectSymbolMappingOTA.class ) ;
         otaMap.put( HistoricEQDataImporterOTA.NAME, HistoricEQDataImporterOTA.class ) ;
         otaMap.put( HistoricIdxDataImporterOTA.NAME,HistoricIdxDataImporterOTA.class ) ;
+        otaMap.put( IDCompressorOTA.NAME,           IDCompressorOTA.class ) ;
         
         executorService = Executors.newFixedThreadPool( 5 ) ;
     }
