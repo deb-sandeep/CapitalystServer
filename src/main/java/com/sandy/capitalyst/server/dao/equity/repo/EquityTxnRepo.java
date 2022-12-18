@@ -3,14 +3,17 @@ package com.sandy.capitalyst.server.dao.equity.repo;
 import java.util.Date ;
 import java.util.List ;
 
+import org.springframework.data.jpa.repository.Modifying ;
 import org.springframework.data.jpa.repository.Query ;
 import org.springframework.data.repository.CrudRepository ;
 import org.springframework.data.repository.query.Param ;
+import org.springframework.transaction.annotation.Transactional ;
 
+import com.sandy.capitalyst.server.dao.IDCompressor ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
 
 public interface EquityTxnRepo 
-    extends CrudRepository<EquityTxn, Integer> {
+    extends CrudRepository<EquityTxn, Integer>, IDCompressor {
     
     List<EquityTxn> findByHoldingIdOrderByTxnDateAscActionAsc( int holdingId ) ;
     
@@ -52,4 +55,28 @@ public interface EquityTxnRepo
                                       @Param( "action"    ) String action,
                                       @Param( "quantity"  ) int quantity ) ;
     
+    @Query( nativeQuery = true,
+            value = 
+            "SELECT "  
+          + "   * " 
+          + "FROM " 
+          + "   equity_txn "
+          + "ORDER BY " 
+          + "   id ASC "
+          + "LIMIT ?2 OFFSET ?1 "
+    )
+    List<EquityTxn> getBatchOfRecords( Integer offset, Integer numRecords ) ;
+
+    @Transactional
+    @Modifying( clearAutomatically = true )
+    @Query( nativeQuery = true,
+            value = 
+            "UPDATE "  
+          + "   equity_txn " 
+          + "SET " 
+          + "   id = ?2 "
+          + "WHERE " 
+          + "   id = ?1 "
+    )
+    void changeID( Integer oldId, Integer newId ) ;
 }

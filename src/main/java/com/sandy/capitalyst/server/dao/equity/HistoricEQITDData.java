@@ -17,12 +17,14 @@ import org.ta4j.core.Bar ;
 import org.ta4j.core.BaseBar ;
 import org.ta4j.core.num.DecimalNum ;
 
+import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
+
 import lombok.Data ;
 
 @Data
 @Entity
 @Table( name = "historic_eq_itd_data" )
-public class HistoricEQITDData {
+public class HistoricEQITDData implements EntityWithNumericID {
 
     @Id
     @TableGenerator(

@@ -102,7 +102,18 @@ public class IDCompressorOTA extends OTA {
                         numRecsCompressed = compressBatch( JobRunEntryRepo.class,
                                                            config.tableName + "_id" ) ;
                         break ;
-                     */
+
+                    case "equity_trade":
+                        numRecsCompressed = compressBatch( EquityTradeRepo.class,
+                                                           config.tableName + "_id" ) ;
+                        break ;
+                        
+                    case "equity_txn":
+                        numRecsCompressed = compressBatch( EquityTxnRepo.class,
+                                                           config.tableName + "_id" ) ;
+                        break ;
+                        
+                    */
                         
                     default:
                         log.info( "ERROR: Unrecognized table name." ) ;
