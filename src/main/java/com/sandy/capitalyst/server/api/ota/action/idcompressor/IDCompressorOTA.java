@@ -13,12 +13,8 @@ import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
 import com.sandy.capitalyst.server.dao.IDCompressor ;
-import com.sandy.capitalyst.server.dao.breeze.repo.BreezeInvocationStatsRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsHistRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 import com.sandy.capitalyst.server.dao.idgen.IDGen ;
 import com.sandy.capitalyst.server.dao.idgen.repo.IDGenRepo ;
-import com.sandy.capitalyst.server.dao.index.repo.HistoricIdxDataRepo ;
 
 public class IDCompressorOTA extends OTA {
     
@@ -66,6 +62,7 @@ public class IDCompressorOTA extends OTA {
                 int numRecsCompressed = 0 ;
                 
                 switch( config.tableName ) {
+                    /*
                     case "historic_eq_data":
                         numRecsCompressed = compressBatch( HistoricEQDataRepo.class,
                                                            config.tableName + "_id" ) ;
@@ -86,9 +83,29 @@ public class IDCompressorOTA extends OTA {
                                                            config.tableName + "_id" ) ;
                         break ;
                         
+                    case "equity_tech_indicator":
+                        numRecsCompressed = compressBatch( EquityTechIndicatorRepo.class,
+                                                           config.tableName + "_id" ) ;
+                        break ;
+                        
+                    case "historic_mf_data":
+                        numRecsCompressed = compressBatch( HistoricMFDataRepo.class,
+                                                           config.tableName + "_id" ) ;
+                        break ;
+                        
+                    case "equity_daily_gain":
+                        numRecsCompressed = compressBatch( EquityDailyGainRepo.class,
+                                                           config.tableName + "_id" ) ;
+                        break ;
+                        
+                    case "job_run":
+                        numRecsCompressed = compressBatch( JobRunEntryRepo.class,
+                                                           config.tableName + "_id" ) ;
+                        break ;
+                     */
+                        
                     default:
                         log.info( "ERROR: Unrecognized table name." ) ;
-                        return ;
                 }
                 
                 if( numRecsCompressed == 0 ) {
@@ -139,7 +156,7 @@ public class IDCompressorOTA extends OTA {
         cfg.setValue( CFG_BATCH_OFFSET, config.batchOffset );
     }
     
-    private int compressBatch( Class<? extends IDCompressor> compressorRepoClass,
+    int compressBatch( Class<? extends IDCompressor> compressorRepoClass,
                                String idGenKey ) {
         
         IDCompressor repo = null ;

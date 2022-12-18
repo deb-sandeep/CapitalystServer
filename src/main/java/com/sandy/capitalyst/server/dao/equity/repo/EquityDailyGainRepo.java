@@ -3,15 +3,18 @@ package com.sandy.capitalyst.server.dao.equity.repo;
 import java.util.Date ;
 import java.util.List ;
 
+import org.springframework.data.jpa.repository.Modifying ;
 import org.springframework.data.jpa.repository.Query ;
 import org.springframework.data.repository.CrudRepository ;
 import org.springframework.data.repository.query.Param ;
+import org.springframework.transaction.annotation.Transactional ;
 
+import com.sandy.capitalyst.server.dao.IDCompressor ;
 import com.sandy.capitalyst.server.dao.equity.EquityDailyGain ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 
 public interface EquityDailyGainRepo 
-    extends CrudRepository<EquityDailyGain, Integer> {
+    extends CrudRepository<EquityDailyGain, Integer>, IDCompressor {
     
     public static interface SparklineData {
         public Integer getHoldingId() ;
@@ -68,4 +71,29 @@ public interface EquityDailyGainRepo
                                   @Param( "holdingId" ) Integer holdingId,
                                   @Param( "startDate" ) Date startDate,
                                   @Param( "endDate"   ) Date endDate ) ;
+
+    @Query( nativeQuery = true,
+            value = 
+            "SELECT "  
+          + "   * " 
+          + "FROM " 
+          + "   equity_daily_gain "
+          + "ORDER BY " 
+          + "   id ASC "
+          + "LIMIT ?2 OFFSET ?1 "
+    )
+    List<EquityDailyGain> getBatchOfRecords( Integer offset, Integer numRecords ) ;
+
+    @Transactional
+    @Modifying( clearAutomatically = true )
+    @Query( nativeQuery = true,
+            value = 
+            "UPDATE "  
+          + "   equity_daily_gain " 
+          + "SET " 
+          + "   id = ?2 "
+          + "WHERE " 
+          + "   id = ?1 "
+    )
+    void changeID( Integer oldId, Integer newId ) ;
 }

@@ -11,16 +11,29 @@ import javax.persistence.Id ;
 import javax.persistence.JoinColumn ;
 import javax.persistence.ManyToOne ;
 import javax.persistence.Table ;
+import javax.persistence.TableGenerator ;
+
+import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
 
 import lombok.Data ;
 
 @Data
 @Entity
 @Table( name = "equity_daily_gain" )
-public class EquityDailyGain {
+public class EquityDailyGain implements EntityWithNumericID {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @TableGenerator(
+        name            = "edgPkGen", 
+        table           = "id_gen", 
+        pkColumnName    = "gen_key", 
+        valueColumnName = "gen_value", 
+        pkColumnValue   = "equity_daily_gain_id",
+        initialValue    = 1,
+        allocationSize  = 1 )    
+    @GeneratedValue( 
+        strategy=GenerationType.TABLE, 
+        generator="edgPkGen" )
     private Integer id = null ;
     
     @ManyToOne( cascade= {CascadeType.MERGE} )

@@ -9,13 +9,26 @@ import javax.persistence.Id ;
 import javax.persistence.JoinColumn ;
 import javax.persistence.ManyToOne ;
 import javax.persistence.Table ;
+import javax.persistence.TableGenerator ;
+
+import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
 
 @Entity
 @Table( name = "job_run" )
-public class JobRunEntry {
+public class JobRunEntry implements EntityWithNumericID {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @TableGenerator(
+        name            = "jrPkGen", 
+        table           = "id_gen", 
+        pkColumnName    = "gen_key", 
+        valueColumnName = "gen_value", 
+        pkColumnValue   = "job_run_id",
+        initialValue    = 1,
+        allocationSize  = 1 )    
+    @GeneratedValue( 
+        strategy=GenerationType.TABLE, 
+        generator="jrPkGen" )
     private Integer id = null ;
     
     @ManyToOne

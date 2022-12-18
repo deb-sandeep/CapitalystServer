@@ -7,19 +7,31 @@ import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
+import javax.persistence.TableGenerator ;
 
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators ;
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators.TechIndicator ;
+import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
 
 import lombok.Data ;
 
 @Data
 @Entity
 @Table( name = "equity_tech_indicator" )
-public class EquityTechIndicator {
+public class EquityTechIndicator implements EntityWithNumericID {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @TableGenerator(
+        name            = "etiPkGen", 
+        table           = "id_gen", 
+        pkColumnName    = "gen_key", 
+        valueColumnName = "gen_value", 
+        pkColumnValue   = "equity_tech_indicator_id",
+        initialValue    = 1,
+        allocationSize  = 1 )    
+    @GeneratedValue( 
+        strategy=GenerationType.TABLE, 
+        generator="etiPkGen" )
     private Integer id = null ;
     
     private String isin           = null ;
