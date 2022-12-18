@@ -25,7 +25,7 @@ public class EquityIndicatorsHist implements EntityWithNumericID {
         table           = "id_gen", 
         pkColumnName    = "gen_key", 
         valueColumnName = "gen_value", 
-        pkColumnValue   = "equity_ind_hist_id",
+        pkColumnValue   = "equity_indicators_hist_id",
         initialValue    = 1,
         allocationSize  = 1 )    
     @GeneratedValue( 

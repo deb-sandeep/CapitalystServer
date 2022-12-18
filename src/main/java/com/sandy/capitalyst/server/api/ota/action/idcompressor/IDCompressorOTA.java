@@ -13,6 +13,7 @@ import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
 import com.sandy.capitalyst.server.dao.IDCompressor ;
+import com.sandy.capitalyst.server.dao.breeze.repo.BreezeInvocationStatsRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityIndicatorsHistRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 import com.sandy.capitalyst.server.dao.idgen.IDGen ;
@@ -67,17 +68,22 @@ public class IDCompressorOTA extends OTA {
                 switch( config.tableName ) {
                     case "historic_eq_data":
                         numRecsCompressed = compressBatch( HistoricEQDataRepo.class,
-                                                           "historic_eq_data_id" ) ;
+                                                           config.tableName + "_id" ) ;
                         break ;
                         
                     case "historic_idx_data":
                         numRecsCompressed = compressBatch( HistoricIdxDataRepo.class,
-                                                           "hist_idx_data_id" ) ;
+                                                           config.tableName + "_id" ) ;
                         break ;
                         
                     case "equity_indicators_hist":
                         numRecsCompressed = compressBatch( EquityIndicatorsHistRepo.class,
-                                                           "equity_ind_hist_id" ) ;
+                                                           config.tableName + "_id" ) ;
+                        break ;
+                        
+                    case "breeze_invocation_stats":
+                        numRecsCompressed = compressBatch( BreezeInvocationStatsRepo.class,
+                                                           config.tableName + "_id" ) ;
                         break ;
                         
                     default:
