@@ -26,7 +26,7 @@ public class DevModeInitializer {
         
         forceOn( EquityITDImporterDaemon.CFG_GRP_NAME, 
                  EquityITDImporterDaemon.CFG_PAUSE_REFRESH_FLAG,
-                 "Equity ITD Import Daemon" ) ;
+                 "Equity ITD Import Daemon (pause)" ) ;
 
         forceOn( PortfolioMarketPriceUpdater.CFG_GRP_NAME, 
                  PortfolioMarketPriceUpdater.CFG_PAUSE_REFRESH_FLAG,
@@ -34,7 +34,7 @@ public class DevModeInitializer {
         
         forceOff( CapitalystServer.CFG_GRP_APP, 
                   CapitalystServer.CFG_RUN_BATCH_DAEMON, 
-                  "Batch Scheduler Daemon" ) ;
+                  "Batch Scheduler Daemon (run)" ) ;
         
         forceOff( CapitalystServer.CFG_GRP_APP, 
                   CapitalystServer.CFG_RUN_EQ_HIST_EOD_DAEMON, 

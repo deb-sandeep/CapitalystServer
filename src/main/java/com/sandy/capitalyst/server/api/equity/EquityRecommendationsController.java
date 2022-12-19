@@ -36,7 +36,7 @@ public class EquityRecommendationsController {
             recommendations = recoMgr.getRecommendations() ;
             
             for( EquityReco reco : recommendations ) {
-                ltp = ltpRepo.getLTP( reco.getSymbolNse() ) ;
+                ltp = ltpRepo.getLTP( reco.getEquityMaster().getSymbol() ) ;
                 if( ltp != null ) {
                     reco.setLtp( ltp ) ;
                     reco.getIndicators().setCurrentPrice( ltp.getPrice() ) ;

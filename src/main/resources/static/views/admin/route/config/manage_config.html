@@ -47,7 +47,7 @@
 		               </div>
 	                   <div ng-if="cfg.editing" style="width:100%">
 	                       <input type="text"
-	                              ng-enter="saveConfig( cfg )"
+	                              ng-enter="saveConfig( cfg, true )"
 	                              ng-escape="cancelEditing()"
 	                              ng-model="tempEditValues.value"
 	                              style="width:100%;"/>
@@ -56,7 +56,7 @@
 	               <div ng-if="cfg.boolFlag">
 		                <input type="checkbox" 
 		                       ng-model="cfg.boolValue"
-		                       ng-change="saveConfig( cfg )"/>
+		                       ng-change="saveConfig( cfg, false )"/>
 	               </div>
 	           </td>
                <td>
@@ -65,14 +65,14 @@
                    </div>
                    <div ng-if="cfg.editing" style="width:100%">
                        <input type="text"
-                              ng-enter="saveConfig( cfg )"
+                              ng-enter="saveConfig( cfg, true )"
                               ng-escape="cancelEditing()"
                               ng-model="tempEditValues.description"
                               style="width:100%;"/>
                    </div>
                </td>
                <td>
-                 <a ng-click="saveConfig( cfg )"
+                 <a ng-click="saveConfig( cfg, true )"
                     ng-if="cfg.editing">
                     <span class="glyphicon glyphicon-floppy-disk"></span>
                  </a>              

@@ -42,14 +42,18 @@ capitalystNgApp.controller( 'ManageConfigController',
         resetEditState() ;
     }
     
-    $scope.saveConfig = function( cfg ) {
+    $scope.saveConfig = function( cfg, descrFromTemp ) {
         if( cfg.boolFlag ) {
             cfg.value = cfg.boolValue ? "true" : "false" ;        
         }
         else {
             cfg.value = $scope.tempEditValues.value ;
         }
-        cfg.description = $scope.tempEditValues.description ;
+        
+        if( descrFromTemp ) {
+            cfg.description = $scope.tempEditValues.description ;
+        }
+        
         resetEditState() ;
         saveCfgOnServer( cfg ) ;
     }

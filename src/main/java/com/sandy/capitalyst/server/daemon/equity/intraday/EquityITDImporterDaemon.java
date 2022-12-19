@@ -73,9 +73,10 @@ public class EquityITDImporterDaemon extends Thread {
                     
                     if( pauseRefresh ) {
                         if( debugEnable ) {
-                            log.debug( "Equity ITD refresh paused." ) ;
+                            log.debug( "Equity ITD refresh paused. " + 
+                                       "Sleeping for 1 minute." ) ;
                         }
-                        TimeUnit.SECONDS.sleep( refreshDelay ) ;
+                        TimeUnit.MINUTES.sleep( 1 ) ;
                     }
                     else {
                         if( debugEnable ) {
@@ -88,6 +89,10 @@ public class EquityITDImporterDaemon extends Thread {
                     }
                 }
                 else {
+                    if( debugEnable ) {
+                        log.debug( "Market closed or exception threshold breached. " + 
+                                   "Sleeping for 2 minutes." ) ;
+                    }
                     TimeUnit.MINUTES.sleep( 2 ) ;
                 }
             }
