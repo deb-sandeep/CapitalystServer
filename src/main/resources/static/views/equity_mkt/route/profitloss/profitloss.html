@@ -4,7 +4,10 @@
            style="width: auto !important;">
         <thead>
             <tr class="success">
-                <th></th>
+                <th>
+	               <span class="glyphicon glyphicon-unchecked"
+	                     ng-click="clearSelections()"></span>
+                </th>
                 <th ng-click="sortRows('owner', 'parentHolding.ownerName', 'string')">
                     Owner
                 </th>

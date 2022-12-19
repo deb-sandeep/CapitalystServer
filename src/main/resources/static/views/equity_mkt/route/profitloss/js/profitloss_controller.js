@@ -90,6 +90,14 @@ capitalystNgApp.controller( 'ProfitLossController',
         recomputeSelTotals() ;
     }
     
+    $scope.clearSelections = function() {
+        
+        for( var i=0; i<$scope.sellTxns.length; i++ ) {
+            $scope.sellTxns[i].selected = false ;
+        }    
+        recomputeSelTotals() ;
+    }
+    
     $scope.showGraphDialog = function( txn ) {
         $scope.$emit( 'graphDialogDisplayTrigger', {
             symbolNse   : txn.parentHolding.symbolNse,
