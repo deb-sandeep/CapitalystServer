@@ -314,7 +314,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
         $scope.inbetweenServerCall = true ;
         $http.get( '/Equity/GraphData' + 
                    '?duration='  + $scope.duration + 
-                   '&symbolNse=' + $scope.graphParams.symbolNse + 
+                   '&symbolNse=' + encodeURIComponent( $scope.graphParams.symbolNse ) + 
                    '&owner='     + $scope.graphParams.ownerName )
         .then ( 
             function( response ){

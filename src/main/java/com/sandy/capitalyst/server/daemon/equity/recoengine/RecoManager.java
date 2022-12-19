@@ -118,6 +118,8 @@ public class RecoManager {
         EquityReco reco = null ;
         EquityIndicators ind = null ;
         EquityTTMPerf ttmPerf = null ;
+        List<EquityReco> rejectedStocks = new ArrayList<>() ;
+        
         int totalNumStocks = 0 ;
         int numStocksProcessed = 0 ;
         
@@ -144,6 +146,9 @@ public class RecoManager {
                     screenedRecos.add( reco ) ;
                     statsMgr.assimilate( reco ) ;
                 }
+                else {
+                    rejectedStocks.add( reco ) ;
+                }
             }
             
             numStocksProcessed++ ;
@@ -154,11 +159,25 @@ public class RecoManager {
             }
         }
         
+        printRejectedStockSummary( rejectedStocks ) ;
+        
         for( EquityReco r : screenedRecos ) {
             recoEngine.applyEvaluators( r, statsMgr ) ;
         }
         
         printStats() ;
+    }
+    
+    private void printRejectedStockSummary( List<EquityReco> rejectedStocks ) {
+        
+        if( !rejectedStocks.isEmpty() ) {
+            log.debug( "Screening Rejected Stocks:" ) ;
+            for( EquityReco r : rejectedStocks ) {
+                String symbolNse = r.getEquityMaster().getSymbol() ;
+                log.info( "  " + StringUtils.rightPad( symbolNse, 10 ) + 
+                          " :: " + r.getMessage() ) ;
+            }
+        }
     }
     
     private void printStats() {

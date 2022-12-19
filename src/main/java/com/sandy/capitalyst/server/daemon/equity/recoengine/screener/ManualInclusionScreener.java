@@ -36,15 +36,16 @@ public class ManualInclusionScreener extends Screener {
 
     @Override
     public ScreenerResult screen( EquityIndicators ind,
-                                List<EquityTechIndicator> techInds, 
-                                EquityReco recos ) {
+                                  List<EquityTechIndicator> techInds, 
+                                  EquityReco recos ) {
         
         if( nseSymbolsForInclusion.isEmpty() ) {
             throw new IllegalStateException( "nseSymbols not configured." ) ;
         }
 
-        if( nseSymbolsForInclusion.contains( ind.getSymbolNse() ) ) {
-            return accept( msg( TEMPLATE, ind.getSymbolNse() ) ) ;
+        String symbolNse = recos.getEquityMaster().getSymbol() ;
+        if( nseSymbolsForInclusion.contains( symbolNse ) ) {
+            return accept( msg( TEMPLATE, symbolNse ) ) ;
         }
         
         return nocare() ;

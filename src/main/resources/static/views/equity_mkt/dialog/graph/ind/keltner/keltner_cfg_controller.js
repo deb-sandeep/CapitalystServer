@@ -37,7 +37,7 @@ capitalystNgApp.controller( 'KeltnerCfgController',
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
         $http.get( '/Equity/GraphData/Indicator/KeltnerChannel' + 
-                   '?symbolNse='+ symbol +
+                   '?symbolNse='+ encodeURIComponent( symbol ) +
                    '&emaCount=' + $scope.config.emaCount +
                    '&atrCount=' + $scope.config.atrCount +
                    '&atrScale=' + $scope.config.atrScale )

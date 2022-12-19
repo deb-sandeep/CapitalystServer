@@ -66,7 +66,7 @@ capitalystNgApp.controller( 'ATRController',
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
         $http.get( '/Equity/GraphData/Indicator/ATR' + 
-                   '?symbolNse=' + symbol +
+                   '?symbolNse=' + encodeURIComponent( symbol ) +
                    '&windowSize=' + $scope.config.windowSize )
         .then ( 
             function( response ){

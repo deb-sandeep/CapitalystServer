@@ -72,7 +72,7 @@ capitalystNgApp.controller( 'RSIController',
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
         $http.get( '/Equity/GraphData/Indicator/RSI' + 
-                   '?symbolNse=' + symbol +
+                   '?symbolNse=' + encodeURIComponent( symbol ) +
                    '&windowSize=' + $scope.config.windowSize )
         .then ( 
             function( response ){

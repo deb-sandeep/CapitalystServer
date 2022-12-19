@@ -40,7 +40,7 @@ public class RecoEngine extends RecoEngineBase {
                               EquityIndicators eIndicators,
                               EquityTTMPerf ttmPerf ) {
         
-        String                    symbolNse   = eIndicators.getSymbolNse() ;
+        String                    symbolNse   = em.getSymbol() ;
         EquityReco                reco        = new EquityReco() ;
         List<EquityHolding>       holdings    = null ;
         List<EquityTechIndicator> tIndicators = null ;
@@ -90,7 +90,8 @@ public class RecoEngine extends RecoEngineBase {
                 break ;
             }
             else if( result.getResult() == ScreenerResult.ACCEPT ) {
-                log.debug( "     ACCEPTED. " + filter.getId() ) ;
+                log.debug( "     ACCEPTED. " + filter.getId() + 
+                           ". Msg = " + result.getDescription() ) ;
                 break ;
             }
             else if( result.getResult() == ScreenerResult.NO_CARE ) {

@@ -38,8 +38,10 @@ public class HoldingScreener extends Screener {
                                   List<EquityTechIndicator> techInds, 
                                   EquityReco recos ) {
 
-        if( holdingNseSymbols.contains( ind.getSymbolNse() ) ) {
-            return accept( msg( TEMPLATE, ind.getSymbolNse() ) ) ;
+        String symbolNse = recos.getEquityMaster().getSymbol() ;
+
+        if( holdingNseSymbols.contains( symbolNse ) ) {
+            return accept( msg( TEMPLATE, symbolNse ) ) ;
         }
         
         return nocare() ;

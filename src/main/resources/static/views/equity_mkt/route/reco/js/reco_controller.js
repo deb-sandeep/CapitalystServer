@@ -81,7 +81,7 @@ capitalystNgApp.controller( 'RecoController',
 
     $scope.showGraphDialog = function( reco ) {
         $scope.$emit( 'graphDialogDisplayTrigger', {
-            symbolNse   : reco.symbolNse,
+            symbolNse   : reco.equityMaster.symbol,
             companyName : reco.equityMaster.name,
             ownerName   : 'Family' 
         }) ;
@@ -195,7 +195,6 @@ capitalystNgApp.controller( 'RecoController',
                     gradientMgr['health'].addValue( reco.goodnessScore ) ;
                     gradientMgr['mc'    ].addValue( reco.indicators.mcEssentialScore ) ;
                     gradientMgr['cagr'  ].addValue( reco.indicators.cagrEbit ) ;
-                    gradientMgr['rsi'   ].addValue( reco.techIndicators[0].level ) ;
                     
                     gradientMgr['perfLTP'].addValue( reco.ltp.pchange ) ;
                     gradientMgr['perf1D' ].addValue( reco.ttmPerf.perf1d  ) ;
@@ -208,6 +207,10 @@ capitalystNgApp.controller( 'RecoController',
                     gradientMgr['perf9M' ].addValue( reco.ttmPerf.perf9m  ) ;
                     gradientMgr['perf1Y' ].addValue( reco.ttmPerf.perf12m  ) ;
                     gradientMgr['perf3Y' ].addValue( reco.indicators.pricePerf3Y  ) ;
+
+                    if( reco.techIndicators.length > 1 ) {
+                        gradientMgr['rsi'].addValue( reco.techIndicators[0].level ) ;
+                    }                    
                 }
                 
                 initializeGradientMgrs() ;

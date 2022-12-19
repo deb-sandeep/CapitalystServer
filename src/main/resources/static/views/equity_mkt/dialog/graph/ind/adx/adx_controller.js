@@ -79,7 +79,7 @@ capitalystNgApp.controller( 'ADXController',
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
         $http.get( '/Equity/GraphData/Indicator/ADX' + 
-                   '?symbolNse=' + symbol +
+                   '?symbolNse=' + encodeURIComponent( symbol ) +
                    '&diWindowSize=' + $scope.config.diWindowSize + 
                    '&adxWindowSize=' + $scope.config.adxWindowSize )
         .then ( 

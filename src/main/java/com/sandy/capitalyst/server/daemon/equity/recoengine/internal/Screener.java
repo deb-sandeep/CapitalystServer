@@ -58,7 +58,7 @@ public abstract class Screener {
         for( int i=0; i<parameters.length; i++ ) {
             Object param = parameters[i] ;
             if( param != null ) {
-                retVal = template.replaceAll( "\\{"+i+"\\}", param.toString() ) ;
+                retVal = retVal.replaceAll( "\\{"+i+"\\}", param.toString() ) ;
             }
         }
         return retVal ;

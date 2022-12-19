@@ -30,6 +30,7 @@ public class IndexScreener extends Screener {
     
     private List<String> indexesForInclusion = new ArrayList<>() ;
     private List<String> eqForInclusion = new ArrayList<>() ;
+    private List<String> nifty50Stocks = new ArrayList<>() ;
     
     // This is populated through the yaml configuration
     public void setIncludedIndexes( String indexNames ) {
@@ -49,6 +50,8 @@ public class IndexScreener extends Screener {
         for( String idxName : indexesForInclusion ) {
             eqForInclusion.addAll( ieRepo.findEquitiesForIndex( idxName ) ) ;
         }
+        
+        nifty50Stocks.addAll( ieRepo.findEquitiesForIndex( "Nifty 50" ) ) ;
     }
     
     @Override
@@ -56,10 +59,15 @@ public class IndexScreener extends Screener {
                                   List<EquityTechIndicator> techInds, 
                                   EquityReco recos ) {
         
-        if( eqForInclusion.contains( ind.getSymbolNse() ) ) {
+        String symbolNse = recos.getEquityMaster().getSymbol() ;
+        
+        if( nifty50Stocks.contains( symbolNse ) ) {
+            return accept( "Nifty 50 stock." ) ;
+        }
+        else if( eqForInclusion.contains( symbolNse ) ) {
             return nocare() ;
         }
-        return reject( msg( TEMPLATE, ind.getSymbolNse() ) ) ;
+        return reject( msg( TEMPLATE, "Not part of selected indexes" ) ) ;
     }
 
 }

@@ -37,7 +37,7 @@ capitalystNgApp.controller( 'BollingerCfgController',
         const symbol = $scope.$parent.graphParams.symbolNse ;
         
         $http.get( '/Equity/GraphData/Indicator/BollingerBands' + 
-                   '?symbolNse='  + symbol +
+                   '?symbolNse='  + encodeURIComponent( symbol ) +
                    '&windowSize=' + $scope.config.windowSize +
                    '&numStdDev='  + $scope.config.numStdDev  )
         .then ( 
