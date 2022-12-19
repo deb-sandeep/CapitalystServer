@@ -53,14 +53,14 @@
                         ng-model="txn.selected"
                         ng-change="txnSelectionChanged()"/>
                </td>
-               <td ng-dblclick="selectAllHoldingsForOwner( txn.holding.ownerName )">
+               <td ng-dblclick="selectAllHoldingsForOwner( txn.parentHolding.ownerName )">
                     {{txn.parentHolding.ownerName}}
                </td>
                <td style="text-align:right;">
                     {{txn.txnDate | date : "dd MMM" }}
                </td>
                <td style="font-size:11px;"
-                   ng-dblclick="selectAllHoldingsForSymbol( txn.holding.symbolIcici )">
+                   ng-dblclick="selectAllHoldingsForSymbol( txn.parentHolding.symbolIcici )">
                    <span data-toggle="tooltip" title="{{txn.holding.companyName}}">
                         {{txn.parentHolding.symbolIcici}}
                    </span>

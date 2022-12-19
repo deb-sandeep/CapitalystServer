@@ -76,7 +76,7 @@ capitalystNgApp.controller( 'ProfitLossController',
         
         for( var i=0; i<$scope.sellTxns.length; i++ ) {
             var txn = $scope.sellTxns[i] ;
-            txn.selected = txn.holding.ownerName == ownerName ;
+            txn.selected = txn.parentHolding.ownerName == ownerName ;
         }    
         recomputeSelTotals() ;
     }
@@ -85,7 +85,7 @@ capitalystNgApp.controller( 'ProfitLossController',
 
         for( var i=0; i<$scope.sellTxns.length; i++ ) {
             var txn = $scope.sellTxns[i] ;
-            txn.selected = txn.holding.symbolIcici == symbolIcici ;
+            txn.selected = txn.parentHolding.symbolIcici == symbolIcici ;
         }    
         recomputeSelTotals() ;
     }
