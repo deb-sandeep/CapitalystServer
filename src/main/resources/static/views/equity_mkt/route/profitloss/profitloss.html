@@ -5,19 +5,43 @@
         <thead>
             <tr class="success">
                 <th></th>
-                <th>Owner</th>
-                <th>Date</th>
-                <th>Company</th>
+                <th ng-click="sortRows('owner', 'parentHolding.ownerName', 'string')">
+                    Owner
+                </th>
+                <th ng-click="sortRows('date', 'txnDate', 'date')">
+                    Date
+                </th>
+                <th ng-click="sortRows('symbol', 'parentHolding.symbolIcici', 'string')">
+                    Company
+                </th>
                 <th></th>
-                <th>Qty</th>
-                <th>Txn Price</th>
-                <th>Cost Price</th>
-                <th>Sell Price</th>
-                <th>Txn Chgs</th>
-                <th>Amt Recd</th>
-                <th>Tax</th>
-                <th>PAT</th>
-                <th>PAT %</th>
+                <th ng-click="sortRows('quantity', 'quantity', 'num')">
+                    Qty
+                </th>
+                <th ng-click="sortRows('txnPrice', 'txnPrice', 'num')">
+                    Txn Price
+                </th>
+                <th ng-click="sortRows('costPrice', 'valueAtCostPrice', 'num')">
+                    Cost Price
+                </th>
+                <th ng-click="sortRows('sellPrice', 'valueAtMktPrice', 'num')">
+                    Sell Price
+                </th>
+                <th ng-click="sortRows('txnCharges', 'sellTxnCharges', 'num')">
+                    Txn Chgs
+                </th>
+                <th ng-click="sortRows('amountRecd', 'amountRecd', 'num')">
+                    Amt Recd
+                </th>
+                <th ng-click="sortRows('tax', 'taxAmount', 'num')">
+                    Tax
+                </th>
+                <th ng-click="sortRows('pat', 'pat', 'num')">
+                    PAT
+                </th>
+                <th ng-click="sortRows('patPct', 'patPct', 'num')">
+                    PAT %
+                </th>
             </tr>
         </thead>
         
@@ -63,7 +87,7 @@
                     {{txn.sellTxnCharges | amt}}
                </td>
                <td class="fixed-font amt">
-                    {{( txn.valueAtMktPrice - txn.sellTxnCharges ) | amt}}
+                    {{txn.amountRecd | amt}}
                </td>
                <td class="fixed-font amt">
                     {{txn.taxAmount | amt}}

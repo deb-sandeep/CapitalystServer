@@ -2,6 +2,9 @@ capitalystNgApp.controller( 'ProfitLossController',
     function( $scope, $http ) {
     
     // ---------------- Local variables --------------------------------------
+    var sortDir = {
+        symbol : 'asc'
+    } ;
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Profit Loss from Equity (this FY)" ;
@@ -95,6 +98,12 @@ capitalystNgApp.controller( 'ProfitLossController',
         }) ;
     }
     
+    $scope.sortRows = function( colId, property, type ) {
+        
+        sortDir[colId] = ( sortDir[colId] == "asc" ) ? "desc" : "asc" ;
+        sortArrayByProperty( sortDir[colId], $scope.sellTxns, property, type ) ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -109,7 +118,7 @@ capitalystNgApp.controller( 'ProfitLossController',
                 $scope.selTotal.costPrice      += txn.valueAtCostPrice ;
                 $scope.selTotal.sellPrice      += txn.valueAtMktPrice ;
                 $scope.selTotal.sellTxnCharges += txn.sellTxnCharges ;
-                $scope.selTotal.amountRecd     += ( txn.valueAtMktPrice - txn.sellTxnCharges ) ;
+                $scope.selTotal.amountRecd     += txn.amountRecd ;
                 $scope.selTotal.taxAmount      += txn.taxAmount ;
                 $scope.selTotal.pat            += txn.pat ;
                 
@@ -136,13 +145,14 @@ capitalystNgApp.controller( 'ProfitLossController',
                     
                     // Injecting new fields into txn
                     txn.selected = false ;
+                    txn.amountRecd = ( txn.valueAtMktPrice - txn.sellTxnCharges ) ;
                     
                     $scope.sellTxns.push( txn ) ;
                     
                     $scope.allTotal.costPrice      += txn.valueAtCostPrice ;
                     $scope.allTotal.sellPrice      += txn.valueAtMktPrice ;
                     $scope.allTotal.sellTxnCharges += txn.sellTxnCharges ;
-                    $scope.allTotal.amountRecd     += ( txn.valueAtMktPrice - txn.sellTxnCharges ) ;
+                    $scope.allTotal.amountRecd     += txn.amountRecd ;
                     $scope.allTotal.taxAmount      += txn.taxAmount ;
                     $scope.allTotal.pat            += txn.pat ;
                     
