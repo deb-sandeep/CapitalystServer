@@ -3,7 +3,6 @@ capitalystNgApp.controller( 'RecoController',
     
     // ---------------- Local variables --------------------------------------
     var sortDir = {
-        perfLTP : 'asc'
     } ;
     
     var gradientMgr = {
@@ -234,7 +233,7 @@ capitalystNgApp.controller( 'RecoController',
                 initializeGradientMgrs() ;
                 
                 sortDir[ "perfLTP" ] = "asc" ; 
-                sortTable( "perfLTP" ) ;
+                $scope.sortRows( "perfLTP", "ltp.pchange", "num" ) ;
             }, 
             function(){
                 $scope.$parent.addErrorAlert( "Error fetching eq recos." ) ;

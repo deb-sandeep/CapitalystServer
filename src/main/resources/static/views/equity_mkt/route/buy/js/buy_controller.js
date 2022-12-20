@@ -2,6 +2,9 @@ capitalystNgApp.controller( 'BuyController',
     function( $scope, $http ) {
     
     // ---------------- Local variables --------------------------------------
+    var sortDir = {
+    } ;
+    
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Equity Buy (this FY)" ;
@@ -75,6 +78,12 @@ capitalystNgApp.controller( 'BuyController',
             companyName : txn.parentHolding.companyName,
             ownerName   : txn.parentHolding.ownerName
         }) ;
+    }
+    
+    $scope.sortRows = function( colId, property, type ) {
+        
+        sortDir[colId] = ( sortDir[colId] == "asc" ) ? "desc" : "asc" ;
+        sortArrayByProperty( sortDir[colId], $scope.buyTxns, property, type ) ;
     }
     
     // --- [END] Scope functions
