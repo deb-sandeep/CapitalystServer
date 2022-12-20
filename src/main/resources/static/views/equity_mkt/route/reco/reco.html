@@ -20,13 +20,13 @@
                 <th></th>
             </tr>
             <tr class="success">
-                <th ng-click="sort('health')">
+                <th ng-click="sortRows('health', 'goodnessScore', 'num')">
                     <i class="fa-solid fa-hand-holding-medical"></i>
                 </th>
-                <th ng-click="sort('mc')">
+                <th ng-click="sortRows('mc', 'indicators.mcEssentialScore', 'num')">
                     MC
                 </th>
-                <th ng-click="sort('symbol')">
+                <th ng-click="sortRows('symbol', 'equityMaster.symbol', 'string')">
                     Symbol
                 </th>
                 <th></th>
@@ -34,19 +34,19 @@
                     <i class="fa-solid fa-map-pin"></i>
                 </th>
                 <th></th>
-                <th ng-click="sort('price')">
+                <th ng-click="sortRows('price', 'indicators.currentPrice', 'num')">
                     Price
                 </th>
-                <th ng-click="sort('mktcap')">
+                <th ng-click="sortRows('mktcap', 'indicators.marketCap', 'num')">
                     Market Cap
                 </th>
-                <th ng-click="sort('beta')">
+                <th ng-click="sortRows('beta', 'indicators.beta', 'num')">
                     &#x3B2;
                 </th>
-                <th ng-click="sort('cagr')">
+                <th ng-click="sortRows('cagr', 'indicators.cagrEbit', 'num')">
                     CAGR
                 </th>
-                <th ng-click="sort('pe')">
+                <th ng-click="sortRows('pe', 'indicators.pe', 'num')">
                     PE
                 </th>
                 <th ng-click="sort('trend')">
@@ -55,37 +55,37 @@
                 <th ng-click="sort('rsi')" style="width:40px;">
                     RSI
                 </th>
-                <th ng-click="sort('perfLTP')" style="width:40px;">
+                <th ng-click="sortRows('perfLTP', 'ltp.pchange', 'num')" style="width:40px;">
                     LTP
                 </th>
-                <th ng-click="sort('perf1D')" style="width:40px;">
+                <th ng-click="sortRows('perf1D', 'ttmPerf.perf1d', 'num')" style="width:40px;">
                     1D
                 </th>
-                <th ng-click="sort('perf1W')" style="width:40px;">
+                <th ng-click="sortRows('perf1W', 'ttmPerf.perf1w', 'num')" style="width:40px;">
                     1W
                 </th>
-                <th ng-click="sort('perf2W')" style="width:40px;">
+                <th ng-click="sortRows('perf2W', 'ttmPerf.perf2w', 'num')" style="width:40px;">
                     2W
                 </th>
-                <th ng-click="sort('perf1M')" style="width:40px;">
+                <th ng-click="sortRows('perf1M', 'ttmPerf.perf1m', 'num')" style="width:40px;">
                     1M
                 </th>
-                <th ng-click="sort('perf2M')" style="width:40px;">
+                <th ng-click="sortRows('perf2M', 'ttmPerf.perf2m', 'num')" style="width:40px;">
                     2M
                 </th>
-                <th ng-click="sort('perf3M')" style="width:40px;">
+                <th ng-click="sortRows('perf3M', 'ttmPerf.perf3m', 'num')" style="width:40px;">
                     3M
                 </th>
-                <th ng-click="sort('perf6M')" style="width:40px;">
+                <th ng-click="sortRows('perf6M', 'ttmPerf.perf6m', 'num')" style="width:40px;">
                     6M
                 </th>
-                <th ng-click="sort('perf9M')" style="width:40px;">
+                <th ng-click="sortRows('perf9M', 'ttmPerf.perf9m', 'num')" style="width:40px;">
                     9M
                 </th>
-                <th ng-click="sort('perf1Y')" style="width:40px;">
+                <th ng-click="sortRows('perf1Y', 'ttmPerf.perf12m', 'num')" style="width:40px;">
                     1Y
                 </th>
-                <th ng-click="sort('perf3Y')" style="width:40px;">
+                <th ng-click="sortRows('perf3Y', 'indicators.pricePerf3Y', 'num')" style="width:40px;">
                     3Y
                 </th>
                 <th></th>

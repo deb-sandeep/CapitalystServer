@@ -66,8 +66,27 @@ capitalystNgApp.controller( 'RecoController',
     }
     
     $scope.sort = function( field ) {
-        sortTable( field ) ;
+        var dir = sortDir[ field ] ;
+        var newDir = ( dir == "asc" ) ? "desc" : "asc" ;
+        sortDir[ field ] = newDir ; 
+        
+        if( field == "holding" ) {
+            $scope.recommendations.sort( holdingSort ) ;
+        }
+        else if( field == "trend" ) {
+            $scope.recommendations.sort( trendSort ) ;
+        }    
+        else if( field == "rsi" ) {
+            $scope.recommendations.sort( rsiSort ) ;
+        }    
     }
+    
+    $scope.sortRows = function( colId, property, type ) {
+        
+        sortDir[colId] = ( sortDir[colId] == "asc" ) ? "desc" : "asc" ;
+        sortArrayByProperty( sortDir[colId], $scope.recommendations, property, type ) ;
+    }
+    
     
     $scope.showStockDetails = function( reco ) {
         $scope.selectedStock = reco.equityMaster ;
@@ -235,95 +254,6 @@ capitalystNgApp.controller( 'RecoController',
         }
     }
     
-    function sortTable( field ) {
-        
-        var dir = sortDir[ field ] ;
-        var newDir = ( dir == "asc" ) ? "desc" : "asc" ;
-        sortDir[ field ] = newDir ; 
-        
-        if( field == "health" ) {
-            $scope.recommendations.sort( healthSort ) ;
-        }
-        else if( field == "symbol" ) {
-            $scope.recommendations.sort( symbolSort ) ;
-        }
-        else if( field == "holding" ) {
-            $scope.recommendations.sort( holdingSort ) ;
-        }
-        else if( field == "price" ) {
-            $scope.recommendations.sort( priceSort ) ;
-        }
-        else if( field == "mktcap" ) {
-            $scope.recommendations.sort( mktcapSort ) ;
-        }
-        else if( field == "beta" ) {
-            $scope.recommendations.sort( betaSort ) ;
-        }
-        else if( field == "cagr" ) {
-            $scope.recommendations.sort( cagrSort ) ;
-        }
-        else if( field == "mc" ) {
-            $scope.recommendations.sort( mcSort ) ;
-        }
-        else if( field == "pe" ) {
-            $scope.recommendations.sort( peSort ) ;
-        }
-        else if( field == "pscore" ) {
-            $scope.recommendations.sort( pscoreSort ) ;
-        }    
-        else if( field == "trend" ) {
-            $scope.recommendations.sort( trendSort ) ;
-        }    
-        else if( field == "rsi" ) {
-            $scope.recommendations.sort( rsiSort ) ;
-        }    
-        else if( field == "perfLTP" ) {
-            $scope.recommendations.sort( perfLTPSort ) ;
-        }
-        else if( field == "perf1D" ) {
-            $scope.recommendations.sort( perf1DSort ) ;
-        }
-        else if( field == "perf1W" ) {
-            $scope.recommendations.sort( perf1WSort ) ;
-        }
-        else if( field == "perf2W" ) {
-            $scope.recommendations.sort( perf2WSort ) ;
-        }
-        else if( field == "perf1M" ) {
-            $scope.recommendations.sort( perf1MSort ) ;
-        }
-        else if( field == "perf2M" ) {
-            $scope.recommendations.sort( perf2MSort ) ;
-        }
-        else if( field == "perf3M" ) {
-            $scope.recommendations.sort( perf3MSort ) ;
-        }
-        else if( field == "perf6M" ) {
-            $scope.recommendations.sort( perf6MSort ) ;
-        }
-        else if( field == "perf9M" ) {
-            $scope.recommendations.sort( perf9MSort ) ;
-        }
-        else if( field == "perf1Y" ) {
-            $scope.recommendations.sort( perf1YSort ) ;
-        }
-        else if( field == "perf3Y" ) {
-            $scope.recommendations.sort( perf3YSort ) ;
-        }
-    }
-    
-    function healthSort( r1, r2 ) {
-        return sortDir[ "health"] == "asc" ?
-            ( r1.goodnessScore - r2.goodnessScore ) :
-            ( r2.goodnessScore - r1.goodnessScore ) ;
-    }
-    
-    function symbolSort( r1, r2 ) {
-        return sortDir[ "symbol"] == "asc" ?
-            ( r1.symbolNse.localeCompare( r2.symbolNse ) ) :
-            ( r2.symbolNse.localeCompare( r1.symbolNse ) ) ;
-    }
-    
     function holdingSort( r1, r2 ) {
         var r1Holding = r1.inPortfolio ? 2 : 0 ;
         var r2Holding = r2.inPortfolio ? 2 : 0 ;
@@ -339,48 +269,6 @@ capitalystNgApp.controller( 'RecoController',
             ( r1Score - r2Score ) ;
     }
     
-    function priceSort( r1, r2 ) {
-        return sortDir[ "price"] == "asc" ?
-            ( r1.indicators.currentPrice - r2.indicators.currentPrice ) :
-            ( r2.indicators.currentPrice - r1.indicators.currentPrice ) ;
-    }
-    
-    function mktcapSort( r1, r2 ) {
-        return sortDir[ "mktcap"] == "asc" ?
-            ( r1.indicators.marketCap - r2.indicators.marketCap ) :
-            ( r2.indicators.marketCap - r1.indicators.marketCap ) ;
-    }
-    
-    function betaSort( r1, r2 ) {
-        return sortDir[ "beta"] == "asc" ?
-            ( r1.indicators.beta - r2.indicators.beta ) :
-            ( r2.indicators.beta - r1.indicators.beta ) ;
-    }
-    
-    function cagrSort( r1, r2 ) {
-        return sortDir[ "cagr"] == "asc" ?
-            ( r1.indicators.cagrEbit - r2.indicators.cagrEbit ) :
-            ( r2.indicators.cagrEbit - r1.indicators.cagrEbit ) ;
-    }
-    
-    function mcSort( r1, r2 ) {
-        return sortDir[ "mc"] == "asc" ?
-            ( r1.indicators.mcEssentialScore - r2.indicators.mcEssentialScore ) :
-            ( r2.indicators.mcEssentialScore - r1.indicators.mcEssentialScore ) ;
-    }
-    
-    function peSort( r1, r2 ) {
-        return sortDir[ "pe"] == "asc" ?
-            ( r1.indicators.pe - r2.indicators.pe ) :
-            ( r2.indicators.pe - r1.indicators.pe ) ;
-    }
-    
-    function pscoreSort( r1, r2 ) {
-        return sortDir[ "pscore"] == "asc" ?
-            ( r1.indicators.piotroskiScore - r2.indicators.piotroskiScore ) :
-            ( r2.indicators.piotroskiScore - r1.indicators.piotroskiScore ) ;
-    }
-        
     function trendSort( r1, r2 ) {
         
         return sortDir[ "trend"] == "asc" ?
@@ -392,71 +280,5 @@ capitalystNgApp.controller( 'RecoController',
         return sortDir["rsi"] == "asc" ?
             ( r1.techIndicators[0].level - r2.techIndicators[0].level ) :
             ( r2.techIndicators[0].level - r1.techIndicators[0].level ) ;
-    }
-    
-    function perfLTPSort( r1, r2 ) {
-        return sortDir["perfLTP"] == "asc" ?
-            ( r1.ltp.pchange - r2.ltp.pchange ) :
-            ( r2.ltp.pchange - r1.ltp.pchange ) ;
-    }
-    
-    function perf1DSort( r1, r2 ) {
-        return sortDir["perf1D"] == "asc" ?
-            ( r1.ttmPerf.perf1d - r2.ttmPerf.perf1d ) :
-            ( r2.ttmPerf.perf1d - r1.ttmPerf.perf1d ) ;
-    }
-    
-    function perf1WSort( r1, r2 ) {
-        return sortDir["perf1W"] == "asc" ?
-            ( r1.ttmPerf.perf1w - r2.ttmPerf.perf1w ) :
-            ( r2.ttmPerf.perf1w - r1.ttmPerf.perf1w ) ;
-    }
-    
-    function perf2WSort( r1, r2 ) {
-        return sortDir["perf2W"] == "asc" ?
-            ( r1.ttmPerf.perf2w - r2.ttmPerf.perf2w ) :
-            ( r2.ttmPerf.perf2w - r1.ttmPerf.perf2w ) ;
-    }
-    
-    function perf1MSort( r1, r2 ) {
-        return sortDir["perf1M"] == "asc" ?
-            ( r1.ttmPerf.perf1m - r2.ttmPerf.perf1m ) :
-            ( r2.ttmPerf.perf1m - r1.ttmPerf.perf1m ) ;
-    }
-    
-    function perf2MSort( r1, r2 ) {
-        return sortDir["perf2M"] == "asc" ?
-            ( r1.ttmPerf.perf2m - r2.ttmPerf.perf2m ) :
-            ( r2.ttmPerf.perf2m - r1.ttmPerf.perf2m ) ;
-    }
-    
-    function perf3MSort( r1, r2 ) {
-        return sortDir["perf3M"] == "asc" ?
-            ( r1.ttmPerf.perf3m - r2.ttmPerf.perf3m ) :
-            ( r2.ttmPerf.perf3m - r1.ttmPerf.perf3m ) ;
-    }
-    
-    function perf6MSort( r1, r2 ) {
-        return sortDir["perf6M"] == "asc" ?
-            ( r1.ttmPerf.perf6m - r2.ttmPerf.perf6m ) :
-            ( r2.ttmPerf.perf6m - r1.ttmPerf.perf6m ) ;
-    }
-    
-    function perf9MSort( r1, r2 ) {
-        return sortDir["perf9M"] == "asc" ?
-            ( r1.ttmPerf.perf9m - r2.ttmPerf.perf9m ) :
-            ( r2.ttmPerf.perf9m - r1.ttmPerf.perf9m ) ;
-    }
-    
-    function perf1YSort( r1, r2 ) {
-        return sortDir["perf1Y"] == "asc" ?
-            ( r1.ttmPerf.perf12m - r2.ttmPerf.perf12m ) :
-            ( r2.ttmPerf.perf12m - r1.ttmPerf.perf12m ) ;
-    }
-    
-    function perf3YSort( r1, r2 ) {
-        return sortDir["perf3Y"] == "asc" ?
-            ( r1.indicators.pricePerf3Y - r2.indicators.pricePerf3Y ) :
-            ( r2.indicators.pricePerf3Y - r1.indicators.pricePerf3Y ) ;
     }
 } ) ;
