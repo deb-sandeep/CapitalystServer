@@ -40,6 +40,7 @@ public class EquityMaster {
     private boolean etf = false ;
     
     private String industry = null ;
+    private String sector = null ;
     private String detailUrl = null ;
     
     private String description = null ;

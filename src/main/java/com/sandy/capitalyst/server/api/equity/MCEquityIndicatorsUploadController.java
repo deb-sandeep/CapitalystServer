@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators ;
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators.TechIndicator ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicatorsHist ;
@@ -72,6 +73,11 @@ public class MCEquityIndicatorsUploadController {
         
         if( em == null ) {
             throw new Exception( "Equity " + ind.getSymbolNse() + " not found." ) ;
+        }
+        
+        if( StringUtil.isNotEmptyOrNull( ind.getSector() ) ) {
+            em.setSector( ind.getSector().trim() ) ;
+            emRepo.save( em ) ;
         }
         
         EquityIndicators eiDao = null ;
