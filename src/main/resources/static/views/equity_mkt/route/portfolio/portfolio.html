@@ -14,39 +14,39 @@
                     </span>
                 </th>
                 <th ng-if="holdingType == 'Individual'"
-                    ng-click="sort('owner')">
+                    ng-click="sortRows('owner', 'ownerName', 'string')">
                     Owner
                 </th>
                 <th></th>
-                <th ng-click="sort('symbol')">
+                <th ng-click="sortRows('symbol', 'symbolIcici', 'string')">
                     Company
                 </th>
                 <th></th>
-                <th ng-click="sort('quantity')">
+                <th ng-click="sortRows('quantity', 'quantity', 'num')">
                     Qty
                 </th>
-                <th ng-click="sort('price')">
+                <th ng-click="sortRows('price', 'currentMktPrice', 'num')">
                     Price
                 </th>
                 <th ng-click="sort('ltcgPct')">
                     LTCG%
                 </th>
-                <th ng-click="sort('costPrice')">
+                <th ng-click="sortRows('costPrice', 'valueAtCost', 'num')">
                     Cost price
                 </th>
-                <th ng-click="sort('mktValue')">
+                <th ng-click="sortRows('mktValue', 'valueAtMktPrice', 'num')">
                     Mkt Value
                 </th>
                 <th ng-click="sort('sellValue')">
                     Sell Value
                 </th>
-                <th ng-click="sort('pat')">
+                <th ng-click="sortRows('pat', 'pat', 'num')">
                     PAT
                 </th>
-                <th ng-click="sort('patPct')">
+                <th ng-click="sortRows('patPct', 'patPct', 'num')">
                     PAT %
                 </th>
-                <th ng-click="sort('dayChange')">
+                <th ng-click="sortRows('dayChange', 'dayGain', 'num')">
                     D-Change
                 </th>
                 <th ng-click="toggleSparkline()">

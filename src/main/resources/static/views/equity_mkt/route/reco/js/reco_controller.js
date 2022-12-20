@@ -87,7 +87,6 @@ capitalystNgApp.controller( 'RecoController',
         sortArrayByProperty( sortDir[colId], $scope.recommendations, property, type ) ;
     }
     
-    
     $scope.showStockDetails = function( reco ) {
         $scope.selectedStock = reco.equityMaster ;
         $( '#stockDetailDialog' ).modal( 'show' ) ;
