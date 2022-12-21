@@ -29,6 +29,16 @@ function sortArrayByProperty( sortDir, array, property, type ) {
         var p2 = getProperty( o2, property ) ;
         
         if( type == 'string' ) {
+            if( p1 == null && p2 != null ) {
+                return 1 ;
+            }
+            else if( p1 != null && p2 == null ) {
+                return -1 ;
+            }
+            else if( p1 == null && p2 == null ) {
+                return 0 ;
+            }
+            
             return sortDir == "asc" ?
                 p1.localeCompare( p2 ) : p2.localeCompare( p1 ) ;
         }

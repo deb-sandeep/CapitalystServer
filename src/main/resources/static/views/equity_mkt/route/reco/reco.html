@@ -3,7 +3,7 @@
            style="width: auto !important;">
         <thead>
             <tr class="success">
-                <th colspan="6"></th>
+                <th colspan="7"></th>
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
@@ -28,6 +28,9 @@
                 </th>
                 <th ng-click="sortRows('symbol', 'equityMaster.symbol', 'string')">
                     Symbol
+                </th>
+                <th ng-click="sortRows('sector', 'equityMaster.sector', 'string')">
+                    Sector
                 </th>
                 <th></th>
                 <th ng-click="sort('holding')">
@@ -106,6 +109,9 @@
                     <a ng-href="{{reco.equityMaster.detailUrl}}#advchart" target="_blank">
                         {{reco.equityMaster.symbol}}&nbsp;&nbsp;
                     </a>
+               </td>
+               <td>
+                 {{reco.equityMaster.sector}}
                </td>
                <td>
                     <a ng-click="showGraphDialog(reco)">
