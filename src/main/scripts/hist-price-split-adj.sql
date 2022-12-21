@@ -1,6 +1,6 @@
 SET @SPLIT_RATIO = 5 ;
-SET @SYMBOL_NSE  = 'SRF' collate utf8mb4_unicode_ci ;
-SET @SPLIT_DATE  = '2021-10-13' ;
+SET @SYMBOL_NSE  = 'JUBLFOOD' collate utf8mb4_unicode_ci ;
+SET @SPLIT_DATE  = '2022-04-19' ;
 
 SELECT id, symbol, date, open, high, low, close, prev_close
 FROM historic_eq_data

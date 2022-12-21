@@ -3,7 +3,26 @@
            style="width: auto !important;">
         <thead>
             <tr class="success">
-                <th colspan="7"></th>
+                <th colspan="2"></th>
+                <th style="width:125px;">
+                    <input type="text"
+                           class="filter-input"
+                           style="width: 80%;"
+                           ng-model="filter.symbolFilter"
+                           ng-change="filterChanged()"/>
+                    <span class="glyphicon glyphicon-remove"
+                          ng-click="clearSymbolFilter()"></span>
+                </th>
+                <th style="width:230px;">
+                    <input type="text"
+                           class="filter-input"
+                           style="width: 90%;"
+                           ng-model="filter.sectorFilter"
+                           ng-change="filterChanged()"/>
+                    <span class="glyphicon glyphicon-remove"
+                          ng-click="clearSectorFilter()"></span>
+                </th>
+                <th colspan="3"></th>
                 <th colspan="5" style="text-align:center;">
                     Health Attributes
                 </th>
@@ -96,7 +115,8 @@
         </thead>
         
         <tbody>
-            <tr ng-repeat="reco in recommendations">
+            <tr ng-repeat="reco in recommendations"
+                ng-show="reco.visible">
                <td class="fixed-font" style="text-align:right;"
                    ng-class="getCellClass( 'health', reco.goodnessScore )">
                     {{reco.goodnessScore | amt}}
@@ -110,7 +130,7 @@
                         {{reco.equityMaster.symbol}}&nbsp;&nbsp;
                     </a>
                </td>
-               <td>
+               <td ng-dblclick="filterBySector( reco.equityMaster.sector )">
                  {{reco.equityMaster.sector}}
                </td>
                <td>

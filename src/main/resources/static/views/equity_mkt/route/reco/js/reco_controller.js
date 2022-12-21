@@ -43,6 +43,11 @@ capitalystNgApp.controller( 'RecoController',
     
     $scope.ttmRefreshTriggered = false ;
     
+    $scope.filter = {
+        symbolFilter : "",
+        sectorFilter : ""
+    } ;
+    
     function resetState() {
         $scope.recommendations.length = 0 ;
     } ;
@@ -181,6 +186,73 @@ capitalystNgApp.controller( 'RecoController',
         )
     }
     
+    $scope.filterChanged = function() {
+        
+        var symFilter = $scope.filter.symbolFilter.trim().toLowerCase() ;
+        var secFilter = $scope.filter.sectorFilter.trim().toLowerCase() ;
+        
+        for( var i=0; i<$scope.recommendations.length; i++ ) {
+            
+            var reco = $scope.recommendations[i] ;
+            
+            if( symFilter == "" && secFilter == "" ) {
+                reco.visible = true ;
+            }
+            else {
+                if( symFilter != "" ) {
+                    
+                    if( symFilter.startsWith('*') ) {
+                        var filter = symFilter.substring( 1 ) ;
+                        reco.visible = reco.equityMaster
+                                           .symbol
+                                           .toLowerCase()
+                                           .includes( filter ) ;
+                    }
+                    else {
+                        reco.visible = reco.equityMaster
+                                           .symbol
+                                           .toLowerCase()
+                                           .startsWith( symFilter ) ;
+                    } 
+                }                
+    
+                if( secFilter != "" ) {
+                    if( secFilter.startsWith('*') ) {
+                        var filter = secFilter.substring( 1 ) ;
+                        reco.visible = reco.equityMaster
+                                           .sector
+                                           .toLowerCase()
+                                           .includes( filter ) ;
+                    }
+                    else {
+                        reco.visible = reco.equityMaster
+                                           .sector
+                                           .toLowerCase()
+                                           .startsWith( secFilter ) ;
+                    } 
+                }                
+            }
+        }
+    }
+    
+    $scope.filterBySector = function( sector ) {
+        
+        $scope.filter.sectorFilter = sector ;
+        $scope.filterChanged() ;
+    }
+    
+    $scope.clearSymbolFilter = function() {
+        
+        $scope.filter.symbolFilter = "" ;
+        $scope.filterChanged() ;
+    }
+    
+    $scope.clearSectorFilter = function() {
+        
+        $scope.filter.sectorFilter = "" ;
+        $scope.filterChanged() ;
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -199,6 +271,9 @@ capitalystNgApp.controller( 'RecoController',
                 for( var i=0; i<response.data.length; i++ ) {
                     
                     var reco = response.data[i] ;
+                    
+                    // Custom properties injection
+                    reco.visible = true ;
 
                     $scope.recommendations.push( reco ) ;
                     
@@ -242,6 +317,13 @@ capitalystNgApp.controller( 'RecoController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function makeAllRowsVisible() {
+        
+        for( var i=0; i<$scope.recommendations.length; i++ ) {
+            reco.visible = true ;
+        }
     }
     
     function initializeGradientMgrs() {

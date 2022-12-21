@@ -89,3 +89,9 @@
 .small-font {
 	font-size: 10px;
 }
+
+.filter-input {
+    background-color: white !important;
+    border-style: solid;
+    border-width: 1px;
+}
