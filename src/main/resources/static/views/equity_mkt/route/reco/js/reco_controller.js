@@ -8,6 +8,7 @@ capitalystNgApp.controller( 'RecoController',
     var gradientMgr = {
        health  : new Gradient( new UniformGradient() ),
        mc      : new Gradient( new UniformGradient() ),
+       pe      : new Gradient( new UniformGradient( GR_GRADIENT ) ),
        
        rsi     : new Gradient( new UniformGradient( GR_GRADIENT ) ),
        
@@ -286,6 +287,7 @@ capitalystNgApp.controller( 'RecoController',
                     
                     gradientMgr['health'].addValue( reco.goodnessScore ) ;
                     gradientMgr['mc'    ].addValue( reco.indicators.mcEssentialScore ) ;
+                    gradientMgr['pe'    ].addValue( reco.indicators.pe ) ;
                     gradientMgr['cagr'  ].addValue( reco.indicators.cagrEbit ) ;
                     
                     gradientMgr['perfLTP'].addValue( reco.ltp.pchange ) ;

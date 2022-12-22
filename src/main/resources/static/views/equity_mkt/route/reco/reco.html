@@ -4,15 +4,6 @@
         <thead>
             <tr class="success">
                 <th colspan="2"></th>
-                <th style="width:125px;">
-                    <input type="text"
-                           class="filter-input"
-                           style="width: 80%;"
-                           ng-model="filter.symbolFilter"
-                           ng-change="filterChanged()"/>
-                    <span class="glyphicon glyphicon-remove"
-                          ng-click="clearSymbolFilter()"></span>
-                </th>
                 <th style="width:230px;">
                     <input type="text"
                            class="filter-input"
@@ -21,6 +12,15 @@
                            ng-change="filterChanged()"/>
                     <span class="glyphicon glyphicon-remove"
                           ng-click="clearSectorFilter()"></span>
+                </th>
+                <th style="width:125px;">
+                    <input type="text"
+                           class="filter-input"
+                           style="width: 80%;"
+                           ng-model="filter.symbolFilter"
+                           ng-change="filterChanged()"/>
+                    <span class="glyphicon glyphicon-remove"
+                          ng-click="clearSymbolFilter()"></span>
                 </th>
                 <th colspan="3"></th>
                 <th colspan="5" style="text-align:center;">
@@ -45,11 +45,11 @@
                 <th ng-click="sortRows('mc', 'indicators.mcEssentialScore', 'num')">
                     MC
                 </th>
-                <th ng-click="sortRows('symbol', 'equityMaster.symbol', 'string')">
-                    Symbol
-                </th>
                 <th ng-click="sortRows('sector', 'equityMaster.sector', 'string')">
                     Sector
+                </th>
+                <th ng-click="sortRows('symbol', 'equityMaster.symbol', 'string')">
+                    Symbol
                 </th>
                 <th></th>
                 <th ng-click="sort('holding')">
@@ -71,11 +71,11 @@
                 <th ng-click="sortRows('pe', 'indicators.pe', 'num')">
                     PE
                 </th>
-                <th ng-click="sort('trend')">
-                    <i class="fa-solid fa-chart-line"></i>
-                </th>
                 <th ng-click="sort('rsi')" style="width:40px;">
                     RSI
+                </th>
+                <th ng-click="sort('trend')">
+                    <i class="fa-solid fa-chart-line"></i>
                 </th>
                 <th ng-click="sortRows('perfLTP', 'ltp.pchange', 'num')" style="width:40px;">
                     LTP
@@ -125,13 +125,13 @@
                    ng-class="getCellClass( 'mc', reco.indicators.mcEssentialScore )">
                     {{reco.indicators.mcEssentialScore | number:0 }}
                </td>
+               <td ng-dblclick="filterBySector( reco.equityMaster.sector )">
+                 {{reco.equityMaster.sector}}
+               </td>
                <td>
                     <a ng-href="{{reco.equityMaster.detailUrl}}#advchart" target="_blank">
                         {{reco.equityMaster.symbol}}&nbsp;&nbsp;
                     </a>
-               </td>
-               <td ng-dblclick="filterBySector( reco.equityMaster.sector )">
-                 {{reco.equityMaster.sector}}
                </td>
                <td>
                     <a ng-click="showGraphDialog(reco)">
@@ -172,8 +172,13 @@
                    ng-class="getCellClass( 'cagr', reco.indicators.cagrEbit )">
                     {{reco.indicators.cagrEbit | number:2 }}
                </td>
-               <td class="fixed-font" style="text-align:right;">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'pe', reco.indicators.pe )">
                     {{reco.indicators.pe | number:0}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'rsi', reco.techIndicators[0].level )">
+                    {{reco.techIndicators[0].level | number:1}}
                </td>
                <td style="text-align:center;font-size:10px;">
                    <span ng-if="reco.indicators.trend == 'VERY BULLISH'"
@@ -202,10 +207,6 @@
                    <span ng-if="reco.indicators.trend == 'VERY BEARISH'"
                          class="glyphicon glyphicon-arrow-down"
                          style="color:red;"></span>
-               </td>
-               <td class="fixed-font small-font" style="text-align:right;"
-                   ng-class="getCellClass( 'rsi', reco.techIndicators[0].level )">
-                    {{reco.techIndicators[0].level | number:1}}
                </td>
                <td class="fixed-font small-font" style="text-align:right;"
                    ng-class="getCellClass( 'perfLTP', reco.ltp.pchange )">
