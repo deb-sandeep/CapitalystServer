@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue ;
 import javax.persistence.GenerationType ;
 import javax.persistence.Id ;
 import javax.persistence.Table ;
+import javax.persistence.TableGenerator ;
 
 import lombok.Data ;
 
@@ -15,7 +16,17 @@ import lombok.Data ;
 public class EquityMaster {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @TableGenerator(
+        name            = "emPkGen", 
+        table           = "id_gen", 
+        pkColumnName    = "gen_key", 
+        valueColumnName = "gen_value", 
+        pkColumnValue   = "equity_master_id",
+        initialValue    = 1,
+        allocationSize  = 1 )    
+    @GeneratedValue( 
+        strategy=GenerationType.TABLE, 
+        generator="emPkGen" )
     private Integer id = null ;
     
     private String isin = null ;

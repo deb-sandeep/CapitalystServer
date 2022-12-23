@@ -187,9 +187,12 @@ public class ListedEquitiesRefresher {
             ota.addResult( " Removing symbol " + symbol ) ;
             
             if( !ehRepo.findBySymbolNse( symbol ).isEmpty() ) {
-                ota.addResult( " ALERT: " + symbol + " unlisted but in holding." ) ;
+                ota.addResult( "   ALERT: " + symbol + " unlisted but in holding. " +
+                               "Not purging equity master." ) ;
             }
-            emRepo.delete( em ) ;
+            else {
+                emRepo.delete( em ) ;
+            }
         }
     }
 }
