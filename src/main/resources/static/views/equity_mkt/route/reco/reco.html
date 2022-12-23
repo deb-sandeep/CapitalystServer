@@ -4,7 +4,7 @@
         <thead>
             <tr class="success">
                 <th colspan="2"></th>
-                <th style="width:230px;">
+                <th style="width:220px;">
                     <input type="text"
                            class="filter-input"
                            style="width: 90%;"
@@ -13,7 +13,7 @@
                     <span class="glyphicon glyphicon-remove"
                           ng-click="clearSectorOrIndustryFilter()"></span>
                 </th>
-                <th style="width:125px;">
+                <th style="width:105px;">
                     <input type="text"
                            class="filter-input"
                            style="width: 80%;"
@@ -23,7 +23,7 @@
                           ng-click="clearSymbolFilter()"></span>
                 </th>
                 <th colspan="3"></th>
-                <th colspan="5" style="text-align:center;">
+                <th colspan="6" style="text-align:center;">
                     Health Attributes
                 </th>
                 <th colspan="2" style="text-align:center;">
@@ -73,6 +73,9 @@
                 <th></th>
                 <th ng-click="sortRows('price', 'indicators.currentPrice', 'num')">
                     Price
+                </th>
+                <th ng-click="sortRows('ltpRange', 'ltpRangePosPct', 'num')">
+                    Range
                 </th>
                 <th ng-click="sortRows('mktcap', 'indicators.marketCap', 'num')">
                     Market Cap
@@ -181,6 +184,9 @@
                </td>
                <td class="fixed-font" style="text-align:right;">
                     {{reco.indicators.currentPrice | amt }}
+               </td>
+               <td>
+                  <span id="spark_{{reco.equityMaster.id}}"></span>
                </td>
                <td class="fixed-font" style="text-align:right;">
                     {{reco.indicators.marketCap | amt }}

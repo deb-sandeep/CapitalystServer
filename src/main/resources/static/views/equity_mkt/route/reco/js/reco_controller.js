@@ -288,6 +288,7 @@ capitalystNgApp.controller( 'RecoController',
                     
                     // Custom properties injection
                     reco.visible = true ;
+                    reco.ltpRangePosPct = computePricePosPct( reco ) ;
 
                     $scope.recommendations.push( reco ) ;
                     
@@ -321,6 +322,7 @@ capitalystNgApp.controller( 'RecoController',
                 }
                 
                 initializeGradientMgrs() ;
+                setTimeout( paintSparklines, 100 ) ;
                 
                 sortDir[ "perfLTP" ] = "asc" ; 
                 $scope.sortRows( "perfLTP", "ltp.pchange", "num" ) ;
@@ -332,6 +334,13 @@ capitalystNgApp.controller( 'RecoController',
         .finally(function() {
             $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
         }) ;
+    }
+    
+    function computePricePosPct( reco ) {
+        
+        var range = reco.indicators.high52 - reco.indicators.low52 ;
+        var distanceFromLow = reco.ltp.price - reco.indicators.low52 ;
+        return Math.round((distanceFromLow / range )*100) ;
     }
     
     function makeAllRowsVisible() {
@@ -347,6 +356,23 @@ capitalystNgApp.controller( 'RecoController',
                 gradientMgr[ key ].initialize() ;
             }
         }
+    }
+    
+    function paintSparklines() {
+        
+        console.log( "Painting sparkline." ) ;
+        for( var i=0; i<$scope.recommendations.length; i++ ) {
+            var reco = $scope.recommendations[i] ;
+            $( '#spark_' + reco.equityMaster.id ).sparkline( 
+                [ reco.ltpRangePosPct, 100 ], 
+                {
+                    type: 'bullet',
+                    targetColor: '#42a0ff',
+                    performanceColor: '#dddddd'
+                } 
+            ) ;
+        }
+        console.log( "Done painting sparkline." ) ;
     }
     
     function holdingSort( r1, r2 ) {
