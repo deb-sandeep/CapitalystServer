@@ -240,7 +240,7 @@ public class EquityITDSnapshotService {
         throws Exception {
         
         if( debugEnable ) {
-            log.info( "-> Downloading intraday data." ) ;
+            log.debug( "-> Downloading intraday data." ) ;
         }
         
         String response = null ;

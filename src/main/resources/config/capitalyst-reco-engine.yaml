@@ -19,7 +19,7 @@ screenerCfgs:
         includedMCInsights : MID RANGE, MID-RANGE, STRONG
         minMcEssentialScore : 40
         minMarketCap : 20000
-        betaRange : 0.3:1.7
+        betaRange : -5.0:5.0
         minCagrEbit : 5
         minPiotroskiScore : 4
         maxPe : 100
