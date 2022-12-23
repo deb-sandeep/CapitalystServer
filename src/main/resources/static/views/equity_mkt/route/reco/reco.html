@@ -8,10 +8,10 @@
                     <input type="text"
                            class="filter-input"
                            style="width: 90%;"
-                           ng-model="filter.sectorFilter"
+                           ng-model="filter.secIndFilter"
                            ng-change="filterChanged()"/>
                     <span class="glyphicon glyphicon-remove"
-                          ng-click="clearSectorFilter()"></span>
+                          ng-click="clearSectorOrIndustryFilter()"></span>
                 </th>
                 <th style="width:125px;">
                     <input type="text"
@@ -45,8 +45,23 @@
                 <th ng-click="sortRows('mc', 'indicators.mcEssentialScore', 'num')">
                     MC
                 </th>
-                <th ng-click="sortRows('sector', 'equityMaster.sector', 'string')">
-                    Sector
+                <th ng-show="industryOrSector == 'sector'">
+                    <span ng-click="sortRows('sector', 'equityMaster.sector', 'string')">
+	                    Sector
+                    </span>
+                    &nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-random"
+                          style="color:blue;"
+                          ng-click="toggleIndustryOrSector()"></span>
+                </th>
+                <th ng-show="industryOrSector == 'industry'">
+                    <span ng-click="sortRows('industry', 'equityMaster.industry', 'string')">
+                        Industry
+                    </span>
+                    &nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-random"
+                          style="color:blue;"
+                          ng-click="toggleIndustryOrSector()"></span>
                 </th>
                 <th ng-click="sortRows('symbol', 'equityMaster.symbol', 'string')">
                     Symbol
@@ -125,8 +140,13 @@
                    ng-class="getCellClass( 'mc', reco.indicators.mcEssentialScore )">
                     {{reco.indicators.mcEssentialScore | number:0 }}
                </td>
-               <td ng-dblclick="filterBySector( reco.equityMaster.sector )">
+               <td ng-show="industryOrSector == 'sector'"
+                   ng-dblclick="filterByIndustryOrSector( reco.equityMaster.sector )">
                  {{reco.equityMaster.sector}}
+               </td>
+               <td ng-show="industryOrSector == 'industry'"
+                   ng-dblclick="filterByIndustryOrSector( reco.equityMaster.industry )">
+                 {{reco.equityMaster.industry}}
                </td>
                <td>
                     <a ng-href="{{reco.equityMaster.detailUrl}}#advchart" target="_blank">

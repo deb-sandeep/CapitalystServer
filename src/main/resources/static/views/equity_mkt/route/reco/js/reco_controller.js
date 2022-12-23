@@ -42,11 +42,13 @@ capitalystNgApp.controller( 'RecoController',
     $scope.recommendations = [] ;
     $scope.selectedStock = null ;
     
+    $scope.industryOrSector = "sector" ;
+    
     $scope.ttmRefreshTriggered = false ;
     
     $scope.filter = {
         symbolFilter : "",
-        sectorFilter : ""
+        secIndFilter : ""
     } ;
     
     function resetState() {
@@ -71,6 +73,9 @@ capitalystNgApp.controller( 'RecoController',
     }
     
     $scope.sort = function( field ) {
+
+        console.log( "Sorting by " + field ) ;
+
         var dir = sortDir[ field ] ;
         var newDir = ( dir == "asc" ) ? "desc" : "asc" ;
         sortDir[ field ] = newDir ; 
@@ -87,6 +92,8 @@ capitalystNgApp.controller( 'RecoController',
     }
     
     $scope.sortRows = function( colId, property, type ) {
+        
+        console.log( "Sorting rows by " + property ) ;
         
         sortDir[colId] = ( sortDir[colId] == "asc" ) ? "desc" : "asc" ;
         sortArrayByProperty( sortDir[colId], $scope.recommendations, property, type ) ;
@@ -189,14 +196,16 @@ capitalystNgApp.controller( 'RecoController',
     
     $scope.filterChanged = function() {
         
+        console.log( "Filtering" ) ;
+        
         var symFilter = $scope.filter.symbolFilter.trim().toLowerCase() ;
-        var secFilter = $scope.filter.sectorFilter.trim().toLowerCase() ;
+        var secIndFilter = $scope.filter.secIndFilter.trim().toLowerCase() ;
         
         for( var i=0; i<$scope.recommendations.length; i++ ) {
             
             var reco = $scope.recommendations[i] ;
             
-            if( symFilter == "" && secFilter == "" ) {
+            if( symFilter == "" && secIndFilter == "" ) {
                 reco.visible = true ;
             }
             else {
@@ -217,28 +226,26 @@ capitalystNgApp.controller( 'RecoController',
                     } 
                 }                
     
-                if( secFilter != "" ) {
-                    if( secFilter.startsWith('*') ) {
-                        var filter = secFilter.substring( 1 ) ;
-                        reco.visible = reco.equityMaster
-                                           .sector
-                                           .toLowerCase()
-                                           .includes( filter ) ;
+                if( secIndFilter != "" ) {
+                    var val = $scope.industryOrSector == "industry" ? 
+                              reco.equityMaster.industry.toLowerCase() :
+                              reco.equityMaster.sector.toLowerCase() ;
+                              
+                    if( secIndFilter.startsWith('*') ) {
+                        var filter = secIndFilter.substring( 1 ) ;
+                        reco.visible = val.includes( filter ) ;
                     }
                     else {
-                        reco.visible = reco.equityMaster
-                                           .sector
-                                           .toLowerCase()
-                                           .startsWith( secFilter ) ;
+                        reco.visible = val.startsWith( secIndFilter ) ;
                     } 
                 }                
             }
         }
     }
     
-    $scope.filterBySector = function( sector ) {
+    $scope.filterByIndustryOrSector = function( filter ) {
         
-        $scope.filter.sectorFilter = sector ;
+        $scope.filter.secIndFilter = filter ;
         $scope.filterChanged() ;
     }
     
@@ -248,10 +255,16 @@ capitalystNgApp.controller( 'RecoController',
         $scope.filterChanged() ;
     }
     
-    $scope.clearSectorFilter = function() {
+    $scope.clearSectorOrIndustryFilter = function() {
         
-        $scope.filter.sectorFilter = "" ;
+        $scope.filter.secIndFilter = "" ;
         $scope.filterChanged() ;
+    }
+    
+    $scope.toggleIndustryOrSector = function() {
+        
+        $scope.industryOrSector = ( $scope.industryOrSector == "industry" ) ?
+                                  "sector" : "industry" ;
     }
     
     // --- [END] Scope functions
