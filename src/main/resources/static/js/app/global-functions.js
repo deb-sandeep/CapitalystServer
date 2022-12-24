@@ -56,3 +56,18 @@ function sortArrayByProperty( sortDir, array, property, type ) {
     } ) ;
 }
 
+Date.prototype.toShortFormat = function() {
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr",
+                        "May", "Jun", "Jul", "Aug",
+                        "Sep", "Oct", "Nov", "Dec"];
+    
+    const day = this.getDate();
+    
+    const monthIndex = this.getMonth();
+    const monthName = monthNames[monthIndex];
+    
+    const year = this.getFullYear();
+    
+    return `${day}-${monthName}-${year}`;  
+}

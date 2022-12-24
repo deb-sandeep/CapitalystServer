@@ -450,6 +450,12 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $( '#associatedCreditsDialog' ).modal( 'hide' ) ;
         $scope.searchLedgerEntries() ;
     }
+    
+    $scope.exportLedgerAsExcel = function() {
+        
+        var exporter = new LedgerExporter( $scope.ledgerEntries ) ;
+        exporter.export() ;
+    }
 
     // --- [END] Scope functions
 
@@ -780,15 +786,12 @@ capitalystNgApp.controller( 'LedgerHomeController',
             
             if( entry.visible ) {
                 var type = entry.amount >= 0 ? "Income" : "Expense" ;
-                if( !( entry.l1Cat == "Inter Account" && 
-                       entry.l2Cat == "Inter Account" ) ) {
-                    pivotSrcData.push( [ 
-                        type, 
-                        entry.l1Cat == null ? "": entry.l1Cat, 
-                                entry.l2Cat == null ? "": entry.l2Cat, 
-                                        entry.amount 
-                                        ] ) ;
-                }
+                pivotSrcData.push( [ 
+                    type, 
+                    entry.l1Cat == null ? "": entry.l1Cat, 
+                            entry.l2Cat == null ? "": entry.l2Cat, 
+                                    entry.amount 
+                                    ] ) ;
             }
         }
         
