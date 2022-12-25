@@ -361,6 +361,7 @@ capitalystNgApp.controller( 'PortfolioController',
             holding.visible = holding.quantity > 0 ;
             holding.cumulativeSparklineData = getCumulativeSLData( holding.sparklineData ) ;
             holding.visibleSparklineData = holding.sparklineData ;
+            holding.dayPctChange = calculateDayPctChange( holding ) ;
             
             $scope.equityHoldings.push( holding ) ;
         }
@@ -379,7 +380,16 @@ capitalystNgApp.controller( 'PortfolioController',
             localHolding.patPct          = serverHolding.patPct ;            
             localHolding.dayGain         = serverHolding.dayGain ;            
             localHolding.lastUpdate      = serverHolding.lastUpdate ;
+            localHolding.dayPctChange    = calculateDayPctChange( serverHolding ) ;
         }
+    }
+    
+    function calculateDayPctChange( holding ) {
+        
+        var changePerUnit = holding.dayGain / holding.quantity ;
+        var lastClosing   = holding.currentMktPrice - changePerUnit ;
+        
+        return ( changePerUnit / lastClosing )*100 ;
     }
     
     function getHoldingWithUniqueId( uid ) {

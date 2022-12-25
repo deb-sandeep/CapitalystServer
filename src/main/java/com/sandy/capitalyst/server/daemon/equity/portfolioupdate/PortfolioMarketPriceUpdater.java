@@ -173,7 +173,6 @@ public class PortfolioMarketPriceUpdater extends Thread {
                             log.error( "Exception while updating CMP." ) ;
                             log.error( e ) ;
                         }
-                        
                         cmpUpdateERM.registerEvent( cred.getUserId() ) ;
                     }
                 }

@@ -9,6 +9,7 @@ public final class StringUtil {
     
     public static final SimpleDateFormat DD_MM_YYYY  = new SimpleDateFormat( "dd-MM-yyyy" ) ;
     public static final SimpleDateFormat DD_MMM_YYYY = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
+    public static final SimpleDateFormat DD_MMM_YYYY_HH_MM_SS = new SimpleDateFormat( "dd-MMM-yyyy HH:mm:ss" ) ;
 
     public static boolean isEmptyOrNull( final String str ) {
         return ( str == null || "".equals( str.trim() ) ) ;

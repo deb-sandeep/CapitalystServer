@@ -1,8 +1,10 @@
 package com.sandy.capitalyst.server.daemon.equity.intraday;
 
+import java.util.Date ;
 import java.util.List ;
 import java.util.concurrent.TimeUnit ;
 
+import org.apache.commons.lang.time.DateUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.stereotype.Component ;
@@ -29,6 +31,8 @@ public class EquityITDImporterDaemon extends Thread {
     public static final String CFG_LIVE_REFRESH_RND   = "refresh_delay_random" ;
     public static final String CFG_PRINT_DEBUG_STMT   = "debug_enable" ;
     public static final String CFG_FORCE_MKT_OPEN     = "force_mkt_open" ;
+    public static final String CFG_LAST_REFRESH_TIME  = "last_refresh (ro)" ;
+    public static final String CFG_NEXT_REFRESH_TIME  = "next_refresh (ro)" ;
     
     public static final int MIN_REFRESH_DELAY = 15 ;
 
@@ -58,11 +62,15 @@ public class EquityITDImporterDaemon extends Thread {
     private boolean debugEnable        = true ;
     private boolean forceMktOpen       = false ;
     
+    private NVPManager nvpMgr = null ;
+    
     public EquityITDImporterDaemon() {}
 
     public void run() {
         
         List<ITDSnapshot> snapshots = null ;
+        
+        nvpMgr = NVPManager.instance() ;
         
         while( true ) {
             try {
@@ -76,7 +84,7 @@ public class EquityITDImporterDaemon extends Thread {
                             log.debug( "Equity ITD refresh paused. " + 
                                        "Sleeping for 1 minute." ) ;
                         }
-                        TimeUnit.MINUTES.sleep( 1 ) ;
+                        setNextRefreshAfter( 60 ) ;
                     }
                     else {
                         if( debugEnable ) {
@@ -93,7 +101,7 @@ public class EquityITDImporterDaemon extends Thread {
                         log.debug( "Market closed or exception threshold breached. " + 
                                    "Sleeping for 2 minutes." ) ;
                     }
-                    TimeUnit.MINUTES.sleep( 2 ) ;
+                    setNextRefreshAfter( 120 ) ;
                 }
             }
             catch( InterruptedException e ) {
@@ -105,7 +113,7 @@ public class EquityITDImporterDaemon extends Thread {
                 genericERM.registerEvent() ;
                 
                 try {
-                    TimeUnit.SECONDS.sleep( 10 ) ;
+                    setNextRefreshAfter( 10 ) ;
                 }
                 catch( InterruptedException ie ) {
                     log.error( "CMP daemon exception stall interrrupted.", ie ) ;
@@ -128,12 +136,12 @@ public class EquityITDImporterDaemon extends Thread {
         if( debugEnable ) {
             log.debug( "Sleeping for " + sleepDur + " sec." ) ;
         }
-        TimeUnit.SECONDS.sleep( sleepDur ) ;
+        
+        setNextRefreshAfter( sleepDur ) ;
     }
     
     private void refreshConfiguration() {
         
-        NVPManager nvpMgr = NVPManager.instance() ;
         NVPConfigGroup cfg = nvpMgr.getConfigGroup( CFG_GRP_NAME ) ; ;
 
         pauseRefresh       = cfg.getBoolValue( CFG_PAUSE_REFRESH_FLAG, pauseRefresh       ) ;
@@ -196,8 +204,21 @@ public class EquityITDImporterDaemon extends Thread {
             }
         } ;
         
+        nvpMgr.getConfigGroup( CFG_GRP_NAME )
+              .setValue( CFG_LAST_REFRESH_TIME, new Date() ) ;
+        
         if( debugEnable ) {
             log.debug( "-> Saved " + numSaved + " snapshots" ) ;
         }
+    }
+
+    private void setNextRefreshAfter( int numSecsFromNow ) 
+        throws InterruptedException {
+        
+        nvpMgr.getConfigGroup( CFG_GRP_NAME ) 
+              .setValue( CFG_LAST_REFRESH_TIME, 
+                         DateUtils.addSeconds( new Date(), numSecsFromNow ) ) ;
+        
+        TimeUnit.SECONDS.sleep( numSecsFromNow ) ;
     }
 }

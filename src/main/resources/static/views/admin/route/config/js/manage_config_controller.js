@@ -31,11 +31,14 @@ capitalystNgApp.controller( 'ManageConfigController',
     }
     
     $scope.editConfig = function( cfg ) {
-        resetEditState() ;
-        cfg.editing = true ;
-        $scope.isEditing = true ;
-        $scope.tempEditValues.value = cfg.value ;
-        $scope.tempEditValues.description = cfg.description ;
+        
+        if( isEditable( cfg ) ) {
+            resetEditState() ;
+            cfg.editing = true ;
+            $scope.isEditing = true ;
+            $scope.tempEditValues.value = cfg.value ;
+            $scope.tempEditValues.description = cfg.description ;
+        }
     }
     
     $scope.cancelEditing = function() {
@@ -60,6 +63,10 @@ capitalystNgApp.controller( 'ManageConfigController',
     
     $scope.refresh = function() {
         fetchAllConfigs( $scope.selectedCfgGroup ) ;
+    }
+    
+    $scope.isEditable = function( cfg ) {
+        return !cfg.configName.includes( "(ro)" ) ;
     }
     
     // --- [END] Scope functions

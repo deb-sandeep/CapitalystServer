@@ -49,6 +49,9 @@
                 <th ng-click="sortRows('dayChange', 'dayGain', 'num')">
                     D-Change
                 </th>
+                <th ng-click="sortRows('dayPctChange', 'dayPctChange', 'num')">
+                    % Chg
+                </th>
                 <th ng-click="toggleSparkline()">
                     Trend
                 </th>
@@ -119,6 +122,10 @@
                <td class="fixed-font amt"
                    ng-class="getAmtClass(holding.dayGain)">
                    {{holding.dayGain | amt}}
+               </td>
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass(holding.dayPctChange)">
+                   {{holding.dayPctChange | number:1}}%
                </td>
                <td>
                   <span id="spark_{{$index}}"></span>
@@ -202,6 +209,7 @@
                     ng-class="getAmtClass(allTotal.dayGain)">
                     {{allTotal.dayGain | amt}}
                 </th>
+                <th></th>
                 <th>
                     <span id="spark_tot"></span>
                 </th>
@@ -235,6 +243,7 @@
                     ng-class="getAmtClass(selTotal.dayGain)">
                     {{selTotal.dayGain | amt}}
                 </th>
+                <th></th>
                 <th>
                     <span id="spark_sel"></span>
                 </th>

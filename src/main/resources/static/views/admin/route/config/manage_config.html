@@ -26,7 +26,7 @@
 	   <tbody>
 	       <tr ng-repeat="cfg in groupedCfgs">
 	           <td>
-                 <a ng-if="!isEditing"
+                 <a ng-if="!isEditing && isEditable( cfg )"
                     ng-click="editConfig( cfg )">
                     <span class="glyphicon glyphicon-pencil"></span>
                  </a>	           
