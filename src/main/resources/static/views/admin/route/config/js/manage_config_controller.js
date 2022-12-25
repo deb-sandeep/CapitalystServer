@@ -32,7 +32,7 @@ capitalystNgApp.controller( 'ManageConfigController',
     
     $scope.editConfig = function( cfg ) {
         
-        if( isEditable( cfg ) ) {
+        if( $scope.isEditable( cfg ) ) {
             resetEditState() ;
             cfg.editing = true ;
             $scope.isEditing = true ;
