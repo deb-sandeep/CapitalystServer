@@ -216,7 +216,7 @@ public class EquityITDImporterDaemon extends Thread {
         throws InterruptedException {
         
         nvpMgr.getConfigGroup( CFG_GRP_NAME ) 
-              .setValue( CFG_LAST_REFRESH_TIME, 
+              .setValue( CFG_NEXT_REFRESH_TIME, 
                          DateUtils.addSeconds( new Date(), numSecsFromNow ) ) ;
         
         TimeUnit.SECONDS.sleep( numSecsFromNow ) ;

@@ -138,7 +138,9 @@ capitalystNgApp.controller( 'RecoController',
             gradientMgr['perfLTP'].initialize() ;
             
             sortDir[ "perfLTP" ] = "asc" ; 
-            sortTable( "perfLTP" ) ;
+            $scope.sortRows( "perfLTP", "ltp.pchange", "num" ) ;
+            
+            setTimeout( paintSparklines, 100 ) ;
         } )
         .finally(function() {
             $scope.ttmRefreshTriggered = false ;
