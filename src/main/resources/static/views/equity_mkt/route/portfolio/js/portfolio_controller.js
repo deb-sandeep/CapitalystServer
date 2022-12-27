@@ -50,6 +50,7 @@ capitalystNgApp.controller( 'PortfolioController',
     $scope.holdingForTxnsDisplay = null ;
     $scope.inbetweenServerCall = false ;
     $scope.marketOpen = true ;
+    $scope.onMobile = window.mobileCheck() ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
