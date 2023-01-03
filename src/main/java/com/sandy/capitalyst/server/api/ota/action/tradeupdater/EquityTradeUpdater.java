@@ -50,6 +50,8 @@ public class EquityTradeUpdater extends OTA {
     public static final String CFG_INCL_PORTFOLIO_STOCKS = "incl_portfolio_stocks" ;
     public static final String CFG_EXCL_PORTFOLIO_STOCKS = "excl_portfolio_stocks" ;
     
+    public static final String CFG_EXCLUDE_USER_IDS = "excl_user_ids" ;
+    
     public static final String CFG_UPDATE_AVG_COST_PRICE = "update_avg_cost_price" ;
 
     public static final String CFG_DEF_LAST_UPDATE_DATE = "01-01-2014" ;
@@ -72,6 +74,7 @@ public class EquityTradeUpdater extends OTA {
     
     private List<String> inclPortfolioStocks = new ArrayList<>() ;
     private List<String> exclPortfolioStocks = new ArrayList<>() ;
+    private List<String> exclUserIds = new ArrayList<>() ;
     
     private int numHoldingsCreated = 0 ;
     private int numHoldingsUpdated = 0 ;
@@ -106,6 +109,8 @@ public class EquityTradeUpdater extends OTA {
         updateAvgCostPrice = cfg.getBoolValue( CFG_UPDATE_AVG_COST_PRICE, 
                                                updateAvgCostPrice ) ;
         
+        exclUserIds = cfg.getListValue( CFG_EXCLUDE_USER_IDS, "" ) ;
+        
         Date now = new Date() ;
         if( iterToDate.after( now ) ) {
             iterToDate = now ;
@@ -124,17 +129,19 @@ public class EquityTradeUpdater extends OTA {
         Breeze breeze = Breeze.instance() ;
         try {
             for( BreezeCred cred : breeze.getAllCreds() ) {
-                addResult( "------------------------------------" ) ; 
-                addResult( "Updating trades for " + cred.getUserName() ) ;
-                
-                addResult( "  Loading holdings" ) ;
-                loadHoldings( cred ) ;
-                
-                addResult( "  Updating trades" ) ;
-                updateTrades( cred, lastUpdateDate, iterToDate ) ;
-                
-                addResult( "  Updating holdings" ) ;
-                updateEquityHoldings( cred ) ;
+                if( Breeze.instance().hasActiveSession( cred ) ) {
+                    addResult( "------------------------------------" ) ; 
+                    addResult( "Updating trades for " + cred.getUserName() ) ;
+                    
+                    addResult( "  Loading holdings" ) ;
+                    loadHoldings( cred ) ;
+                    
+                    addResult( "  Updating trades" ) ;
+                    updateTrades( cred, lastUpdateDate, iterToDate ) ;
+                    
+                    addResult( "  Updating holdings" ) ;
+                    updateEquityHoldings( cred ) ;
+                }
             }
             
             addResult( "------------------------------------" ) ; 
@@ -160,10 +167,12 @@ public class EquityTradeUpdater extends OTA {
     private void assertValidSessions() throws BreezeException {
         
         for( BreezeCred cred : Breeze.instance().getAllCreds() ) {
-            if( !Breeze.instance().hasActiveSession( cred ) ) {
-                
-                throw BreezeException.sessionError( cred.getUserName(), 
+            if( !exclUserIds.contains( cred.getUserId() ) ) {
+                if( !Breeze.instance().hasActiveSession( cred ) ) {
+                    
+                    throw BreezeException.sessionError( cred.getUserName(), 
                             "EquityTradeUpdater", "No active session." ) ; 
+                }
             }
         }
     }
