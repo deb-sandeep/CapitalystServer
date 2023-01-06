@@ -15,6 +15,7 @@ import com.sandy.capitalyst.server.dao.index.IndexEquity ;
 import com.sandy.capitalyst.server.dao.index.IndexMaster ;
 import com.sandy.capitalyst.server.dao.index.repo.IndexEquityRepo ;
 import com.sandy.capitalyst.server.dao.index.repo.IndexMasterRepo ;
+import com.sandy.common.util.StringUtil ;
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;
 
@@ -62,6 +63,12 @@ public class IndexRefresher {
 
     public int refreshIndex( IndexMaster idx ) 
         throws Exception {
+        
+        // Some indexes like India VIX do not have included stocks. In such
+        // cases there is nothing to refresh.
+        if( StringUtil.isEmptyOrNull( idx.getIncludedStocksUrl() ) ) {
+            return 0 ;
+        }
         
         log( "Refreshing - " + idx.getName() ) ;
         
