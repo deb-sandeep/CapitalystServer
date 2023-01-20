@@ -299,7 +299,7 @@ public interface LedgerRepo
           + "WHERE "
           + "    le.account_id = :accountId "
     )
-    public Float computeCashAccountBalance( @Param( "accountId" ) Integer accountId ) ;
+    public Float summateAccountBalance( @Param( "accountId" ) Integer accountId ) ;
     
     @Query( nativeQuery = true,
             value =   

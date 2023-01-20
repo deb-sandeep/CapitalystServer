@@ -225,7 +225,7 @@ public class LedgerRestController {
 
             Account account = entry.getAccount() ;
             if( account.getAccountNumber().equals( "CASH@HOME" ) ) {
-                Float balance = lRepo.computeCashAccountBalance( account.getId() ) ;
+                Float balance = lRepo.summateAccountBalance( account.getId() ) ;
                 account.setBalance( balance ) ;
                 aRepo.save( account ) ;
             }

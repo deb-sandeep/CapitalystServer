@@ -30,4 +30,11 @@ public class Account {
     
     @Transient
     private Float  depositBalance = 0.0F ;
+    
+    public Float getBalance() {
+        if( this.balance == null ) {
+            this.balance = 0F ;
+        }
+        return this.balance ;
+    }
 }

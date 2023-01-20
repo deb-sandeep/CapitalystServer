@@ -6,6 +6,7 @@ public class CapitalystConstants {
     public static enum Bank {
         ICICI,
         SBI,
+        PO,
         HOME,
         BAFINS
     } ;

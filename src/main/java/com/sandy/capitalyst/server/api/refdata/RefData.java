@@ -26,6 +26,7 @@ public class RefData {
         List<String> values = new ArrayList<>() ;
         values.add( "ICICI" ) ;
         values.add( "SBI" ) ;
+        values.add( "PO" ) ;
         values.add( "HOME" ) ;
         values.add( "BAFINS" ) ;
         return values ;

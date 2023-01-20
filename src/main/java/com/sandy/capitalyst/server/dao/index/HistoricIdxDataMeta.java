@@ -11,6 +11,7 @@ import javax.persistence.Id ;
 import javax.persistence.JoinColumn ;
 import javax.persistence.ManyToOne ;
 import javax.persistence.Table ;
+import javax.persistence.TableGenerator ;
 
 import lombok.Data ;
 
@@ -20,7 +21,17 @@ import lombok.Data ;
 public class HistoricIdxDataMeta {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @TableGenerator(
+        name            = "histIdxDataMetaPkGen", 
+        table           = "id_gen", 
+        pkColumnName    = "gen_key", 
+        valueColumnName = "gen_value", 
+        pkColumnValue   = "hist_idx_data_meta_id",
+        initialValue    = 1,
+        allocationSize  = 1 )    
+    @GeneratedValue( 
+        strategy=GenerationType.TABLE, 
+        generator="histIdxDataMetaPkGen" )
     private Integer id = null ;
     
     @ManyToOne( cascade= {CascadeType.MERGE} )

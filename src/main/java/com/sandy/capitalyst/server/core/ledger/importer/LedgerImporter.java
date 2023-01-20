@@ -7,6 +7,7 @@ import org.apache.log4j.Logger ;
 import org.springframework.context.ApplicationContext ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
+import com.sandy.capitalyst.server.core.CapitalystConstants.Bank ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
@@ -31,7 +32,7 @@ public class LedgerImporter {
     }
 
     // NOTE: It is assumed that all the ledger entries are for a single 
-    //       account. Implying, 
+    //       account. 
     public LedgerImportResult importLedgerEntries( List<LedgerEntry> entries )
         throws Exception {
         
@@ -83,7 +84,14 @@ public class LedgerImporter {
     
     public void updateAccountBalance( Account account ) {
         
-        Float balance = this.ledgerRepo.getAccountBalance( account.getId() ) ;
+        Float balance = 0F ;
+        if( account.getBankName().equals( Bank.PO.name() ) ) {
+            balance = ledgerRepo.summateAccountBalance( account.getId() ) ;
+        }
+        else {
+            balance = ledgerRepo.getAccountBalance( account.getId() ) ;
+        }
+        
         if( balance != null ) {
             account.setBalance( balance ) ;
             this.accountRepo.save( account ) ;

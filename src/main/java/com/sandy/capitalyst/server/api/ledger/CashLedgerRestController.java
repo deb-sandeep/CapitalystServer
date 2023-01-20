@@ -77,7 +77,7 @@ public class CashLedgerRestController {
             ledgerEntry.setHash( hash ) ;
             ledgerEntry = lRepo.save( ledgerEntry ) ;
             
-            Float balance = lRepo.computeCashAccountBalance( account.getId() ) ;
+            Float balance = lRepo.summateAccountBalance( account.getId() ) ;
             ledgerEntry.setBalance( balance ) ;
             account.setBalance( balance ) ;
 

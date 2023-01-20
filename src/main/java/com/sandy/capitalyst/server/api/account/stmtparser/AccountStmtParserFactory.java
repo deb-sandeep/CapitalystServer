@@ -4,6 +4,7 @@ import static com.sandy.capitalyst.server.core.CapitalystConstants.AccountType.C
 import static com.sandy.capitalyst.server.core.CapitalystConstants.AccountType.SAVING ;
 import static com.sandy.capitalyst.server.core.CapitalystConstants.Bank.ICICI ;
 import static com.sandy.capitalyst.server.core.CapitalystConstants.Bank.SBI ;
+import static com.sandy.capitalyst.server.core.CapitalystConstants.Bank.PO ;
 
 import org.apache.log4j.Logger ;
 
@@ -42,6 +43,9 @@ public class AccountStmtParserFactory {
         }
         else if( bankName.equals( SBI.name() ) ) {
             importer = new SBISavingsAccountStmtParser() ;
+        }
+        else if( bankName.equals( PO.name() ) ) {
+            importer = new POSavingsAccountStmtParser() ;
         }
         
         if( importer == null ) {

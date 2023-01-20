@@ -6,7 +6,7 @@ screenerCfgs:
    - id : ManualInclusionScreener
      priority : 99
      attributes :
-        nseSymbols : NIFTYBEES, SETFGOLD
+        nseSymbols : NIFTYBEES, SETFGOLD, GSPL
         
    - id : IndexScreener
      priority : 98

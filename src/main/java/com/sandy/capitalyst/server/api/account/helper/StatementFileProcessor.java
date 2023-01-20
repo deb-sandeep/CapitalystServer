@@ -71,8 +71,10 @@ public class StatementFileProcessor {
         
         entries = stmtParser.parseLedgerEntries( account, file ) ;
         
-        result = importer.importLedgerEntries( entries ) ;
-        result.setFileName( file.getName() ) ;
+        if( entries != null && !entries.isEmpty() ) {
+            result = importer.importLedgerEntries( entries ) ;
+            result.setFileName( file.getName() ) ;
+        }
         
         return result ;
     }
