@@ -68,7 +68,7 @@ public class POSavingsAccountStmtParser extends AccountStmtParser {
                     String date    = txnDateRow.getCellValue( 0 ) ;
                     String remarks = txnDateRow.getCellValue( 2 ) ;
                     String txnType = amtRow.getCellValue( 5 ) ;
-                    String amt     = amtRow.getCellValue( 6 ) ;
+                    String amt     = amtRow.getCellValue( 6 ).replaceAll( ",", "" ) ;
                     
                     LedgerEntry entry = constructEntry( account, date, remarks, 
                                                         txnType, amt ) ;
