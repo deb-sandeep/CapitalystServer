@@ -140,7 +140,7 @@ input[type="checkbox"] {
     width: var( --indDivWidth ) ;
     height: var( --primaryChartHeight ) ;
     background-color: var( --canvasBackground ) ;
-    overflow-y : scroll;
+    overflow-y : auto;
 }
 
 #indicatorsPanel {

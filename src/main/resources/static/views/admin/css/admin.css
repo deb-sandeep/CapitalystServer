@@ -1,7 +1,8 @@
 #split-pane {
     width: 100%;
-    height: calc(100vh - 33px );
+    height: calc(100vh - 35px );
     display: flex;
+    overflow-y: hidden;
 }
 
 #icon-bar {
@@ -11,18 +12,18 @@
     border-style:hidden;
     border-color:#f4f4f4;
     background-color: #555; 
-    overflow-y: scroll;    
+    overflow-y: auto;    
 }
 
 #module-panel {
     position:relative;
     width: 100%;
     height: 100%;
-    margin-left: 20px;
     margin-top: 5px;
     margin-right: 5px;
-    overflow-y: scroll;
-    font-size: 14px;
+    margin-left:20px;
+    overflow-y: auto;
+    font-size: 12px;
 }
 
 #icon-bar a {
@@ -57,7 +58,7 @@
 
 .numeric {
 	width: 70px;
-	font-family: "Courier New" ;
+	font-family: "Courier" ;
 	text-align: right ;
 }
 
