@@ -17,7 +17,7 @@
 
 #split-pane {
     width: 100%;
-    height: calc(100vh - 33px - 40px);
+    height: calc(100vh - 33px - 40px - 5px);
     display: flex;
 }
 

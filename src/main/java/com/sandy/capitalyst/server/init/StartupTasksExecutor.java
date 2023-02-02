@@ -12,6 +12,7 @@ import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.listener.InvStatsPersistListener ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
+import com.sandy.capitalyst.server.core.CapitalystConstants.Bank ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.account.Account ;
@@ -82,6 +83,12 @@ public class StartupTasksExecutor {
     private void updateAccountBalanceOnStartup() {
         
         for( Account account : aiRepo.findAll() ) {
+            if( account.getBankName().equals( Bank.PO.name() ) ) {
+                // Note that PO balance is zero based on the statements 
+                // The PO balance is updated when a statements is uploaded. 
+                // No need to update the balance on startup.
+                continue ;
+            }
             Float balance = this.ledgerRepo.getAccountBalance( account.getId() ) ;
             if( balance != null ) {
                 account.setBalance( balance ) ;
