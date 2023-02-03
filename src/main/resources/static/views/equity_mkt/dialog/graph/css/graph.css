@@ -69,6 +69,7 @@ input[type="checkbox"] {
     width: var( --chartWidth ) ;
     height: 100px ;
     background-color: var( --canvasBackground ) ;
+    padding-left:30px;
 }
 
 #rsiChartDiv {
@@ -79,6 +80,7 @@ input[type="checkbox"] {
     width: var( --chartWidth ) ;
     height: 100px ;
     background-color: var( --canvasBackground ) ;
+    padding-left:30px;
 }
 
 #adxChartDiv {
@@ -89,6 +91,7 @@ input[type="checkbox"] {
     width: var( --chartWidth ) ;
     height: 125px ;
     background-color: var( --canvasBackground ) ;
+    padding-left:30px;
 }
 
 #atrChartDiv {
@@ -99,6 +102,7 @@ input[type="checkbox"] {
     width: var( --chartWidth ) ;
     height: 100px ;
     background-color: var( --canvasBackground ) ;
+    padding-left:30px;
 }
 
 /* ---------------- Canvas CSS ---------------------------------------------- */

@@ -133,7 +133,7 @@ capitalystNgApp.controller( 'ADXController',
         
         ctx.font = "12px Courier" ;
         ctx.fillStyle = "white" ;
-        ctx.fillText( "ADX", 60, 10 ) ;
+        ctx.fillText( "ADX", 0, 10 ) ;
         
         ctx.fillStyle = oldColor ;
     }
@@ -268,6 +268,7 @@ capitalystNgApp.controller( 'ADXController',
                 }
             },
             y : {
+                position : 'right',
                 ticks: {
                     font: {
                         family: 'courier'

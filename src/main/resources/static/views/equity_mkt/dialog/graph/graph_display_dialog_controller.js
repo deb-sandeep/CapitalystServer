@@ -980,6 +980,7 @@ capitalystNgApp.controller( 'GraphDisplayDialogController',
                 }
             },
             y : {
+                position : 'right',
                 ticks: {
                     font: {
                         family: 'courier'

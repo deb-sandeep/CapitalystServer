@@ -132,7 +132,7 @@ capitalystNgApp.controller( 'MACDController',
         
         ctx.font = "12px Courier" ;
         ctx.fillStyle = "white" ;
-        ctx.fillText( "MACD", 60, 10 ) ;
+        ctx.fillText( "MACD", 0, 10 ) ;
         
         ctx.fillStyle = oldColor ;
     }
@@ -262,6 +262,7 @@ capitalystNgApp.controller( 'MACDController',
                 }
             },
             y : {
+                position : 'right',
                 ticks: {
                     font: {
                         family: 'courier'

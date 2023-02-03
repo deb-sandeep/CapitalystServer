@@ -68,5 +68,5 @@
     background-color:#FEFEFE;
     padding:5px;
     height: 320px;  
-    overflow-y: scroll;
+    overflow-y: auto;
 }

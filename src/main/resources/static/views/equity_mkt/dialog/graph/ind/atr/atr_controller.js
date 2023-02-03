@@ -116,7 +116,7 @@ capitalystNgApp.controller( 'ATRController',
         
         ctx.font = "12px Courier" ;
         ctx.fillStyle = "white" ;
-        ctx.fillText( "ATR", 60, 10 ) ;
+        ctx.fillText( "ATR", 0, 10 ) ;
         
         ctx.fillStyle = oldColor ;
     }
@@ -216,6 +216,7 @@ capitalystNgApp.controller( 'ATRController',
                 }
             },
             y : {
+                position : 'right',
                 ticks: {
                     font: {
                         family: 'courier'

@@ -122,7 +122,7 @@ capitalystNgApp.controller( 'RSIController',
         
         ctx.font = "12px Courier" ;
         ctx.fillStyle = "white" ;
-        ctx.fillText( "RSI", 60, 10 ) ;
+        ctx.fillText( "RSI", 0, 10 ) ;
         
         ctx.fillStyle = oldColor ;
     }
@@ -254,6 +254,7 @@ capitalystNgApp.controller( 'RSIController',
                 }
             },
             y : {
+                position : 'right',
                 ticks: {
                     font: {
                         family: 'courier'

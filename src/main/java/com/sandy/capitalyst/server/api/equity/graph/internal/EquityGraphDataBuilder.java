@@ -39,6 +39,8 @@ public class EquityGraphDataBuilder {
 
     static final Logger log = Logger.getLogger( EquityGraphDataBuilder.class ) ;
     
+    private static int NUM_FUTURE_DATES = 5 ;
+    
     private class DataHolder {
         HistoricEQData    histData = null ;
         List<EquityTrade> trades   = new ArrayList<>() ;
@@ -123,6 +125,12 @@ public class EquityGraphDataBuilder {
         
         List<Long> labels = graphData.getLabels() ;
         data.forEach( (date,holding)->labels.add( date.getTime() ) ) ;
+        
+        // To ensure that we show some empty space to the right of the graph
+        for( int i=0; i<NUM_FUTURE_DATES; i++ ) {
+            long lastTime = labels.get( labels.size()-1 ) ;
+            labels.add( lastTime + 86400*1000 ) ;
+        }
     }
 
     private void populateTradeData( Map<Date, DataHolder> data,
@@ -288,7 +296,7 @@ public class EquityGraphDataBuilder {
         List<Long>  labels  = graphData.getLabels() ;
         
         float cmp     = eodList.get( eodList.size()-1 ) ;
-        long  lastDay = labels.get( labels.size()-1 ) ;
+        long  lastDay = labels.get( labels.size()-NUM_FUTURE_DATES-1 ) ;
         
         DayPriceData d = new DayPriceData() ;
         d.setX( lastDay ) ;
