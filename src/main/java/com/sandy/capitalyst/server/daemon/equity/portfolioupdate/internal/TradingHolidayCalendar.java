@@ -106,7 +106,7 @@ public class TradingHolidayCalendar {
             if( hour >= 10 && hour < 15 ) {
                 return true ;
             }
-            else if( hour == 15 && min <= 30 ) {
+            else if( hour == 15 && min <= 35 ) {
                 return true ;
             }
             else if( hour ==9 && min >= 15 ) {
