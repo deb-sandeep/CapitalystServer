@@ -85,7 +85,7 @@ table.treetable tr.branch[l2-branch]>td {
     background-color:#FEFEFE;
     padding:5px;
     height: 500px;  
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .curr-mth {

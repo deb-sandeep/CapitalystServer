@@ -88,7 +88,7 @@ public class BudgetSpreadBuilder {
         BudgetSpread spread = new BudgetSpread( startDate, endDate ) ;
         
         List<LedgerEntryCategory> budgetedCategories = null ;
-        budgetedCategories = lecRepo.findBudgetedCategories() ;
+        budgetedCategories = lecRepo.findBudgetedCategories( fy ) ;
         
         for( LedgerEntryCategory cat : budgetedCategories ) {
             spread.addCategory( cat ) ;

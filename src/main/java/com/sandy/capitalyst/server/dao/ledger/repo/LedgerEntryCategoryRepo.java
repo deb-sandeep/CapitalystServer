@@ -64,5 +64,5 @@ public interface LedgerEntryCategoryRepo
           + "    lec.l1CatName ASC, "
           + "    lec.l2CatName ASC "
     )
-    public List<LedgerEntryCategory> findBudgetedCategories() ;
+    public List<LedgerEntryCategory> findBudgetedCategories( int fy ) ;
 }
