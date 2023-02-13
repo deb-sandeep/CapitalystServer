@@ -7,8 +7,8 @@ import java.util.List ;
 import java.util.Map ;
 
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.CalendarUtil ;
+import com.sandy.capitalyst.server.dao.ledger.LedgerCategoryBudget ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.common.util.StringUtil ;
 
 import lombok.Getter ;
@@ -38,9 +38,9 @@ public class BudgetSpread extends BudgetLineItem {
         }
     }
 
-    public void addCategory( LedgerEntryCategory cat ) {
+    public void addCategoryBudget( LedgerCategoryBudget catBudget ) {
         
-        String l1Name = cat.getL1CatName() ;
+        String l1Name = catBudget.getL1CatName() ;
         L1LineItem l1LineItem = null ; 
         
         if( l1LineItemMap.containsKey( l1Name ) ) {
@@ -52,7 +52,7 @@ public class BudgetSpread extends BudgetLineItem {
             l1LineItems.add( l1LineItem ) ;
         }
         
-        l1LineItem.addCategory( cat ) ;
+        l1LineItem.addCategoryBudget( catBudget ) ;
     }
 
     public void processEntry( LedgerEntry entry ) {

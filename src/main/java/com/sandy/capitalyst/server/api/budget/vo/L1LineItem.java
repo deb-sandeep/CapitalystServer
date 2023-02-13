@@ -5,8 +5,8 @@ import java.util.LinkedHashMap ;
 import java.util.List ;
 import java.util.Map ;
 
+import com.sandy.capitalyst.server.dao.ledger.LedgerCategoryBudget ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 
 import lombok.Getter ;
 import lombok.Setter ;
@@ -28,13 +28,13 @@ public class L1LineItem extends BudgetLineItem {
         this.spread = spread ;
     }
 
-    public void addCategory( LedgerEntryCategory cat ) {
+    public void addCategoryBudget( LedgerCategoryBudget catBudget ) {
         
-        String l2Name = cat.getL2CatName() ;
+        String l2Name = catBudget.getL2CatName() ;
         L2LineItem l2LineItem = null ; 
         
         if( !l2LineItemMap.containsKey( l2Name ) ) {
-            l2LineItem = new L2LineItem( this, cat ) ;
+            l2LineItem = new L2LineItem( this, catBudget ) ;
             l2LineItemMap.put( l2Name, l2LineItem ) ;
             l2LineItems.add( l2LineItem ) ;
         }

@@ -382,8 +382,8 @@ function BudgetTableRenderer( onMobile ) {
                     
                     if( !onMobile ) {
                         attributes[ "onclick" ] = "triggerLedgerEntryDisplay( " + 
-                                                    "'" + l2LineItem.category.l1CatName + "'," + 
-                                                    "'" + l2LineItem.category.l2CatName + "'," + 
+                                                    "'" + l2LineItem.categoryBudget.l1CatName + "'," + 
+                                                    "'" + l2LineItem.categoryBudget.l2CatName + "'," + 
                                                     "'" + cell.startOfMonth +"' ) ;" ;
                     }
                     return fmtAmt( cell.consumed ) ; 

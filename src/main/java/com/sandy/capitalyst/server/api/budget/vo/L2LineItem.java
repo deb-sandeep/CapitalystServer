@@ -4,8 +4,8 @@ import java.util.Calendar ;
 import java.util.Date ;
 
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.MonthlyLoadingCalculator ;
+import com.sandy.capitalyst.server.dao.ledger.LedgerCategoryBudget ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 
 import lombok.Getter ;
 import lombok.Setter ;
@@ -15,16 +15,16 @@ public class L2LineItem extends BudgetLineItem {
     private L1LineItem parent = null ;
     
     @Getter @Setter
-    private LedgerEntryCategory category = null ;
+    private LedgerCategoryBudget categoryBudget = null ;
     
-    public L2LineItem( L1LineItem parent, LedgerEntryCategory cat ) {
+    public L2LineItem( L1LineItem parent, LedgerCategoryBudget catBudget ) {
         
-        super( cat.getL2CatName(), 
+        super( catBudget.getL2CatName(), 
                parent.getStartOfYear(), 
                parent.getEndOfYear() ) ;
         
         this.parent = parent ;
-        this.category = cat ;
+        this.categoryBudget = catBudget ;
         
         createMontlyLoading() ;
     }
@@ -32,7 +32,7 @@ public class L2LineItem extends BudgetLineItem {
     private void createMontlyLoading() {
         
         MonthlyLoadingCalculator loadCalc = null ;
-        String ruleSet = category.getAmountLoadingRule() ;
+        String ruleSet = categoryBudget.getBudgetRule() ;
         
         loadCalc = new MonthlyLoadingCalculator( ruleSet ) ;
         int[] monthlyCaps = loadCalc.getMonthlyCap() ;

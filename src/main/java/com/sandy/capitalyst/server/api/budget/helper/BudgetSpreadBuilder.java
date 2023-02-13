@@ -3,6 +3,7 @@ package com.sandy.capitalyst.server.api.budget.helper;
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 
 import java.util.Calendar ;
+import java.util.Collections ;
 import java.util.Date ;
 import java.util.GregorianCalendar ;
 import java.util.List ;
@@ -10,22 +11,22 @@ import java.util.TimeZone ;
 
 import com.sandy.capitalyst.server.api.budget.vo.BudgetSpread ;
 import com.sandy.capitalyst.server.dao.ledger.DebitCreditAssoc ;
+import com.sandy.capitalyst.server.dao.ledger.LedgerCategoryBudget ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.repo.DebitCreditAssocRepo ;
-import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
+import com.sandy.capitalyst.server.dao.ledger.repo.LedgerCategoryBudgetRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
 
 public class BudgetSpreadBuilder {
 
-    private LedgerRepo              lRepo   = null ;
-    private LedgerEntryCategoryRepo lecRepo = null ;
-    private DebitCreditAssocRepo    dcaRepo = null ;
+    private LedgerRepo               lRepo   = null ;
+    private LedgerCategoryBudgetRepo lcbRepo = null ;
+    private DebitCreditAssocRepo     dcaRepo = null ;
         
     public BudgetSpreadBuilder() {
         this.lRepo   = getBean( LedgerRepo.class ) ;
-        this.lecRepo = getBean( LedgerEntryCategoryRepo.class ) ;
         this.dcaRepo = getBean( DebitCreditAssocRepo.class ) ;
+        this.lcbRepo = getBean( LedgerCategoryBudgetRepo.class ) ;
     }
 
     public BudgetSpread createBudgetSpread( int financialYear ) {
@@ -85,13 +86,17 @@ public class BudgetSpreadBuilder {
     
     private BudgetSpread buildBudgetSpread( int fy, Date startDate, Date endDate ) {
         
+        List<LedgerCategoryBudget> categoryBudgets = lcbRepo.findAllByFy( fy ) ;
+        if( categoryBudgets.isEmpty() ) {
+            // If we don't have a defined budget for the given FY, use the 
+            // default budget in the system. This is guaranteed to be present.
+            categoryBudgets = lcbRepo.findAllByFy( 0 ) ;
+        }
+        Collections.sort( categoryBudgets ) ;
+        
         BudgetSpread spread = new BudgetSpread( startDate, endDate ) ;
-        
-        List<LedgerEntryCategory> budgetedCategories = null ;
-        budgetedCategories = lecRepo.findBudgetedCategories( fy ) ;
-        
-        for( LedgerEntryCategory cat : budgetedCategories ) {
-            spread.addCategory( cat ) ;
+        for( LedgerCategoryBudget catBudget : categoryBudgets ) {
+            spread.addCategoryBudget( catBudget ) ;
         }
         
         return spread ;
