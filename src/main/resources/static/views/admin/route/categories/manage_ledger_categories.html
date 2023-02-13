@@ -1,4 +1,9 @@
 <div id="nav-panel">
+    <select class="form-field fin-year-select" 
+            ng-model="operatingFY"
+            ng-options="item as item.label for item in fyChoices"
+            ng-change="operatingFYChanged()">
+    </select>
     <button class="btn"
             ng-class="getTabActivationClass( 'Debit' )"
             ng-click="showDebitEntries()">
@@ -43,7 +48,7 @@
      ng-include="'route/categories/dialog/merge_category_dialog.html'">
 </div>
 
-<div id="yearlyCapEditDialog" 
+<div id="budgetEditorDialog" 
      class="modal" 
      role="dialog"
      data-backdrop="static"

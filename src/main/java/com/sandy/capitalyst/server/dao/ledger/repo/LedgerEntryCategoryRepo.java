@@ -51,18 +51,4 @@ public interface LedgerEntryCategoryRepo
           + "    lec.l2CatName ASC "
     )
     public List<LedgerEntryCategory> findCategoriesForCashEntry() ;
-    
-    @Query( value =   
-            "SELECT "
-          + "    lec "
-          + "FROM "
-          + "    LedgerEntryCategory lec "
-          + "WHERE "
-          + "    lec.creditClassification = false AND "
-          + "    lec.amountLoadingRule != null "
-          + "ORDER BY "
-          + "    lec.l1CatName ASC, "
-          + "    lec.l2CatName ASC "
-    )
-    public List<LedgerEntryCategory> findBudgetedCategories( int fy ) ;
 }

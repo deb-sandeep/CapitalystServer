@@ -20,13 +20,13 @@ public class LedgerCategoryBudget implements Comparable<LedgerCategoryBudget> {
 
     @Id
     @TableGenerator(
-            name            = "lcbPkGen", 
-            table           = "id_gen", 
-            pkColumnName    = "gen_key", 
-            valueColumnName = "gen_value", 
-            pkColumnValue   = "ledger_category_budget_id",
-            initialValue    = 1,
-            allocationSize  = 1 )    
+        name            = "lcbPkGen", 
+        table           = "id_gen", 
+        pkColumnName    = "gen_key", 
+        valueColumnName = "gen_value", 
+        pkColumnValue   = "ledger_category_budget_id",
+        initialValue    = 1,
+        allocationSize  = 1 )
     @GeneratedValue( 
         strategy=GenerationType.TABLE, 
         generator="lcbPkGen" )

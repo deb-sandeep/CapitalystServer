@@ -2,9 +2,7 @@ package com.sandy.capitalyst.server.api.ledgermgmt;
 
 import java.util.ArrayList ;
 import java.util.Collections ;
-import java.util.HashMap ;
 import java.util.List ;
-import java.util.Map ;
 
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.CategoryMergeHelper ;
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.ChangedCategorySaveHelper ;
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.MergeLedgeEntryCategoriesInput ;
-import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.MonthlyLoadingCalculator ;
 import com.sandy.capitalyst.server.core.api.APIResponse ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.repo.ClassifiedLedgerEntriesCounter ;
@@ -133,30 +130,4 @@ public class LedgerCategoriesController {
                                  .body( null ) ;
         }
     }
-    
-    @PostMapping( "/Ledger/Category/AmountLoading/Validate" ) 
-    public ResponseEntity<Map<String, Object>> valiateRule( @RequestBody String ruleText ) {
-        
-        Map<String, Object> result = new HashMap<>() ;
-        
-        try {
-            
-            MonthlyLoadingCalculator calc = null ;
-            calc = new MonthlyLoadingCalculator( ruleText ) ;
-            
-            result.put( "yearlyCap", calc.getYearlyCap() ) ;
-            result.put( "monthlyCap", calc.getMonthlyCap() ) ;
-            
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( result ) ;
-        }
-        catch( Exception e ) {
-            //log.debug( "Error", e ) ;
-            result.put( "message", e.getMessage() ) ;
-            return ResponseEntity.status( HttpStatus.BAD_REQUEST )
-                                 .body( result ) ;
-        }
-    }
-
-    
 }

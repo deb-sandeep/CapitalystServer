@@ -4,12 +4,10 @@ import java.util.List ;
 
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.MonthlyLoadingCalculator ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryClassificationRuleRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
-import com.sandy.common.util.StringUtil ;
 
 public class ChangedCategorySaveHelper {
     
@@ -71,13 +69,6 @@ public class ChangedCategorySaveHelper {
         
         log.debug( "Updating attributes of existing category" ) ;
         oldCat.copyAttributes( newCat ) ;
-        
-        String loadingRule = oldCat.getAmountLoadingRule() ;
-        if( StringUtil.isNotEmptyOrNull( loadingRule ) ) {
-            MonthlyLoadingCalculator calc = null ;
-            calc = new MonthlyLoadingCalculator( loadingRule ) ;
-            oldCat.setYearlyCap( calc.getYearlyCap() ) ;
-        }
         
         lecRepo.save( oldCat ) ;
     }

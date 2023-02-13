@@ -28,12 +28,6 @@ public class LedgerEntryCategory implements Comparable<LedgerEntryCategory> {
     @Column( name = "l2_cat_name" )
     private String l2CatName = null ;
     
-    @Column( name = "amount_loading_rule" ) 
-    private String amountLoadingRule = null ;
-    
-    @Column( name = "yearly_cap" ) 
-    private int yearlyCap = 0 ;
-
     public LedgerEntryCategory() {}
 
     public String toString() {
@@ -46,8 +40,6 @@ public class LedgerEntryCategory implements Comparable<LedgerEntryCategory> {
         builder.append( "   validForCashEntry      = " + this.validForCashEntry + "\n" ) ;
         builder.append( "   l1CatName              = " + this.l1CatName + "\n" ) ;
         builder.append( "   l2CatName              = " + this.l2CatName + "\n" ) ;
-        builder.append( "   yearlyCap              = " + this.yearlyCap + "\n" ) ;
-        builder.append( "   loadingRule            = " + this.amountLoadingRule + "\n" ) ;
         
         builder.append( "]" ) ;
         
@@ -61,8 +53,6 @@ public class LedgerEntryCategory implements Comparable<LedgerEntryCategory> {
         this.selectedForTxnPivot  = refCat.selectedForTxnPivot ;
         this.l1CatName            = refCat.l1CatName ;
         this.l2CatName            = refCat.l2CatName ;
-        this.yearlyCap            = refCat.yearlyCap ;
-        this.amountLoadingRule    = refCat.amountLoadingRule ;
     }
 
     @Override

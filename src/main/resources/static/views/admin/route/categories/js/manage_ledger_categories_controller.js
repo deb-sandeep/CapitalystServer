@@ -60,6 +60,9 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     $scope.ledgerEntriesForDisplay = [] ;
     
+    $scope.operatingFY = null ;
+    $scope.fyChoices = getFYChoices() ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading ManageLedgerCategoriesController" ) ;
@@ -309,27 +312,27 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.hideMergeCategoryDialog() ;
     }
     
-    $scope.showYearlyCapEditDialog = function( cat ) {
+    $scope.showBudgetEditorDialog = function( cat ) {
         
         clearCatEditCtx() ;
         $scope.catEditCtx.cat = cat ;
         $scope.catEditCtx.amountLoadingRule = cat.amountLoadingRule ;
         $scope.catEditCtx.yearlyCap         = cat.yearlyCap ;
         
-        $scope.validateLoadingRule() ;
+        $scope.validateBudgetRule() ;
         
-        $( '#yearlyCapEditDialog' ).modal( 'show' ) ;
+        $( '#budgetEditorDialog' ).modal( 'show' ) ;
     }
 
-    $scope.hideYearlyCapEditDialog = function() {
-        $( '#yearlyCapEditDialog' ).modal( 'hide' ) ;
+    $scope.hideBudgetEditorDialog = function() {
+        $( '#budgetEditorDialog' ).modal( 'hide' ) ;
     }
 
-    $scope.validateLoadingRule = function() {
+    $scope.validateBudgetRule = function() {
         
         clearLoadingRuleValidationResult() ;
 
-        validateLoadingRuleOnServer( function( yearlyCap, monthlyCap ) {
+        validateBudgetRuleOnServer( function( yearlyCap, monthlyCap ) {
             
             $scope.loadingRuleValidationResult.yearlyCap = yearlyCap ;
             for( var i=0; i<monthlyCap.length; i++ ) {
@@ -345,46 +348,44 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         } ) ;
     }
     
-    $scope.saveYearlyCapRule = function() {
+    $scope.saveBudgetRule = function() {
         
-        var editedCatList = [] ;
         var cat = $scope.catEditCtx.cat ;
         
         cat.amountLoadingRule = $scope.catEditCtx.amountLoadingRule ;
         cat.yearlyCap         = $scope.loadingRuleValidationResult.yearlyCap ;
         
-        editedCatList.push( cat ) ;
-        
-        saveCategoryEditChangesOnServer( editedCatList,
+        saveBudgetRuleOnServer( cat.id, cat.amountLoadingRule,
             function() {
-                $scope.hideYearlyCapEditDialog() ;
+                $scope.hideBudgetEditorDialog() ;
             },
             function() {
-                $scope.hideYearlyCapEditDialog() ;
+                $scope.hideBudgetEditorDialog() ;
                 fetchClassificationCategories() ;
             } 
         ) ;
     }
     
-    $scope.deleteYearlyCapRule = function() {
+    $scope.deleteBudgetRule = function() {
         
-        var editedCatList = [] ;
         var cat = $scope.catEditCtx.cat ;
         
-        cat.amountLoadingRule = null ;
+        cat.amountLoadingRule = "" ;
         cat.yearlyCap         = 0 ;
         
-        editedCatList.push( cat ) ;
-        
-        saveCategoryEditChangesOnServer( editedCatList,
+        saveBudgetRuleOnServer( cat.id, "",
             function() {
-                $scope.hideYearlyCapEditDialog() ;
+                $scope.hideBudgetEditorDialog() ;
             },
             function() {
-                $scope.hideYearlyCapEditDialog() ;
+                $scope.hideBudgetEditorDialog() ;
                 fetchClassificationCategories() ;
             } 
         ) ;
+    }
+    
+    $scope.operatingFYChanged = function() {
+        fetchClassificationCategories() ;
     }
     
     // --- [END] Scope functions
@@ -433,6 +434,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                 populateMasterCategories( response.data ) ;
                 console.log( "Fetching ledger enties classification counter." ) ;
                 fetchClassifiedLedgerEntriesCounter() ;
+                fetchCategoryBudgetRules() ;
             }, 
             function( error ){
                 $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
@@ -526,10 +528,14 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         }) ;
     }
     
-    function validateLoadingRuleOnServer( successCallback, errorCallback ) {
+    function validateBudgetRuleOnServer( successCallback, errorCallback ) {
         
-        $http.post( '/Ledger/Category/AmountLoading/Validate', 
-                    $scope.catEditCtx.amountLoadingRule )
+        var ruleText = $scope.catEditCtx.amountLoadingRule ;
+        ruleText = ruleText == null ? "" : ruleText ;
+        
+        console.log( ruleText ) ;
+        
+        $http.post( '/Budget/Rule/Validate', ruleText )
         .then ( 
             function( response ){
                 successCallback( response.data.yearlyCap,
@@ -539,6 +545,43 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                 errorCallback( error.data.message ) ;
             }
         )
+    }
+    
+    function saveBudgetRuleOnServer( catId, budgetRule, 
+                                     successCallback, 
+                                     errorCallback ) {
+        
+        $http.post( '/Budget/Rule', {
+            catId : catId,
+            fy : $scope.operatingFY.value,
+            budgetRule : budgetRule
+        } )
+        .then ( 
+            function(){
+                console.log( "Changes successfully saved on server" ) ;
+                successCallback() ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error saving changes on server.\n" + 
+                                              error.data.message ) ;
+                console.log( error ) ;
+                errorCallback() ;
+            }
+        )
+    }
+    
+    function fetchCategoryBudgetRules() {
+        
+        $http.get( '/Budget/Rules/' + $scope.operatingFY.value )
+        .then ( 
+            function( response ){
+                populateCategoryBudget( response.data ) ;
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch budget rules.\n" +
+                                              error.data.message ) ;
+            }
+        ) ;
     }
     
     // ------------------- Server response processors ------------------------
@@ -575,6 +618,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
             // Extention attributes added to the server returned obj
             category.beingEdited = false ;
             category.numLedgerEntries = 0 ;
+            category.amountLoadingRule = null ;
+            category.yearlyCap = 0 ;
             
             if( category.creditClassification ) {
                 classifyCategoryInMasterList( $scope.ledgerCategories.credit,
@@ -606,6 +651,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     }
     
     function populateNumLedgerEntries( counters ) {
+        
         for( var i=0; i<counters.length; i++ ) {
             
             var counter = counters[i] ;
@@ -676,5 +722,57 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                 fetchClassificationCategories() ;
             } 
         ) ;        
+    }
+    
+    function getCurrentFY() {
+      const date = new Date() ;
+      
+      var year = date.getFullYear() ;
+      var month = date.getMonth() ;
+      
+      return ( month >=0 && month <=2 ) ? year-1 : year ;
+    }
+    
+    function getFYChoices() {
+        
+        var choices = [{
+            label : 'Default',
+            value : 0
+        }] ;
+        var curFY = getCurrentFY() ;
+        
+        for( var i=curFY-2; i<curFY+2; i++ ) {
+            choices.push( {
+                label : 'FY ' + i,
+                value : i    
+            } ) ;
+            
+            if( i == curFY ) {
+                $scope.operatingFY = choices[ choices.length - 1 ] ;
+            }
+        }
+        return choices ;
+    }
+    
+    function populateCategoryBudget( budgetList ) {
+        
+        for( var i=0; i<budgetList.length; i++ ) {
+            
+            var budget = budgetList[i] ;
+            var catData = $scope.ledgerCategories.debit ;
+                            
+            if( catData.l2Categories.has( budget.l1CatName ) ) {
+                var l2Array = catData.l2Categories.get( budget.l1CatName ) ;
+                
+                for( var j=0; j<l2Array.length; j++ ) {
+                    var cat = l2Array[j] ;
+                    if( cat.l2CatName == budget.l2CatName ) {
+                        cat.amountLoadingRule = budget.budgetRule ;
+                        cat.yearlyCap = budget.yearlyCap ;
+                        break ;
+                    }
+                }
+            }
+        }
     }
 } ) ;

@@ -111,7 +111,7 @@
                             <label>Rule</label>
                             <textarea class="form-field rule-edit-textarea"
                                       ng-model="catEditCtx.amountLoadingRule" 
-                                      ng-change="validateLoadingRule()"
+                                      ng-change="validateBudgetRule()"
                                       rows="6">
                             </textarea> 
                             <span style="color:red;">&nbsp;
@@ -127,17 +127,17 @@
     <div class="modal-footer">
       <button type="button" 
               class="btn btn-danger btn-sm" 
-              ng-click="deleteYearlyCapRule()">
+              ng-click="deleteBudgetRule()">
             Delete
       </button>
       <button type="button" 
               class="btn btn-default btn-sm" 
-              ng-click="hideYearlyCapEditDialog()">
+              ng-click="hideBudgetEditorDialog()">
             Cancel
       </button>
       <button type="button" 
               class="btn btn-info btn-sm"
-              ng-click="saveYearlyCapRule()"
+              ng-click="saveBudgetRule()"
               ng-disabled="loadingRuleValidationResult.validationMsg != null">
             Save
       </button>
