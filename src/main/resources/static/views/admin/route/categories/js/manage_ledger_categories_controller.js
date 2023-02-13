@@ -446,7 +446,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     function fetchClassifiedLedgerEntriesCounter() {
         
-        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.get( '/Ledger/Categories/ClassificationCount' )
         .then ( 
             function( response ){
@@ -456,10 +455,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                 $scope.$parent.addErrorAlert( "Could not fetch classification categories.\n" +
                                               error.data.message ) ;
             }
-        )
-        .finally(function() {
-            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
-        }) ;
+        ) ;
     }
     
     function fetchLedgerEntries( cat ) {
