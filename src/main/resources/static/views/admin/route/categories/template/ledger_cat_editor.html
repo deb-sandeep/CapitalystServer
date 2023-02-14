@@ -17,6 +17,8 @@
            <th width="40px">#</th>
            <th width="40px"
                ng-if="$parent.catType == 'Debit'">
+			     <input type="checkbox" 
+			            ng-model="$parent.$parent.$parent.showOnlyBudgetedDebitCategories"/>
                 Yr. Cap
            </th>
            <th>Txn Pivot</th>
@@ -25,7 +27,9 @@
            <th>Merge</th>
        </tr>
    </thead>
-   <tbody ng-repeat="catName in catData.l1Categories">
+   <tbody ng-repeat="catName in catData.l1Categories"
+          ng-show="showL1Category( catName )">
+          
        <tr class='cat-name'>
            <td colspan="{{$parent.$parent.catType=='Debit'?3:7}}">
                 <div ng-show="!catName.beingEdited" 
@@ -48,7 +52,8 @@
             <td ng-if="$parent.$parent.catType=='Debit'" colspan="4">
             </td>
        </tr>
-       <tr ng-repeat="cat in catData.l2Categories.get( catName.displayName )">
+       <tr ng-repeat="cat in catData.l2Categories.get( catName.displayName )"
+           ng-show="showL2Category( cat )" >
             <td></td>
             <td>
                 <div ng-show="!cat.beingEdited" 

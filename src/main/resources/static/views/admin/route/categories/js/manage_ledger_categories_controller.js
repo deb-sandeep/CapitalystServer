@@ -66,6 +66,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     $scope.totalBudget = 0 ;
     
+    $scope.showOnlyBudgetedDebitCategories = true ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading ManageLedgerCategoriesController" ) ;
@@ -391,6 +393,30 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     $scope.operatingFYChanged = function() {
         fetchClassificationCategories() ;
+    }
+    
+    $scope.showL1Category = function( catName ) {
+        
+        if( $scope.showOnlyBudgetedDebitCategories ) {
+            if( $scope.activeCategory == 'Debit' ) {
+                if( catName.yearlyBudget == 0 ) {
+                    return false ;
+                }
+            }
+        }
+        return true ;
+    }
+    
+    $scope.showL2Category = function( cat ) {
+        
+        if( $scope.showOnlyBudgetedDebitCategories ) {
+            if( $scope.activeCategory == 'Debit' ) {
+                if( cat.yearlyCap == 0 ) {
+                    return false ;
+                }
+            }
+        }
+        return true ;
     }
     
     // --- [END] Scope functions
