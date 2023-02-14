@@ -1,5 +1,6 @@
 function CatName( name, categoryData ) {
     
+    this.yearlyBudget = 0 ;
     this.displayName = name ;
     this.categoryData = categoryData ;
     this.beingEdited = false ;
@@ -62,6 +63,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
     
     $scope.operatingFY = null ;
     $scope.fyChoices = getFYChoices() ;
+    
+    $scope.totalBudget = 0 ;
     
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
@@ -358,6 +361,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         saveBudgetRuleOnServer( cat.id, cat.amountLoadingRule,
             function() {
                 $scope.hideBudgetEditorDialog() ;
+                fetchCategoryBudgetRules() ;
             },
             function() {
                 $scope.hideBudgetEditorDialog() ;
@@ -376,6 +380,7 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         saveBudgetRuleOnServer( cat.id, "",
             function() {
                 $scope.hideBudgetEditorDialog() ;
+                fetchCategoryBudgetRules() ;
             },
             function() {
                 $scope.hideBudgetEditorDialog() ;
@@ -424,6 +429,8 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         $scope.ledgerCategories.credit.l2Categories.clear() ;
         $scope.ledgerCategories.debit.l1Categories.length = 0 ;  
         $scope.ledgerCategories.debit.l2Categories.clear() ;
+        
+        $scope.totalBudget = 0 ;
         
         clearCatEditCtx() ;
         
@@ -754,13 +761,36 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         return choices ;
     }
     
+    // 1. Resets 
+    //      - the total budget
+    //      - the yearly budget for each l1 category
+    // 3. Repopulates
+    //      - Budget for each l2 line item
+    // 4. Computes
+    //      - Budget for each l1 line item
+    //      - Total budget 
     function populateCategoryBudget( budgetList ) {
+        
+        var catData = $scope.ledgerCategories.debit ;
+        
+        $scope.totalBudget = 0 ;
+        for( var j=0; j<catData.l1Categories.length; j++ ) {
+            catData.l1Categories[j].yearlyBudget = 0 ;
+        }
         
         for( var i=0; i<budgetList.length; i++ ) {
             
             var budget = budgetList[i] ;
-            var catData = $scope.ledgerCategories.debit ;
-                            
+            var l1CatName = null ;
+            
+            for( var j=0; j<catData.l1Categories.length; j++ ) {
+                var catName = catData.l1Categories[j] ;
+                if( catName.displayName == budget.l1CatName ) {
+                    l1CatName = catName ;
+                    break ;
+                } 
+            }
+
             if( catData.l2Categories.has( budget.l1CatName ) ) {
                 var l2Array = catData.l2Categories.get( budget.l1CatName ) ;
                 
@@ -769,6 +799,10 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
                     if( cat.l2CatName == budget.l2CatName ) {
                         cat.amountLoadingRule = budget.budgetRule ;
                         cat.yearlyCap = budget.yearlyCap ;
+                        
+                        $scope.totalBudget += cat.yearlyCap ;
+                        l1CatName.yearlyBudget += cat.yearlyCap ;
+                        
                         break ;
                     }
                 }

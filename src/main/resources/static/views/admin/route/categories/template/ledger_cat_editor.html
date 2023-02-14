@@ -1,6 +1,12 @@
 <nav>
   <ol class="breadcrumb" style="background-color:#eef4fa;">
-    <li class="breadcrumb-item" style="color:#444;">{{catName}} Entries</li>
+    <li class="breadcrumb-item" style="color:#444;">
+        {{operatingFY.label}} - {{activeCategory}} Entries.&nbsp;
+        <span ng-if="activeCategory == 'Debit'">
+            Total budget - 
+            <span style="font-family:Courier">{{totalBudget | amt}}</span>
+        </span>
+    </li>
   </ol>
 </nav>
 <table class="pure-table pure-table-bordered">
@@ -21,7 +27,7 @@
    </thead>
    <tbody ng-repeat="catName in catData.l1Categories">
        <tr class='cat-name'>
-           <td colspan="{{$parent.$parent.catType=='Debit'?8:7}}">
+           <td colspan="{{$parent.$parent.catType=='Debit'?3:7}}">
                 <div ng-show="!catName.beingEdited" 
                      ng-click="startEditingL1CategoryName( catName )">
                     <b>{{catName.displayName}}</b>
@@ -33,6 +39,13 @@
                            ng-enter="saveL1CategoryName( catName )"
                            ng-escape="revertL1CategoryEditChanges( catName )"/> 
                 </div>
+            </td>
+            <td ng-if="$parent.$parent.catType=='Debit'"
+                class="numeric"
+                style="color:blue;">
+                {{catName.yearlyBudget | amt}}
+            </td>
+            <td ng-if="$parent.$parent.catType=='Debit'" colspan="4">
             </td>
        </tr>
        <tr ng-repeat="cat in catData.l2Categories.get( catName.displayName )">
