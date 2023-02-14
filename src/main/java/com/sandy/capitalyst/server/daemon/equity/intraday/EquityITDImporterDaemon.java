@@ -33,6 +33,7 @@ public class EquityITDImporterDaemon extends Thread {
     public static final String CFG_FORCE_MKT_OPEN     = "force_mkt_open" ;
     public static final String CFG_LAST_REFRESH_TIME  = "last_refresh (ro)" ;
     public static final String CFG_NEXT_REFRESH_TIME  = "next_refresh (ro)" ;
+    public static final String CFG_CAPTRE_RAW_SNAPSHOT= "capture_raw_snapshot" ;
     
     public static final int MIN_REFRESH_DELAY = 15 ;
 

@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.daemon.equity.intraday;
 
 import static com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon.CFG_GRP_NAME ;
 import static com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon.CFG_PRINT_DEBUG_STMT ;
+import static com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon.CFG_CAPTRE_RAW_SNAPSHOT ;
 
 import java.io.File ;
 import java.io.FileReader ;
@@ -19,6 +20,7 @@ import java.util.Set ;
 
 import javax.annotation.PostConstruct ;
 
+import org.apache.commons.io.FileUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.stereotype.Component ;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Component ;
 import com.fasterxml.jackson.databind.JsonNode ;
 import com.fasterxml.jackson.databind.ObjectMapper ;
 import com.sandy.capitalyst.server.CapitalystServer ;
+import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
@@ -41,6 +44,7 @@ public class EquityITDSnapshotService {
     private static final Logger log = Logger.getLogger( EquityITDSnapshotService.class ) ;
     
     private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy HH:mm:ss" ) ;
+    private static final SimpleDateFormat SNAPSHOT_SDF = new SimpleDateFormat( "yyyy-MM-dd-HH-mm-ss" ) ;
     
     private static final String EQ_ITD_URL = 
         "https://www.nseindia.com/api/equity-stockIndices?index=NIFTY+TOTAL+MARKET" ;
@@ -80,6 +84,7 @@ public class EquityITDSnapshotService {
     private Set<String> qualifiedStocks = new HashSet<>() ;
     
     private boolean debugEnable  = true ;
+    private boolean captureRawSnapshot = false ;
     
     private File cookieFile = null ;
 
@@ -117,14 +122,14 @@ public class EquityITDSnapshotService {
             }
             collateEquityITDSnapshot( snapshots, EQ_ITD_URL, 
                                       "itd-eq-pricevol.txt", 
-                                      this::buildEquityITDSnapshot, 2 ) ;
+                                      this::buildEquityITDSnapshot, 2, "eqt" ) ;
             
             if( debugEnable ) {
                 log.debug( "- Collating ETF ITD snapshots" ) ;
             }
             collateEquityITDSnapshot( snapshots, ETF_ITD_URL, 
                                       "itd-etf-pricevol.txt",
-                                      this::buildETFITDSnapshot, 2 ) ;
+                                      this::buildETFITDSnapshot, 2, "etf" ) ;
         }
         catch( SocketTimeoutException e ) {
             // Do nothing.
@@ -139,11 +144,12 @@ public class EquityITDSnapshotService {
                                            String url,
                                            String headerFile,
                                            ITDSnapshotBuilder builder,
-                                           int remainingTries ) 
+                                           int remainingTries,
+                                           String filePrefix ) 
         throws SocketTimeoutException {
         
         try {
-            String       jsonStr   = downloadIntradaySnapshotJSON( url, headerFile ) ;
+            String       jsonStr   = downloadIntradaySnapshotJSON( url, headerFile, filePrefix ) ;
             ObjectMapper objMapper = new ObjectMapper() ;
             JsonNode     jsonRoot  = objMapper.readTree( jsonStr ) ;
             
@@ -182,7 +188,7 @@ public class EquityITDSnapshotService {
                 }
                 catch( InterruptedException e ) {}
                 collateEquityITDSnapshot( snapshots, url, headerFile,
-                                          builder, remainingTries-1 );
+                                          builder, remainingTries-1, filePrefix );
             }
             else {
                 if( debugEnable ) {
@@ -236,7 +242,8 @@ public class EquityITDSnapshotService {
     }
     
     private String downloadIntradaySnapshotJSON( String url,
-                                                 String headerFile ) 
+                                                 String headerFile,
+                                                 String filePrefix ) 
         throws Exception {
         
         if( debugEnable ) {
@@ -253,7 +260,23 @@ public class EquityITDSnapshotService {
             log.debug( "->> Response " + response.length() + " bytes." ) ;
         }
         
+        if( captureRawSnapshot ) {
+            log.debug( "->> Capturing raw snapshot." ) ;
+            captureRawSnapshot( filePrefix, response ) ;
+        }
+        
         return response ;
+    }
+    
+    private void captureRawSnapshot( String filePrefix, String response )
+        throws Exception {
+        
+        String fileName = filePrefix + "-" + SNAPSHOT_SDF.format( new Date() ) + ".json" ;
+        CapitalystConfig cfg = CapitalystServer.getConfig() ;
+        File snapshotDir = new File( cfg.getWorkspaceDir(), "raw_itd_snapshots" ) ;
+        File snapshotFile = new File( snapshotDir, fileName ) ;
+        
+        FileUtils.write( snapshotFile, response ) ;
     }
     
     private Map<String, String> loadCookies() {
@@ -279,6 +302,7 @@ public class EquityITDSnapshotService {
         NVPManager nvpMgr = NVPManager.instance() ;
         NVPConfigGroup cfg = nvpMgr.getConfigGroup( CFG_GRP_NAME ) ; ;
 
-        debugEnable  = cfg.getBoolValue( CFG_PRINT_DEBUG_STMT, debugEnable ) ;
+        debugEnable        = cfg.getBoolValue( CFG_PRINT_DEBUG_STMT, debugEnable ) ;
+        captureRawSnapshot = cfg.getBoolValue( CFG_CAPTRE_RAW_SNAPSHOT,captureRawSnapshot ) ;
     }
 }
