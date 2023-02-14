@@ -757,15 +757,6 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
         ) ;        
     }
     
-    function getCurrentFY() {
-      const date = new Date() ;
-      
-      var year = date.getFullYear() ;
-      var month = date.getMonth() ;
-      
-      return ( month >=0 && month <=2 ) ? year-1 : year ;
-    }
-    
     function getFYChoices() {
         
         var choices = [{
@@ -785,6 +776,15 @@ capitalystNgApp.controller( 'ManageLedgerCategoriesController',
             }
         }
         return choices ;
+    }
+    
+    function getCurrentFY() {
+      const date = new Date() ;
+      
+      var year = date.getFullYear() ;
+      var month = date.getMonth() ;
+      
+      return ( month >=0 && month <=2 ) ? year-1 : year ;
     }
     
     // 1. Resets 

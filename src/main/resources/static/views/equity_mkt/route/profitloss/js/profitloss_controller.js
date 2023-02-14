@@ -7,7 +7,7 @@ capitalystNgApp.controller( 'ProfitLossController',
     } ;
     
     // ---------------- Scope variables --------------------------------------
-    $scope.$parent.navBarTitle = "Profit Loss from Equity (this FY)" ;
+    $scope.$parent.navBarTitle = "Profit Loss from Equity" ;
     $scope.$parent.activeModuleId = "profitloss" ;
     
     $scope.sellTxns = [] ;
@@ -112,6 +112,25 @@ capitalystNgApp.controller( 'ProfitLossController',
         sortArrayByProperty( sortDir[colId], $scope.sellTxns, property, type ) ;
     }
     
+    $scope.$parent.operatingFYChanged = function() {
+        console.log( "Operating FY changed : " + $scope.$parent.operatingFY.value ) ;
+        fetchProfitLossDataFromServer() ;
+    }
+    
+    $scope.selectNextOperatingYear = function() {
+        if( $scope.$parent.operatingFY.nextChoice != null ) {
+            $scope.$parent.operatingFY = $scope.$parent.operatingFY.nextChoice ;
+            $scope.$parent.operatingFYChanged() ;
+        }
+    }
+    
+    $scope.selectPrevOperatingYear = function() {
+        if( $scope.$parent.operatingFY.prevChoice != null ) {
+            $scope.$parent.operatingFY = $scope.$parent.operatingFY.prevChoice ;
+            $scope.$parent.operatingFYChanged() ;
+        }
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -143,7 +162,7 @@ capitalystNgApp.controller( 'ProfitLossController',
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         
-        $http.get( '/Equity/Transactions/Sell' )
+        $http.get( '/Equity/Transactions/Sell?fy=' + $scope.$parent.operatingFY.value )
         .then ( 
             function( response ){
                 console.log( response.data ) ;

@@ -10,6 +10,9 @@ capitalystNgApp.controller( 'EquityMktLandingController',
     $scope.navBarTitle = "Equity Market" ;
     $scope.activeModuleId = "portfolio" ;
     
+    $scope.operatingFY = null ;
+    $scope.fyChoices = getFYChoices() ;
+    
     // -----------------------------------------------------------------------
     // --- [START] Controller initialization ---------------------------------
     console.log( "Loading EquityMktLandingController" ) ;
@@ -55,6 +58,40 @@ capitalystNgApp.controller( 'EquityMktLandingController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
+    }
+    
+    function getFYChoices() {
+        
+        var choices = [] ;
+        var curFY = getCurrentFY() ;
+        
+        for( var i=curFY-5; i<=curFY; i++ ) {
+            var prevChoice = choices.length > 0 ? choices[choices.length-1] : null ;
+            choices.push( {
+                label : 'FY ' + i,
+                value : i,
+                prevChoice : prevChoice,
+                nextChoice : null
+            } ) ;
+            
+            if( prevChoice != null ) {
+                prevChoice.nextChoice = choices[choices.length-1] ;
+            }
+            
+            if( i == curFY ) {
+                $scope.operatingFY = choices[ choices.length - 1 ] ;
+            }
+        }
+        return choices ;
+    }
+    
+    function getCurrentFY() {
+      const date = new Date() ;
+      
+      var year = date.getFullYear() ;
+      var month = date.getMonth() ;
+      
+      return ( month >=0 && month <=2 ) ? year-1 : year ;
     }
     
     // ------------------- Server comm functions -----------------------------

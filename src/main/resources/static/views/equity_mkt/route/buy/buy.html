@@ -1,3 +1,23 @@
+<div id="nav-panel" align="center">
+    <span class="glyphicon glyphicon-chevron-left"
+          ng-show="$parent.operatingFY.prevChoice != null"
+          ng-click="selectPrevOperatingYear()"></span>
+    <select class="form-field fin-year-select" 
+            ng-model="$parent.operatingFY"
+            ng-options="item as item.label for item in fyChoices"
+            ng-change="operatingFYChanged()">
+    </select>
+    <span class="glyphicon glyphicon-chevron-right"
+          ng-show="$parent.operatingFY.nextChoice != null"
+          ng-click="selectNextOperatingYear()"></span>
+    <span style="font-size: 20px; margin-left:50px;">
+        <span>Invested amount : </span>
+        <span class="fixed-font" ng-class="getAmtClass(allTotal.costPrice)">
+            {{allTotal.costPrice | amt}}
+        </span>
+    </span>
+</div>
+
 <div style="padding: 0px; margin: 10px" align="center">
     <table class="table table-bordered table-compact"
            style="width: auto !important;">

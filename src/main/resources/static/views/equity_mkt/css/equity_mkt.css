@@ -111,3 +111,10 @@ td {
 	width: auto !important;
 }
 
+.fin-year-select {
+    width: 120px;
+    height:30px;
+    font-size:16px;
+    margin: 5px;
+    display: inline-block;
+}

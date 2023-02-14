@@ -86,6 +86,25 @@ capitalystNgApp.controller( 'BuyController',
         sortArrayByProperty( sortDir[colId], $scope.buyTxns, property, type ) ;
     }
     
+    $scope.$parent.operatingFYChanged = function() {
+        console.log( "Operating FY changed : " + $scope.$parent.operatingFY.value ) ;
+        fetchBuyDataFromServer() ;
+    }
+    
+    $scope.selectNextOperatingYear = function() {
+        if( $scope.$parent.operatingFY.nextChoice != null ) {
+            $scope.$parent.operatingFY = $scope.$parent.operatingFY.nextChoice ;
+            $scope.$parent.operatingFYChanged() ;
+        }
+    }
+    
+    $scope.selectPrevOperatingYear = function() {
+        if( $scope.$parent.operatingFY.prevChoice != null ) {
+            $scope.$parent.operatingFY = $scope.$parent.operatingFY.prevChoice ;
+            $scope.$parent.operatingFYChanged() ;
+        }
+    }
+    
     // --- [END] Scope functions
 
     // -----------------------------------------------------------------------
@@ -106,7 +125,7 @@ capitalystNgApp.controller( 'BuyController',
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         
-        $http.get( '/Equity/Transactions/Buy' )
+        $http.get( '/Equity/Transactions/Buy?fy=' + $scope.$parent.operatingFY.value )
         .then ( 
             function( response ){
                 console.log( response.data ) ;
