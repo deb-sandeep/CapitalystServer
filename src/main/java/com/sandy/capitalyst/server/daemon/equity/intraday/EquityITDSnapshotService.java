@@ -204,7 +204,7 @@ public class EquityITDSnapshotService {
     
     private ITDSnapshot buildEquityITDSnapshot( JsonNode node ) {
         
-        if( !node.get( "series" ).asText().equals( "EQ" ) ) {
+        if( node.has( "series" ) && !node.get( "series" ).asText().equals( "EQ" ) ) {
             return null ;
         }
 
