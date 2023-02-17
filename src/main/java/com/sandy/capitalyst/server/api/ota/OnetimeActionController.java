@@ -27,7 +27,8 @@ import com.sandy.capitalyst.server.api.ota.action.idxrefresh.IndexMasterRefreshO
 import com.sandy.capitalyst.server.api.ota.action.prevcloseupdater.HistPrevCloseUpdater ;
 import com.sandy.capitalyst.server.api.ota.action.tradeupdater.EquityTradeUpdater ;
 import com.sandy.capitalyst.server.api.ota.vo.PartResult ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMapResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 
 @RestController
 public class OnetimeActionController {
@@ -53,39 +54,81 @@ public class OnetimeActionController {
         executorService = Executors.newFixedThreadPool( 5 ) ;
     }
     
+    private OTA getOTAInstance( String actionId ) 
+        throws Exception {
+        
+        Class<? extends OTA> clz = null ;
+        OTA action = null ;
+        
+        clz = otaMap.get( actionId ) ;
+        if( clz == null ) {
+            throw new IllegalArgumentException( "Invalid OTA - " + actionId ) ;
+        }
+        
+        action = clz.getDeclaredConstructor().newInstance() ;
+        return action ;
+    }
+        
+    @GetMapping( "/OTA/DefaultConfigs" ) 
+    public ResponseEntity<? extends APIMapResponse> getDefaultConfigs() {
+        
+        try {
+            log.debug( "Getting default configuration for all action " ) ;
+            
+            APIMapResponse response = new APIMapResponse() ;
+            
+            otaMap.forEach( (k,v) -> {
+                try {
+                    OTA instance = getOTAInstance( k ) ;
+                    Map<String, Object> params = instance.getDefaultParameters() ;
+                    response.set( k, params ) ;
+                }
+                catch( Exception e ) {
+                    log.error( "Exception in getting OTA instance.", e ) ;
+                }
+            } ) ;
+            
+            return ResponseEntity.status( HttpStatus.OK ).body( response ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Saving account data.", e ) ;
+            return APIMsgResponse.serverError( e.getMessage() ) ;
+        }
+    }
+    
     @PostMapping( "/OTA/Execute/{actionId}" ) 
-    public ResponseEntity<APIResponse> execute( 
+    public ResponseEntity<APIMsgResponse> execute( 
                                 @PathVariable String actionId,
-                                @RequestBody Map<String, String> parameters ) {
+                                @RequestBody Map<String, Object> parameters ) {
         try {
             log.debug( "Executing action " + actionId ) ;
             
-            Class<? extends OTA> clz = null ;
-            OTA action = null ;
+            OTA action = getOTAInstance( actionId ) ;
             
-            clz = otaMap.get( actionId ) ;
-            if( clz == null ) {
-                throw new IllegalArgumentException( "Invalid OTA - " + actionId ) ;
+            if( parameters != null && !parameters.isEmpty() ) {
+                log.debug( "Parameters : " ) ;
+                parameters.forEach( (k,v)->{
+                    log.debug( "  " + k + " = " + v ) ;
+                }) ;
+                action.setParameters( parameters ) ;
             }
-            
-            action = clz.getDeclaredConstructor().newInstance() ;
-            action.setParameters( parameters ) ;
             
             executorService.execute( action ) ;
             executingActions.put( actionId, action ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( APIResponse.SUCCESS ) ;
+                                 .body( APIMsgResponse.SUCCESS ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( e.getMessage() ) ) ;
+                                 .body( new APIMsgResponse( e.getMessage() ) ) ;
         }
     }
     
     @GetMapping( "/OTA/PartResults" )
     public ResponseEntity<Map<String, List<PartResult>>> getResults() {
+        
         try {
             Map<String, List<PartResult>> results = new HashMap<>() ;
             Iterator<Map.Entry<String, OTA>> iter = null ; 

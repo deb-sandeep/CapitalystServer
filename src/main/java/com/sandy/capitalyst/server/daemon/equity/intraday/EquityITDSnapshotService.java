@@ -199,6 +199,7 @@ public class EquityITDSnapshotService {
         }
         catch( Exception e ) {
             log.error( "->  Error obtaining ITD snapshot. " + e.getMessage() ) ;
+            log.error( e ) ;
         }
     }
     

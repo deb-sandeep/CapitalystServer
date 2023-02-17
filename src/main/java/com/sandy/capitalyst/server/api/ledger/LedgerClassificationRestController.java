@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.ledger.helpers.LedgerClassificationInput ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifier ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryClassificationRule ;
@@ -35,7 +35,7 @@ public class LedgerClassificationRestController {
     private LedgerEntryClassificationRuleRepo leClassificationRuleRepo = null ;
     
     @PostMapping( "/Ledger/Classification" ) 
-    public ResponseEntity<APIResponse> classifyLedgerEntries( 
+    public ResponseEntity<APIMsgResponse> classifyLedgerEntries( 
                          @RequestBody LedgerClassificationInput input ) {
         try {
             log.debug( "Classifying ledger entries." ) ;
@@ -44,7 +44,7 @@ public class LedgerClassificationRestController {
             processEntryClassification( input ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( "Success" ) ) ;
+                                 .body( new APIMsgResponse( "Success" ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;

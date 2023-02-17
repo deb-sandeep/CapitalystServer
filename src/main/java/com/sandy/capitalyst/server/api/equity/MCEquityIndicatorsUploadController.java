@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators ;
 import com.sandy.capitalyst.server.api.equity.vo.StockIndicators.TechIndicator ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
@@ -45,7 +45,7 @@ public class MCEquityIndicatorsUploadController {
     private EquityIndicatorsHistRepo eihRepo = null ;
     
     @PostMapping( "/Equity/Master/MCStockIndicators" ) 
-    public ResponseEntity<APIResponse> updateMCStockIndicators(
+    public ResponseEntity<APIMsgResponse> updateMCStockIndicators(
                                      @RequestBody StockIndicators ind ) {
         try {
             log.debug( "Updating indicators for " + ind.getSymbolNse() ) ;
@@ -56,13 +56,13 @@ public class MCEquityIndicatorsUploadController {
 
             String msg = "Success. Updated indicators for " + ind.getSymbolNse() ;
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( msg ) ) ;
+                                 .body( new APIMsgResponse( msg ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving equity holding.", e ) ;
             String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( stackTrace ) ) ;
+                                 .body( new APIMsgResponse( stackTrace ) ) ;
         }
     }
     

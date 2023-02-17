@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.index.helper.IndexRefresher ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.dao.index.IndexMaster ;
 import com.sandy.capitalyst.server.dao.index.repo.IndexMasterRepo ;
 
@@ -86,7 +86,7 @@ public class IndexMasterController {
     }
 
     @PostMapping( "/IndexMaster/Refresh/{id}" ) 
-    public ResponseEntity<APIResponse> refreshIdx( @PathVariable Integer id ) {
+    public ResponseEntity<APIMsgResponse> refreshIdx( @PathVariable Integer id ) {
         try {
             log.debug( "Updating index master" ) ;
             
@@ -94,28 +94,28 @@ public class IndexMasterController {
             int numUpdates = refresher.refreshIndex( id ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse(
+                                 .body( new APIMsgResponse(
                                          numUpdates + " symbols updated." ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving index master.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( e.getMessage() ) ) ;
+                                 .body( new APIMsgResponse( e.getMessage() ) ) ;
         }
     }
 
     @DeleteMapping( "/IndexMaster/{id}" ) 
-    public ResponseEntity<APIResponse> delete( @PathVariable Integer id ) {
+    public ResponseEntity<APIMsgResponse> delete( @PathVariable Integer id ) {
         try {
             log.debug( "Deleting index master. " + id ) ;
             imRepo.deleteById( id ) ;
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( "Successfully deleted" ) ) ;
+                                 .body( new APIMsgResponse( "Successfully deleted" ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( e.getMessage() ) ) ;
+                                 .body( new APIMsgResponse( e.getMessage() ) ) ;
         }
     }
 }

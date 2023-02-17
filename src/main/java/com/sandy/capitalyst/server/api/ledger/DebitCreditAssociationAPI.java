@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.dao.ledger.DebitCreditAssoc ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 import com.sandy.capitalyst.server.dao.ledger.repo.DebitCreditAssocRepo ;
@@ -215,13 +215,13 @@ public class DebitCreditAssociationAPI {
     }
     
     @DeleteMapping( "/DebitCreditAssociation/{id}" ) 
-    public ResponseEntity<APIResponse> delete( @PathVariable Integer id ) {
+    public ResponseEntity<APIMsgResponse> delete( @PathVariable Integer id ) {
         try {
             log.debug( "Deleting association entry. " + id ) ;
             dcaRepo.deleteById( id ) ;
             
             return status( HttpStatus.OK )
-                   .body( new APIResponse( "Successfully deleted" ) ) ;
+                   .body( new APIMsgResponse( "Successfully deleted" ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Deleting association entry.", e ) ;

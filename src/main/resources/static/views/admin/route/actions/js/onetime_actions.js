@@ -3,7 +3,42 @@ function OTAStat( id ) {
     this.message = "" ;
     this.executing = false ;
     this.viewLog = false ;
+    this.viewConfig = false ;
     this.parameters = {} ;
+    this.editableParameters = null ;
+    this.configError = null ;
+    
+    this.hasParams = function() {
+        return this.parameters != null && 
+               Object.keys( this.parameters ).length != 0 ;
+    }
+    
+    this.toggleParamsEditor = function() {
+        this.viewConfig = !this.viewConfig ;
+    }
+    
+    this.viewOTALog = function() {
+        this.viewLog = !this.viewLog ;
+    }
+    
+    this.validateConfig = function() {
+
+        this.configError = null ;
+        try {
+            if( this.editableParameters != null ) {
+                this.parameters = JSON.parse( this.editableParameters ) ;
+            }
+            return true ;
+        }
+        catch( e ) {
+            this.configError = e ;
+            return false ;
+        }
+    }
+
+    this.validConfigEditorClass = function() {
+        return ( this.configError != null ) ? "invalid-rule" : "valid-rule" ;
+    }
 }
 
 capitalystNgApp.controller( 'OneTimeActionsController', 
@@ -35,24 +70,28 @@ capitalystNgApp.controller( 'OneTimeActionsController',
     // -----------------------------------------------------------------------
     // --- [START] Scope functions -------------------------------------------
     $scope.executeOTA = function( actionId ) {
-        $http.post( '/OTA/Execute/' + actionId, 
-                    $scope.otaStat[ actionId ].parameters )
-        .then ( 
-            function(){
-                $scope.otaStat[ actionId ].executing = true ;
-                $scope.otaStat[ actionId ].message = "" ;
-                $scope.otaStat[ actionId ].viewLog = true ;
-                fetchOTAPartResults() ;
-            }, 
-            function(){
-                $scope.$parent.addErrorAlert( "Error triggering OTA." ) ;
-            }
-        )
-    }
-    
-    $scope.viewOTALog = function( actionId ) {
-        var ota = $scope.otaStat[ actionId ] ; 
-        ota.viewLog = !ota.viewLog ;
+        
+        const ota = $scope.otaStat[ actionId ] ;
+        
+        if( ota.validateConfig() ) {
+            $http.post( '/OTA/Execute/' + actionId, ota.parameters )
+            .then ( 
+                function(){
+                    $scope.otaStat[ actionId ].executing = true ;
+                    $scope.otaStat[ actionId ].message = "" ;
+                    $scope.otaStat[ actionId ].viewLog = true ;
+                    fetchOTAPartResults() ;
+                }, 
+                function(){
+                    $scope.$parent.addErrorAlert( "Error triggering OTA." ) ;
+                }
+            )
+        }
+        else {
+            $scope.$parent.addErrorAlert( "Configuration invalid. Msg : " + 
+                                          ota.configError ) ;
+        }
+        
     }
     
     // --- [START] Scope functions dealilng with non UI logic ----------------
@@ -63,9 +102,53 @@ capitalystNgApp.controller( 'OneTimeActionsController',
     // --- [START] Local functions -------------------------------------------
     
     function initializeController() {
-        setTimeout( function(){
-            fetchOTAPartResults() ;
-        }, 1000 ) ;
+        
+        console.log( "Initializing OTA controller." ) ;
+        
+        fetchOTADefaultConfigs( function(){
+            setTimeout( function(){
+                fetchOTAPartResults() ;
+            }, 1000 ) ;
+        }) ;
+    }
+    
+    function fetchOTADefaultConfigs( successCallback ) {
+        
+        console.log( "Fetching default configurations received." ) ;
+        
+        $http.get( '/OTA/DefaultConfigs' )
+        .then ( 
+            function( response ){
+                
+                console.log( "Default configurations received." ) ;
+                
+                if( response.data.result == 'Success' ) {
+                    
+                    for( const actionId in response.data.body ) {
+                        
+                        const props = response.data.body[ actionId ] ;
+                        console.log( "  Default properties for " + actionId ) ;
+                        console.log( props ) ;
+                        
+                        const otaStat = $scope.otaStat[actionId] ;
+                        
+                        otaStat.parameters = props ;
+                        if( props != null ) {
+                            otaStat.editableParameters = JSON.stringify( props, null, 2 ) ;
+                        }
+                    }
+                    successCallback() ;
+                }
+                else {
+                    $scope.$parent.addErrorAlert( "Could not fetch OTA configs.\n" +
+                                                  response.data.message ) ;
+                }
+            }, 
+            function( error ){
+                $scope.$parent.addErrorAlert( "Could not fetch OTA results.\n" +
+                                              error.data.message ) ;
+            }
+        )
     }
     
     function fetchOTAPartResults() {

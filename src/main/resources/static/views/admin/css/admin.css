@@ -116,3 +116,8 @@ pre {
     margin: 5px;
     display: inline-block;
 }
+
+.error-msg {
+	color : red ;
+}
+

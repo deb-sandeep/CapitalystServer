@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundMaster ;
 import com.sandy.capitalyst.server.dao.mf.repo.MutualFundRepo ;
 
@@ -28,7 +28,7 @@ public class EnrichMFMetaController {
     private MutualFundRepo mfRepo = null ;
     
     @PostMapping( "/MutualFund/EnrichMFMeta" ) 
-    public ResponseEntity<APIResponse> refreshMFMeta(
+    public ResponseEntity<APIMsgResponse> refreshMFMeta(
                                 @RequestBody List<String[]> mfMetaDetails ) {
         try {
             log.debug( "Uploading Mutual Fund meta" ) ;
@@ -92,13 +92,13 @@ public class EnrichMFMetaController {
             String msg = "Success. Num records updated = " + 
                          numRecordsUpdated ;
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( msg ) ) ;
+                                 .body( new APIMsgResponse( msg ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( stackTrace ) ) ;
+                                 .body( new APIMsgResponse( stackTrace ) ) ;
         }
     }
 }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.equity.vo.EquityTxnPostingVO ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
@@ -38,7 +38,7 @@ public class EquityTransactionsUploadController {
     private EquityTxnRepo etRepo = null ;
     
     @PostMapping( "/Equity/Transaction" ) 
-    public ResponseEntity<APIResponse> updateEquityTransactions(
+    public ResponseEntity<APIMsgResponse> updateEquityTransactions(
                                 @RequestBody List<EquityTxnPostingVO> txnPostings ) {
         try {
             log.debug( "Updating equity transactions" ) ;
@@ -60,13 +60,13 @@ public class EquityTransactionsUploadController {
 
             String msg = "Success. Saved " + txnPostings.size() + " txns." ;
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( msg ) ) ;
+                                 .body( new APIMsgResponse( msg ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving equity holding.", e ) ;
             String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( stackTrace ) ) ;
+                                 .body( new APIMsgResponse( stackTrace ) ) ;
         }
     }
     

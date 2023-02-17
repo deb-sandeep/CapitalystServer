@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.core.CapitalystConstants.AccountType ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.account.repo.AccountRepo ;
 import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDeposit ;
@@ -89,7 +89,7 @@ public class SavingAccountRestController {
     }
 
     @DeleteMapping( "/SavingAccount/{id}" ) 
-    public ResponseEntity<APIResponse> deleteAccount( @PathVariable Integer id ) {
+    public ResponseEntity<APIMsgResponse> deleteAccount( @PathVariable Integer id ) {
         try {
             log.debug( "Deleting account. " + id ) ;
             Account account = accountRepo.findById( id ).get() ;
@@ -97,10 +97,10 @@ public class SavingAccountRestController {
             	account.setDeleted( true ) ;
             	accountRepo.save( account ) ;
             	return ResponseEntity.status( HttpStatus.OK )
-            			             .body( new APIResponse( "Successfully deleted" ) ) ;
+            			             .body( new APIMsgResponse( "Successfully deleted" ) ) ;
             }
         	return ResponseEntity.status( HttpStatus.NOT_FOUND )
-        		                 .body( new APIResponse( "Account " + id + " not found." ) ) ;
+        		                 .body( new APIMsgResponse( "Account " + id + " not found." ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;

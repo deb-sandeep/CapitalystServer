@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable ;
 import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.EquityMonitor ;
@@ -30,7 +30,7 @@ public class EquityMonitorController {
     private EquityMonitorRepo emonRepo = null ;
     
     @PostMapping( "/Equity/Monitor/{isin}" ) 
-    public ResponseEntity<APIResponse> addMonitor( @PathVariable String isin ) {
+    public ResponseEntity<APIMsgResponse> addMonitor( @PathVariable String isin ) {
         try {
             EquityMaster em = emRepo.findByIsin( isin ) ;
             
@@ -50,29 +50,29 @@ public class EquityMonitorController {
             
             RecoManager.instance().setMonitorFlag( mon, true ) ;
 
-            return APIResponse.success() ;
+            return APIMsgResponse.success() ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving equity monitor.", e ) ;
             String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
-            return APIResponse.serverError( stackTrace ) ;
+            return APIMsgResponse.serverError( stackTrace ) ;
         }
     }
 
     @DeleteMapping( "/Equity/Monitor/{isin}" ) 
-    public ResponseEntity<APIResponse> deleteMonitor( @PathVariable String isin ) {
+    public ResponseEntity<APIMsgResponse> deleteMonitor( @PathVariable String isin ) {
         try {
             EquityMonitor mon = emonRepo.findByIsin( isin ) ;
             if( mon != null ) {
                 emonRepo.delete( mon ) ;
             }
             RecoManager.instance().setMonitorFlag( mon, false ) ;
-            return APIResponse.success() ;
+            return APIMsgResponse.success() ;
         }
         catch( Exception e ) {
             log.error( "Error :: Deleting equity monitor.", e ) ;
             String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
-            return APIResponse.serverError( stackTrace ) ;
+            return APIMsgResponse.serverError( stackTrace ) ;
         }
     }
 }

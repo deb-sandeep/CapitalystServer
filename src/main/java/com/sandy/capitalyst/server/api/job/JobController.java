@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 
 @RestController
 public class JobController {
@@ -16,7 +16,7 @@ public class JobController {
     private static final Logger log = Logger.getLogger( JobController.class ) ;
     
     @PostMapping( "/Job/TriggerNow/{jobName}" ) 
-    public ResponseEntity<APIResponse> saveCashEntry( 
+    public ResponseEntity<APIMsgResponse> saveCashEntry( 
                                      @PathVariable String jobName ) {
         try {
             log.debug( "Triggering job = " + jobName ) ;
@@ -24,7 +24,7 @@ public class JobController {
                             .getScheduler()
                             .triggerJob( jobName ) ;
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( APIResponse.SUCCESS ) ;
+                                 .body( APIMsgResponse.SUCCESS ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Triggering Job " + jobName, e ) ;

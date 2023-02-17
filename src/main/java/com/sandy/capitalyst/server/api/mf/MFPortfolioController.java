@@ -19,7 +19,7 @@ import com.sandy.capitalyst.server.api.mf.helper.MFHolding ;
 import com.sandy.capitalyst.server.api.mf.helper.MFPortfolioBuilder ;
 import com.sandy.capitalyst.server.api.mf.helper.MFTxn ;
 import com.sandy.capitalyst.server.api.mf.helper.MFUpdateInfo ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAsset ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundTxn ;
@@ -59,7 +59,7 @@ public class MFPortfolioController {
     }
     
     @PostMapping( "/MutualFund/Portfolio" ) 
-    public ResponseEntity<APIResponse> updateMutualFundPortfolio(
+    public ResponseEntity<APIMsgResponse> updateMutualFundPortfolio(
                                 @RequestBody List<MutualFundAsset> mfAssets ) {
         try {
             log.debug( "Updating MF portfolio" ) ;
@@ -68,18 +68,18 @@ public class MFPortfolioController {
                 saveMFAsset( asset ) ;
             }
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( "Success" ) ) ;
+                                 .body( new APIMsgResponse( "Success" ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( stackTrace ) ) ;
+                                 .body( new APIMsgResponse( stackTrace ) ) ;
         }
     }
     
     @PostMapping( "/MutualFund/TxnList" ) 
-    public ResponseEntity<APIResponse> updateMutualFundTxns(
+    public ResponseEntity<APIMsgResponse> updateMutualFundTxns(
                                 @RequestBody List<MFTxn> txnList ) {
         try {
             log.debug( "Updating MF transactions" ) ;
@@ -91,18 +91,18 @@ public class MFPortfolioController {
             }
             String msg = "Success. Num buyTxn saved = " + numTxnSaved ;
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( msg ) ) ;
+                                 .body( new APIMsgResponse( msg ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( stackTrace ) ) ;
+                                 .body( new APIMsgResponse( stackTrace ) ) ;
         }
     }
     
     @PostMapping( "/MutualFund/InfoUpdate" ) 
-    public ResponseEntity<APIResponse> updateAsset( 
+    public ResponseEntity<APIMsgResponse> updateAsset( 
                                     @RequestBody MFUpdateInfo updateInfo ) {
         
         try {
@@ -117,13 +117,13 @@ public class MFPortfolioController {
             mfAssetRepo.save( mfAsset ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( "Success" ) ) ;
+                                 .body( new APIMsgResponse( "Success" ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( stackTrace ) ) ;
+                                 .body( new APIMsgResponse( stackTrace ) ) ;
         }
     }
     

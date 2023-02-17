@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.RuleMatchCount ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
@@ -52,7 +52,7 @@ public class LedgerClassificationRulesController {
     }
     
     @PostMapping( "/Ledger/ClassificationRule" ) 
-    public ResponseEntity<APIResponse> saveRule(
+    public ResponseEntity<APIMsgResponse> saveRule(
                             @RequestBody LedgerEntryClassificationRule rule ) {
         try {
             rule.setLastUpdate( new java.sql.Date( System.currentTimeMillis() ) ) ;
@@ -68,7 +68,7 @@ public class LedgerClassificationRulesController {
     }
 
     @DeleteMapping( "/Ledger/ClassificationRule/{id}" ) 
-    public ResponseEntity<APIResponse> deleteRule( @PathVariable Integer id ) {
+    public ResponseEntity<APIMsgResponse> deleteRule( @PathVariable Integer id ) {
         try {
             lecrRepo.deleteById( id ) ;
             return ResponseEntity.status( HttpStatus.OK )
@@ -82,7 +82,7 @@ public class LedgerClassificationRulesController {
     }
 
     @PostMapping( "/Ledger/ClassificationRule/Validate" ) 
-    public ResponseEntity<APIResponse> valiateRule( @RequestBody String ruleText ) {
+    public ResponseEntity<APIMsgResponse> valiateRule( @RequestBody String ruleText ) {
         try {
             LEClassifierRuleBuilder builder = new LEClassifierRuleBuilder() ;
             builder.buildClassifier( "Temp rule", ruleText ) ;
@@ -92,12 +92,12 @@ public class LedgerClassificationRulesController {
         }
         catch( Exception e ) {
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( e.getMessage() ) ) ;
+                                 .body( new APIMsgResponse( e.getMessage() ) ) ;
         }
     }
 
     @PostMapping( "/Ledger/ClassificationRule/Execute/{id}" ) 
-    public ResponseEntity<APIResponse> executeRule( @PathVariable Integer id ) {
+    public ResponseEntity<APIMsgResponse> executeRule( @PathVariable Integer id ) {
         try {
             
             List<LedgerEntry> entries = null ;
@@ -134,17 +134,17 @@ public class LedgerClassificationRulesController {
             
             String msg = numClassifiedEntries + " entries classified." ;
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( msg ) ) ;
+                                 .body( new APIMsgResponse( msg ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( e.getMessage() ) ) ;
+                                 .body( new APIMsgResponse( e.getMessage() ) ) ;
         }
     }
 
     @PostMapping( "/Ledger/ClassificationRule/ExecuteAll" ) 
-    public ResponseEntity<APIResponse> executeAllRules() {
+    public ResponseEntity<APIMsgResponse> executeAllRules() {
         try {
             
             List<LedgerEntry> entries = null ;
@@ -186,12 +186,12 @@ public class LedgerClassificationRulesController {
             
             String msg = numClassifiedEntries + " entries classified." ;
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( msg ) ) ;
+                                 .body( new APIMsgResponse( msg ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( e.getMessage() ) ) ;
+                                 .body( new APIMsgResponse( e.getMessage() ) ) ;
         }
     }
 

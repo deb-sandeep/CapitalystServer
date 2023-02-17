@@ -7,6 +7,7 @@ import static org.apache.commons.lang.StringUtils.rightPad ;
 
 import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
+import java.util.Arrays ;
 import java.util.Collections ;
 import java.util.Date ;
 import java.util.HashMap ;
@@ -118,7 +119,51 @@ public class EquityTradeUpdater extends OTA {
     }
 
     @Override
+    public Map<String, Object> getDefaultParameters() {
+        
+        Map<String, Object> params = super.getDefaultParameters() ;
+        
+        params.put( CFG_ITER_DUR_IN_DAYS,      iterDurationDays    ) ;
+        params.put( CFG_INCL_PORTFOLIO_STOCKS, inclPortfolioStocks ) ;
+        params.put( CFG_EXCL_PORTFOLIO_STOCKS, exclPortfolioStocks ) ;
+        params.put( CFG_UPDATE_AVG_COST_PRICE, updateAvgCostPrice  ) ;
+        params.put( CFG_EXCLUDE_USER_IDS,      exclUserIds         ) ;
+        
+        return params ;
+    }
+    
+    // In case the user has tweaked any parameters for this run, reload 
+    // the user tweaked parameters.
+    private void refreshParameters() {
+        
+        if( super.parameters.containsKey( CFG_ITER_DUR_IN_DAYS ) ) {
+            iterDurationDays = super.parameters.getInt( CFG_ITER_DUR_IN_DAYS ) ;
+        }
+        
+        if( super.parameters.containsKey( CFG_INCL_PORTFOLIO_STOCKS ) ) {
+            inclPortfolioStocks = Arrays.asList( 
+                    parameters.getStringArray( CFG_INCL_PORTFOLIO_STOCKS ) ) ;
+        }
+        
+        if( super.parameters.containsKey( CFG_EXCL_PORTFOLIO_STOCKS ) ) {
+            exclPortfolioStocks = Arrays.asList( 
+                    parameters.getStringArray( CFG_EXCL_PORTFOLIO_STOCKS ) ) ;
+        }
+        
+        if( super.parameters.containsKey( CFG_UPDATE_AVG_COST_PRICE ) ) {
+            updateAvgCostPrice = parameters.getBoolean( CFG_UPDATE_AVG_COST_PRICE ) ;
+        }
+        
+        if( super.parameters.containsKey( CFG_EXCLUDE_USER_IDS ) ) {
+            exclUserIds = Arrays.asList( 
+                    parameters.getStringArray( CFG_EXCLUDE_USER_IDS ) ) ;
+        }
+    }
+
+    @Override
     protected void execute() throws Exception {
+        
+        refreshParameters() ;
         
         assertValidSessions() ;
         

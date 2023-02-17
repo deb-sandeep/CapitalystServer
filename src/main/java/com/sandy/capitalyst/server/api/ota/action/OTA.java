@@ -5,10 +5,12 @@ import static com.sandy.capitalyst.server.api.ota.vo.PartResult.ResultType.Excep
 import static com.sandy.capitalyst.server.api.ota.vo.PartResult.ResultType.Message ;
 
 import java.util.ArrayList ;
+import java.util.HashMap ;
 import java.util.List ;
 import java.util.Map ;
 import java.util.concurrent.LinkedBlockingQueue ;
 
+import org.apache.commons.configuration.MapConfiguration ;
 import org.apache.log4j.AppenderSkeleton ;
 import org.apache.log4j.Level ;
 import org.apache.log4j.Logger ;
@@ -18,7 +20,6 @@ import com.sandy.capitalyst.server.api.ota.vo.PartResult ;
 import com.sandy.capitalyst.server.core.log.CapitalystOTALogLayout ;
 
 import lombok.Getter ;
-import lombok.Setter ;
 
 public abstract class OTA implements Runnable, OTALogger {
     
@@ -59,8 +60,7 @@ public abstract class OTA implements Runnable, OTALogger {
     @Getter
     private String name = null ;
     
-    @Setter
-    protected Map<String, String> parameters = null ;
+    protected MapConfiguration parameters = new MapConfiguration( getDefaultParameters() ) ;
     
     private LinkedBlockingQueue<PartResult> queue = new LinkedBlockingQueue<>() ;
     
@@ -69,6 +69,10 @@ public abstract class OTA implements Runnable, OTALogger {
     
     protected OTA( String name ) {
         this.name = name ;
+    }
+    
+    public void setParameters( Map<String, Object> params ) {
+        this.parameters = new MapConfiguration( params ) ;
     }
     
     @Override
@@ -93,6 +97,10 @@ public abstract class OTA implements Runnable, OTALogger {
     }
     
     protected abstract void execute() throws Exception ;
+    
+    public Map<String, Object> getDefaultParameters() {
+        return new HashMap<>() ;
+    }
     
     public void addResult( String message ) {
         queue.add( new PartResult( Message, message ) ) ;

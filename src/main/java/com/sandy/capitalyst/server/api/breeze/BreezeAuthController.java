@@ -16,7 +16,7 @@ import com.sandy.capitalyst.server.breeze.Breeze ;
 import com.sandy.capitalyst.server.breeze.BreezeException ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 
 @RestController
 public class BreezeAuthController {
@@ -46,7 +46,7 @@ public class BreezeAuthController {
     }
     
     @PostMapping( "/Breeze/APISession/{userId}" ) 
-    public ResponseEntity<APIResponse> refreshIdx( 
+    public ResponseEntity<APIMsgResponse> refreshIdx( 
                     @PathVariable String userId, 
                     @RequestParam( "apisession" ) String sessionId ) {
         
@@ -58,7 +58,7 @@ public class BreezeAuthController {
             BreezeSessionManager.instance().activateSession( userId, sessionId ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( "Session activation " + 
+                                 .body( new APIMsgResponse( "Session activation " + 
                                         "successful for user " + userId ) ) ;
             
         }
@@ -67,7 +67,7 @@ public class BreezeAuthController {
             log.error( "Error :: Activating session for " + userId, e ) ;
             
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( e.toString() ) ) ;
+                                 .body( new APIMsgResponse( e.toString() ) ) ;
         }
     }
 }

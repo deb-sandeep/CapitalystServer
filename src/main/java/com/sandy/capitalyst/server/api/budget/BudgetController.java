@@ -18,7 +18,7 @@ import com.sandy.capitalyst.server.api.budget.helper.BudgetSpreadBuilder ;
 import com.sandy.capitalyst.server.api.budget.vo.BudgetRuleInput ;
 import com.sandy.capitalyst.server.api.budget.vo.BudgetSpread ;
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.MonthlyLoadingCalculator ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerCategoryBudget ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerCategoryBudgetRepo ;
@@ -111,7 +111,7 @@ public class BudgetController {
     }
 
     @PostMapping( "/Budget/Rule" ) 
-    public ResponseEntity<APIResponse> saveRule( @RequestBody BudgetRuleInput input ) {
+    public ResponseEntity<APIMsgResponse> saveRule( @RequestBody BudgetRuleInput input ) {
         
         MonthlyLoadingCalculator calc = null ;
         LedgerEntryCategory cat = null ;
@@ -139,11 +139,11 @@ public class BudgetController {
             lcbRepo.save( budget ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( APIResponse.SUCCESS ) ;
+                                 .body( APIMsgResponse.SUCCESS ) ;
         }
         catch( Exception e ) {
             log.debug( "Error", e ) ;
-            return APIResponse.serverError( e.getMessage() ) ;
+            return APIMsgResponse.serverError( e.getMessage() ) ;
         }
     }
 }

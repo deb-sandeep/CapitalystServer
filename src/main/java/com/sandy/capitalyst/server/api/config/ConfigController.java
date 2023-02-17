@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.dao.nvp.NVP ;
 import com.sandy.capitalyst.server.dao.nvp.repo.NVPRepo ;
 
@@ -55,7 +55,7 @@ public class ConfigController {
     }
 
     @PostMapping( "/Config" ) 
-    public ResponseEntity<APIResponse> execute( @RequestBody NVPVO nvpVo ) {
+    public ResponseEntity<APIMsgResponse> execute( @RequestBody NVPVO nvpVo ) {
         
         try {
             NVP nvp = nvpRepo.findById( nvpVo.getId() ).get() ;
@@ -67,17 +67,17 @@ public class ConfigController {
                 nvpRepo.save( nvp ) ;
                 
                 return ResponseEntity.status( HttpStatus.OK )
-                                     .body( APIResponse.SUCCESS ) ;
+                                     .body( APIMsgResponse.SUCCESS ) ;
             }
 
             return ResponseEntity.status( HttpStatus.BAD_REQUEST )
-                                 .body( new APIResponse( "Config doesn't exist." ) ) ;
+                                 .body( new APIMsgResponse( "Config doesn't exist." ) ) ;
             
         }
         catch( Exception e ) {
             log.error( "Error :: Saving nvp.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( e.getMessage() ) ) ;
+                                 .body( new APIMsgResponse( e.getMessage() ) ) ;
         }
     }
 }

@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.ledger.helpers.LedgerSearchCriteria ;
 import com.sandy.capitalyst.server.api.ledger.helpers.SplitDetails ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRule ;
 import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRuleBuilder ;
 import com.sandy.capitalyst.server.dao.account.Account ;
@@ -216,7 +216,7 @@ public class LedgerRestController {
     }
     
     @DeleteMapping( "/Ledger/{id}" ) 
-    public ResponseEntity<APIResponse> deleteLedgerEntry( @PathVariable Integer id ) {
+    public ResponseEntity<APIMsgResponse> deleteLedgerEntry( @PathVariable Integer id ) {
         try {
             log.debug( "Deleting ledger entry. " + id ) ;
             LedgerEntry entry = lRepo.findById( id ).get() ;
@@ -231,7 +231,7 @@ public class LedgerRestController {
             }
             
             return status( HttpStatus.OK ).
-                   body( new APIResponse( "Successfully deleted" ) ) ;
+                   body( new APIMsgResponse( "Successfully deleted" ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
@@ -273,7 +273,7 @@ public class LedgerRestController {
     }
     
     @PostMapping( "/LedgerEntry/Split" ) 
-    public ResponseEntity<APIResponse> splitLedgerEntries( 
+    public ResponseEntity<APIMsgResponse> splitLedgerEntries( 
                          @RequestBody SplitDetails splitDetails ) {
         try {
             log.debug( "Splitting ledger entry. Details = " + splitDetails );
@@ -292,7 +292,7 @@ public class LedgerRestController {
             lRepo.save( newEntry ) ;
             
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( APIResponse.SUCCESS ) ;
+                                 .body( APIMsgResponse.SUCCESS ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;

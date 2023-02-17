@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.equity.vo.MCStockMeta ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
@@ -26,7 +26,7 @@ public class MCEquityMetaMapController {
     private EquityMasterRepo emRepo = null ;
     
     @PostMapping( "/Equity/Master/MCStockMeta" ) 
-    public ResponseEntity<APIResponse> updateMCNameISINMapping(
+    public ResponseEntity<APIMsgResponse> updateMCNameISINMapping(
                                 @RequestBody MCStockMeta meta ) {
         try {
             log.debug( "Updating equity master with MC Name ISIN mappings" ) ;
@@ -36,13 +36,13 @@ public class MCEquityMetaMapController {
 
             String msg = "Success. Updated meta for " + meta.getSymbolNSE() ;
             return ResponseEntity.status( HttpStatus.OK )
-                                 .body( new APIResponse( msg ) ) ;
+                                 .body( new APIMsgResponse( msg ) ) ;
         }
         catch( Exception e ) {
             log.error( "Error :: Saving equity holding.", e ) ;
             String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( new APIResponse( stackTrace ) ) ;
+                                 .body( new APIMsgResponse( stackTrace ) ) ;
         }
     }
     

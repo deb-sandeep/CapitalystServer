@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController ;
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.CategoryMergeHelper ;
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.ChangedCategorySaveHelper ;
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.MergeLedgeEntryCategoriesInput ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.repo.ClassifiedLedgerEntriesCounter ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
@@ -76,7 +76,7 @@ public class LedgerCategoriesController {
     }
     
     @PostMapping( "/Ledger/Categories" ) 
-    public ResponseEntity<APIResponse> saveLedgerEntryCategories(
+    public ResponseEntity<APIMsgResponse> saveLedgerEntryCategories(
                             @RequestBody List<LedgerEntryCategory> categories ) {
         try {
             ChangedCategorySaveHelper helper = null ;
@@ -96,7 +96,7 @@ public class LedgerCategoriesController {
     }
     
     @PostMapping( "/Ledger/Categories/Merge" ) 
-    public ResponseEntity<APIResponse> mergeLedgerEntryCategories(
+    public ResponseEntity<APIMsgResponse> mergeLedgerEntryCategories(
                             @RequestBody MergeLedgeEntryCategoriesInput input ) {
         try {
             CategoryMergeHelper helper = null ;

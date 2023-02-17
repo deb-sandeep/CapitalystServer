@@ -1,7 +1,7 @@
 package com.sandy.capitalyst.server.api.equity ;
 
-import static com.sandy.capitalyst.server.core.api.APIResponse.serverError ;
-import static com.sandy.capitalyst.server.core.api.APIResponse.success ;
+import static com.sandy.capitalyst.server.core.api.APIMsgResponse.serverError ;
+import static com.sandy.capitalyst.server.core.api.APIMsgResponse.success ;
 
 import java.text.SimpleDateFormat ;
 import java.util.Calendar ;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.sandy.capitalyst.server.api.equity.helper.EquityTTMPerfUpdater ;
-import com.sandy.capitalyst.server.core.api.APIResponse ;
+import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 import com.sandy.capitalyst.server.core.log.IndentUtil ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
@@ -33,7 +33,7 @@ public class EquityPerfTTMRefreshController {
     private HistoricEQDataRepo histRepo = null ;
     
     @PostMapping( "/Equity/PerfTTMRefresh" ) 
-    public ResponseEntity<APIResponse> refreshPerfTTM() {
+    public ResponseEntity<APIMsgResponse> refreshPerfTTM() {
 
         log.debug( "Executing Perf TTM refresh API. >" ) ;
         
