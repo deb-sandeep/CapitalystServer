@@ -94,7 +94,7 @@ public class CapitalystServer
         SpringApplication.run( CapitalystServer.class, args ) ;
 
         log.debug( "\n" ) ;
-        log.debug( "Initializeing Capitalyst Server App..." ) ;
+        log.debug( "Initializing Capitalyst Server App..." ) ;
         getBean( CapitalystServer.class ).initialize() ;
         long endTime = System.currentTimeMillis() ;
         
