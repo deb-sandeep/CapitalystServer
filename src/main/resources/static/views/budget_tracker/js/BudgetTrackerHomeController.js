@@ -11,10 +11,10 @@ capitalystNgApp.controller( 'BudgetTrackerHomeController',
     
     // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Budget Tracker" ;
-    $scope.financialYearChoices = [ 2020, 2021, 2022 ] ;
+    $scope.financialYearChoices = [ 2020, 2021, 2022, 2023 ] ;
     
     $scope.userChoices = {
-        financialYear : $scope.financialYearChoices[2],
+        financialYear : $scope.financialYearChoices[3],
         showPlanned   : false,
         showAvailable : false,
         showConsumed  : true

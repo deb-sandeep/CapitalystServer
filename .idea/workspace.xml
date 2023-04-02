@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Moving to IntelliJ.. bye bye Eclipse">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/account.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/views/account/account.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/js/BudgetTrackerHomeController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/js/BudgetTrackerHomeController.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +48,9 @@
   </component>
   <component name="NamedScopeManager">
     <scope name="Source Folders" pattern="(file[capitalyst-server]:doc//*||file[capitalyst-server]:src//*||file:.gitignore||file:pom.xml)&amp;&amp;!file[capitalyst-server]:src/main/resources/static/js/lib//*&amp;&amp;!file[capitalyst-server]:src/test/config/*" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectId" id="2M26svxjHeMokT5nG0zhbSWHcgk" />
   <component name="ProjectViewState">
@@ -125,6 +128,9 @@
       <workItem from="1677244004102" duration="125000" />
       <workItem from="1677244137943" duration="210000" />
       <workItem from="1677615126651" duration="176000" />
+      <workItem from="1679821101831" duration="147000" />
+      <workItem from="1679821259033" duration="56000" />
+      <workItem from="1680433498205" duration="341000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
