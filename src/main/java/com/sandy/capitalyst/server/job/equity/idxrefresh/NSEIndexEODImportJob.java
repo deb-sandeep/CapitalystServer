@@ -1,16 +1,15 @@
 package com.sandy.capitalyst.server.job.equity.idxrefresh;
 
-import java.text.SimpleDateFormat ;
-import java.util.Date ;
+import com.sandy.capitalyst.server.core.scheduler.CapitalystJob;
+import com.sandy.capitalyst.server.core.scheduler.JobState;
+import com.sandy.common.util.StringUtil;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
+import org.quartz.DisallowConcurrentExecution;
+import org.quartz.JobExecutionContext;
 
-import org.apache.commons.lang.time.DateUtils ;
-import org.apache.log4j.Logger ;
-import org.quartz.DisallowConcurrentExecution ;
-import org.quartz.JobExecutionContext ;
-
-import com.sandy.capitalyst.server.core.scheduler.CapitalystJob ;
-import com.sandy.capitalyst.server.core.scheduler.JobState ;
-import com.sandy.common.util.StringUtil ;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @DisallowConcurrentExecution
 public class NSEIndexEODImportJob extends CapitalystJob {
@@ -19,10 +18,9 @@ public class NSEIndexEODImportJob extends CapitalystJob {
     
     public static final SimpleDateFormat SDF = new SimpleDateFormat( "ddMMMyyyy" ) ;
     private static final String KEY_LAST_IMPORT_DATE = "LAST_IMPORT_DATE" ;
-    
+
     @Override
-    public void executeJob( JobExecutionContext context,
-                               JobState state ) 
+    public void executeJob( JobExecutionContext context, JobState state )
         throws Exception {
         
         log.debug( "NSEIndexEODImportJob executeJob" ) ;

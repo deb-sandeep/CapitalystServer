@@ -124,11 +124,14 @@ public class HTTPResourceDownloader {
             if( responseCode == 404 ) {
                 throw new HTTPException404() ;
             }
-            
-            long contentLength = response.body().contentLength() ;
-            log.debug( "Content length = " + (int)(contentLength/1024) + " KB" ) ;
-            
+            else if( responseCode == 500 ) {
+                throw new HTTPException500() ;
+            }
+
             responseBody = response.body().bytes() ;
+            long contentLength = responseBody.length ;
+            log.debug( "Content length = " + (int)(contentLength/1024) + " KB" ) ;
+            //log.debug( "Response body = " + new String( responseBody ) );
         }
         
         return responseBody ;

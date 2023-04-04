@@ -32,9 +32,9 @@ public class DevModeInitializer {
                  PortfolioMarketPriceUpdater.CFG_PAUSE_REFRESH_FLAG,
                  "Breeze Portfolio CMP Daemon (pause)" ) ;
         
-        forceOff( CapitalystServer.CFG_GRP_APP, 
+        forceOff( CapitalystServer.CFG_GRP_APP,
                   CapitalystServer.CFG_RUN_BATCH_DAEMON, 
-                  "Batch Scheduler Daemon (run)" ) ;
+                  "Batch Scheduler Daemon (run)" ); ;
         
         forceOff( CapitalystServer.CFG_GRP_APP, 
                   CapitalystServer.CFG_RUN_EQ_HIST_EOD_DAEMON, 

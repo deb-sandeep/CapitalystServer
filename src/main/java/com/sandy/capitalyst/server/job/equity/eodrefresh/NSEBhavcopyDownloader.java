@@ -3,73 +3,46 @@ package com.sandy.capitalyst.server.job.equity.eodrefresh;
 import java.io.ByteArrayInputStream ;
 import java.io.File ;
 import java.io.FileOutputStream ;
-import java.util.Date ;
 import java.util.zip.ZipEntry ;
 import java.util.zip.ZipInputStream ;
 
 import org.apache.log4j.Logger ;
-import org.jsoup.Jsoup ;
-import org.jsoup.nodes.Document ;
-import org.jsoup.select.Elements ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.external.nse.NSEReportsMetaRepo.ReportMeta;
 
 public class NSEBhavcopyDownloader {
 
     private static final Logger log = Logger.getLogger( NSEBhavcopyDownloader.class ) ;
     
-    private static final String BASE_URL = "https://www1.nseindia.com/products/dynaContent/equities/equities/htms/CM_homepage_1.htm" ;
     private static final int BUFFER_SIZE = 10*1024 ;
     
-    private HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
-    
-    private String bhavcopyUrl = null ;
-    
-    public Date getLatestBhavcopyDate() throws Exception {
-        bhavcopyUrl = findBhavcopyDownloadLink() ;
-        String subStr = bhavcopyUrl.substring( bhavcopyUrl.indexOf( "/cm" ) ) ;
-        String dtStr  = subStr.substring( 3, subStr.length()-12 ) ;
-        return NSEBhavcopyImportJob.SDF.parse( dtStr ) ;
-    }
-    
-    public File downloadBhavcopy() throws Exception {
+    public File downloadBhavcopy( ReportMeta reportMeta ) throws Exception {
         
-        log.debug( "Downloading latest bhavcopy..." ) ;
-        
-        if( StringUtil.isEmptyOrNull( bhavcopyUrl ) ) {
-            bhavcopyUrl = findBhavcopyDownloadLink() ;
-        }
+        log.debug( "Downloading bhavcopy for " + reportMeta.getTradingDate() ) ;
+
+        File savedFile = null ;
+        byte[] zipContents = null ;
+        String bhavcopyUrl = reportMeta.getReportURL() ;
+        HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
+
         log.debug( "\tDownload url : " + bhavcopyUrl ) ;
-        
-        byte[] zipContents = downloader.getResourceAsBytes( bhavcopyUrl, "nse-bhav.txt" ) ;
+
+        zipContents = downloader.getResourceAsBytes( bhavcopyUrl,
+                                  "nse-reports-headers.txt" ) ;
+        savedFile = unzipAndStoreContents( zipContents ) ;
+
         log.debug( "\tZip contents downloaded." ) ;
-        
-        File file = unzipAndStoreContents( zipContents ) ;
+
         log.debug( "\tBhavcopy contents unzipped" ) ;
-        log.debug( "\tSaved file : " + file.getAbsolutePath() ) ;
+        log.debug( "\tSaved file : " + savedFile.getAbsolutePath() ) ;
         
-        return file ;
+        return savedFile ;
     }
     
-    private String findBhavcopyDownloadLink() 
-        throws Exception {
-        
-        String content = downloader.getResource( BASE_URL, "nse-bhav.txt" ) ;
-        Document doc = Jsoup.parse( content ) ;
-        Elements elements = doc.select( "a:containsOwn(Bhavcopy file (csv))" ) ;
-        
-        if( elements.isEmpty() ) {
-            throw new Exception( "Bhavcopy download link not found." ) ;
-        }
-        
-        String href = elements.get( 0 ).attr( "href" ) ;
-        return "https://www1.nseindia.com" + href ;
-    }
-    
-    private File unzipAndStoreContents( byte[] zipContents ) 
+    private File unzipAndStoreContents( byte[] zipContents )
         throws Exception {
         
         ZipInputStream zipIn = new ZipInputStream( new ByteArrayInputStream( zipContents ) ) ;

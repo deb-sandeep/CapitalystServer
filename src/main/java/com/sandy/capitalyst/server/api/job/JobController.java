@@ -16,7 +16,7 @@ public class JobController {
     private static final Logger log = Logger.getLogger( JobController.class ) ;
     
     @PostMapping( "/Job/TriggerNow/{jobName}" ) 
-    public ResponseEntity<APIMsgResponse> saveCashEntry( 
+    public ResponseEntity<APIMsgResponse> triggerJob(
                                      @PathVariable String jobName ) {
         try {
             log.debug( "Triggering job = " + jobName ) ;

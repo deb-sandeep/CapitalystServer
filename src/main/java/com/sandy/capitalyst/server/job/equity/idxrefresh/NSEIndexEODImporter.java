@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat ;
 import java.util.Date ;
 import java.util.List ;
 
+import com.sandy.capitalyst.server.core.network.HTTPException500;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.core.network.HTTPException404 ;
@@ -24,7 +25,7 @@ public class NSEIndexEODImporter {
     
     private static final SimpleDateFormat REQ_SDF = new SimpleDateFormat( "ddMMyyyy" ) ;
     private static final SimpleDateFormat RES_SDF = new SimpleDateFormat( "dd-MM-yyyy" ) ;
-    private static final String URL = "https://www1.nseindia.com/content/indices/ind_close_all_{date}.csv" ;
+    private static final String URL = "https://archives.nseindia.com/content/indices/ind_close_all_{date}.csv" ;
     
     private Date importDate = null ;
     
@@ -34,7 +35,7 @@ public class NSEIndexEODImporter {
     public NSEIndexEODImporter( Date importDate ) {
         
         this.importDate = importDate ;
-        
+
         imRepo  = getBean( IndexMasterRepo.class ) ;
         eodRepo = getBean( HistoricIdxDataRepo.class ) ;
     }
@@ -55,9 +56,8 @@ public class NSEIndexEODImporter {
                     numRecordsProcessed++ ;
                 }
             }
-            
         }
-        catch( HTTPException404 e ) {
+        catch( HTTPException404 | HTTPException500 ex ) {
             log.debug( "No file found." ) ;
         }
         
@@ -71,7 +71,7 @@ public class NSEIndexEODImporter {
         HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
         
         String url        = URL.replace( "{date}", REQ_SDF.format( importDate ) ) ;
-        String csvContent = downloader.getResource( url, "nse-bhav.txt" ) ;
+        String csvContent = downloader.getResource( url, "nse-reports-headers.txt" ) ;
 
         CsvParser parser = new CsvParser( new CsvParserSettings() ) ;
         
