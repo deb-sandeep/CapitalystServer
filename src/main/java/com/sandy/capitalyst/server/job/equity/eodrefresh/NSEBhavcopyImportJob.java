@@ -43,7 +43,6 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
         ReportMeta prevBhavcopyMeta = null ;
 
         metaRepo = NSEReportsMetaRepo.instance() ;
-        metaRepo.loadMeta() ;
 
         curBhavcopyMeta  = metaRepo.getCurrentReportMeta( BHAVCOPY_META_KEY ) ;
         prevBhavcopyMeta = metaRepo.getPrevReportMeta( BHAVCOPY_META_KEY ) ;

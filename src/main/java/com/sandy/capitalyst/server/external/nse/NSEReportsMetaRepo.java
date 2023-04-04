@@ -87,17 +87,20 @@ public class NSEReportsMetaRepo {
     private NSEReportsMetaRepo() {}
 
     private boolean reloadRequired() {
+
+        boolean reloadRequired = false ;
         if( lastLoadTime == null ) {
-            return true ;
+            reloadRequired = true ;
         }
         else {
             // Cache window is 5 minutes.
             Date curTime = new Date() ;
-            return curTime.getTime() - lastLoadTime.getTime() > 300 * 1000;
+            reloadRequired = ( curTime.getTime() - lastLoadTime.getTime() ) > 300 * 1000 ;
         }
+        return  reloadRequired ;
     }
 
-    public void loadMeta() throws Exception {
+    private void loadMeta() throws Exception {
         log.info( "Loading CM reports meta." ) ;
         loadMeta( CM_REPORT_META_URL ) ;
 
