@@ -98,10 +98,10 @@ public class NSEReportsMetaRepo {
     }
 
     public void loadMeta() throws Exception {
-        log.debug( "Loading CM reports meta." ) ;
+        log.info( "Loading CM reports meta." ) ;
         loadMeta( CM_REPORT_META_URL ) ;
 
-        log.debug( "Loading Index reports meta." ) ;
+        log.info( "Loading Index reports meta." ) ;
         loadMeta( IDX_REPORT_META_URL ) ;
 
         lastLoadTime = new Date() ;
@@ -123,7 +123,7 @@ public class NSEReportsMetaRepo {
             throws Exception {
 
         Date date = REPORT_DATE_FMT.parse( rootNode.get( dateKey ).asText() ) ;
-        log.debug( "-> Date = " + REPORT_DATE_FMT.format( date ) ) ;
+        log.info( "-> Date = " + REPORT_DATE_FMT.format( date ) ) ;
 
         String metaArrayKey = dateKey.equals( "currentDate" ) ? "CurrentDay" : "PreviousDay" ;
         JsonNode dataNode  = rootNode.get( metaArrayKey ) ;

@@ -4,20 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Budget tracking for 2023">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capitalyst-server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/capitalyst-server.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/job/JobController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/job/JobController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/network/HTTPResourceDownloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/network/HTTPResourceDownloader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/init/DevModeInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/init/DevModeInitializer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyDownloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyDownloader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyImportJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyImportJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/bhavcopy/DownloadTester.java" beforeDir="false" />
-    </list>
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="NSE new site changes for bhavcopy" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -225,7 +212,7 @@
       <workItem from="1679821101831" duration="147000" />
       <workItem from="1679821259033" duration="56000" />
       <workItem from="1680433498205" duration="341000" />
-      <workItem from="1680433852824" duration="21721000" />
+      <workItem from="1680433852824" duration="22512000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -255,7 +242,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680433992123</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="NSE new site changes for bhavcopy">
+      <created>1680635560907</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1680635560907</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -289,7 +283,8 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="Moving to IntelliJ.. bye bye Eclipse" />
     <MESSAGE value="Budget tracking for 2023" />
-    <option name="LAST_COMMIT_MESSAGE" value="Budget tracking for 2023" />
+    <MESSAGE value="NSE new site changes for bhavcopy" />
+    <option name="LAST_COMMIT_MESSAGE" value="NSE new site changes for bhavcopy" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -298,16 +293,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyImportJob.java</url>
           <line>38</line>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/bhavcopy/NSEBhavcopyImportJobTest.java</url>
-          <line>24</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/bhavcopy/NSEIndexImportJobTest.java</url>
-          <line>36</line>
-          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
