@@ -1,47 +1,40 @@
 package com.sandy.capitalyst.server.api.ota.action.tradeupdater;
 
-import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
-import static java.util.Calendar.DAY_OF_MONTH ;
-import static org.apache.commons.lang.StringUtils.leftPad ;
-import static org.apache.commons.lang.StringUtils.rightPad ;
+import com.sandy.capitalyst.server.api.ota.action.OTA;
+import com.sandy.capitalyst.server.breeze.Breeze;
+import com.sandy.capitalyst.server.breeze.BreezeCred;
+import com.sandy.capitalyst.server.breeze.BreezeException;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI.TradeDetail;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI;
+import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI.Trade;
+import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPManager;
+import com.sandy.capitalyst.server.dao.equity.EquityHolding;
+import com.sandy.capitalyst.server.dao.equity.EquityMaster;
+import com.sandy.capitalyst.server.dao.equity.EquityTrade;
+import com.sandy.capitalyst.server.dao.equity.EquityTxn;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityTradeRepo;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo;
+import com.sandy.common.util.StringUtil;
+import org.apache.commons.lang.time.DateUtils;
 
-import java.text.SimpleDateFormat ;
-import java.util.ArrayList ;
-import java.util.Arrays ;
-import java.util.Collections ;
-import java.util.Date ;
-import java.util.HashMap ;
-import java.util.List ;
-import java.util.Map ;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-import org.apache.commons.lang.time.DateUtils ;
-
-import com.sandy.capitalyst.server.api.ota.action.OTA ;
-import com.sandy.capitalyst.server.breeze.Breeze ;
-import com.sandy.capitalyst.server.breeze.BreezeCred ;
-import com.sandy.capitalyst.server.breeze.BreezeException ;
-import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI ;
-import com.sandy.capitalyst.server.breeze.api.BreezeGetPortfolioHoldingsAPI.PortfolioHolding ;
-import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI ;
-import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI.TradeDetail ;
-import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI ;
-import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI.Trade ;
-import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
-import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
-import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
-import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
-import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
-import com.sandy.capitalyst.server.dao.equity.EquityTrade ;
-import com.sandy.capitalyst.server.dao.equity.EquityTxn ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityTradeRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
-import com.sandy.common.util.StringUtil ;
+import static com.sandy.capitalyst.server.CapitalystServer.getBean;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static org.apache.commons.lang.StringUtils.leftPad;
+import static org.apache.commons.lang.StringUtils.rightPad;
 
 public class EquityTradeUpdater extends OTA {
     
-    private static SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy HH:mm:ss" ) ;
+    private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy HH:mm:ss" ) ;
     
     public static final String NAME                 = "EquityTradeUpdater" ;
     public static final String CFG_GRP_NAME         = NAME ;
@@ -58,24 +51,24 @@ public class EquityTradeUpdater extends OTA {
     public static final String CFG_DEF_LAST_UPDATE_DATE = "01-01-2014" ;
     public static final int    CFG_DEF_ITER_DUR_IN_DAYS = 7 ;
 
-    private EquityMasterRepo  emRepo    = null ;
-    private EquityTradeRepo   etrdRepo  = null ;
-    private EquityTxnRepo     etxnRepo  = null ;
-    private EquityHoldingRepo ehRepo    = null ;
+    private final EquityMasterRepo  emRepo ;
+    private final EquityTradeRepo   etrdRepo ;
+    private final EquityTxnRepo     etxnRepo ;
+    private final EquityHoldingRepo ehRepo ;
     
-    private Map<String, EquityHolding>    localHoldingsMap  = new HashMap<>() ;
-    private Map<String, PortfolioHolding> breezeHoldingsMap = new HashMap<>() ;
+    private final Map<String, EquityHolding>    localHoldingsMap  = new HashMap<>() ;
+    private final Map<String, PortfolioHolding> breezeHoldingsMap = new HashMap<>() ;
     
-    private NVPConfigGroup cfg = null ;
+    private final NVPConfigGroup cfg ;
     
-    private Date    lastUpdateDate     = null ;
-    private Date    iterToDate         = null ;
-    private int     iterDurationDays   = CFG_DEF_ITER_DUR_IN_DAYS ;
+    private final Date lastUpdateDate ;
+    private Date    iterToDate ;
+    private int     iterDurationDays ;
     private boolean updateAvgCostPrice = true ;
     
-    private List<String> inclPortfolioStocks = new ArrayList<>() ;
-    private List<String> exclPortfolioStocks = new ArrayList<>() ;
-    private List<String> exclUserIds = new ArrayList<>() ;
+    private List<String> inclPortfolioStocks ;
+    private List<String> exclPortfolioStocks ;
+    private List<String> exclUserIds ;
     
     private int numHoldingsCreated = 0 ;
     private int numHoldingsUpdated = 0 ;
@@ -138,6 +131,11 @@ public class EquityTradeUpdater extends OTA {
         
         if( super.parameters.containsKey( CFG_ITER_DUR_IN_DAYS ) ) {
             iterDurationDays = super.parameters.getInt( CFG_ITER_DUR_IN_DAYS ) ;
+            iterToDate = DateUtils.addDays( lastUpdateDate, iterDurationDays ) ;
+            Date now = new Date() ;
+            if( iterToDate.after( now ) ) {
+                iterToDate = now ;
+            }
         }
         
         if( super.parameters.containsKey( CFG_INCL_PORTFOLIO_STOCKS ) ) {
@@ -224,10 +222,10 @@ public class EquityTradeUpdater extends OTA {
     
     private void loadHoldings( BreezeCred cred ) throws Exception {
         
-        List<EquityHolding>                 lHoldings = null ;
-        List<PortfolioHolding>              bHoldings = null ;
-        BreezeGetPortfolioHoldingsAPI       api       = null ;
-        BreezeAPIResponse<PortfolioHolding> response  = null ;
+        List<EquityHolding>                 lHoldings ;
+        List<PortfolioHolding>              bHoldings ;
+        BreezeGetPortfolioHoldingsAPI       api ;
+        BreezeAPIResponse<PortfolioHolding> response ;
         
         localHoldingsMap.clear() ;
         breezeHoldingsMap.clear() ;
@@ -247,9 +245,7 @@ public class EquityTradeUpdater extends OTA {
         
         if( !response.isError() ) {
             bHoldings = response.getEntities() ;
-            bHoldings.forEach( ph -> {
-                this.breezeHoldingsMap.put( ph.getSymbol(), ph ) ;
-            } ) ;
+            bHoldings.forEach( ph -> this.breezeHoldingsMap.put( ph.getSymbol(), ph ) ) ;
         }
         else {
             addResult( "     ERROR loading breeze holdings." ) ; 
@@ -265,7 +261,7 @@ public class EquityTradeUpdater extends OTA {
         List<Trade> trades = getBreezeTrades( cred, fromDate, toDate ) ;
         addResult( "    " + trades.size() + " Breeze trades obtained." ) ;
         
-        if( trades != null && !trades.isEmpty() ) {
+        if( !trades.isEmpty() ) {
             
             // The trades returned by Breeze are in reverse chronological
             // order. We reverse the list to start with the oldest trade first.
@@ -286,8 +282,8 @@ public class EquityTradeUpdater extends OTA {
                 addResult( "" ) ;
                 addResult( "    " + msg ) ;
                 
-                EquityHolding    eh = null ;
-                PortfolioHolding ph = null ;
+                EquityHolding    eh ;
+                PortfolioHolding ph ;
                 
                 // If we find a local portfolio holding, we use it to associate
                 // the trade with.
@@ -317,8 +313,7 @@ public class EquityTradeUpdater extends OTA {
         }
     }
     
-    private EquityTrade processNewTrade( EquityHolding eh, Trade trade, BreezeCred cred ) 
-        throws Exception {
+    private EquityTrade processNewTrade( EquityHolding eh, Trade trade, BreezeCred cred ) {
         
         addResult( "      Creating new trade - " + trade.getOrderId() ) ;
         
@@ -350,9 +345,9 @@ public class EquityTradeUpdater extends OTA {
                                       BreezeCred cred ) 
         throws Exception {
     
-        List<TradeDetail>              breezeTxns = null ;
-        BreezeGetTradeDetailAPI        api        = null ;
-        BreezeAPIResponse<TradeDetail> response   = null ;
+        List<TradeDetail>              breezeTxns ;
+        BreezeGetTradeDetailAPI        api ;
+        BreezeAPIResponse<TradeDetail> response ;
         
         addResult( "      Loading breeze transactions" ) ;
         api = new BreezeGetTradeDetailAPI() ;
@@ -461,7 +456,7 @@ public class EquityTradeUpdater extends OTA {
         end = DateUtils.addMinutes( end, 59 ) ;
         end = DateUtils.addSeconds( end, 59 ) ;
         
-        List<EquityTxn> txns = null ;
+        List<EquityTxn> txns ;
         
         txns = etxnRepo.findMatchingTxns( eh.getId(), start, end, 
                                           breezeTxn.getAction(), 
@@ -478,8 +473,8 @@ public class EquityTradeUpdater extends OTA {
                                          Date fromDate, Date toDate ) 
         throws Exception {
         
-        BreezeGetTradeListAPI api = null ;
-        BreezeAPIResponse<Trade> response = null ;
+        BreezeGetTradeListAPI api ;
+        BreezeAPIResponse<Trade> response ;
         
         api = new BreezeGetTradeListAPI() ;
         api.setFromDate( fromDate ) ;
@@ -500,8 +495,8 @@ public class EquityTradeUpdater extends OTA {
     // Map<String, PortfolioHolding> breezeHoldingsMap
     private void updateEquityHoldings( BreezeCred cred ) {
         
-        EquityHolding    capitalystHolding = null ;
-        PortfolioHolding breezeHolding     = null ;
+        EquityHolding    capitalystHolding ;
+        PortfolioHolding breezeHolding ;
         
         for( String symbolIcici : localHoldingsMap.keySet() ) {
             
@@ -567,9 +562,7 @@ public class EquityTradeUpdater extends OTA {
         // If no exclude stocks are specified, we include all, else any
         // stock in the exclude stock is rejected
         if( !exclPortfolioStocks.isEmpty() ) {
-            if( exclPortfolioStocks.contains( symbol ) ) {
-                return false ;
-            }
+            return !exclPortfolioStocks.contains( symbol );
         }
         
         return true ;
