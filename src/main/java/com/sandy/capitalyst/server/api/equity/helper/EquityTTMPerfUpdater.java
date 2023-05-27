@@ -1,32 +1,26 @@
 package com.sandy.capitalyst.server.api.equity.helper;
 
-import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
+import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPManager;
+import com.sandy.capitalyst.server.core.util.StringUtil;
+import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager;
+import com.sandy.capitalyst.server.dao.equity.EquityTTMPerf;
+import com.sandy.capitalyst.server.dao.equity.HistoricEQData;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityTTMPerfRepo;
+import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo;
+import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo.ClosePrice;
+import com.univocity.parsers.csv.CsvParser;
+import com.univocity.parsers.csv.CsvParserSettings;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 
-import java.io.StringReader ;
-import java.text.SimpleDateFormat ;
-import java.util.Calendar ;
-import java.util.Date ;
-import java.util.HashMap ;
-import java.util.Iterator ;
-import java.util.List ;
-import java.util.Map ;
+import java.io.StringReader;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-import org.apache.commons.beanutils.BeanUtils ;
-import org.apache.commons.lang.time.DateUtils ;
-import org.apache.log4j.Logger ;
-
-import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
-import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
-import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
-import com.sandy.capitalyst.server.core.util.StringUtil ;
-import com.sandy.capitalyst.server.daemon.equity.recoengine.RecoManager ;
-import com.sandy.capitalyst.server.dao.equity.EquityTTMPerf ;
-import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityTTMPerfRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo.ClosePrice ;
-import com.univocity.parsers.csv.CsvParser ;
-import com.univocity.parsers.csv.CsvParserSettings ;
+import static com.sandy.capitalyst.server.CapitalystServer.getBean;
 
 public class EquityTTMPerfUpdater {
     
@@ -49,20 +43,20 @@ public class EquityTTMPerfUpdater {
     
     private static final SimpleDateFormat SDF = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
     
-    class Config {
+    static class Config {
         List<String> inclStocks = null ;
         List<String> exclStocks = null ;
     }
 
-    private Map<String, HistoricEQData> todayCandles = new HashMap<>() ;
-    private Map<String, EquityTTMPerf>  perfMap      = new HashMap<>() ;
+    private final Map<String, HistoricEQData> todayCandles = new HashMap<>() ;
+    private final Map<String, EquityTTMPerf>  perfMap      = new HashMap<>() ;
     
-    private HistoricEQDataRepo histRepo = null ;
-    private EquityTTMPerfRepo  perfRepo = null ;
+    private final HistoricEQDataRepo histRepo ;
+    private final EquityTTMPerfRepo  perfRepo ;
     
     private Object[][] ttmTimeMarkers = null ;
     
-    private Config cfg = null ;
+    private final Config cfg ;
 
     public EquityTTMPerfUpdater() {
         
@@ -78,7 +72,7 @@ public class EquityTTMPerfUpdater {
         
         NVPConfigGroup nvpCfg = NVPManager.instance()
                                           .getConfigGroup( CFG_GRP_NAME ) ;
-        Config cfg = new Config() ;
+        Config cfg = new Config();
         cfg.inclStocks = nvpCfg.getListValue( CFG_INCL_STOCKS, "" ) ;
         cfg.exclStocks = nvpCfg.getListValue( CFG_EXCL_STOCKS, "" ) ;
         
@@ -94,7 +88,7 @@ public class EquityTTMPerfUpdater {
         int      fyYear = cal.get( Calendar.YEAR ) ;
         int      month  = cal.get( Calendar.MONTH ) ;
         
-        if( month >= Calendar.JANUARY && month <= Calendar.MARCH ) { 
+        if( month <= Calendar.MARCH ) {
             fyYear -= 1 ;
         }
         cal.set( fyYear, Calendar.APRIL, 1, 0, 0, 0 ) ;
@@ -124,9 +118,7 @@ public class EquityTTMPerfUpdater {
         // If no exclude stocks are specified, we include all, else any
         // stock in the exclude stock is rejected
         if( !cfg.exclStocks.isEmpty() ) {
-            if( cfg.exclStocks.contains( symbol ) ) {
-                return false ;
-            }
+            return !cfg.exclStocks.contains( symbol );
         }
         
         return true ;
@@ -156,18 +148,16 @@ public class EquityTTMPerfUpdater {
         
         int   numRecords   = perfMap.size() ;
         int   curRecord    = -1 ;
-        float pctCompleted = 0 ;
-        
-        Iterator<EquityTTMPerf> iter = perfMap.values().iterator() ; 
-        while( iter.hasNext() ) {
-            EquityTTMPerf record = iter.next() ;
-            perfRepo.saveAndFlush( record ) ;
-            
-            curRecord++ ;
-            
+        float pctCompleted ;
+
+        for( EquityTTMPerf record : perfMap.values() ) {
+            perfRepo.saveAndFlush( record );
+
+            curRecord++;
+
             if( curRecord % 50 == 0 ) {
-                pctCompleted = (((float)curRecord)/numRecords)*100 ;
-                log.debug( "->> " + Math.ceil( pctCompleted ) + "% completed." ) ;
+                pctCompleted = ((( float ) curRecord) / numRecords) * 100;
+                log.debug( "->> " + Math.ceil( pctCompleted ) + "% completed." );
             }
         }
         
@@ -216,7 +206,7 @@ public class EquityTTMPerfUpdater {
         ttmTimeMarkers[15] = new Object[]{ "perfFy" , fyStart } ;     
     }
     
-    private void preloadTTMPerfRecords() throws Exception {
+    private void preloadTTMPerfRecords() {
         
         log.debug( "- Preloading TTM perf records" ) ;
         
@@ -241,11 +231,11 @@ public class EquityTTMPerfUpdater {
         
         log.debug( "- Updating TTM " + perfField + " @ " + SDF.format( date ) ) ;
      
-        List<ClosePrice>        histEODList = null ;
+        List<ClosePrice>        histEODList ;
         Map<String, ClosePrice> histEODMap  = new HashMap<>() ;
         
         histEODList = histRepo.getClosePriceNearestToDate( date ) ;
-        histEODList.forEach( i -> { histEODMap.put( i.getSymbol(), i ) ; } ) ;
+        histEODList.forEach( i -> histEODMap.put( i.getSymbol(), i ) ) ;
         
         for( HistoricEQData candle : todayCandles.values() ) {
             
@@ -266,25 +256,34 @@ public class EquityTTMPerfUpdater {
                 if( perf.genuineGapExists() ) {
                     
                     log.debug( "!> Genuine gap found for " + symbol ) ;
-                    
-                    final HistoricEQData milestoneCP = fillGapsInHistoricData( perf, date ) ;
-                    if( milestoneCP != null ) {
-                        
-                        histCP = new ClosePrice() {
-                            public Date getDate() {
-                                return milestoneCP.getDate() ;
-                            }
-                            
-                            public String getSymbol() {
-                                return milestoneCP.getSymbol() ;
-                            }
-                            
-                            public float getClose() {
-                                return milestoneCP.getClose() ;
-                            }
-                        } ;
+
+                    try {
+                        final HistoricEQData milestoneCP = fillGapsInHistoricData( perf, date ) ;
+                        if( milestoneCP != null ) {
+
+                            histCP = new ClosePrice() {
+                                public Date getDate() {
+                                    return milestoneCP.getDate() ;
+                                }
+
+                                public String getSymbol() {
+                                    return milestoneCP.getSymbol() ;
+                                }
+
+                                public float getClose() {
+                                    return milestoneCP.getClose() ;
+                                }
+                            } ;
+                        }
+                        log.debug( "- Gap filled <<" ) ;
                     }
-                    log.debug( "- Gap filled <<" ) ;
+                    catch( Exception e ) {
+                        // Do not propagate the error. We can't have the bhavcopy
+                        // import failing just because historic data of one symbol
+                        // is not found.
+                        log.error( "Could not fill gap in historic data for " +
+                                   perf.getSymbolNse() + " and date " + date, e ) ;
+                    }
                 }
             }
             
@@ -318,7 +317,7 @@ public class EquityTTMPerfUpdater {
         String url = LAST_24M_EOD_URL.replace( "{symbol}", symbol ) ;
         
         HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
-        String response = null ;
+        String response ;
         String csvContent = null ;
         HistoricEQData eodDataClosestToMilestone = null ;
         
@@ -335,7 +334,7 @@ public class EquityTTMPerfUpdater {
             
             CsvParserSettings settings = new CsvParserSettings() ;
             CsvParser parser = new CsvParser( settings ) ;
-            List<String[]> records = null ;
+            List<String[]> records ;
             
             csvContent = csvContent.replace( ":", "\n" ) ;
             records = parser.parseAll( new StringReader( csvContent ) ) ;
@@ -370,7 +369,7 @@ public class EquityTTMPerfUpdater {
     private HistoricEQData addHistoricRecord( String[] row ) throws Exception {
         
         HistoricEQData eodData = null ;
-        List<HistoricEQData> histRows = null ;
+        List<HistoricEQData> histRows ;
         
         String symbol        = row[0].trim() ;
         Date   date          = SDF.parse       ( row[ 2].trim() ) ;

@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Removed the redundant test case">
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Equity updater was not respecting input params.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/Libraries.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/doc/sysops/Libraries.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/cron-scheduler.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doc/sysops/cron-scheduler.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/tradeupdater/EquityTradeUpdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/tradeupdater/EquityTradeUpdater.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capitalyst-server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/capitalyst-server.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityTTMPerfUpdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityTTMPerfUpdater.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,11 +49,6 @@
         <option name="userSettingsFile" value="$PROJECT_DIR$/../../workspace/mvnrepo/settings.xml" />
       </MavenGeneralSettings>
     </option>
-    <option name="importingSettings">
-      <MavenImportingSettings>
-        <option name="workspaceImportEnabled" value="true" />
-      </MavenImportingSettings>
-    </option>
   </component>
   <component name="NamedScopeManager">
     <scope name="Source Folders" pattern="(file[capitalyst-server]:doc//*||file[capitalyst-server]:src//*||file:.gitignore||file:pom.xml)&amp;&amp;!file[capitalyst-server]:src/main/resources/static/js/lib//*&amp;&amp;!file[capitalyst-server]:src/test/config/*" />
@@ -72,33 +66,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_directory_selection": "/Users/sandeep/projects/source/CapitalystServer/src/main/java/com/sandy/capitalyst/server",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "Errors",
-    "spring.configuration.checksum": "8d08fabdab186cde2d19ca8bcaea4309",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;last_directory_selection&quot;: &quot;/Users/sandeep/projects/source/CapitalystServer/src/main/java/com/sandy/capitalyst/server&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;8d08fabdab186cde2d19ca8bcaea4309&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/doc/sysops" />
@@ -229,7 +224,14 @@
       <workItem from="1682437915827" duration="122000" />
       <workItem from="1682445094970" duration="1498000" />
       <workItem from="1682869893004" duration="3368000" />
-      <workItem from="1683007470253" duration="665000" />
+      <workItem from="1683007470253" duration="909000" />
+      <workItem from="1683122179513" duration="2123000" />
+      <workItem from="1683178673505" duration="497000" />
+      <workItem from="1683267478727" duration="610000" />
+      <workItem from="1683405209186" duration="2906000" />
+      <workItem from="1683695205484" duration="1356000" />
+      <workItem from="1683814083883" duration="38000" />
+      <workItem from="1685104607592" duration="1218000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -287,7 +289,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680636566199</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Equity updater was not respecting input params.">
+      <created>1683008173407</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1683008173407</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -325,7 +334,8 @@
     <MESSAGE value="Log config" />
     <MESSAGE value="Bug - reports meta reload twice" />
     <MESSAGE value="Removed the redundant test case" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed the redundant test case" />
+    <MESSAGE value="Equity updater was not respecting input params." />
+    <option name="LAST_COMMIT_MESSAGE" value="Equity updater was not respecting input params." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
