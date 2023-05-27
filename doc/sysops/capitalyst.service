@@ -1,0 +1,16 @@
+[Unit]
+Description=Capitalyst
+
+[Service]
+Environment="DB_PASSWORD=[password here]"
+ExecStart=/home/pi/projects/bin/capitalyst/capitalyst
+WorkingDirectory=/home/pi/projects/bin/capitalyst
+Type=simple
+StandardOutput=file:/home/pi/projects/workspace/capitalyst/log/capitalyst_out.txt
+StandardError=file:/home/pi/projects/workspace/capitalyst/log/capitalyst_err.txt
+Restart=on-abort
+RestartSec=5s
+User=pi
+
+[Install]
+WantedBy=multi-user.target
