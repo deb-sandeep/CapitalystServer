@@ -1,0 +1,76 @@
+<div class="modal-dialog" 
+     style="width:500px;">
+     
+  <div class="modal-content" >
+    <div class="modal-header" style="background-color:#C5C5C5;padding:5px">
+      <h3 class="modal-title">Edit classification rule</h3>
+    </div>
+    
+    <div class="modal-body" style="background-color:#FEFEFE;padding:5px">
+	    <div class="form">
+	        <table class="form-table">
+	            <tbody>
+                    <tr>
+                        <td>
+                            <label>Rule name</label>
+                            <input class='form-field' 
+                                   type="text"
+                                   ng-model="ruleUnderEdit.ruleName" /> 
+                        </td>
+                    </tr>
+	                <tr>
+	                    <td>
+	                        <label>Change L1 category</label>
+	                        <select class="form-field" 
+	                                ng-model="ruleUnderEdit.l1CatName"
+	                                ng-options="item for item in catData.l1Categories">
+	                            <option value=""></option>
+	                        <p>
+	                        </select>
+	                    </td>
+	                </tr>
+                    <tr>
+                        <td>
+                            <label>Change L2 category</label>
+                            <select class="form-field" 
+                                    ng-model="ruleUnderEdit.l2CatName"
+                                    ng-options="item for item in catData.l2Categories.get( ruleUnderEdit.l1CatName )">
+                                <option value=""></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Rule</label>
+                            <textarea class="form-field rule-edit-textarea"
+                                      ng-class="getRuleEditBoxClass()" 
+                                      ng-model="ruleUnderEdit.ruleText" 
+                                      ng-change="validateEditedRule()"
+                                      rows="6">
+                            </textarea> 
+                            <span style="color:red;">&nbsp;
+                                {{ruleUnderEdit.validationMsg}}
+                            </span>
+                        </td>
+                    </tr>
+	            </tbody>
+	        </table>
+	    </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-default btn-sm" 
+              ng-click="hideRuleEditor()">
+            Cancel
+      </button>
+      <button type="button" 
+              class="btn btn-info btn-sm"
+              ng-click="saveEditedRule()">
+            Save
+      </button>
+    </div>
+    
+    <p>
+  </div>
+</div>

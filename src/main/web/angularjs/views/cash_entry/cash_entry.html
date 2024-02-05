@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html ng-app="capitalystNgApp">
+<head>
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#222" />
+    <!-- <meta name="mobile-web-app-capable" content="yes">  -->
+     
+    <title>Cash Entry</title>
+    <script src="/js/lib/jquery/jquery-2.1.1.min.js"></script>
+    <script src="/js/lib/jquery/jquery.cookie.js"></script>
+    <script src="/js/lib/angular/angular.min.js"></script>
+    <script src="/js/lib/angular/angular-route.min.js"></script>
+    <script src="/js/lib/angular/confirm/angular-confirm.min.js"></script>
+    <script src="/js/lib/moment/moment.min.js"></script>
+    <script src="/js/lib/bootstrap/bootstrap.min.js"></script>
+    <script src="/js/lib/bootstrap/bootstrap-datetimepicker.js"></script>
+
+    <link rel="stylesheet" href="/js/lib/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/js/lib/bootstrap/bootstrap-datetimepicker.css"/>
+    <link rel="stylesheet" href="/js/lib/angular/confirm/angular-confirm.min.css"/>
+    
+    <link rel="stylesheet" href="/css/app/app.css"/>
+    <link rel="stylesheet" href="/views/cash_entry/css/cash_entry.css"/>
+    
+    <script src="/js/app/app-ng-non-fu.js"></script>
+    <script src="/js/app/filter.js"></script>
+    
+    <script src="/views/cash_entry/js/controller.js"></script>
+    <script src="/views/cash_entry/js/service.js"></script>
+    <script src="/views/cash_entry/js/route.js"></script>
+    <script src="/views/cash_entry/js/filter.js"></script>
+    <script src="/views/cash_entry/js/CashEntryHomeController.js"></script>
+    <script src="/views/cash_entry/js/CashEntryEditController.js"></script>
+</head>
+
+<body ng-controller="CashEntryController"
+      style="background-color: #222;">
+
+<nav class="navbar navbar-inverse navbar-static-top"
+     style="min-height:0px;margin-bottom:0px;">
+    <div class="container" style="width:100%">
+        <div class="row" >
+            <div class="col-sm-7">
+                Cash account :: {{cashBalance | amt}}
+            </div>
+            <div class="col-sm-5">
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="alert alert-danger alert-dismissible" ng-repeat="alert in alerts">
+<a ng-click="dismissAlert( $index )" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+{{alert.msg}}
+</div>
+
+<div ng-view></div>
+
+<div id="serverInteractionLoader" 
+     class="modal loader" 
+     role="dialog"
+     data-backdrop="static">
+</div>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+#split-pane {
+    width: 100%;
+    height: calc(100vh - 35px );
+    display: flex;
+    overflow-y: hidden;
+}
+
+#icon-bar {
+    position:relative;
+    width: 65px;
+    height: 100%;
+    border-style:hidden;
+    border-color:#f4f4f4;
+    background-color: #555; 
+    overflow-y: auto;    
+}
+
+#module-panel {
+    position:relative;
+    width: 100%;
+    height: 100%;
+    margin-top: 5px;
+    margin-right: 5px;
+    overflow-y: auto;
+    font-size: 12px;
+}
+
+#icon-bar a {
+  display: block; /* Make the links appear below each other instead of side-by-side */
+  text-align: center; /* Center-align text */
+  padding: 16px; /* Add some padding */
+  transition: all 0.3s ease; /* Add transition for hover effects */
+  color: white; /* White text color */
+  font-size: 25px; /* Increased font-size */
+}
+
+#icon-bar a:hover {
+  background-color: #000; /* Add a hover color */
+}
+
+#icon-bar .active {
+  background-color: #04AA6D; /* Add an active/current color */
+}
+
+.pure-table .cat-name {
+    background-color: #eef4fa;
+}
+
+.pure-table td {
+	padding: 3px ;
+	font-size: 12px;
+}
+
+.centered-cell {
+	text-align: center;
+}
+
+.numeric {
+	width: 70px;
+	font-family: "Courier" ;
+	text-align: right ;
+}
+
+pre {
+	border:none;
+	background-color:white;
+	padding:2px;
+	font-family: "Courier" ;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;	
+}
+
+.action-div {
+	padding: 5px;
+	font-size:13px;
+}
+
+.action-btn {
+	text-align:center;
+}
+
+.jqstooltip {
+  width: auto !important;
+  height: auto !important;
+}
+
+.neg_amt {
+    color:red !important;
+}
+
+.pos_amt {
+    color:#295f19 !important;
+}
+
+.selected_row {
+    background-color: #fafaee ;
+}
+
+td {
+    padding-left : 5px !important;
+    padding-right : 5px !important;
+    padding-top : 3px !important;
+    padding-bottom : 3px !important;
+}
+
+.property-table {
+	width: auto !important;
+}
+
+.fin-year-select {
+    width: 120px;
+    height:30px;
+    font-size:16px;
+    margin: 5px;
+    display: inline-block;
+}

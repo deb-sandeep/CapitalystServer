@@ -1,0 +1,47 @@
+.form-table {
+	width:100%;
+}
+
+.form-table td {
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:10px;
+}
+
+.form-table label {
+    border:none;
+    color:#222;
+    display:block;
+    font-size:95%;
+    font-weight:700;
+    padding:0 0 1px;
+    margin-bottom:0px !important;
+}
+
+.form-field {
+	display:block;
+	width: 100%;
+	padding-left:10px;
+	padding-right:10px;
+	font-size:1.1em;
+	line-height:150%;
+	border-style:solid;
+	border-width:1px;
+	border-color:#d2d1d3;
+}
+
+.modal-footer {
+	padding:10px 10px 2px 0px;
+	border:none;
+}
+
+.ng-invalid {
+  background-color: pink;
+}
+
+.ng-valid {
+}
+
+.input-group-addon {
+    padding: 0px 5px 0px 10px; 
+}

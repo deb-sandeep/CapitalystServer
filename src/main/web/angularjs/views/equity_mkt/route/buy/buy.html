@@ -1,0 +1,113 @@
+<div id="nav-panel" align="center">
+    <span class="glyphicon glyphicon-chevron-left"
+          ng-show="$parent.operatingFY.prevChoice != null"
+          ng-click="selectPrevOperatingYear()"></span>
+    <select class="form-field fin-year-select" 
+            ng-model="$parent.operatingFY"
+            ng-options="item as item.label for item in fyChoices"
+            ng-change="operatingFYChanged()">
+    </select>
+    <span class="glyphicon glyphicon-chevron-right"
+          ng-show="$parent.operatingFY.nextChoice != null"
+          ng-click="selectNextOperatingYear()"></span>
+    <span style="font-size: 20px; margin-left:50px;">
+        <span>Invested amount : </span>
+        <span class="fixed-font" ng-class="getAmtClass(allTotal.costPrice)">
+            {{allTotal.costPrice | amt}}
+        </span>
+    </span>
+</div>
+
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="table table-bordered table-compact"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th></th>
+                <th ng-click="sortRows('owner', 'parentHolding.ownerName', 'string')">
+                    Owner
+                </th>
+                <th ng-click="sortRows('date', 'txnDate', 'date')">
+                    Date
+                </th>
+                <th ng-click="sortRows('symbol', 'parentHolding.symbolIcici', 'string')">
+                    Company
+                </th>
+                <th></th>
+                <th style="width:50px;"
+                    ng-click="sortRows('quantity', 'quantity', 'num')">
+                    Qty
+                </th>
+                <th style="width:75px;"
+                    ng-click="sortRows('txnPrice', 'txnPrice', 'num')">
+                    Txn Price
+                </th>
+                <th ng-click="sortRows('mktPrice', 'parentHolding.currentMktPrice', 'num')"
+                    style="width:75px;">
+                    Mkt Price
+                </th>
+                <th ng-click="sortRows('costPrice', 'valueAtCost', 'num')"
+                    style="width:100px;">
+                    Cost Price
+                </th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <tr ng-class="getRowClass( txn )"
+                ng-repeat="txn in buyTxns">
+               <td>
+                 <input type="checkbox" 
+                        ng-model="txn.selected"
+                        ng-change="txnSelectionChanged()"/>
+               </td>
+               <td ng-dblclick="selectAllHoldingsForOwner( txn.parentHolding.ownerName )">
+                    {{txn.parentHolding.ownerName}}
+               </td>
+               <td style="text-align:right;">
+                    {{txn.txnDate | date : "dd MMM" }}
+               </td>
+               <td style="font-size:12px;"
+                   ng-dblclick="selectAllHoldingsForSymbol( txn.parentHolding.symbolIcici )">
+                   <span data-toggle="tooltip" title="{{txn.parentHolding.companyName}}">
+                        {{txn.parentHolding.symbolIcici}}
+                   </span>
+               </td>
+               <td>
+                    <a ng-click="showGraphDialog( txn )">
+                        <span class="glyphicon glyphicon-stats"
+                              style="color:#C8C8C8;"></span>
+                    </a>
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.quantity}}
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.txnPrice | amt}}
+               </td>
+               <td class="fixed-font amt"
+                   ng-class="getAmtClass( txn.parentHolding.currentMktPrice - txn.txnPrice)">
+                    {{txn.parentHolding.currentMktPrice | amt}}
+               </td>
+               <td class="fixed-font amt">
+                    {{txn.valueAtCost | amt}}
+               </td>
+            </tr>
+        </tbody>
+        
+        <tfoot>
+            <tr class="success">
+                <th colspan="8"></th>
+                <th class="fixed-font amt">
+                    {{allTotal.costPrice | amt}}
+                </th>
+            </tr>
+            <tr class="info">
+                <th colspan="8"></th>
+                <th class="fixed-font amt">
+                    {{selTotal.costPrice | amt}}
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>

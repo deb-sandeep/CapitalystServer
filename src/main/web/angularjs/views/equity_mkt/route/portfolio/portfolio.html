@@ -1,0 +1,16 @@
+<div ng-if="!onMobile"
+     ng-include="'route/portfolio/portfolio_desktop.html'">
+</div>
+<div ng-if="onMobile"
+     ng-include="'route/portfolio/portfolio_mobile.html'">
+</div>
+
+<div id="txnsDisplayDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/portfolio/dialog/txns_display_dialog.html'"
+     ng-controller="TxnsDisplayDialogController">
+</div>
+
+

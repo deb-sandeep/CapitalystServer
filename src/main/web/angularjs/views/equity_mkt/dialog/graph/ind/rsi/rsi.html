@@ -1,0 +1,41 @@
+<div class="panel-heading">
+  <h4 class="panel-title">
+    <input type="checkbox" 
+           ng-model="config.enableFlag"
+           ng-change="enableFlagUpdated()"/>
+    &nbsp;
+    <a data-target="#rsi" data-toggle="collapse">
+    RSI
+    </a>
+  </h4>
+</div>
+
+<div id="rsi" 
+     class="panel-collapse collapse form indicator-options">
+    <div>
+        <table>
+            <tr>
+                <td style="width:60%">Window</td>
+                <td style="width:40%">
+                   <input type="numeric"
+                          ng-model="config.windowSize"
+                          style="width:100%;"/>
+                </td>
+            </tr>
+        </table>
+        <div style="text-align:right;">
+            <button type="button"
+                    class="btn btn-info indicator-cfg-btn"
+                    ng-click="hideRSIChart()"
+                    style="color:#800200;">
+               <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <button type="button"
+                    class="btn btn-info indicator-cfg-btn"
+                    ng-click="showRSIChart()"
+                    style="color:green;">
+               <span class="glyphicon glyphicon-ok"></span>
+            </button>
+        </div>
+    </div>
+</div>

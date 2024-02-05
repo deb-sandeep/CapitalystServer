@@ -1,0 +1,54 @@
+<div class="panel-group" id="acc" style="font-size:12px;padding:5px;">
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-target="#indexMaster" data-toggle="collapse" data-parent="#acc">
+        Index Master
+        </a>
+      </h4>
+    </div>
+    <div id="indexMaster" class="panel-collapse form action-div">
+        <div class="explanation">
+            Refreshes the NSE index master table by refreshing index, stock
+            associations.
+        </div>
+        <div ng-repeat="ota in [$parent.otaStat[ 'RefreshIndexMaster' ]]" 
+             ng-include="'route/actions/template/action.html'"></div>
+        
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-target="#tradeUpdater" data-toggle="collapse" data-parent="#acc">
+        Equity Trade Updater
+        </a>
+      </h4>
+    </div>
+    <div id="#tradeUpdater" class="panel-collapse form action-div">
+        <div class="explanation">
+            Updates trades and trade details
+        </div>
+        <div ng-repeat="ota in [$parent.otaStat[ 'EquityTradeUpdater' ]]" 
+             ng-include="'route/actions/template/action.html'"></div>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-target="#histEQDataUpdater" data-toggle="collapse" data-parent="#acc">
+        Historic EQ data importer
+        </a>
+      </h4>
+    </div>
+    <div id="#histEQDataUpdater" class="panel-collapse form action-div">
+        <div class="explanation">
+            Updates historic equity data
+        </div>
+        <div ng-repeat="ota in [$parent.otaStat[ 'HistoricEQDataImporter' ]]" 
+             ng-include="'route/actions/template/action.html'"></div>
+    </div>
+  </div>
+</div>

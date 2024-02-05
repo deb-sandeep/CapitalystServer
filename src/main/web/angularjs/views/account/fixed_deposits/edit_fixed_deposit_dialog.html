@@ -1,0 +1,164 @@
+<div class="modal-dialog" 
+     style="width:600px;"
+     ng-controller="FixedDepositEditController">
+     
+  <div class="modal-content" >
+    <div class="modal-header" style="background-color:#E5E5E5;padding:5px">
+      <h4 class="modal-title">Edit Fixed Deposit</h4>
+    </div>
+    
+    <div class="modal-body" style="background-color:#FEFEFE;padding:5px">
+    
+	    <div class="form">
+	        <table class="form-table">
+	            <tbody>
+	                <tr>
+	                    <td width="50%">
+					        <label>Account Owner</label>
+					        <select class="form-field" required
+					                ng-model="account.baseAccount.accountOwner"
+					                ng-options="item.firstName as item.firstName for item in refData.individuals">
+					        </select>
+	                    </td>
+	                    <td>
+	                        <label>Account Type</label>
+	                        <select class='form-field' required
+	                                ng-model="account.baseAccount.accountType"
+	                                ng-options="item for item in refData.accountTypes"> 
+	                        </select>
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <td>
+	                        <label>Bank</label>
+	                        <select class='form-field' required
+	                                ng-model="account.baseAccount.bankName"
+	                                ng-options="item for item in refData.bankNames"> 
+	                        </select>
+	                    </td>
+	                    <td>
+	                        <label>Branch</label>
+	                        <input class='form-field' required
+	                               type="text" 
+	                               ng-model="account.baseAccount.bankBranch" /> 
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <td>
+	                        <label>Account Number</label>
+	                        <input class='form-field' required
+	                               type="text" 
+	                               ng-model="account.baseAccount.accountNumber" /> 
+	                    </td>
+	                    <td>
+	                        <label>Short Name</label>
+	                        <input class='form-field' required
+	                               type="text" 
+	                               ng-model="account.baseAccount.shortName" /> 
+	                    </td>
+	                </tr>
+                    <tr>
+                        <td>
+                            <label>Parent Account</label>
+                            <select class='form-field' required
+                                    ng-model="account.parentAccount"
+                                    ng-options="item as item.shortName for item in savingAccounts"> 
+                            </select>
+                        </td>
+                        <td>
+                            <label>Balance</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.baseAccount.balance" /> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Opening date</label>
+							<div class='input-group date' id="opening_date">
+							    <input type='text' class="form-field" required/>
+							    <span class="input-group-addon">
+							        <span class="glyphicon glyphicon-calendar"></span>
+							    </span>
+							</div>
+                        </td>
+                        <td>
+                            <label>Maturity date</label>
+                            <div class='input-group date' id="maturity_date">
+                                <input type='text' class="form-field" required/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Opening amount</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.openAmt" /> 
+                        </td>
+                        <td>
+                            <label>Mature amount</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.matureAmt" /> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Autorenew</label>
+							<input type="checkbox" 
+							       ng-model="account.autoRenew"/>
+                        </td>
+                        <td>
+                            <label>Interest Rate</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.interestRate" /> 
+                        </td>
+                    </tr>
+                    <tr ng-if="account.baseAccount.accountType != null && 
+                               account.baseAccount.accountType == 'RECURRING_DEPOSIT'">
+                        <td>
+                            <label>Recurring Amount</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.recurringAmt" /> 
+                        </td>
+                        <td>
+                            <label>Recurring Day of Month</label>
+                            <input class='form-field' required
+                                   type="number" 
+                                   ng-model="account.recurringDom" /> 
+                        </td>
+                    </tr>
+	                <tr>
+	                    <td colspan="2">
+	                        <label>Notes</label>
+	                        <textarea class='form-field' 
+	                                  rows="2"
+	                                  ng-model="account.baseAccount.description">
+	                        </textarea> 
+	                    </td>
+	                </tr>
+	            </tbody>
+	        </table>
+	    </div>
+	</div>
+    
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-default btn-sm" 
+              ng-click="cancelEdit()">
+            Cancel
+      </button>
+      <button type="button" 
+              class="btn btn-info btn-sm"
+              ng-click="saveAccount()">
+            Save
+      </button>
+    </div>
+  </div>
+</div>

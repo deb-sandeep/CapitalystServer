@@ -1,0 +1,127 @@
+.cash_entry_ledger_body {
+	position:absolute;
+	top:32px;
+	left:0px;
+	bottom:50px;
+	right:0px;
+	background-color: #222;
+	overflow-y:auto;
+}
+
+.cash_entry_edit_body {
+    position:absolute;
+    top:32px;
+    left:0px;
+    bottom:50px;
+    right:0px;
+    background-color: #222;
+    padding:10px;
+}
+
+.cash_entry_screen_footer {
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:50px;
+    background-color:#222;
+}
+
+.cash_entry_ledger_load_more_btn {
+    width:100%;
+    height:100%;
+    font-size:20px;
+    background-color:#222;
+    color:#8a898a;
+}
+
+.cash_entry_footer_btn {
+	position:relative;
+	width:100%;
+	height:100%;
+	padding:0px;
+	background-color: #2A2A2A;
+	border-color: #2E2E2E;
+	font-size:20px;
+	color: #AAA;
+}
+
+.btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: black;
+}
+
+.cash_entry_ledger_body .container {
+	margin-bottom: 3px;
+}
+
+.cash_entry_ledger_body .ledger_row {
+  height:50px;
+}
+
+.cash_entry_ledger_body .short-div {
+  height:25px;
+}
+
+.cash_entry_ledger_body .dt-cell {
+    background-color: #5c5e5f;
+    color:white;
+	font-size:16px;
+	line-height:50px;
+	text-align:middle;
+	padding:0px 0px 0px 5px;
+}
+
+.cash_entry_ledger_body .cat-cell {
+    background-color: #868788;
+    padding:0px 0px 0px 5px;
+    color:white;
+    line-height:25px;
+    text-align:middle;
+    font-size:13px;
+}
+
+.cash_entry_ledger_body .note-cell {
+    background-color: #424344;
+    padding:0px 0px 0px 5px;
+    line-height:25px;
+    text-align:middle;
+    color:white;
+}
+
+.cash_entry_ledger_body .amt-cell {
+    background-color: #5c5e5f;
+    padding:0px 5px 0px 0px;
+    text-align:right;
+    font-size:16px;
+    line-height:50px;
+    color:white;
+    font-family:'Courier';
+}
+
+.cash_entry_edit_body label {
+	font-size:12px;
+	color:#cacbcd;
+}
+
+.cash_entry_edit_body .form-control {
+	background-color: #43454a;
+	color:white;
+	border-color: #686a71;
+}
+
+.ng-confirm-box {
+	background-color: #f2dfba !important;
+}
+
+.btn-default {
+	background-color: #e2b88b !important;
+}
+
+.input-group-addon {
+	background-color: #a0a3a7 !important;
+}
+
+.bootstrap-datetimepicker-widget {
+    background-color: #bfc1c7 !important;	
+}
+

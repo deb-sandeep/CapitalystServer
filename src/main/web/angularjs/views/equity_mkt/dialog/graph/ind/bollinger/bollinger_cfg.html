@@ -1,0 +1,54 @@
+<div class="panel-heading">
+  <h4 class="panel-title">
+    <input type="checkbox" 
+           ng-model="config.enableFlag"
+           ng-change="enableFlagUpdated()"/>
+    &nbsp;
+    <a data-target="#bollinger" data-toggle="collapse">
+    Bollinger
+    </a>
+  </h4>
+</div>
+
+<div id="bollinger" 
+     class="panel-collapse collapse form indicator-options">
+	<div>
+	    <table>
+	        <tr>
+	            <td style="width:60%">Num bars</td>
+	            <td style="width:40%">
+	               <input type="numeric"
+	                      ng-model="config.windowSize"
+	                      style="width:100%;"/>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>Num StdDev</td>
+	            <td>
+	               <input type="numeric"
+	                      ng-model="config.numStdDev"
+	                      style="width:100%;"/>
+	            </td>
+	        </tr>
+	    </table>
+	    <div style="text-align:right;">
+	        <button type="button"
+	                class="btn btn-info indicator-cfg-btn"
+	                ng-click="hideBollingerBands()"
+	                style="color:#800200;">
+	           <span class="glyphicon glyphicon-remove"></span>
+	        </button>
+	        <button type="button"
+	                class="btn btn-info indicator-cfg-btn"
+	                ng-click="fetchBollingerBands()"
+	                style="color:green;">
+	           <span class="glyphicon glyphicon-ok"></span>
+	        </button>
+	    </div>
+	</div>
+</div>
+
+
+
+
+

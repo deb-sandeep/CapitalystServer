@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html ng-app="capitalystNgApp">
+
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <script src="/js/lib/jquery/jquery-2.1.1.min.js"></script>
+    <script src="/js/lib/angular/angular.min.js"></script>
+    <script src="/js/lib/angular/angular-route.min.js"></script>
+    <script src="/js/lib/angular/confirm/angular-confirm.min.js"></script>
+    <script src="/js/lib/moment/moment.min.js"></script>
+    <script src="/js/lib/bootstrap/bootstrap.min.js"></script>
+    <script src="/js/lib/bootstrap/bootstrap-datetimepicker.js"></script>
+    <script src="/js/lib/sort-table/sort-table.js"></script>
+    <script src="/js/lib/ng-file-upload/ng-file-upload-all.js"></script>
+
+    <link rel="stylesheet" href="/js/lib/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/js/lib/bootstrap/bootstrap-datetimepicker.css"/>
+    <link rel="stylesheet" href="/js/lib/angular/confirm/angular-confirm.min.css"/>
+    <link rel="stylesheet" href="/css/app/app.css"/>
+    <link rel="stylesheet" href="/css/app/form.css"/>
+    <link rel="stylesheet" href="/views/account/account.css"/>
+    <link rel="stylesheet" href="/views/account/mf/css/mf.css"/>
+    
+    <script src="/js/app/app-ng.js"></script>
+    <script src="/js/app/filter.js"></script>
+    
+    <script src="/views/account/_common/js/controller.js"></script>
+    <script src="/views/account/_common/js/directive.js"></script>
+    <script src="/views/account/_common/js/route.js"></script>
+    <script src="/views/account/_common/js/filter.js"></script>
+    
+    <script src="/views/account/_common/js/UploadAccountStmtController.js"></script>
+    
+    <script src="/views/account/savings/js/SavingAccountsController.js"></script>
+    <script src="/views/account/savings/js/SavingAccountEditController.js"></script>
+    
+    <script src="/views/account/fixed_deposits/js/FixedDepositsController.js"></script>
+    <script src="/views/account/fixed_deposits/js/FixedDepositEditController.js"></script>
+
+    <script src="/views/account/mf/js/MutualFundsController.js"></script>
+    <script src="/views/account/mf/js/InfoEditController.js"></script>
+
+    <script src="/views/account/equity/js/EquityController.js"></script>
+    
+    <script>
+		$(document).ready(function(){
+		  $('[data-toggle="tooltip"]').tooltip();   
+		});
+	</script>
+</head>
+
+<body ng-controller="AccountController"
+      style="background-color: #FFFFFF;">
+
+<nav class="navbar navbar-inverse navbar-static-top"
+     style="min-height:0px;margin-bottom:0px;">
+    <div class="container" style="width:100%">
+        <div class="row" >
+            <div class="col-sm-7">
+                [ <a href="/views/landing/landing.html">Capitalyst</a> ] - {{navBarTitle}}
+            </div>
+            <div class="col-sm-5">
+                <!-- Space for controls common to module -->
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="alert alert-danger alert-dismissible" ng-repeat="alert in alerts">
+<a ng-click="dismissAlert( $index )" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+{{alert.msg}}
+</div>
+
+<ul class="nav nav-tabs">
+  <li ng-class="getTabActiveClass( 'SB' )">
+    <a data-toggle="tab" ng-click="showRoute( '/savingAccounts' )">Savings Bank Accounts</a>
+  </li>
+  <li ng-class="getTabActiveClass( 'FD' )">
+    <a data-toggle="tab" ng-click="showRoute( '/fixedDeposits' )">Fixed Deposits</a>
+  </li>
+  <li ng-class="getTabActiveClass( 'MF' )">
+    <a data-toggle="tab" ng-click="showRoute( '/mutualFunds' )">Mutual Funds</a>
+  </li>
+  <li ng-class="getTabActiveClass( 'EQ' )">
+    <a data-toggle="tab" ng-click="showRoute( '/equityHoldings' )">Equity</a>
+  </li>
+</ul>
+
+<div ng-view></div>
+
+<div id="serverInteractionLoader" 
+     class="modal loader" 
+     role="dialog"
+     data-backdrop="static">
+</div>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<div class="page-menu-bar">
+	<button class="btn btn-info btn-sm"
+	        ng-click="showNewAccountDialog()">
+	    <span class="glyphicon glyphicon-plus-sign"></span>
+	    New Account
+	</button>
+	<button class="btn btn-info btn-sm"
+	        ng-click="showConsolidatedLedger()">
+	    Show consolidated ledger
+	</button>
+	<button class="btn btn-info btn-sm"
+	        ng-click="corpusSnapshot()">
+	    Take corpus snapshot
+	</button>
+</div>
+
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="table table-bordered table-compact js-sort-table"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th></th>
+                <th>Owner</th>
+                <th>A/C #</th>
+                <th>Type</th>
+                <th>Bank</th>
+                <th>Remark</th>
+                <th class="js-sort-number">Balance</th>
+                <th class="js-sort-number">Deposits</th>
+                <th class="js-sort-number">Total</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="account in accounts">
+               <td>
+                 <input type="checkbox" 
+                        ng-model="account.selected"/>
+               </td>
+               <td>{{account.accountOwner}}</td>
+               <td>{{account.accountNumber}}</td>
+               <td>{{account.accountType}}</td>
+               <td>{{account.bankName}}</td>
+               <td>{{account.shortName}}</td>
+               <td class="fixed-font amt">{{account.balance | amt}}</td>
+               <td class="fixed-font amt">{{account.depositBalance | amt}}</td>
+               <td class="fixed-font amt">{{account.depositBalance + account.balance | amt}}</td>
+               <td>
+	             <span class="glyphicon glyphicon-pencil"
+	                   ng-click="editAccount( $index )">
+	             </span>&nbsp;
+               </td>
+               <td>
+                 <span class="glyphicon glyphicon-cloud-upload"
+                       ng-click="showAccountStmtUploadDialog( account )">
+                 </span>&nbsp;
+               </td>
+               <td>
+                 <span class="glyphicon glyphicon-th-list"
+                       ng-click="viewLedger( account )">
+                 </span>&nbsp;
+               </td>
+               <td>
+                 <span class="glyphicon glyphicon-trash"
+                       style="color:red;"
+                       ng-click="deleteAccount( $index )">
+                 </span>&nbsp;
+               </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="success">
+                <th colspan="6"></th>
+                <th class="fixed-font amt">{{totalBalance | amt}}</th>
+                <th class="fixed-font amt">{{totalDepositBalance | amt}}</th>
+                <th class="fixed-font amt">{{totalBalance + totalDepositBalance | amt}}</th>
+                <th colspan="4"></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div id="savingAccountEditDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'savings/edit_saving_account_dialog.html'">
+</div>
+
+<div id="uploadAccountStmtDialog"
+     class="modal"
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'_common/upload_account_stmt_dialog.html'">
+</div>

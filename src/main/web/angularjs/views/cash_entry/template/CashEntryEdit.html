@@ -1,0 +1,84 @@
+<div class="cash_entry_edit_body">
+	<form>
+      <div class="form-group">
+        <label for="ceIndividual">Entry by</label>
+        <div>
+           <select id="ceIndividual"
+                   class="form-control" 
+                   ng-model="editEntry.notes"
+                   ng-options="item for item in individuals">
+           </select>
+        </div>
+      </div>
+	  <div class="form-group">
+	    <label for="ceDate">Date</label>
+        <div class='input-group date' id="ceDate">
+            <input type='text' class="form-control" required/>
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+	  </div>
+      <div class="form-group">
+        <label for="ceAmt">Amount</label>
+        <div>
+            <input id="ceAmt" type='number' class="form-control" required 
+                   ng-model="editEntry.amount"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="ceL1Cat">Category</label>
+        <div>
+           <select id="ceL1Cat"
+                   class="form-control" 
+                   ng-model="editEntry.l1Cat"
+                   ng-options="item for item in relevantCategoriesForSelectedEntries.l1Categories">
+               <option value=""></option>
+           </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="ceL2Cat">Subcategory</label>
+        <div>
+           <select id="ceL2Cat"
+                   class="form-control" 
+                   ng-model="editEntry.l2Cat"
+                   ng-options="item for item in relevantCategoriesForSelectedEntries.l2Categories.get(editEntry.l1Cat)">
+               <option value=""></option>
+           </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="ceRemarks">Remarks</label>
+        <div>
+           <textarea id="ceRemarks"
+                     class="form-control" 
+                     rows="2"
+                     ng-model="editEntry.remarks">
+           </textarea> 
+        </div>
+      </div>
+	</form>
+</div>
+
+<div class="cash_entry_screen_footer">
+    <div class="container" style="width:100%;height:100%;padding:0;">
+      <div class="row" style="height:100%;">
+        <div class="col-xs-5" style="height:100%;padding:1px;">
+		    <button class="btn btn-primary btn-md cash_entry_footer_btn"
+		            ng-click="cancelCashEntry()">
+              <span class="glyphicon glyphicon-chevron-left"></span>&nbsp;
+		      Cancel
+		    </button>
+        </div>
+        <div class="col-xs-7" style="height:100%;padding:1px;">
+		    <button class="btn btn-primary btn-md cash_entry_footer_btn"
+                    style="background-color:#5c5e5f;"
+		            ng-click="saveCashEntry()">
+		      <span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;
+		      Save
+		    </button>
+        </div>
+      </div>
+    </div>
+</div>

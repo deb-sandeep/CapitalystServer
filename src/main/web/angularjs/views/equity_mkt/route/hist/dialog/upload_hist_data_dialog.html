@@ -1,0 +1,69 @@
+<div class="modal-dialog" 
+     style="width:700px;"
+     ng-controller="UploadEquityEODController">
+     
+  <div class="modal-content" >
+    <div class="modal-header" style="background-color:#E5E5E5;padding:5px">
+      <h4 class="modal-title">Upload Equity Historic EOD</h4>
+    </div>
+
+	<div class="modal-body"
+		style="background-color: #FEFEFE; padding: 5px">
+		
+        <span style="height:10px;display:block;"></span>
+        Uploads historic data for a single equity. The data can be downloaded
+        from <a target="_blank" href="https://www1.nseindia.com/products/content/equities/equities/eq_security.htm">here</a>.
+        Please ensure the 'Security wise price volume data' format is downloaded.
+        <span style="height:10px;display:block;"></span>
+        
+        <button ngf-select="uploadFiles($files)" multiple>Select Files</button>
+		
+		<br>
+	    Files:
+	    <ul>
+	        <li ng-repeat="f in files" style="font:smaller">
+	            {{f.name}}
+	        </li>
+	    </ul>
+	    Progress:
+	    <span class="progress" ng-show="progress >= 0">
+	        <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
+	    </span>
+	    <br>
+	    <table class="table table-bordered table-compact">
+	       <thead>
+	            <tr class="success">
+	                <th colspan="2"></th>
+	                <th colspan="4"># Records</th>
+	            </tr>
+	            <tr class="success">
+	                <th width="250px">File</th>
+	                <th width="60px">Symbol</th>
+	                <th width="60px">Found</th>
+	                <th width="60px">Imported</th>
+	                <th width="60px">Deleted</th>
+	                <th width="60px">Modified</th>
+	            </tr>
+	       </thead>
+	       <tbody>
+            <tr ng-repeat="result in results">
+               <td>{{result.fileName}}</td>
+               <td>{{result.symbol}}</td>
+               <td>{{result.numRecordsFounds}}</td>
+               <td>{{result.numAdditions}}</td>
+               <td>{{result.numDeletions}}</td>
+               <td>{{result.numModified}}</td>
+            </tr>
+	       </tbody>
+	    </table>
+	</div>
+
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-default btn-sm" 
+              ng-click="hideDialog()">
+            Done
+      </button>
+    </div>
+  </div>
+</div>

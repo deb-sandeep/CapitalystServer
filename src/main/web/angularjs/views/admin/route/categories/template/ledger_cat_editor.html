@@ -1,0 +1,106 @@
+<nav>
+  <ol class="breadcrumb" style="background-color:#eef4fa;">
+    <li class="breadcrumb-item" style="color:#444;">
+        {{operatingFY.label}} - {{activeCategory}} Entries.&nbsp;
+        <span ng-if="activeCategory == 'Debit'">
+            Total budget - 
+            <span style="font-family:Courier">{{totalBudget | amt}}</span>
+        </span>
+    </li>
+  </ol>
+</nav>
+<table class="pure-table pure-table-bordered">
+   <thead>
+       <tr>
+           <th>Category</th>
+           <th width="200px">Sub-category</th>
+           <th width="40px">#</th>
+           <th width="40px"
+               ng-if="$parent.catType == 'Debit'">
+			     <input type="checkbox" 
+			            ng-model="$parent.$parent.$parent.showOnlyBudgetedDebitCategories"/>
+                Yr. Cap
+           </th>
+           <th>Txn Pivot</th>
+           <th>Cash Entry</th>
+           <th>Change L1</th>
+           <th>Merge</th>
+       </tr>
+   </thead>
+   <tbody ng-repeat="catName in catData.l1Categories"
+          ng-show="showL1Category( catName )">
+          
+       <tr class='cat-name'>
+           <td colspan="{{$parent.$parent.catType=='Debit'?3:7}}">
+                <div ng-show="!catName.beingEdited" 
+                     ng-click="startEditingL1CategoryName( catName )">
+                    <b>{{catName.displayName}}</b>
+                </div>
+                <div ng-show="catName.beingEdited">
+                    <input class='form-field' 
+                           type="text" 
+                           ng-model="$parent.$parent.$parent.l1CatNameBeingEdited" 
+                           ng-enter="saveL1CategoryName( catName )"
+                           ng-escape="revertL1CategoryEditChanges( catName )"/> 
+                </div>
+            </td>
+            <td ng-if="$parent.$parent.catType=='Debit'"
+                class="numeric"
+                style="color:blue;">
+                {{catName.yearlyBudget | amt}}
+            </td>
+            <td ng-if="$parent.$parent.catType=='Debit'" colspan="4">
+            </td>
+       </tr>
+       <tr ng-repeat="cat in catData.l2Categories.get( catName.displayName )"
+           ng-show="showL2Category( cat )" >
+            <td></td>
+            <td>
+                <div ng-show="!cat.beingEdited" 
+                     ng-click="startEditingL2CategoryName( cat )">
+                    {{cat.l2CatName}}
+                </div>
+                <div ng-show="cat.beingEdited">
+                    <input class='form-field' 
+                           type="text" 
+                           ng-model="$parent.$parent.$parent.$parent.l2CatNameBeingEdited" 
+                           ng-enter="saveL2CategoryName( cat )"
+                           ng-escape="revertL1CategoryEditChanges( cat )"/> 
+                </div>
+            </td>
+            <td class="numeric">
+                <a ng-click="showLedgerEntriesDialog( cat )">
+	                {{cat.numLedgerEntries}}
+                </a>
+            </td>
+	        <td ng-if="$parent.$parent.$parent.catType == 'Debit'" 
+	            class="numeric">
+	            <a ng-click="showBudgetEditorDialog( cat )">
+	               {{cat.yearlyCap | amt}}
+	            </a>
+	        </td>
+            <td class="centered-cell">
+                <input type="checkbox" 
+                       ng-model="cat.selectedForTxnPivot"
+                       ng-change="saveCategoryAttributes( cat )"/>
+                
+            </td>
+            <td class="centered-cell">
+                <input type="checkbox" 
+                       ng-model="cat.validForCashEntry"
+                       ng-change="saveCategoryAttributes( cat )"/>
+                
+            </td>
+            <td class="centered-cell">
+                <a ng-click="showParentCategoryDialog( cat )">
+                    <span class="glyphicon glyphicon-indent-left"></span>
+                </a>
+            </td>
+            <td class="centered-cell">
+                <a ng-click="showMergeCategoryDialog( cat )">
+                    <span class="glyphicon glyphicon-log-in"></span>
+                </a>
+            </td>
+       </tr>
+   </tbody>
+</table>

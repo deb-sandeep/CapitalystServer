@@ -1,0 +1,196 @@
+<div class="modal-dialog" style="width:1100px;"
+     ng-controller="DebitRecoveryDialogController">
+     
+  <div class="modal-content" >
+    <div class="modal-header" style="background-color:#E5E5E5;padding:5px">
+      <h4 class="modal-title">Recover debit transaction</h4>
+    </div>
+    
+    <div class="modal-body" style="background-color:#FEFEFE;padding:5px">
+	    <div class="form">
+	    
+	       <div>
+	           <h5>Selected Credit Transaction.
+		           <span style="color:red;">
+		               Remaining amount : {{creditAmtRemaining | amt}}
+		           </span> 
+	           </h5>
+	           <table style="width:100%;" class="ledger-table">
+	               <tr>
+	                   <td class="fixed-font" width="100px;">
+	                       {{creditTxn.valueDate | date}}
+	                   </td>
+                       <td class="fixed-font amt" width="75px;">
+                           {{creditTxn.amount | amt}}
+                       </td>
+                       <td width="150px;">
+                           {{creditTxn.notes}}
+                       </td>
+                       <td width="250px;">
+                           {{creditTxn.l1Cat}} &gt; {{creditTxn.l2Cat}}
+                       </td>
+		               <td class="remarks fixed-font" style="padding-left:10px;">
+		                   {{creditTxn.remarks | remark}}
+		                   &nbsp;
+		                   <span ng-if="creditTxn.chequePayment"
+		                         class="glyphicon glyphicon-map-marker"></span>
+		                   <span ng-if="$parent.$parent.isCreditCardEntry( creditTxn )"
+		                         class="glyphicon glyphicon-subtitles"></span>
+		                   <span ng-if="$parent.$parent.isCashEntry( creditTxn )"
+		                         class="glyphicon glyphicon-leaf"></span>
+		               </td>
+	               </tr>
+	           </table>
+	       </div>
+	       
+	       <div>
+               <h5>
+                    Associated Debit Transaction
+               </h5>
+               <table style="width:100%;" class="ledger-table">
+                   <tr ng-repeat="entry in selectedDebitTxns">
+                       <td class="fixed-font" width="10px">
+                            {{$index + 1}}
+                       </td>
+                       <td class="fixed-font" width="100px;">
+                           {{entry.debitTxn.valueDate | date}}
+                       </td>
+                       <td class="fixed-font amt" width="75px;">
+                           {{entry.debitTxn.amount | amt}} <br/>
+                           ({{entry.maxRecoverableAmount | amt}})
+                       </td>
+                       <td width="150px;">
+                           {{entry.debitTxn.notes}}
+                       </td>
+                       <td width="400px;">
+                           {{entry.debitTxn.l1Cat}} &gt; {{entry.debitTxn.l2Cat}}<br/>
+                           {{entry.debitTxn.remarks | remark}}
+                           &nbsp;
+                           <span ng-if="entry.chequePayment"
+                                 class="glyphicon glyphicon-map-marker"></span>
+                           <span ng-if="$parent.$parent.isCreditCardEntry( entry.debitTxn )"
+                                 class="glyphicon glyphicon-subtitles"></span>
+                           <span ng-if="$parent.$parent.isCashEntry( entry.debitTxn )"
+                                 class="glyphicon glyphicon-leaf"></span>
+                           
+                       </td>
+                       <td width="100px">
+	                        <input class='form-field' 
+	                               type="number" 
+	                               min="0"
+	                               max="99999999"
+	                               ng-model="entry.recoveredAmount"
+	                               ng-change="recomputeRemainingCreditAmt()"
+	                               style="text-align:right;"/> 
+                       </td>
+                       <td width="200px">
+                            <input class='form-field' 
+                                   type="text" 
+                                   ng-model="entry.note"/> 
+                       </td>
+                       <td width="50px" style="text-align:center;">
+                          <span class="glyphicon glyphicon-trash"
+                                ng-click="removeDebitTxn( $index )"></span>
+                       </td>
+                   </tr>
+               </table>
+	       </div>
+	       
+	       <div>
+               <h5>Debit Transaction</h5>
+               <div id="debit-entries-div">
+				    <table class="ledger-table" style="width: 100%;">
+				        <thead>
+				            <tr class="success">
+				                <th style="width:25px;"></th>
+				                <th style="width:100px;" class="js-sort-valueDate">Date</th>
+				                <th style="width:300px;">Remarks</th>
+				                <th style="width:75px;">Owner</th>
+				                <th style="width:90px;" class="js-sort-number">Amount</th>
+				                <th style="width:150px;" >Notes</th>
+				                <th style="width:130px;">L1</th>
+				                <th style="width:130px;">L2</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+				            <tr ng-repeat="entry in debitTxnList">
+				               <td>
+				                 <span class="glyphicon glyphicon-plus-sign"
+				                       ng-show="!isLedgerEntryAlreadySelected( entry )"
+				                       ng-click="selectDebitTxn( entry )"></span>
+				               </td>
+				               <td class="fixed-font">{{entry.valueDate | date}}</td>
+				               <td class="remarks" ng-click="selectEntry(entry)">
+				                   {{entry.remarks | remark}}
+				                   &nbsp;
+				                   <span ng-if="entry.chequePayment"
+				                         class="glyphicon glyphicon-map-marker"></span>
+				                   <span ng-if="isCreditCardEntry( entry )"
+				                         class="glyphicon glyphicon-subtitles"></span>
+				                   <span ng-if="isCashEntry( entry )"
+				                         class="glyphicon glyphicon-leaf"></span>
+				               </td>
+				               <td ng-if="searchQuery.accountIds.length > 1">
+				                    {{entry.account.accountOwner}}
+				               </td>
+				               <td class="fixed-font amt" 
+				                   ng-class="$parent.$parent.amtClass( entry.amount )">
+				                   {{entry.amount | amt}}
+				               </td>
+				               <td class="remarks">
+			                        {{entry.notes == null ? "---" : entry.notes}}
+				               </td>
+				               <td class="remarks">
+			                        {{entry.l1Cat == null ? "---" : entry.l1Cat}}
+				               </td>
+				               <td class="remarks">
+			                        {{entry.l2Cat == null ? "---" : entry.l2Cat}}
+				               </td>
+				            </tr>
+				        </tbody>
+				    </table>
+               </div>
+	       </div>
+	    </div>
+	    
+	    <div class="modal-footer">
+	      <div style="float:left;">
+	          <button type="button" 
+	                  class="btn btn-default btn-sm" 
+	                  ng-click="getPreviousBatchOfDebitTxns()"
+	                  ng-disabled="currentResultPage <= 0">
+	                <span class="glyphicon glyphicon-backward"></span>
+	                Prev
+	          </button>
+	          <button type="button" 
+	                  class="btn btn-default btn-sm"
+	                  ng-click="getNextBatchOfDebitTxns()">
+	                Next
+	                <span class="glyphicon glyphicon-forward"></span>
+	          </button>
+	      </div>
+	      <button type="button" 
+	              class="btn btn-default btn-sm" 
+	              ng-click="hideDebitRecoveryDialog()">
+	            Done
+	      </button>
+	      <button type="button" 
+	              class="btn btn-info btn-sm"
+	              ng-click="saveAssociations()"
+	              ng-disabled="!isValidAssociation()">
+	            Save
+	      </button>
+          <span class="glyphicon glyphicon-ban-circle"
+                style="color:red;"
+                ng-show="!isValidAssociation()"
+                ng-click="showErrorMessages()"></span>
+                
+          <span class="glyphicon glyphicon-ok"
+                style="color:green;"
+                ng-show="saveSuccessFlag"></span>
+	    </div>
+    </div>
+    
+  </div>
+
+</div>

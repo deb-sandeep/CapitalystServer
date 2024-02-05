@@ -1,0 +1,74 @@
+<div class="modal-dialog" 
+     style="width:700px;"
+     ng-controller="UploadBSEBhavcopyController">
+     
+  <div class="modal-content" >
+    <div class="modal-header" style="background-color:#E5E5E5;padding:5px">
+      <h4 class="modal-title">Upload BSE Bhav Copies</h4>
+    </div>
+
+	<div class="modal-body"
+		style="background-color: #FEFEFE; padding: 5px">
+		
+        <span style="height:10px;display:block;"></span>
+        Uploads multiple BSE bhavcopies. The data can be downloaded
+        from <a target="_blank" href="https://www.bseindia.com/markets/marketinfo/BhavCopy.aspx">here</a>.
+        Please ensure the 'Equity with ISIN' format is downloaded.
+
+        <span style="height:5px;display:block;"></span>
+        <span style="color:red;">NOTE:</span>
+        Uploading BSE bhavcopy is an exception scenario. Capitalyst is
+        tuned for tracking NSE market automatically every day. However 
+        (very infrequently) NSE fails to publish bhavcopies in time. During 
+        these scenarios, a BSE bhavcopy can be uploaded. The data will be off 
+        by a few basis points, but it is better than having no EOD data at all.
+
+        <span style="height:10px;display:block;"></span>
+        
+        <button ngf-select="uploadFiles($files)" multiple>Select Files</button>
+		
+		<br>
+	    Files:
+	    <ul>
+	        <li ng-repeat="f in files" style="font:smaller">
+	            {{f.name}}
+	        </li>
+	    </ul>
+	    Progress:
+	    <span class="progress" ng-show="progress >= 0">
+	        <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
+	    </span>
+	    <br>
+	    <table class="table table-bordered table-compact">
+	       <thead>
+	            <tr class="success">
+	                <th colspan="2">File</th>
+	                <th colspan="2"># Records</th>
+	            </tr>
+	            <tr class="success">
+                    <th width="250px">Name</th>
+                    <th width="60px">Date</th>
+	                <th width="60px">Found</th>
+	                <th width="60px">Imported</th>
+	            </tr>
+	       </thead>
+	       <tbody>
+            <tr ng-repeat="result in results">
+               <td>{{result.fileName}}</td>
+               <td>{{result.bhavcopyDate | date}}</td>
+               <td>{{result.numRecordsFound}}</td>
+               <td>{{result.numRecordsImported}}</td>
+            </tr>
+	       </tbody>
+	    </table>
+	</div>
+
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-default btn-sm" 
+              ng-click="hideDialog()">
+            Done
+      </button>
+    </div>
+  </div>
+</div>

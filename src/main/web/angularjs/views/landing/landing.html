@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html ng-app="capitalystNgApp">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capitalyst</title>
+    <script src="/js/lib/jquery/jquery.min.js"></script>
+    <script src="/js/lib/angular/angular.min.js"></script>
+    <script src="/js/lib/angular/angular-route.min.js"></script>
+    <script src="/js/lib/angular/confirm/angular-confirm.min.js"></script>
+    <script src="/js/lib/bootstrap/bootstrap.min.js"></script>
+    <script src="/js/lib/sort-table/sort-table.js"></script>
+    <script src="/js/lib/ng-file-upload/ng-file-upload.min.js"></script>
+    
+    <link rel="stylesheet" href="/js/lib/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/app/app.css"/>
+    <link rel="stylesheet" href="/css/app/tile.css"/>
+    
+    <script src="/js/app/app-ng.js"></script>
+    <script src="/views/landing/js/controller.js"></script>
+</head>
+
+<body ng-controller="LandingController">
+
+<div class="tile"
+     style="background-color:#FBEEC1"
+     ng-click="go('/views/account/account.html')">
+    <div class="tilecontent">
+        <div class="tiletable">
+            <div class="tiletable-cell">Account</div>
+        </div>
+    </div>
+</div>
+<div class="tile"
+     style="background-color:rgb(171, 236, 227)"
+     ng-click="go('/views/equity_mkt/equity_mkt.html')">
+    <div class="tilecontent">
+        <div class="tiletable">
+            <div class="tiletable-cell">Equity</div>
+        </div>
+    </div>
+</div>
+<div class="tile"
+     style="background-color:#FBEEC1"
+     ng-click="go('/views/cash_entry/cash_entry.html')">
+    <div class="tilecontent">
+        <div class="tiletable">
+            <div class="tiletable-cell">Cash Entry</div>
+        </div>
+    </div>
+</div>
+<div class="tile"
+     style="background-color:#FBEEC1"
+     ng-click="go('/views/txn_pivot/txn_pivot.html')">
+    <div class="tilecontent">
+        <div class="tiletable">
+            <div class="tiletable-cell">Pivot of Transactions</div>
+        </div>
+    </div>
+</div>
+<div class="tile"
+     style="background-color:#FBEEC1"
+     ng-click="go('/views/budget_tracker/budget_tracker.html')">
+    <div class="tilecontent">
+        <div class="tiletable">
+            <div class="tiletable-cell">Budget Tracker</div>
+        </div>
+    </div>
+</div>
+<div class="tile"
+     style="background-color:#FBEEC1"
+     ng-click="go('/views/admin/admin.html')">
+    <div class="tilecontent">
+        <div class="tiletable">
+            <div class="tiletable-cell">Administration</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

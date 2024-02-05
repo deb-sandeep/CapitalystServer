@@ -1,0 +1,56 @@
+<div id="nav-panel">
+    <select class="form-field fin-year-select" 
+            ng-model="operatingFY"
+            ng-options="item as item.label for item in fyChoices"
+            ng-change="operatingFYChanged()">
+    </select>
+    <button class="btn"
+            ng-class="getTabActivationClass( 'Debit' )"
+            ng-click="showDebitEntries()">
+      Edit Debit Entries
+    </button>
+    
+	<button class="btn"
+	        ng-class="getTabActivationClass( 'Credit' )"
+	        ng-click="showCreditEntries()">
+	  Edit Credit Entries
+	</button>
+</div>
+
+<div ng-init="catType='Debit';catData=ledgerCategories.debit;"
+     ng-if="activeCategory == 'Debit'"
+     ng-include="'route/categories/template/ledger_cat_editor.html'">
+</div>
+
+<div ng-init="catType='Credit';catData=ledgerCategories.credit;"
+     ng-if="activeCategory == 'Credit'"
+     ng-include="'route/categories/template/ledger_cat_editor.html'">
+</div>
+
+<div id="changeParentCategoryDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/categories/dialog/change_parent_category_dialog.html'">
+</div>
+
+<div id="viewLedgerEntriesDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/categories/dialog/view_ledger_entries_dialog.html'">
+</div>
+
+<div id="mergeLedgerCategoryDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/categories/dialog/merge_category_dialog.html'">
+</div>
+
+<div id="budgetEditorDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/categories/dialog/yearly_cap_editor_dialog.html'">
+</div>

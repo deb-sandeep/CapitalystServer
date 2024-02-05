@@ -1,0 +1,295 @@
+<div style="padding: 0px; margin: 10px" align="center">
+    <table class="table table-bordered table-compact"
+           style="width: auto !important;">
+        <thead>
+            <tr class="success">
+                <th colspan="2"></th>
+                <th style="width:250px;">
+                    <input type="text"
+                           class="filter-input"
+                           style="width: 90%;"
+                           ng-model="filter.secIndFilter"
+                           ng-change="filterChanged()"/>
+                    <span class="glyphicon glyphicon-remove"
+                          ng-click="clearSectorOrIndustryFilter()"></span>
+                </th>
+                <th style="width:105px;">
+                    <input type="text"
+                           class="filter-input"
+                           style="width: 80%;"
+                           ng-model="filter.symbolFilter"
+                           ng-change="filterChanged()"/>
+                    <span class="glyphicon glyphicon-remove"
+                          ng-click="clearSymbolFilter()"></span>
+                </th>
+                <th colspan="3"></th>
+                <th colspan="6" style="text-align:center;">
+                    Health Attributes
+                </th>
+                <th colspan="2" style="text-align:center;">
+                    Indicator
+                </th>
+                <th>
+                    <span class="glyphicon glyphicon-refresh"
+                          ng-click="refreshLTP()"></span>
+                </th>
+                <th colspan="10" style="text-align:center;">
+                    Performance % &nbsp;&nbsp;
+                </th>
+                <th></th>
+            </tr>
+            <tr class="success">
+                <th ng-click="sortRows('health', 'goodnessScore', 'num')">
+                    <i class="fa-solid fa-hand-holding-medical"></i>
+                </th>
+                <th ng-click="sortRows('mc', 'indicators.mcEssentialScore', 'num')">
+                    MC
+                </th>
+                <th ng-show="industryOrSector == 'sector'">
+                    <span ng-click="sortRows('sector', 'equityMaster.sector', 'string')">
+	                    Sector
+                    </span>
+                    &nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-random"
+                          style="color:blue;"
+                          ng-click="toggleIndustryOrSector()"></span>
+                </th>
+                <th ng-show="industryOrSector == 'industry'">
+                    <span ng-click="sortRows('industry', 'equityMaster.industry', 'string')">
+                        Industry
+                    </span>
+                    &nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-random"
+                          style="color:blue;"
+                          ng-click="toggleIndustryOrSector()"></span>
+                </th>
+                <th ng-click="sortRows('symbol', 'equityMaster.symbol', 'string')">
+                    Symbol
+                </th>
+                <th></th>
+                <th ng-click="sort('holding')">
+                    <i class="fa-solid fa-map-pin"></i>
+                </th>
+                <th></th>
+                <th ng-click="sortRows('price', 'indicators.currentPrice', 'num')">
+                    Price
+                </th>
+                <th ng-click="sortRows('ltpRange', 'ltpRangePosPct', 'num')">
+                    Range
+                </th>
+                <th ng-click="sortRows('mktcap', 'indicators.marketCap', 'num')">
+                    Market Cap
+                </th>
+                <th ng-click="sortRows('beta', 'indicators.beta', 'num')">
+                    &#x3B2;
+                </th>
+                <th ng-click="sortRows('cagr', 'indicators.cagrEbit', 'num')">
+                    CAGR
+                </th>
+                <th ng-click="sortRows('pe', 'indicators.pe', 'num')">
+                    PE
+                </th>
+                <th ng-click="sort('rsi')" style="width:40px;">
+                    RSI
+                </th>
+                <th ng-click="sort('trend')">
+                    <i class="fa-solid fa-chart-line"></i>
+                </th>
+                <th ng-click="sortRows('perfLTP', 'ltp.pchange', 'num')" style="width:40px;">
+                    LTP
+                </th>
+                <th ng-click="sortRows('perf1D', 'ttmPerf.perf1d', 'num')" style="width:40px;">
+                    1D
+                </th>
+                <th ng-click="sortRows('perf1W', 'ttmPerf.perf1w', 'num')" style="width:40px;">
+                    1W
+                </th>
+                <th ng-click="sortRows('perf2W', 'ttmPerf.perf2w', 'num')" style="width:40px;">
+                    2W
+                </th>
+                <th ng-click="sortRows('perf1M', 'ttmPerf.perf1m', 'num')" style="width:40px;">
+                    1M
+                </th>
+                <th ng-click="sortRows('perf2M', 'ttmPerf.perf2m', 'num')" style="width:40px;">
+                    2M
+                </th>
+                <th ng-click="sortRows('perf3M', 'ttmPerf.perf3m', 'num')" style="width:40px;">
+                    3M
+                </th>
+                <th ng-click="sortRows('perf6M', 'ttmPerf.perf6m', 'num')" style="width:40px;">
+                    6M
+                </th>
+                <th ng-click="sortRows('perf9M', 'ttmPerf.perf9m', 'num')" style="width:40px;">
+                    9M
+                </th>
+                <th ng-click="sortRows('perf1Y', 'ttmPerf.perf12m', 'num')" style="width:40px;">
+                    1Y
+                </th>
+                <th ng-click="sortRows('perf3Y', 'indicators.pricePerf3Y', 'num')" style="width:40px;">
+                    3Y
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <tr ng-repeat="reco in recommendations"
+                ng-show="reco.visible">
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'health', reco.goodnessScore )">
+                    {{reco.goodnessScore | amt}}
+               </td>
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'mc', reco.indicators.mcEssentialScore )">
+                    {{reco.indicators.mcEssentialScore | number:0 }}
+               </td>
+               <td ng-show="industryOrSector == 'sector'"
+                   ng-dblclick="filterByIndustryOrSector( reco.equityMaster.sector )">
+                 {{reco.equityMaster.sector}}
+               </td>
+               <td ng-show="industryOrSector == 'industry'"
+                   ng-dblclick="filterByIndustryOrSector( reco.equityMaster.industry )">
+                 {{reco.equityMaster.industry}}
+               </td>
+               <td>
+                    <a ng-href="{{reco.equityMaster.detailUrl}}#advchart" target="_blank">
+                        {{reco.equityMaster.symbol}}&nbsp;&nbsp;
+                    </a>
+               </td>
+               <td>
+                    <a ng-click="showGraphDialog(reco)">
+                        <span class="glyphicon glyphicon-stats"
+                              style="color:#C8C8C8;"></span>
+                    </a>
+               </td>
+               <td>
+                    <i ng-if="reco.inPortfolio" 
+                       class="fa-solid fa-map-pin"
+                       style="color:red;"></i>
+                       
+                    <i ng-if="!reco.inPortfolio && reco.monitored" 
+                       class="fa-solid fa-map-pin"
+                       style="color:blue;"
+                       ng-click="toggleMonitor( reco )"></i>
+                       
+                    <i ng-if="!reco.inPortfolio && !reco.monitored"
+                       class="fa-solid fa-map-pin"
+                       style="color:#EEEEEE;"
+                       ng-click="toggleMonitor( reco )"></i>
+               </td>
+               <td>
+                    <i class="fa-regular fa-note-sticky"
+                       ng-click="showStockDetails(reco)"
+                       style="color:gray;"></i>
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.currentPrice | amt }}
+               </td>
+               <td>
+                  <span id="spark_{{reco.equityMaster.id}}"></span>
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.marketCap | amt }}
+               </td>
+               <td class="fixed-font" style="text-align:right;">
+                    {{reco.indicators.beta | number:1}}
+               </td>
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'cagr', reco.indicators.cagrEbit )">
+                    {{reco.indicators.cagrEbit | number:2 }}
+               </td>
+               <td class="fixed-font" style="text-align:right;"
+                   ng-class="getCellClass( 'pe', reco.indicators.pe )">
+                    {{reco.indicators.pe | number:0}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'rsi', reco.techIndicators[0].level )">
+                    {{reco.techIndicators[0].level | number:1}}
+               </td>
+               <td style="text-align:center;font-size:10px;">
+                   <span ng-if="reco.indicators.trend == 'VERY BULLISH'"
+                         class="glyphicon glyphicon-arrow-up"
+                         style="color:green;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'VERY BULLISH'"
+                         class="glyphicon glyphicon-arrow-up"
+                         style="color:green;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'BULLISH'"
+                         class="glyphicon glyphicon-arrow-up"
+                         style="color:green;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'NEUTRAL'"
+                         class="glyphicon glyphicon-resize-horizontal"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'BEARISH'"
+                         class="glyphicon glyphicon-arrow-down"
+                         style="color:red;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'VERY BEARISH'"
+                         class="glyphicon glyphicon-arrow-down"
+                         style="color:red;"></span>
+                         
+                   <span ng-if="reco.indicators.trend == 'VERY BEARISH'"
+                         class="glyphicon glyphicon-arrow-down"
+                         style="color:red;"></span>
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perfLTP', reco.ltp.pchange )">
+                    {{reco.ltp.pchange | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1D', reco.ttmPerf.perf1d )">
+                    {{reco.ttmPerf.perf1d | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1W', reco.ttmPerf.perf1w )">
+                    {{reco.ttmPerf.perf1w | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf2W', reco.ttmPerf.perf2w )">
+                    {{reco.ttmPerf.perf2w | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1M', reco.ttmPerf.perf1m )">
+                    {{reco.ttmPerf.perf1m | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf2M', reco.ttmPerf.perf2m )">
+                    {{reco.ttmPerf.perf2m | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf3M', reco.ttmPerf.perf3m )">
+                    {{reco.ttmPerf.perf3m | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf6M', reco.ttmPerf.perf6m )">
+                    {{reco.ttmPerf.perf6m | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf9M', reco.ttmPerf.perf9m )">
+                    {{reco.ttmPerf.perf9m | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf1Y', reco.ttmPerf.perf12m )">
+                    {{reco.ttmPerf.perf12m | number:1}}
+               </td>
+               <td class="fixed-font small-font" style="text-align:right;"
+                   ng-class="getCellClass( 'perf3Y', reco.indicators.pricePerf3Y )">
+                    {{reco.indicators.pricePerf3Y | number:1}}
+               </td>
+               <td>
+                   <span class="glyphicon glyphicon-save"
+                         ng-click="downloadHistoricData( reco.symbolNse )"></span>
+               </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="stockDetailDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/reco/dialog/stock_detail_dialog.html'">
+</div>

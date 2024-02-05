@@ -1,0 +1,49 @@
+<div class="panel-heading">
+  <h4 class="panel-title">
+    <input type="checkbox" 
+           ng-model="config.enableFlag"
+           ng-change="enableFlagUpdated()"/>
+    &nbsp;
+    <a data-target="#adx" data-toggle="collapse">
+    <span style="color:#F7FD35;">ADX</span>
+    </a>
+  </h4>
+</div>
+
+<div id="adx" 
+     class="panel-collapse collapse form indicator-options">
+    <div>
+        <table>
+            <tr>
+                <td style="width:60%">DI Window</td>
+                <td style="width:40%">
+                   <input type="numeric"
+                          ng-model="config.diWindowSize"
+                          style="width:100%;"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:60%">ADX Window</td>
+                <td style="width:40%">
+                   <input type="numeric"
+                          ng-model="config.adxWindowSize"
+                          style="width:100%;"/>
+                </td>
+            </tr>
+        </table>
+        <div style="text-align:right;">
+            <button type="button"
+                    class="btn btn-info indicator-cfg-btn"
+                    ng-click="hideADXChart()"
+                    style="color:#800200;">
+               <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <button type="button"
+                    class="btn btn-info indicator-cfg-btn"
+                    ng-click="showADXChart()"
+                    style="color:green;">
+               <span class="glyphicon glyphicon-ok"></span>
+            </button>
+        </div>
+    </div>
+</div>

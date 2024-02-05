@@ -1,0 +1,90 @@
+<div id="nav-panel">
+    <button class="btn"
+            ng-class="getTabActivationClass( 'Debit' )"
+            ng-click="showDebitEntries()">
+      Manage debit classification rules
+    </button>
+    
+	<button class="btn"
+	        ng-class="getTabActivationClass( 'Credit' )"
+	        ng-click="showCreditEntries()">
+      Manage credit classification rules
+	</button>
+</div>
+
+<table class="pure-table pure-table-bordered">
+   <thead>
+       <tr>
+           <td>
+               <span class="glyphicon glyphicon-plus-sign"
+                     ng-click="addNewRule()">
+               </span>
+           </td>
+            <td style="vertical-align:middle;">
+               <span class="glyphicon glyphicon-flash"
+                     ng-click="executeAllRules()">
+               </span>&nbsp;
+            </td>
+           <th width="175px">Rule name</th>
+           <th width="50px">#Match</th>
+           <th>Rule</th>
+           <th width="175px">L1 category</th>
+           <th width="175px">L2 category</th>
+           <td></td>
+       </tr>
+   </thead>
+   <tbody>
+       <tr ng-repeat="rule in rules"
+           ng-show="isRuleVisible( rule )">
+           
+            <td style="vertical-align:middle;">
+               <span class="glyphicon glyphicon-pencil"
+                     ng-click="showRuleEditor( rule )">
+               </span>&nbsp;
+            </td>
+            <td style="vertical-align:middle;">
+               <span class="glyphicon glyphicon-flash"
+                     ng-click="executeRule( rule )">
+               </span>&nbsp;
+            </td>
+            <td>{{rule.ruleName}}</td>
+            <td>
+                <a ng-click="showMatchedEntries( rule )"
+                   style="font-size:16px;">
+                    {{rule.matchCount}}
+                </a>
+            </td>
+            <td>
+               <pre>{{rule.ruleText}}</pre>
+               <span class="glyphicon glyphicon-pencil"
+                     style="color:lightgray;"
+                     ng-click="showRuleEditor( rule )">
+               </span>&nbsp;
+            </td>
+            <td>{{rule.l1Category}}</td>
+            <td>{{rule.l2Category}}</td>
+            <td style="vertical-align:middle;">
+               <span class="glyphicon glyphicon-trash"
+                     ng-click="deleteRule( rule )"
+                     style="color:red;">
+               </span>&nbsp;
+            </td>
+       </tr>
+   </tbody>
+</table>
+
+<div id="ruleEditorDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/rules/dialog/rule_editor_dialog.html'">
+</div>
+
+<div id="viewLedgerEntriesDialog" 
+     class="modal" 
+     role="dialog"
+     data-backdrop="static"
+     ng-include="'route/categories/dialog/view_ledger_entries_dialog.html'">
+</div>
+
+

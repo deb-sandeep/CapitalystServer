@@ -1,0 +1,25 @@
+#select-group-name {
+    width:  200px;
+    height: 30px;
+    font-size: 13px;
+    margin: 5px;
+}
+
+#cfg-listing {
+	padding-top:10px;
+	padding-right:10px;
+	font-size:12px;
+}
+
+#cfg-listing-table {
+	width:100%;
+}
+
+#cfg-listing-table td {
+	font-size:12px;
+	padding-left: 10px;
+}
+
+.cfg-description {
+	font-size:11px;
+}
