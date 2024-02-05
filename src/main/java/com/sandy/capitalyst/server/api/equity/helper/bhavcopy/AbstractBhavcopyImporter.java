@@ -2,8 +2,8 @@ package com.sandy.capitalyst.server.api.equity.helper.bhavcopy;
 
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 import static com.sandy.capitalyst.server.core.util.StringUtil.DD_MM_YYYY ;
-import static org.apache.commons.lang.time.DateUtils.addMinutes ;
-import static org.apache.commons.lang.StringUtils.* ;
+import static org.apache.commons.lang3.time.DateUtils.addMinutes ;
+import static org.apache.commons.lang3.StringUtils.* ;
 
 import java.io.StringReader ;
 import java.util.ArrayList ;
@@ -26,7 +26,7 @@ import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataMetaRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 import com.sandy.capitalyst.server.dao.index.repo.IndexEquityRepo ;
 import com.sandy.capitalyst.server.job.equity.eodrefresh.EquityDailyGainUpdater ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.univocity.parsers.csv.CsvParser ;
 import com.univocity.parsers.csv.CsvParserSettings ;
 

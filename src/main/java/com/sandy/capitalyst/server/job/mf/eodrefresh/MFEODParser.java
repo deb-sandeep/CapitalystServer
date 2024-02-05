@@ -11,7 +11,7 @@ import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
 import com.sandy.capitalyst.server.job.equity.eodrefresh.NSEBhavcopyDownloader ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 public class MFEODParser {
 

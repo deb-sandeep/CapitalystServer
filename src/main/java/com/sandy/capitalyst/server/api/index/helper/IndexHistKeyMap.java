@@ -38,7 +38,7 @@ public class IndexHistKeyMap {
         
         InputStream is = IndexHistKeyMap.class.getResourceAsStream( CFG_FILE_PATH ) ;
         if( is != null ) {
-            List<String> lines = IOUtils.readLines( is ) ;
+            List<String> lines = IOUtils.readLines( is, "UTF-8" ) ;
             lines.forEach( str -> {
                 String[] parts = str.split( "=" ) ;
                 translationMap.put( parts[0].trim().toUpperCase(), 

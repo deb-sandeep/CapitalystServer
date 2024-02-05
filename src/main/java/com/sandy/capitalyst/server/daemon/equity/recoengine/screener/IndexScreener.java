@@ -12,7 +12,7 @@ import com.sandy.capitalyst.server.daemon.equity.recoengine.internal.Screener ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
 import com.sandy.capitalyst.server.dao.index.repo.IndexEquityRepo ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 /**
  * Excludes any equity which is not a part of the indexes specified.

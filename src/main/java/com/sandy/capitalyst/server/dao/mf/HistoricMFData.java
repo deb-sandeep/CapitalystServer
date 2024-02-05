@@ -2,13 +2,13 @@ package com.sandy.capitalyst.server.dao.mf;
 
 import java.util.Date ;
 
-import javax.persistence.Column ;
-import javax.persistence.Entity ;
-import javax.persistence.GeneratedValue ;
-import javax.persistence.GenerationType ;
-import javax.persistence.Id ;
-import javax.persistence.Table ;
-import javax.persistence.TableGenerator ;
+import jakarta.persistence.Column ;
+import jakarta.persistence.Entity ;
+import jakarta.persistence.GeneratedValue ;
+import jakarta.persistence.GenerationType ;
+import jakarta.persistence.Id ;
+import jakarta.persistence.Table ;
+import jakarta.persistence.TableGenerator ;
 
 import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
 
@@ -36,6 +36,6 @@ public class HistoricMFData implements EntityWithNumericID {
     private String isin = null ;
     private Date   date = null ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float nav = 0.0F ;
 }

@@ -1,7 +1,7 @@
 package com.sandy.capitalyst.server.test.breeze;
 
-import static org.apache.commons.lang.StringUtils.leftPad;
-import static org.apache.commons.lang.StringUtils.rightPad;
+import static org.apache.commons.lang3.StringUtils.leftPad;
+import static org.apache.commons.lang3.StringUtils.rightPad;
 
 import java.io.File ;
 import java.text.SimpleDateFormat ;
@@ -21,7 +21,7 @@ import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeDetailAPI.TradeDetai
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI ;
 import com.sandy.capitalyst.server.breeze.api.BreezeGetTradeListAPI.Trade ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeAPIResponse ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 public class BreezeTester {
 

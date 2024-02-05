@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat ;
 import java.util.Date ;
 import java.util.List ;
 
-import org.apache.commons.lang.exception.ExceptionUtils ;
+import org.apache.commons.lang3.exception.ExceptionUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
@@ -72,7 +72,7 @@ public class MFPortfolioController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            String stackTrace = ExceptionUtils.getStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( new APIMsgResponse( stackTrace ) ) ;
         }
@@ -95,7 +95,7 @@ public class MFPortfolioController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            String stackTrace = ExceptionUtils.getStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( new APIMsgResponse( stackTrace ) ) ;
         }
@@ -121,7 +121,7 @@ public class MFPortfolioController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving account data.", e ) ;
-            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            String stackTrace = ExceptionUtils.getStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( new APIMsgResponse( stackTrace ) ) ;
         }

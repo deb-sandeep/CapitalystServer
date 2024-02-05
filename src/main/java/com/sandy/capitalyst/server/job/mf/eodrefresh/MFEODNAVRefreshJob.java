@@ -9,7 +9,7 @@ import org.quartz.JobExecutionContext ;
 
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJob ;
 import com.sandy.capitalyst.server.core.scheduler.JobState ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 @DisallowConcurrentExecution
 public class MFEODNAVRefreshJob extends CapitalystJob {

@@ -7,7 +7,7 @@ import static org.springframework.http.ResponseEntity.status ;
 import java.text.SimpleDateFormat ;
 import java.util.Date ;
 
-import org.apache.commons.lang.time.DateUtils ;
+import org.apache.commons.lang3.time.DateUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.ResponseEntity ;

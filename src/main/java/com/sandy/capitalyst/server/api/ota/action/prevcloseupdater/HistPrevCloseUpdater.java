@@ -8,7 +8,7 @@ import java.util.HashMap ;
 import java.util.List ;
 import java.util.Map ;
 
-import org.apache.commons.lang.time.DateUtils ;
+import org.apache.commons.lang3.time.DateUtils ;
 
 import com.sandy.capitalyst.server.api.ota.action.OTA ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;

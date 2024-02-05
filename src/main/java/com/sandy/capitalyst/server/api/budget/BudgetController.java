@@ -23,7 +23,7 @@ import com.sandy.capitalyst.server.dao.ledger.LedgerCategoryBudget ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntryCategory ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerCategoryBudgetRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 @RestController
 public class BudgetController {

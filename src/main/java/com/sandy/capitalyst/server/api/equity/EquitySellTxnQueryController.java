@@ -1,6 +1,6 @@
 package com.sandy.capitalyst.server.api.equity ;
 
-import static org.apache.commons.lang.StringUtils.rightPad ;
+import static org.apache.commons.lang3.StringUtils.rightPad ;
 
 import java.time.Month ;
 import java.util.ArrayList ;

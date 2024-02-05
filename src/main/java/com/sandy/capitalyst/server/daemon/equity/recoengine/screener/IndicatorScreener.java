@@ -7,7 +7,7 @@ import com.sandy.capitalyst.server.daemon.equity.recoengine.EquityReco ;
 import com.sandy.capitalyst.server.daemon.equity.recoengine.internal.Screener ;
 import com.sandy.capitalyst.server.dao.equity.EquityIndicators ;
 import com.sandy.capitalyst.server.dao.equity.EquityTechIndicator ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 /**
  * Filters out those stocks which don't lie within the specified 

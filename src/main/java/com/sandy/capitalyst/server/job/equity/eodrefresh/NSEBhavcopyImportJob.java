@@ -6,7 +6,7 @@ import java.util.Calendar ;
 import java.util.Date ;
 
 import org.apache.commons.io.FileUtils ;
-import org.apache.commons.lang.time.DateUtils ;
+import org.apache.commons.lang3.time.DateUtils ;
 import org.apache.log4j.Logger ;
 import org.quartz.DisallowConcurrentExecution ;
 import org.quartz.JobExecutionContext ;
@@ -17,7 +17,7 @@ import com.sandy.capitalyst.server.external.nse.NSEReportsMetaRepo;
 import com.sandy.capitalyst.server.external.nse.NSEReportsMetaRepo.ReportMeta ;
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJob ;
 import com.sandy.capitalyst.server.core.scheduler.JobState ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 import static com.sandy.capitalyst.server.external.nse.NSEReportsMetaRepo.* ;
 
@@ -88,9 +88,12 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
 
             File file = downloader.downloadBhavcopy( reportMeta ) ;
 
-            bhavcopyContents = FileUtils.readFileToString( file ) ;
+            bhavcopyContents = FileUtils.readFileToString( file, "UTF-8" ) ;
             importer = new NSEBhavcopyImporter() ;
 
+            // Note: job_run is updated by the framework based on any
+            //       exception emitted from this method. Do no subdue
+            //       exceptions.
             result = importer.importContents( bhavcopyContents ) ;
 
             updateJobState( state, result ) ;

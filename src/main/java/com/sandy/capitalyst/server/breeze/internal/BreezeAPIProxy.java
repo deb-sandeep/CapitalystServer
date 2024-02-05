@@ -1,7 +1,7 @@
 package com.sandy.capitalyst.server.breeze.internal;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT ;
-import static org.apache.commons.lang.StringUtils.rightPad ;
+import static org.apache.commons.lang3.StringUtils.rightPad ;
 
 import java.io.IOException ;
 import java.lang.reflect.InvocationTargetException ;
@@ -26,7 +26,7 @@ import com.sandy.capitalyst.server.breeze.BreezeCred ;
 import com.sandy.capitalyst.server.breeze.BreezeException ;
 import com.sandy.capitalyst.server.breeze.BreezeException.Type ;
 import com.sandy.capitalyst.server.breeze.internal.BreezeSessionManager.BreezeSession ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 public abstract class BreezeAPIProxy<T> {
 

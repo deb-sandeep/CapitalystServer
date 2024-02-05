@@ -1,8 +1,0 @@
-capitalyst.runClassificationOnStartup=true
-capitalyst.initializeRecoMgrOnStartup=true
-capitalyst.updateAccountBalanceOnStartup=true
-
-capitalyst.classifyOnlyUnclassifiedEntries=true
-
-capitalyst.workspaceDir=/home/pi/projects/workspace/capitalyst
-capitalyst.breezeCfgFile=/home/pi/projects/workspace/capitalyst/breeze/config/breeze-config.yaml

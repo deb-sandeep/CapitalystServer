@@ -7,12 +7,12 @@ import java.util.List ;
 import java.util.Map ;
 import java.util.Map.Entry ;
 
+import com.sandy.capitalyst.server.core.xlsutil.XLSRow;
+import com.sandy.capitalyst.server.core.xlsutil.XLSWrapper;
 import org.apache.commons.io.FileUtils ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
-import com.sandy.common.xlsutil.XLSRow ;
-import com.sandy.common.xlsutil.XLSWrapper ;
 
 public class ListedETFRefresher extends ListedEquitiesRefresher {
     
@@ -30,7 +30,7 @@ public class ListedETFRefresher extends ListedEquitiesRefresher {
     public void refreshEquityMaster() throws Exception {
         
         ota.addResult( " Downloading from network." ) ;
-        List<XLSRow> rows = parseOnlineXLSX() ;
+        List<XLSRow> rows = parseOnlineXLSX();
         ota.addResult( " Network data downloaded." ) ;
         
         ota.addResult( " Loading database cache" ) ; 

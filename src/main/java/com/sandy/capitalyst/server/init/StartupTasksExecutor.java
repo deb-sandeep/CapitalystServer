@@ -3,6 +3,7 @@ package com.sandy.capitalyst.server.init;
 import static com.sandy.capitalyst.server.CapitalystServer.getConfig ;
 
 import java.io.File ;
+import java.net.URL;
 
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -100,6 +101,17 @@ public class StartupTasksExecutor {
     private void initializeBreeze() throws Exception {
         
         File cfgPath = getConfig().getBreezeCfgFile() ;
+        if( cfgPath == null || !cfgPath.exists() ) {
+            log.info( "Breeze configuration not found. Trying classpath." ) ;
+            URL url = getClass().getResource( "/breeze-config.yaml" ) ;
+            if( url != null ) {
+                cfgPath = new File( url.toURI().getPath() ) ;
+            }
+            else {
+                log.error( "Breeze configuration not found." ) ;
+                throw new IllegalStateException( "Breeze configuration not found" ) ;
+            }
+        }
         Breeze breeze = Breeze.instance() ;
         breeze.addInvocationListener( new InvStatsPersistListener() ) ;
         breeze.initialize( cfgPath ) ;

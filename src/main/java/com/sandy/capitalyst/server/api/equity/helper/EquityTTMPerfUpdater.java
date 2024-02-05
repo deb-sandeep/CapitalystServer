@@ -12,7 +12,7 @@ import java.util.List ;
 import java.util.Map ;
 
 import org.apache.commons.beanutils.BeanUtils ;
-import org.apache.commons.lang.time.DateUtils ;
+import org.apache.commons.lang3.time.DateUtils ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;

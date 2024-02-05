@@ -9,7 +9,7 @@ import java.util.List ;
 import java.util.Map ;
 import java.util.TreeMap ;
 
-import org.apache.commons.lang.time.DateUtils ;
+import org.apache.commons.lang3.time.DateUtils ;
 import org.apache.log4j.Logger ;
 import org.ta4j.core.BarSeries ;
 import org.ta4j.core.BaseBarSeries ;

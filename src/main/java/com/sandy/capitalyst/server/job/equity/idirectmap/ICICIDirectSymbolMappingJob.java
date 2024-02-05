@@ -16,7 +16,7 @@ import com.sandy.capitalyst.server.dao.equity.EquityHolding ;
 import com.sandy.capitalyst.server.dao.equity.EquityMaster ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
-import com.sandy.capitalyst.server.job.equity.idirectmap.IDirectSecurityMaprDownloader.SecMapping ;
+import com.sandy.capitalyst.server.job.equity.idirectmap.IDirectSecurityMapDownloader.SecMapping ;
 
 @DisallowConcurrentExecution
 public class ICICIDirectSymbolMappingJob extends CapitalystJob {
@@ -35,7 +35,7 @@ public class ICICIDirectSymbolMappingJob extends CapitalystJob {
     public void mapICICIDirectSymbols( OTA ota ) throws Exception {
         
         List<SecMapping> mappings = null ;
-        IDirectSecurityMaprDownloader downloader = null ;
+        IDirectSecurityMapDownloader downloader = null ;
         
         EquityMasterRepo emRepo = null ;
         EquityHoldingRepo ehRepo = null ;
@@ -43,7 +43,7 @@ public class ICICIDirectSymbolMappingJob extends CapitalystJob {
         emRepo     = getBean( EquityMasterRepo.class ) ;
         ehRepo     = getBean( EquityHoldingRepo.class ) ;
         
-        downloader = new IDirectSecurityMaprDownloader() ;
+        downloader = new IDirectSecurityMapDownloader() ;
         mappings   = downloader.downloadSecurityMappings() ;
         
         if( ota != null ) {

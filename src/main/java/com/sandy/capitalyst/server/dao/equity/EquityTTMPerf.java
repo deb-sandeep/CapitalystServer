@@ -1,17 +1,17 @@
 package com.sandy.capitalyst.server.dao.equity;
 
-import static org.apache.commons.lang.time.DateUtils.addDays ;
-import static org.apache.commons.lang.time.DateUtils.addMonths ;
+import static org.apache.commons.lang3.time.DateUtils.addDays ;
+import static org.apache.commons.lang3.time.DateUtils.addMonths ;
 
 import java.util.Calendar ;
 import java.util.Date ;
 
-import javax.persistence.Column ;
-import javax.persistence.Entity ;
-import javax.persistence.GeneratedValue ;
-import javax.persistence.GenerationType ;
-import javax.persistence.Id ;
-import javax.persistence.Table ;
+import jakarta.persistence.Column ;
+import jakarta.persistence.Entity ;
+import jakarta.persistence.GeneratedValue ;
+import jakarta.persistence.GenerationType ;
+import jakarta.persistence.Id ;
+import jakarta.persistence.Table ;
 
 import lombok.Data ;
 
@@ -27,55 +27,55 @@ public class EquityTTMPerf {
     private String  symbolNse = null ;
     private Boolean gapsFilled = null ;
     
-    @Column( precision=16, scale=2, name="current_price" )
+    @Column( precision=16,  name="current_price" )
     private float currentPrice = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_1d" )
+    @Column( precision=16,  name="perf_1d" )
     private Float perf1d = null ;
 
-    @Column( precision=16, scale=2, name="perf_1w" )
+    @Column( precision=16,  name="perf_1w" )
     private float perf1w = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_2w" )
+    @Column( precision=16,  name="perf_2w" )
     private float perf2w = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_1m" )
+    @Column( precision=16,  name="perf_1m" )
     private float perf1m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_2m" )
+    @Column( precision=16,  name="perf_2m" )
     private float perf2m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_3m" )
+    @Column( precision=16,  name="perf_3m" )
     private float perf3m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_4m" )
+    @Column( precision=16,  name="perf_4m" )
     private float perf4m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_5m" )
+    @Column( precision=16,  name="perf_5m" )
     private float perf5m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_6m" )
+    @Column( precision=16,  name="perf_6m" )
     private float perf6m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_7m" )
+    @Column( precision=16,  name="perf_7m" )
     private float perf7m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_8m" )
+    @Column( precision=16,  name="perf_8m" )
     private float perf8m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_9m" )
+    @Column( precision=16,  name="perf_9m" )
     private float perf9m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_10m" )
+    @Column( precision=16,  name="perf_10m" )
     private float perf10m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_11m" )
+    @Column( precision=16,  name="perf_11m" )
     private float perf11m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_12m" )
+    @Column( precision=16,  name="perf_12m" )
     private float perf12m = 0.0F ;
 
-    @Column( precision=16, scale=2, name="perf_fy" )
+    @Column( precision=16,  name="perf_fy" )
     private float perfFy = 0.0F ;
     
     public boolean genuineGapExists() {

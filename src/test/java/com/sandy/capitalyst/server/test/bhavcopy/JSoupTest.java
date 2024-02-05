@@ -18,7 +18,7 @@ public class JSoupTest {
     
     public void test() throws Exception {
         String filePath = "/Users/sandeep/temp/nsdl.txt" ;
-        String contents = FileUtils.readFileToString( new File( filePath ) ) ;
+        String contents = FileUtils.readFileToString( new File( filePath ), "UTF-8" ) ;
         
         Document doc = Jsoup.parse( contents ) ;
         Elements elements = doc.select( "td[class^=tablecontent]" ) ;

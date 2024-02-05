@@ -1,12 +1,12 @@
 package com.sandy.capitalyst.server.dao.equity;
 
-import javax.persistence.Column ;
-import javax.persistence.Entity ;
-import javax.persistence.GeneratedValue ;
-import javax.persistence.GenerationType ;
-import javax.persistence.Id ;
-import javax.persistence.Table ;
-import javax.persistence.TableGenerator ;
+import jakarta.persistence.Column ;
+import jakarta.persistence.Entity ;
+import jakarta.persistence.GeneratedValue ;
+import jakarta.persistence.GenerationType ;
+import jakarta.persistence.Id ;
+import jakarta.persistence.Table ;
+import jakarta.persistence.TableGenerator ;
 
 import lombok.Data ;
 
@@ -35,16 +35,16 @@ public class EquityMaster {
     private String name = null ;
     private String mcName = null ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private Float close = 0F ;
 
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private Float prevClose = 0F ;
 
-    @Column( name = "high_52w", precision=16, scale=2 )
+    @Column( name = "high_52w", precision=16 )
     private Float high52w = 0F ;
 
-    @Column( name = "low_52w", precision=16, scale=2 )
+    @Column( name = "low_52w", precision=16 )
     private Float low52w = 0F ;
     
     @Column( name = "is_etf" )

@@ -18,7 +18,7 @@ import com.sandy.capitalyst.server.dao.ledger.LedgerEntryClassificationRule ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryCategoryRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerEntryClassificationRuleRepo ;
 import com.sandy.capitalyst.server.dao.ledger.repo.LedgerRepo ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 @RestController
 public class LedgerClassificationRestController {

@@ -2,7 +2,7 @@ package com.sandy.capitalyst.server.api.equity ;
 
 import java.util.Date ;
 
-import org.apache.commons.lang.exception.ExceptionUtils ;
+import org.apache.commons.lang3.exception.ExceptionUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.HttpStatus ;
@@ -60,7 +60,7 @@ public class MCEquityIndicatorsUploadController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving equity holding.", e ) ;
-            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            String stackTrace = ExceptionUtils.getStackTrace( e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( new APIMsgResponse( stackTrace ) ) ;
         }

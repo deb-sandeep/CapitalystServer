@@ -5,17 +5,17 @@ import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
 import java.util.Date ;
 
-import javax.persistence.Entity ;
-import javax.persistence.EntityListeners ;
-import javax.persistence.GeneratedValue ;
-import javax.persistence.GenerationType ;
-import javax.persistence.Id ;
-import javax.persistence.Table ;
+import com.sandy.capitalyst.server.core.util.StringUtil;
+import jakarta.persistence.Entity ;
+import jakarta.persistence.EntityListeners ;
+import jakarta.persistence.GeneratedValue ;
+import jakarta.persistence.GenerationType ;
+import jakarta.persistence.Id ;
+import jakarta.persistence.Table ;
 
 import com.fasterxml.jackson.annotation.JsonIgnore ;
 import com.sandy.capitalyst.server.api.config.NVPVO ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager.NVPPersistCallback ;
-import com.sandy.common.util.StringUtil ;
 
 import lombok.Data ;
 
@@ -114,4 +114,3 @@ public class NVP {
         return builder.toString() ;
     }
 }
-

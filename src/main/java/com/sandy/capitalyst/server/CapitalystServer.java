@@ -14,7 +14,7 @@ import com.sandy.capitalyst.server.core.scheduler.CapitalystJobScheduler ;
 import com.sandy.capitalyst.server.init.DaemonInitializer ;
 import com.sandy.capitalyst.server.init.DevModeInitializer ;
 import com.sandy.capitalyst.server.init.StartupTasksExecutor ;
-import com.sandy.common.bus.EventBus ;
+
 
 @SpringBootApplication
 public class CapitalystServer 
@@ -24,8 +24,6 @@ public class CapitalystServer
     
     private static ApplicationContext APP_CTX   = null ;
     private static CapitalystServer   APP       = null ;
-    
-    public static EventBus GLOBAL_EVENT_BUS = new EventBus() ;
     
     public static String CFG_GRP_APP = "Capitalyst" ;
     
@@ -48,20 +46,18 @@ public class CapitalystServer
 
     public static CapitalystServer getApp() { return APP ; }
     
-    public static boolean isInServerMode() { return APP != null ; }
-
     // ---------------- Instance methods start ------------------------------
     @Autowired
     private CapitalystJobScheduler scheduler = null ;
-    
+
+    @Autowired
+    private DevModeInitializer devModeInitializer = null ;
+
     @Autowired
     private StartupTasksExecutor startupTaskExecutor = null ;
     
     @Autowired
     private DaemonInitializer daemonInitializer = null ;
-    
-    @Autowired
-    private DevModeInitializer devModeInitializer = null ;
     
     public CapitalystServer() {
         APP = this ;
@@ -84,25 +80,30 @@ public class CapitalystServer
     }
 
     // --------------------- Main method ---------------------------------------
-
     public static void main( String[] args ) throws Exception {
-        
-        long startTime = System.currentTimeMillis() ;
-        log.debug( "Starting Capitalyst Server.." ) ;
 
-        log.debug( "Starting Spring Booot..." ) ;
-        SpringApplication.run( CapitalystServer.class, args ) ;
+        try {
+            long startTime = System.currentTimeMillis() ;
+            log.debug( "Starting Capitalyst Server.." ) ;
 
-        log.debug( "\n" ) ;
-        log.debug( "Initializing Capitalyst Server App..." ) ;
-        getBean( CapitalystServer.class ).initialize() ;
-        long endTime = System.currentTimeMillis() ;
-        
-        int timeTaken = (int)(( endTime - startTime )/1000) ;
-        
-        log.debug( "" ) ;
-        log.debug( "Capitalyst Server open for business. "  + 
-                   "Boot time = " + timeTaken + " secs." ) ;
-        log.debug( "" ) ;
+            log.debug( "Starting Spring Booot..." ) ;
+            SpringApplication.run( CapitalystServer.class, args ) ;
+
+            log.debug( "\n" ) ;
+            log.debug( "Initializing Capitalyst Server App..." ) ;
+            getBean( CapitalystServer.class ).initialize() ;
+            long endTime = System.currentTimeMillis() ;
+
+            int timeTaken = (int)(( endTime - startTime )/1000) ;
+
+            log.debug( "" ) ;
+            log.debug( "Capitalyst Server open for business. "  +
+                       "Boot time = " + timeTaken + " secs." ) ;
+            log.debug( "" ) ;
+        }
+        catch( Throwable t ) {
+            log.error( "Capitalyst initialization failed. Error - " + t.getMessage() );
+            t.printStackTrace() ;
+        }
     }
 }

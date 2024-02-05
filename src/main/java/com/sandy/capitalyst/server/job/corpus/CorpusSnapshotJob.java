@@ -5,6 +5,7 @@ import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 import java.text.SimpleDateFormat ;
 import java.util.Date ;
 import java.util.LinkedHashSet ;
+import java.util.Objects;
 import java.util.Set ;
 
 import org.apache.log4j.Logger ;
@@ -35,9 +36,7 @@ public class CorpusSnapshotJob extends CapitalystJob {
     private CorpusSnapshotRepo csRepo = null ;
     private AccountRepo        acRepo = null ;
     private FixedDepositRepo   fdRepo = null ;
-    
-    private CorpusSnapshot todaySnapshot = null ;
-    
+
     @Override
     public void executeJob( JobExecutionContext context,
                                JobState state ) 
@@ -46,20 +45,20 @@ public class CorpusSnapshotJob extends CapitalystJob {
         csRepo = getBean( CorpusSnapshotRepo.class ) ;
         acRepo = getBean( AccountRepo.class        ) ;
         fdRepo = getBean( FixedDepositRepo.class   ) ;
-        
-        todaySnapshot = getTodaySnapshot() ;
+
+        CorpusSnapshot todaySnapshot = getTodaySnapshot();
         
         log.debug( "- Populating Saving Account corpus" ) ;
-        populateSavingAccountsCorpus( todaySnapshot ) ;
+        populateSavingAccountsCorpus(todaySnapshot) ;
         
         log.debug( "- Populating Fixed Deposit corpus" ) ;
-        populateFixedDepositCorpus( todaySnapshot ) ;
+        populateFixedDepositCorpus(todaySnapshot) ;
         
         log.debug( "- Populating Equity corpus" ) ;
-        populateEquityCorpus( todaySnapshot ) ;
+        populateEquityCorpus(todaySnapshot) ;
         
         log.debug( "- Saving todays corpus snapshot" ) ;
-        csRepo.save( todaySnapshot ) ;
+        csRepo.save(todaySnapshot) ;
     }
     
     private CorpusSnapshot getTodaySnapshot() 
@@ -109,7 +108,7 @@ public class CorpusSnapshotJob extends CapitalystJob {
     private void populateFixedDepositCorpus( CorpusSnapshot s ) {
         
         fdRepo.findAllActiveDeposits().forEach( fd -> {
-            s.setFixedDeposit( s.getFixedDeposit() +  
+            s.setFixedDeposit( s.getFixedDeposit() +
                                fd.getBaseAccount().getBalance() ) ;
         } ) ;
         
@@ -119,13 +118,13 @@ public class CorpusSnapshotJob extends CapitalystJob {
     
     private void populateEquityCorpus( CorpusSnapshot s ) {
 
-        EquityHoldingsQueryController ehc = null ;
-        EquitySellTxnQueryController stc = null ;
+        EquityHoldingsQueryController ehc ;
+        EquitySellTxnQueryController stc ;
         
         ehc = getBean( EquityHoldingsQueryController.class ) ;
         stc = getBean( EquitySellTxnQueryController.class ) ;
         
-        ehc.getFamilyEquityHoldings().getBody().forEach( h -> {
+        Objects.requireNonNull(ehc.getFamilyEquityHoldings().getBody()).forEach(h -> {
 
             s.setEquityInvested( s.getEquityInvested() + h.getValueAtCost() ) ;
             s.setEquityMktValue( s.getEquityMktValue() + h.getValueAtMktPrice() ) ;
@@ -133,7 +132,7 @@ public class CorpusSnapshotJob extends CapitalystJob {
             s.setEquityUnrealizedPat( s.getEquityUnrealizedPat() + h.getPat() ) ;
         } ) ;
         
-        stc.getEquitySellTxns( null ).getBody().forEach( stxn -> {
+        Objects.requireNonNull(stc.getEquitySellTxns(null).getBody()).forEach(stxn -> {
             
             s.setEquityRealizedPat( s.getEquityRealizedPat() + stxn.getPat() ) ;
             s.setTaxOnRealizedProfit( s.getTaxOnRealizedProfit() + stxn.getTaxAmount() ) ;

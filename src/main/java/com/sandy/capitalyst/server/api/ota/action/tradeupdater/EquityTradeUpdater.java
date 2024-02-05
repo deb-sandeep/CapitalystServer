@@ -2,8 +2,8 @@ package com.sandy.capitalyst.server.api.ota.action.tradeupdater;
 
 import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
 import static java.util.Calendar.DAY_OF_MONTH ;
-import static org.apache.commons.lang.StringUtils.leftPad ;
-import static org.apache.commons.lang.StringUtils.rightPad ;
+import static org.apache.commons.lang3.StringUtils.leftPad ;
+import static org.apache.commons.lang3.StringUtils.rightPad ;
 
 import java.text.SimpleDateFormat ;
 import java.util.ArrayList ;
@@ -14,7 +14,7 @@ import java.util.HashMap ;
 import java.util.List ;
 import java.util.Map ;
 
-import org.apache.commons.lang.time.DateUtils ;
+import org.apache.commons.lang3.time.DateUtils ;
 
 import com.sandy.capitalyst.server.api.ota.action.OTA ;
 import com.sandy.capitalyst.server.breeze.Breeze ;
@@ -37,7 +37,7 @@ import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTradeRepo ;
 import com.sandy.capitalyst.server.dao.equity.repo.EquityTxnRepo ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 public class EquityTradeUpdater extends OTA {
     

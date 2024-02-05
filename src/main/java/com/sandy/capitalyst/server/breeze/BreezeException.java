@@ -3,7 +3,7 @@ package com.sandy.capitalyst.server.breeze;
 import java.util.ArrayList ;
 import java.util.List ;
 
-import org.apache.commons.lang.exception.ExceptionUtils ;
+import org.apache.commons.lang3.exception.ExceptionUtils ;
 import org.apache.log4j.Logger ;
 
 import lombok.Data ;

@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat ;
 import java.util.Date ;
 import java.util.List ;
 
-import org.apache.commons.lang.time.DateUtils ;
+import org.apache.commons.lang3.time.DateUtils ;
 
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;

@@ -20,7 +20,7 @@ public class LEClassifierBuilderTest {
     
     private void execute() throws Exception {
         File file = new File( "src/test/resources/rule.txt" ) ;
-        String ruleText = FileUtils.readFileToString( file ) ;
+        String ruleText = FileUtils.readFileToString( file, "UTF-8" ) ;
         LEClassifierRule rule = builder.buildClassifier( "Test Rule", ruleText ) ;
         log.debug( rule.getFormattedString( "" ) ) ;
     }

@@ -18,7 +18,7 @@ import java.util.Map ;
 import java.util.Properties ;
 import java.util.Set ;
 
-import javax.annotation.PostConstruct ;
+import jakarta.annotation.PostConstruct ;
 
 import org.apache.commons.io.FileUtils ;
 import org.apache.log4j.Logger ;
@@ -277,7 +277,7 @@ public class EquityITDSnapshotService {
         File snapshotDir = new File( cfg.getWorkspaceDir(), "raw_itd_snapshots" ) ;
         File snapshotFile = new File( snapshotDir, fileName ) ;
         
-        FileUtils.write( snapshotFile, response ) ;
+        FileUtils.write( snapshotFile, response, "UTF-8" ) ;
     }
     
     private Map<String, String> loadCookies() {

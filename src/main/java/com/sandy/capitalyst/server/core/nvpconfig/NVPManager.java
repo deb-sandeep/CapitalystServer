@@ -6,8 +6,8 @@ import java.util.List ;
 import java.util.Map ;
 import java.util.Set ;
 
-import javax.persistence.PostPersist ;
-import javax.persistence.PostUpdate ;
+import jakarta.persistence.PostPersist ;
+import jakarta.persistence.PostUpdate ;
 
 import org.apache.log4j.Logger ;
 

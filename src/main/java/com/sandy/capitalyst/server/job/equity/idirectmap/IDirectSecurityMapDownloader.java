@@ -16,9 +16,9 @@ import com.univocity.parsers.csv.CsvParserSettings ;
 
 import lombok.Data ;
 
-public class IDirectSecurityMaprDownloader {
+public class IDirectSecurityMapDownloader {
 
-    private static final Logger log = Logger.getLogger( IDirectSecurityMaprDownloader.class ) ;
+    private static final Logger log = Logger.getLogger( IDirectSecurityMapDownloader.class ) ;
     
     private static final String DOWNLOAD_URL = "https://directlink.icicidirect.com/NewSecurityMaster/SecurityMaster.zip" ;
     
@@ -110,7 +110,7 @@ public class IDirectSecurityMaprDownloader {
     }
 
     public static void main( String[] args ) throws Exception {
-        IDirectSecurityMaprDownloader app = new IDirectSecurityMaprDownloader() ;
+        IDirectSecurityMapDownloader app = new IDirectSecurityMapDownloader() ;
         List<SecMapping> mappings = app.downloadSecurityMappings() ;
         for( SecMapping m : mappings ) {
             log.debug( m.isin + " :: " + m.getSymbolICICI() + " - " + m.getSymbolNSE() ) ;

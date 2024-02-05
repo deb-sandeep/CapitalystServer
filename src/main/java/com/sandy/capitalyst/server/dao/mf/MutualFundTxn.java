@@ -2,12 +2,12 @@ package com.sandy.capitalyst.server.dao.mf;
 
 import java.util.Date ;
 
-import javax.persistence.Column ;
-import javax.persistence.Entity ;
-import javax.persistence.GeneratedValue ;
-import javax.persistence.GenerationType ;
-import javax.persistence.Id ;
-import javax.persistence.Table ;
+import jakarta.persistence.Column ;
+import jakarta.persistence.Entity ;
+import jakarta.persistence.GeneratedValue ;
+import jakarta.persistence.GenerationType ;
+import jakarta.persistence.Id ;
+import jakarta.persistence.Table ;
 
 @Entity
 @Table( name = "mf_txn" )
@@ -22,13 +22,13 @@ public class MutualFundTxn {
     private String txnChannel = null ;
     private Date txnDate = null ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float navPerUnit = 0.0f ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float numUnits = 0.0f ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float amount = 0.0f ;
     
     private String hash = null ;

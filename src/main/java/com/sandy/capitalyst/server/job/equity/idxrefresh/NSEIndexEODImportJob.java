@@ -2,8 +2,8 @@ package com.sandy.capitalyst.server.job.equity.idxrefresh;
 
 import com.sandy.capitalyst.server.core.scheduler.CapitalystJob;
 import com.sandy.capitalyst.server.core.scheduler.JobState;
-import com.sandy.common.util.StringUtil;
-import org.apache.commons.lang.time.DateUtils;
+import com.sandy.capitalyst.server.core.util.StringUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
@@ -61,7 +61,7 @@ public class NSEIndexEODImportJob extends CapitalystJob {
             lastImportDate = SDF.parse( lastImportDateVal ) ;
         }
         else {
-            lastImportDate = SDF.parse( "10Oct2022" ) ;
+            lastImportDate = SDF.parse( "01Jan2024" ) ;
         }
         
         log.debug( "\tLast imported date - " + lastImportDateVal ) ;

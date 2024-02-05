@@ -2,7 +2,6 @@ package com.sandy.capitalyst.server.breeze.internal;
 
 import org.apache.log4j.Logger ;
 
-import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfig ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigChangeListener ;
 import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
@@ -47,10 +46,7 @@ public class BreezeNVPConfig implements NVPConfigChangeListener {
     private NVPManager nvpMgr = null ;
     
     public BreezeNVPConfig() {
-        
-        if( CapitalystServer.isInServerMode() ) {
-            loadNVPConfigValues() ;
-        }
+        loadNVPConfigValues() ;
     }
     
     private void loadNVPConfigValues() {

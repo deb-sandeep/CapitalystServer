@@ -1,40 +1,22 @@
 package com.sandy.capitalyst.server.core.ledger.classifier;
 
-import java.util.ArrayList ;
-import java.util.List ;
+import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierAmtMatchRule.OpType;
+import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRemarkMatchRule.MatchValueWithAlias;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierBaseListener;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierLexer;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser;
+import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
-import org.antlr.v4.runtime.ANTLRInputStream ;
-import org.antlr.v4.runtime.CommonTokenStream ;
-import org.antlr.v4.runtime.tree.ParseTree ;
-import org.apache.log4j.Logger ;
-
-import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierAmtMatchRule.OpType ;
-import com.sandy.capitalyst.server.core.ledger.classifier.LEClassifierRemarkMatchRule.MatchValueWithAlias ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierBaseListener ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierLexer ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_bw_stmtContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_eq_stmtContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_gt_stmtContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_lt_stmtContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Amt_matchContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Binary_opContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.L1cat_matchContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.L2cat_matchContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Le_group_stmtContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Multi_remark_matchContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Neg_opContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Note_matchContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Remark_matchContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Single_remark_matchContext ;
-import com.sandy.capitalyst.server.rules.LedgerEntryClassifierParser.Value_with_aliasContext ;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LEClassifierRuleBuilder 
     extends LedgerEntryClassifierBaseListener {
     
-    static final Logger log = Logger.getLogger( LEClassifierRuleBuilder.class ) ;
-
-    private LedgerEntryClassifierParser parser = null ; 
     private String ruleName = null ;
     
     public LEClassifierRule buildClassifier( String ruleName, String input ) 
@@ -42,25 +24,25 @@ public class LEClassifierRuleBuilder
         
         this.ruleName = ruleName ;
         
-        ANTLRInputStream  ais = new ANTLRInputStream( input ) ;
-        LedgerEntryClassifierLexer lexer  = new LedgerEntryClassifierLexer( ais ) ;
+        CharStream charStream = CharStreams.fromString( input ) ;
+
+        LedgerEntryClassifierLexer lexer  = new LedgerEntryClassifierLexer( charStream ) ;
         CommonTokenStream tokens = new CommonTokenStream( lexer ) ;
-        
-        parser = new LedgerEntryClassifierParser( tokens ) ;
+
+        LedgerEntryClassifierParser parser = new LedgerEntryClassifierParser(tokens);
         parser.removeErrorListeners() ;
         parser.addErrorListener( new LEClassifierRuleErrorListener() ) ;
         
         ParseTree tree   = parser.le_classifier() ;
-        LEClassifierRule rule = buildRule( tree, 0 ) ;
-        return rule ;
+        return buildRule( tree, 0 );
     }
     
     private LEClassifierRule buildRule( ParseTree tree, int fromChildIndex ) {
         
         LEClassifierRule rule = null ;
-        Binary_opContext binOp = null ; 
-        LEClassifierRule rightStmt = null ;
-        LEClassifierBinaryOpRule opRule = null ; 
+        Binary_opContext binOp ;
+        LEClassifierRule rightStmt ;
+        LEClassifierBinaryOpRule opRule ;
         
         int numChildrenLeft = tree.getChildCount() - fromChildIndex ;
         
@@ -119,7 +101,7 @@ public class LEClassifierRuleBuilder
     
     private LEClassifierRule buildRemarkMatchRule( ParseTree tree ) {
         
-        MatchValueWithAlias mva = null ;
+        MatchValueWithAlias mva ;
         List<MatchValueWithAlias> values = new ArrayList<>() ;
         
         Remark_matchContext ctx = ( Remark_matchContext )tree ;
@@ -127,7 +109,7 @@ public class LEClassifierRuleBuilder
         
         if( child instanceof Single_remark_matchContext ) {
             
-            Single_remark_matchContext singleMatch = null ;
+            Single_remark_matchContext singleMatch ;
             singleMatch = ctx.single_remark_match() ;
             mva = createMatchValueWithAlias( singleMatch.value_with_alias() ) ;
             
@@ -135,7 +117,7 @@ public class LEClassifierRuleBuilder
         }
         else {
             
-            Multi_remark_matchContext multiMatch = null ;
+            Multi_remark_matchContext multiMatch ;
             multiMatch = ctx.multi_remark_match() ;
             
             for( Value_with_aliasContext vwaCtx : multiMatch.value_with_alias() ) {
@@ -185,10 +167,10 @@ public class LEClassifierRuleBuilder
     
     private LEClassifierRule buildAmountMatchRule( ParseTree tree ) {
         
-        Amt_eq_stmtContext eqStmt = null ;
-        Amt_gt_stmtContext gtStmt = null ;
-        Amt_lt_stmtContext ltStmt = null ;
-        Amt_bw_stmtContext bwStmt = null ;
+        Amt_eq_stmtContext eqStmt ;
+        Amt_gt_stmtContext gtStmt ;
+        Amt_lt_stmtContext ltStmt ;
+        Amt_bw_stmtContext bwStmt ;
         
         LEClassifierAmtMatchRule rule = null ;
         Amt_matchContext ctx = ( Amt_matchContext )tree ;

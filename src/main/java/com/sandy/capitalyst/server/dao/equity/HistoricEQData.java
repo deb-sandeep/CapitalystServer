@@ -5,13 +5,13 @@ import java.time.ZoneId ;
 import java.time.ZonedDateTime ;
 import java.util.Date ;
 
-import javax.persistence.Column ;
-import javax.persistence.Entity ;
-import javax.persistence.GeneratedValue ;
-import javax.persistence.GenerationType ;
-import javax.persistence.Id ;
-import javax.persistence.Table ;
-import javax.persistence.TableGenerator ;
+import jakarta.persistence.Column ;
+import jakarta.persistence.Entity ;
+import jakarta.persistence.GeneratedValue ;
+import jakarta.persistence.GenerationType ;
+import jakarta.persistence.Id ;
+import jakarta.persistence.Table ;
+import jakarta.persistence.TableGenerator ;
 
 import org.ta4j.core.Bar ;
 import org.ta4j.core.BaseBar ;
@@ -45,22 +45,22 @@ public class HistoricEQData implements EntityWithNumericID {
     private long   totalTrades = 0 ;
     private Date   date = null ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float open = 0.0F ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float high = 0.0F ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float low = 0.0F ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float close = 0.0F ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private Float prevClose = 0.0F ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float totalTradeVal = 0.0F ;
     
     public Bar toBar() {

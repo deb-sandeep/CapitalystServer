@@ -79,6 +79,14 @@ public class CapitalystJobScheduler {
     private SchedulerConfig loadConfig() throws Exception {
         SchedulerConfig config =  null ;
         InputStream is = getClass().getResourceAsStream( "/config/scheduler-config.yaml" ) ;
+
+        if( is == null ) {
+            is = getClass().getResourceAsStream( "/scheduler-config.yaml" ) ;
+            if( is == null ) {
+                throw new Exception( "scheduler-config.yaml not found." ) ;
+            }
+        }
+
         config = mapper.readValue( is, SchedulerConfig.class ) ;
         config.enrichValues() ;
         return config ;

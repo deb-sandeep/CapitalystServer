@@ -1,6 +1,6 @@
 package com.sandy.capitalyst.server.core.asynctask;
 
-import org.apache.commons.lang.exception.ExceptionUtils ;
+import org.apache.commons.lang3.exception.ExceptionUtils ;
 
 import lombok.Data ;
 
@@ -22,7 +22,7 @@ public class AsyncTaskMessage {
     
     public AsyncTaskMessage( String msg, Exception e ) {
         this( msg ) ;
-        this.exceptionTrace = ExceptionUtils.getFullStackTrace( e ) ;
+        this.exceptionTrace = ExceptionUtils.getStackTrace( e ) ;
     }
     
     public AsyncTaskMessage( Exception e ) {

@@ -6,7 +6,7 @@ import java.util.List ;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.api.ledgermgmt.helpers.loadcalc.LoadRule.LoadAction ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.udojava.evalex.Expression.ExpressionException ;
 
 import lombok.Getter ;

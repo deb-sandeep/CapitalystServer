@@ -2,13 +2,13 @@ package com.sandy.capitalyst.server.dao.equity;
 
 import java.util.Date ;
 
-import javax.persistence.Column ;
-import javax.persistence.Entity ;
-import javax.persistence.GeneratedValue ;
-import javax.persistence.GenerationType ;
-import javax.persistence.Id ;
-import javax.persistence.Table ;
-import javax.persistence.TableGenerator ;
+import jakarta.persistence.Column ;
+import jakarta.persistence.Entity ;
+import jakarta.persistence.GeneratedValue ;
+import jakarta.persistence.GenerationType ;
+import jakarta.persistence.Id ;
+import jakarta.persistence.Table ;
+import jakarta.persistence.TableGenerator ;
 
 import com.sandy.capitalyst.server.dao.EntityWithNumericID ;
 
@@ -43,16 +43,16 @@ public class EquityTxn implements EntityWithNumericID {
     private String settlementId    = null ;
     private String exchangeTradeId = null ;
 
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float txnPrice = 0.0f ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float brokerage = 0.0f ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float txnCharges = 0.0f ;
     
-    @Column( precision=16, scale=2 )
+    @Column( precision=16 )
     private float stampDuty = 0.0f ;
     
     public EquityTxn() {}

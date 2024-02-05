@@ -1,6 +1,6 @@
 package com.sandy.capitalyst.server.api.breeze;
 
-import static org.apache.commons.lang.StringUtils.* ;
+import static org.apache.commons.lang3.StringUtils.* ;
 
 import java.io.StringWriter ;
 import java.util.HashMap ;

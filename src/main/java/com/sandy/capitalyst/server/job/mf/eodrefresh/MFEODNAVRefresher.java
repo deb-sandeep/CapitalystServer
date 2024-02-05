@@ -12,7 +12,7 @@ import com.sandy.capitalyst.server.dao.mf.HistoricMFData ;
 import com.sandy.capitalyst.server.dao.mf.MutualFundAsset ;
 import com.sandy.capitalyst.server.dao.mf.repo.HistoricMFDataRepo ;
 import com.sandy.capitalyst.server.dao.mf.repo.MutualFundAssetRepo ;
-import com.sandy.common.util.StringUtil ;
+import com.sandy.capitalyst.server.core.util.StringUtil ;
 
 public class MFEODNAVRefresher {
     

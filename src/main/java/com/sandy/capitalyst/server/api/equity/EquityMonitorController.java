@@ -2,7 +2,7 @@ package com.sandy.capitalyst.server.api.equity ;
 
 import java.util.Date ;
 
-import org.apache.commons.lang.exception.ExceptionUtils ;
+import org.apache.commons.lang3.exception.ExceptionUtils ;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.http.ResponseEntity ;
@@ -54,7 +54,7 @@ public class EquityMonitorController {
         }
         catch( Exception e ) {
             log.error( "Error :: Saving equity monitor.", e ) ;
-            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            String stackTrace = ExceptionUtils.getStackTrace( e ) ;
             return APIMsgResponse.serverError( stackTrace ) ;
         }
     }
@@ -71,7 +71,7 @@ public class EquityMonitorController {
         }
         catch( Exception e ) {
             log.error( "Error :: Deleting equity monitor.", e ) ;
-            String stackTrace = ExceptionUtils.getFullStackTrace( e ) ;
+            String stackTrace = ExceptionUtils.getStackTrace( e ) ;
             return APIMsgResponse.serverError( stackTrace ) ;
         }
     }
