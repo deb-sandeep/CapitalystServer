@@ -1,24 +1,25 @@
 package com.sandy.capitalyst.server.api.equity.helper;
 
-import static com.sandy.capitalyst.server.CapitalystServer.getBean ;
-
-import java.io.StringReader ;
+import java.io.StringReader;
 import java.text.SimpleDateFormat ;
-import java.util.Date ;
-import java.util.List ;
+import java.util.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sandy.capitalyst.server.core.util.CookieUtil;
+import com.univocity.parsers.csv.CsvParser;
+import com.univocity.parsers.csv.CsvParserSettings;
+import jdk.jfr.ContentType;
 import org.apache.commons.lang3.time.DateUtils ;
 import org.apache.log4j.Logger ;
-import org.springframework.web.multipart.MultipartFile ;
 
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
 import com.sandy.capitalyst.server.core.util.StringUtil ;
 import com.sandy.capitalyst.server.dao.equity.HistoricEQData ;
 import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
-import com.univocity.parsers.csv.CsvParser ;
-import com.univocity.parsers.csv.CsvParserSettings ;
 
 import lombok.Data ;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * For a given NSE symbol and a past date range, this one-time class 
@@ -31,19 +32,13 @@ public class EquityHistDataImporter {
     private static final SimpleDateFormat REQ_SDF = new SimpleDateFormat( "dd-MM-yyyy" ) ;
     private static final SimpleDateFormat RES_SDF = new SimpleDateFormat( "dd-MMM-yyyy" ) ;
     
-    private static final String NSE_HISTORIC_DATA_URL = 
-            "https://www1.nseindia.com/" + 
-            "products/dynaContent/common/productsSymbolMapping.jsp?" + 
-            "symbol={symbol}&" + 
-            "segmentLink=3&" + 
-            "symbolCount=1&" + 
-            "series=EQ&" + 
-            "dateRange=+&" + 
-            "fromDate={fromDate}&" + 
-            "toDate={toDate}&" + 
-            "dataType=PRICEVOLUME" ;
-    
-    private static final String DIV_START = "<div id='csvContentDiv' style='display:none;'>" ;
+    private static final String NSE_HISTORIC_DATA_URL =
+            "https://www.nseindia.com/api/historical/securityArchives?" +
+            "from={fromDate}&" +
+            "to={toDate}&" +
+            "symbol={symbol}&" +
+            "dataType=priceVolume&" +
+            "series=EQ" ;
     
     @Data
     public static class ImportResult {
@@ -56,44 +51,166 @@ public class EquityHistDataImporter {
         private int numModified  = 0 ;
         private boolean dataForWrongSymbolReceived = false ;
     }
-    
-    private String symbol = null ;
-    private Date fromDate = null ;
-    private Date toDate   = null ;
-    
-    private ImportResult results = new ImportResult() ;
+
+    private static class HistoricEODRecord {
+        String symbol        = null ;
+        Date   date          = null ;
+        float  prevClose     = 0.0F ;
+        float  open          = 0.0F ;
+        float  high          = 0.0F ;
+        float  low           = 0.0F ;
+        float  close         = 0.0F ;
+        long   totalTradeQty = 0L ;
+        float  totalTradeVal = 0.0F ;
+        long   totalTrades   = 0L ;
+
+        static HistoricEODRecord build( JsonNode node ) throws Exception {
+
+            HistoricEODRecord record = new HistoricEODRecord() ;
+
+            record.symbol        = node.get( "CH_SYMBOL" ).asText().trim() ;
+            record.date          = RES_SDF.parse( node.get( "mTIMESTAMP"    ).asText() ) ;
+            record.prevClose     = (float)node.get( "CH_PREVIOUS_CLS_PRICE" ).asDouble() ;
+            record.open          = (float)node.get( "CH_OPENING_PRICE"      ).asDouble() ;
+            record.high          = (float)node.get( "CH_TRADE_HIGH_PRICE"   ).asDouble() ;
+            record.low           = (float)node.get( "CH_TRADE_LOW_PRICE"    ).asDouble() ;
+            record.close         = (float)node.get( "CH_CLOSING_PRICE"      ).asDouble() ;
+            record.totalTradeQty = (long )node.get( "CH_TOT_TRADED_QTY"     ).asDouble() ;
+            record.totalTradeVal = (float)node.get( "CH_TOT_TRADED_VAL"     ).asDouble() ;
+            record.totalTrades   = (long )node.get( "CH_TOTAL_TRADES"       ).asDouble() ;
+
+            return record ;
+        }
+
+        static HistoricEODRecord build( String[] row ) throws Exception {
+
+            HistoricEODRecord record = new HistoricEODRecord() ;
+
+            record.symbol        = row[0].trim() ;
+            record.date          = RES_SDF.parse   ( row[ 2].trim() ) ;
+            record.prevClose     = Float.parseFloat( row[ 3].trim() ) ;
+            record.open          = Float.parseFloat( row[ 4].trim() ) ;
+            record.high          = Float.parseFloat( row[ 5].trim() ) ;
+            record.low           = Float.parseFloat( row[ 6].trim() ) ;
+            record.close         = Float.parseFloat( row[ 8].trim() ) ;
+            record.totalTradeQty = Long.parseLong  ( row[10].trim() ) ;
+            record.totalTradeVal = Float.parseFloat( row[11].trim() ) ;
+            record.totalTrades   = Long.parseLong  ( row[12].trim() ) ;
+
+            return record ;
+        }
+    }
     
     private HistoricEQDataRepo histRepo = null ;
 
-    public EquityHistDataImporter() {
-        histRepo = getBean( HistoricEQDataRepo.class ) ;
+    public EquityHistDataImporter( HistoricEQDataRepo repo ) {
+        histRepo = repo ;
     }
 
-    public EquityHistDataImporter( String symbol, Date fromDate, Date toDate ) {
-        this() ;
-        this.symbol   = symbol ;
-        this.fromDate = fromDate ;
-        this.toDate   = toDate ;
-    }
-    
-    public ImportResult execute() throws Exception {
-        
+    public ImportResult importFromServer( String symbol, Date fromDate, Date toDate )
+        throws Exception {
+
+        Date maxPastDate = DateUtils.addDays( toDate, -60 ) ;
+        if( maxPastDate.after( fromDate ) ) {
+            throw new IllegalArgumentException(
+                    "From date can't be more than 60 days before the end date" ) ;
+        }
+
         log.info( "!- Filling historic data for " + symbol + " >" ) ;
         log.info( "-> From date = " + RES_SDF.format( fromDate ) ) ;
         log.info( "-> To date   = " + RES_SDF.format( toDate ) ) ;
-        
+
+        String jsonContent = getHistoricDataFromServer( symbol, fromDate, toDate ) ;
+
+        List<HistoricEODRecord> records = new ArrayList<>() ;
+        ObjectMapper objMapper = new ObjectMapper() ;
+        JsonNode jsonRoot  = objMapper.readTree( jsonContent ) ;
+
+        JsonNode dataNode  = jsonRoot.get( "data" ) ;
+        for( int i=0; i<dataNode.size(); i++ ) {
+            JsonNode jsonNode = dataNode.get( i ) ;
+            records.add( HistoricEODRecord.build( jsonNode ) ) ;
+        }
+
+        return importHistoricData( symbol, records ) ;
+    }
+
+    private String getHistoricDataFromServer( String symbol, Date fromDate, Date toDate )
+            throws Exception {
+
+        String url = NSE_HISTORIC_DATA_URL
+                .replace( "{symbol}", symbol )
+                .replace( "{fromDate}", REQ_SDF.format( fromDate ) )
+                .replace( "{toDate}", REQ_SDF.format( toDate ) ) ;
+
+        log.info( "- Downloading eod data." ) ;
+        log.debug( "- URL = " + url ) ;
+
+        HTTPResourceDownloader httpClient = HTTPResourceDownloader.instance() ;
+        Map<String, String> cookies = CookieUtil.loadNSECookies() ;
+
+        String response = httpClient.getResource( url, "eod-pricevol.txt", cookies ) ;
+
+        log.debug( "-> Done. Response size " + response.length() + " bytes." ) ;
+
+        return response ;
+    }
+
+    public ImportResult importCSVData( String csvContent )
+            throws Exception {
+
+        CsvParserSettings settings = new CsvParserSettings() ;
+        CsvParser parser = new CsvParser( settings ) ;
+        ImportResult results = new ImportResult() ;
+
+        List<String[]> csvRecords = parser.parseAll( new StringReader( csvContent ) ) ;
+        List<HistoricEODRecord> records = new ArrayList<>() ;
+
+        results.setNumRecordsFounds( csvRecords.size()-1 ) ;
+        log.debug( "-> Num records found = " + (csvRecords.size()-1) );
+
+        log.info( "-> Importing eod data." ) ;
+        if( csvRecords.size() > 1 ) {
+
+            String[] firstRecord = csvRecords.get( 1 ) ;
+            results.symbol = firstRecord[0].trim() ;
+
+            for( int i=1; i<csvRecords.size(); i++ ) {
+                records.add( HistoricEODRecord.build( csvRecords.get(i) ) ) ;
+            }
+        }
+
+        return importHistoricData( results.symbol, records ) ;
+    }
+    
+    private ImportResult importHistoricData( String symbol, List<HistoricEODRecord> records )
+            throws Exception {
+
+        ImportResult results = new ImportResult() ;
+
         try {
-            if( fromDate365DaysBeforeToDate() ) {
-                throw new IllegalArgumentException( 
-                    "From date can't be more than 365 days before the end date" ) ;
+            results.setNumRecordsFounds( records.size() ) ;
+            log.debug( "-> Num records found = " + (records.size()-1) );
+
+            if( records.size() > 1 ) {
+
+                log.info( "-> Importing eod data." ) ;
+                HistoricEODRecord firstRecord = records.get( 0 ) ;
+
+                if( symbol !=null && !firstRecord.symbol.equals( symbol ) ) {
+
+                    // There is a bizzare scenario where the server returns
+                    // EOD for a different symbol. If such a scenario occurs,
+                    // Don't process this bunch of records.
+                    log.error( "-> ERROR: Different symbol data obtained. " +
+                            firstRecord.symbol ) ;
+                    results.setDataForWrongSymbolReceived( true ) ;
+                }
+                else {
+                    records.forEach( r -> addHistoricRecord( r, results ) ) ;
+                }
             }
-            
-            String csvContent = getRawHistoricData() ;
-            
-            if( StringUtil.isNotEmptyOrNull( csvContent ) ) {
-                parseAndPopulateHistoricData( csvContent ) ;
-            }
-            
+
             log.info( "-> Num records found    = " + results.getNumRecordsFounds() ) ;
             log.info( "-> Num records imported = " + results.getNumAdditions() ) ;
             log.info( "-> Num records modified = " + results.getNumModified() ) ;
@@ -109,130 +226,29 @@ public class EquityHistDataImporter {
         }
         return results ;
     }
-    
-    public ImportResult importFile( MultipartFile file )
-        throws Exception {
-        
-        String fileContent = new String( file.getBytes() ) ;
-        results = parseAndPopulateHistoricData( fileContent ) ;
-        return results ;
-    }
 
-    private ImportResult parseAndPopulateHistoricData( String csvContent )
-            throws Exception {
-        
-        CsvParserSettings settings = new CsvParserSettings() ;
-        CsvParser parser = new CsvParser( settings ) ;
-        List<String[]> records = null ;
-        
-        csvContent = csvContent.replace( ":", "\n" ) ;
-        records = parser.parseAll( new StringReader( csvContent ) ) ;
-        
-        results.setNumRecordsFounds( records.size()-1 ) ;
-        log.debug( "-> Num records found = " + (records.size()-1) );
-        
-        log.info( "-> Importing eod data." ) ;
-        if( records.size() > 1 ) {
-
-            String[] firstRecord = records.get( 1 ) ;
-            String importSymbol  = firstRecord[0].trim() ;
-            
-            if( symbol !=null && !importSymbol.equals( this.symbol ) ) {
-                
-                // There is a bizzare scenario where the server returns 
-                // EOD for a different symbol. If such a scenario occurs,
-                // Don't process this bunch of records.
-                log.error( "-> ERROR: Different symbol data obtained. " + 
-                           firstRecord[0].trim() ) ;
-                
-                results.setDataForWrongSymbolReceived( true ) ;
-            }
-            else {
-                results.symbol = importSymbol ;
-                
-                for( int i=1; i<records.size(); i++ ) {
-                    String[] row = records.get( i ) ;
-                    addHistoricRecord( row ) ;
-                }
-            }
-        }
-        
-        return results ;
-    }
-
-    private boolean fromDate365DaysBeforeToDate() {
-        Date maxPastDate = DateUtils.addDays( toDate, -365 ) ;
-        return maxPastDate.after( fromDate ) ;
-    }
-    
-    private String getRawHistoricData() throws Exception {
-        
-        String url = NSE_HISTORIC_DATA_URL
-                        .replace( "{symbol}", symbol )
-                        .replace( "{fromDate}", REQ_SDF.format( fromDate ) )
-                        .replace( "{toDate}", REQ_SDF.format( toDate ) ) ;
-        
-        HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
-        String response = null ;
-        String csvContent = null ;
-        
-        log.info( "- Downloading eod data." ) ;
-        response = downloader.getResource( url, "eod-pricevol.txt" ) ;
-        log.debug( "-> Done. Response size " + response.length() + " bytes." ) ;
-        
-        int startIndex = response.indexOf( DIV_START ) ;
-        
-        if( startIndex != -1 ) {
-            startIndex += DIV_START.length() ;
-            int endIndex = response.indexOf( "</div>", startIndex ) ;
-            csvContent = response.substring( startIndex, endIndex ) ;
-            log.debug( "-> Data size = " + csvContent.length() + " bytes." ) ;
-        }
-        else if( response.contains( "No Records" ) ) {
-            log.debug( "-> No records found." ) ;
-            csvContent = "" ;
-        }
-        else {
-            log.error( "-> Invalid response from server." ) ;
-            log.debug( "->>" + response ) ;
-            throw new Exception( "No historic records found." ) ;
-        }
-        
-        return csvContent ;
-    }
-
-    private HistoricEQData addHistoricRecord( String[] row ) throws Exception {
+    private void addHistoricRecord( HistoricEODRecord record, ImportResult results ) {
         
         HistoricEQData eodData = null ;
         List<HistoricEQData> histRows = null ;
-        
-        String symbol        = row[0].trim() ;
-        Date   date          = RES_SDF.parse   ( row[ 2].trim() ) ;
-        float  prevClose     = Float.parseFloat( row[ 3].trim() ) ;
-        float  open          = Float.parseFloat( row[ 4].trim() ) ;
-        float  high          = Float.parseFloat( row[ 5].trim() ) ;
-        float  low           = Float.parseFloat( row[ 6].trim() ) ;
-        float  close         = Float.parseFloat( row[ 8].trim() ) ;
-        long   totalTradeQty = Long.parseLong  ( row[10].trim() ) ;
-        float  totalTradeVal = Float.parseFloat( row[11].trim() ) ;
-        long   totalTrades   = Long.parseLong  ( row[12].trim() ) ;
-        
-        histRows = histRepo.findBySymbolAndDate( symbol, date ) ;
+
+        histRows = histRepo.findBySymbolAndDate( record.symbol, record.date ) ;
         if( histRows == null || histRows.isEmpty() ) {
             
             eodData = new HistoricEQData() ;
             
-            eodData.setSymbol( symbol ) ;
-            eodData.setDate( date ) ;
-            eodData.setPrevClose( prevClose ) ;
-            eodData.setOpen( open ) ;
-            eodData.setHigh( high ) ;
-            eodData.setLow( low ) ;
-            eodData.setClose( close ) ;
-            eodData.setTotalTradeQty( totalTradeQty ) ;
-            eodData.setTotalTradeVal( totalTradeVal ) ;
-            eodData.setTotalTrades( totalTrades ) ;
-            
+            eodData.setSymbol( record.symbol ) ;
+            eodData.setDate( record.date ) ;
+            eodData.setPrevClose( record.prevClose ) ;
+            eodData.setOpen( record.open ) ;
+            eodData.setHigh( record.high ) ;
+            eodData.setLow( record.low ) ;
+            eodData.setClose( record.close ) ;
+            eodData.setTotalTradeQty( record.totalTradeQty ) ;
+            eodData.setTotalTradeVal( record.totalTradeVal ) ;
+            eodData.setTotalTrades( record.totalTrades ) ;
+
+            log.debug( "->   New record added for date = " + RES_SDF.format( record.date ) );
             results.numAdditions++ ;
             histRepo.saveAndFlush( eodData ) ;
         }
@@ -241,21 +257,24 @@ public class EquityHistDataImporter {
             HistoricEQData histData = histRows.get( 0 ) ;
             if( histData.getPrevClose() == null || 
                 histData.getPrevClose() == 0 ) {
-                
-                histData.setPrevClose( prevClose ) ;
+
+                log.debug( "->   Existing record modified for date = " + RES_SDF.format( record.date ) );
+                histData.setPrevClose( record.prevClose ) ;
                 results.numModified++ ;
                 histRepo.saveAndFlush( histData ) ;
             }
+            else {
+                log.debug( "->   Records exist for date = " + RES_SDF.format( record.date ) );
+            }
         }
         else {
-            deleteDuplicateHistoricData( histRows, prevClose ) ;
+            deleteDuplicateHistoricData( histRows, record.prevClose, results ) ;
         }
-        
-        return eodData ;
     }
     
     private void deleteDuplicateHistoricData( List<HistoricEQData> candles,
-                                              float prevClose ) {
+                                              float prevClose,
+                                              ImportResult results ) {
         
         if( candles != null && !candles.isEmpty() && candles.size()>1 ) {
             
@@ -263,7 +282,10 @@ public class EquityHistDataImporter {
             
             if( histData.getPrevClose() == null || 
                 histData.getPrevClose() == 0 ) {
-                
+
+                log.debug( "->   Existing record modified for date = " +
+                           RES_SDF.format( histData.getDate() ) );
+
                 histData.setPrevClose( prevClose ) ;
                 results.numModified++ ;
                 histRepo.saveAndFlush( histData ) ;
@@ -271,6 +293,9 @@ public class EquityHistDataImporter {
 
             for( int i=1; i<candles.size(); i++ ) {
                 histData = candles.get( i ) ;
+                log.debug( "->   Existing record deleted for date = " +
+                           RES_SDF.format( histData.getDate() ) );
+
                 results.numDeletions++ ;
                 histRepo.delete( histData ) ;
             }

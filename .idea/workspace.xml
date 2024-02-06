@@ -4,360 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Log config">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Major refactor - static file separation, latest version upgrades">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capitalyst-server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/capitalyst-server.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assembly/dep.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/assembly/dep.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/CapitalystServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/CapitalystServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/helper/CCTxnEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/helper/CCTxnEntry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICICreditCardAccountStmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICICreditCardAccountStmtParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICISavingsAccountStmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICISavingsAccountStmtParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/POSavingsAccountStmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/POSavingsAccountStmtParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/SBISavingsAccountStmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/SBISavingsAccountStmtParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/breeze/BreezeTestExecutionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/breeze/BreezeTestExecutionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/BudgetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/BudgetController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/vo/BudgetCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/vo/BudgetCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/vo/BudgetLineItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/vo/BudgetLineItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/vo/BudgetSpread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/vo/BudgetSpread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityHoldingsUploadController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityHoldingsUploadController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityMonitorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityMonitorController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityPerfTTMRefreshController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityPerfTTMRefreshController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquitySellTxnQueryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquitySellTxnQueryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityTransactionsUploadController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityTransactionsUploadController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/MCEquityIndicatorsUploadController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/MCEquityIndicatorsUploadController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/MCEquityMetaMapController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/MCEquityMetaMapController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/graph/EquityGraphDataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/graph/EquityGraphDataController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/graph/internal/EquityGraphDataBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/graph/internal/EquityGraphDataBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityHistoricDataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityHistoricDataController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistDataImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistDataImporter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistDataPartImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistDataPartImporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistoricDataCSVGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistoricDataCSVGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHoldingVOBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHoldingVOBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityTTMPerfUpdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityTTMPerfUpdater.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/bhavcopy/AbstractBhavcopyImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/bhavcopy/AbstractBhavcopyImporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/vo/EquityBuyTxnVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/vo/EquityBuyTxnVO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/vo/EquitySellTxnVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/vo/EquitySellTxnVO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexHistDataImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexHistDataImporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexHistDataPartImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexHistDataPartImporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexHistKeyMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexHistKeyMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexRefresher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexRefresher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/LedgerClassificationRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/LedgerClassificationRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/LedgerRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/LedgerRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/helpers/LedgerSearchCriteria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/helpers/LedgerSearchCriteria.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledgermgmt/helpers/loadcalc/MonthlyLoadingCalculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledgermgmt/helpers/loadcalc/MonthlyLoadingCalculator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/mf/EnrichMFMetaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/mf/EnrichMFMetaController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/mf/MFPortfolioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/mf/MFPortfolioController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/mf/helper/MFPortfolioBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/mf/helper/MFPortfolioBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/emrefresh/ListedETFRefresher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/emrefresh/ListedETFRefresher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/prevcloseupdater/HistPrevCloseUpdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/prevcloseupdater/HistPrevCloseUpdater.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/tradeupdater/EquityTradeUpdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/tradeupdater/EquityTradeUpdater.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/BreezeException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/BreezeException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/api/BreezeGetTradeListAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/api/BreezeGetTradeListAPI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeAPIProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeAPIProxy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeNVPConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeNVPConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeNetworkClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeNetworkClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeSessionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeSessionManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/listener/InvStatsPersistListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/listener/InvStatsPersistListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/asynctask/AsyncTaskMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/asynctask/AsyncTaskMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/ledger/classifier/LEClassifierRemarkMatchRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/ledger/classifier/LEClassifierRemarkMatchRule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/ledger/classifier/LEClassifierRuleBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/ledger/classifier/LEClassifierRuleBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/nvpconfig/NVPManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/nvpconfig/NVPManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/CapitalystJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/CapitalystJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/CapitalystJobScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/CapitalystJobScheduler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/JobConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/JobConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/util/ListOfStringPrinter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/util/ListOfStringPrinter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/util/StringUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/util/StringUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityITDImporterDaemon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityITDImporterDaemon.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityITDSnapshotService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityITDSnapshotService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityLTPRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityLTPRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/recoengine/RecoManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/recoengine/RecoManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/recoengine/screener/IndexScreener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/recoengine/screener/IndexScreener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/recoengine/screener/IndicatorScreener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/recoengine/screener/IndicatorScreener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/recoengine/screener/ManualInclusionScreener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/recoengine/screener/ManualInclusionScreener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/account/Account.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/account/Account.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/account/CorpusSnapshot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/account/CorpusSnapshot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/breeze/BreezeInvocationStats.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/breeze/BreezeInvocationStats.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityDailyGain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityDailyGain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityHolding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityHolding.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityIndicators.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityIndicators.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityIndicatorsHist.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityIndicatorsHist.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityMaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityMaster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityMonitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityMonitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTTMPerf.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTTMPerf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTechIndicator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTechIndicator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTrade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTrade.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTxn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTxn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/HistoricEQData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/HistoricEQData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/HistoricEQDataMeta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/HistoricEQDataMeta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/HistoricEQITDData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/HistoricEQITDData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/SebiPenalty.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/SebiPenalty.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/fixed_deposit/FixedDeposit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/fixed_deposit/FixedDeposit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/idgen/IDGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/idgen/IDGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/HistoricIdxData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/HistoricIdxData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/HistoricIdxDataMeta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/HistoricIdxDataMeta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/IndexEquity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/IndexEquity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/IndexMaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/IndexMaster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/repo/IndexEquityRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/repo/IndexEquityRepo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/individual/Individual.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/individual/Individual.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/JobEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/JobEntry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/JobRunEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/JobRunEntry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/DebitCreditAssoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/DebitCreditAssoc.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerCategoryBudget.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerCategoryBudget.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntryCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntryCategory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntryClassificationRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntryClassificationRule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/HistoricMFData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/HistoricMFData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundAsset.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundAsset.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundMaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundMaster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundTxn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundTxn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/nvp/NVP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/nvp/NVP.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/init/StartupTasksExecutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/init/StartupTasksExecutor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/corpus/CorpusSnapshotJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/corpus/CorpusSnapshotJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyImportJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyImportJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idirectmap/ICICIDirectSymbolMappingJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idirectmap/ICICIDirectSymbolMappingJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idirectmap/IDirectSecurityMaprDownloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idirectmap/IDirectSecurityMapDownloader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/mf/eodrefresh/MFEODNAVRefreshJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/mf/eodrefresh/MFEODNAVRefreshJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/mf/eodrefresh/MFEODNAVRefresher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/mf/eodrefresh/MFEODNAVRefresher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/mf/eodrefresh/MFEODParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/mf/eodrefresh/MFEODParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config/capitalyst.prod" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config/scheduler-config.prod" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/logback.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/app/app.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/app/form.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/app/tile.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/fa/css/all.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/fa/webfonts/fa-brands-400.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/fa/webfonts/fa-brands-400.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/fa/webfonts/fa-regular-400.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/fa/webfonts/fa-regular-400.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/fa/webfonts/fa-solid-900.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/fa/webfonts/fa-solid-900.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/fa/webfonts/fa-v4compatibility.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/fa/webfonts/fa-v4compatibility.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/pure/tables.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/fonts/quicksand-v9-latin-regular.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/fonts/quicksand-v9-latin-regular.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/fonts/quicksand-v9-latin-regular.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/fonts/quicksand-v9-latin-regular.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/fonts/quicksand-v9-latin-regular.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/gear.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/prune-guard.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/app/app-ng-non-fu.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/app/app-ng.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/app/filter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/app/global-functions.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/angular/angular-route.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/angular/angular.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/angular/confirm/angular-confirm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/angular/confirm/angular-confirm.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/angular/confirm/angular-confirm.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/bootstrap/bootstrap-datetimepicker.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/bootstrap/bootstrap-datetimepicker.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/bootstrap/bootstrap.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/bootstrap/bootstrap.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/bootstrap/collapse.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/bootstrap/transition.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/bootstrap/ui-bootstrap-tpls-2.5.0.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/chart/chart.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/chart/chartjs-adapter-moment.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/chart/chartjs-plugin-annotation.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/chart/chartjs-plugin-zoom.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/daterangepicker/daterangepicker-bs3.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/daterangepicker/daterangepicker.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/dombuilder/DOMBuilder.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/fonts/glyphicons-halflings-regular.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/fonts/glyphicons-halflings-regular.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/fonts/glyphicons-halflings-regular.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/fonts/glyphicons-halflings-regular.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/fonts/glyphicons-halflings-regular.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/hammer/hammer.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/jquery/jquery-2.1.1.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/jquery/jquery.cookie.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/jquery/jquery.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/moment/moment.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/.bower.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/.versions" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/FileAPI.flash.swf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/FileAPI.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/FileAPI.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/bower.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/ng-file-upload-all.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/ng-file-upload-all.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/ng-file-upload-shim.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/ng-file-upload-shim.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/ng-file-upload.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/ng-file-upload.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/ng-file-upload/package.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/sheetjs/xlsx.full.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/simple_pivot/simple_pivot.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/sort-table/demo.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/sort-table/sort-table.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/sparkline/jquery.sparkline.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/treetable/jquery.treetable.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/treetable/jquery.treetable.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/lib/treetable/jquery.treetable.theme.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/_common/js/UploadAccountStmtController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/_common/js/controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/_common/js/directive.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/_common/js/filter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/_common/js/route.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/_common/upload_account_stmt_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/account.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/account.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/equity/Equity.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/equity/js/EquityController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/fixed_deposits/FixedDeposits.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/fixed_deposits/edit_fixed_deposit_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/fixed_deposits/js/FixedDepositEditController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/fixed_deposits/js/FixedDepositsController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/mf/MutualFunds.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/mf/css/mf.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/mf/edit_info_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/mf/js/InfoEditController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/mf/js/MutualFundsController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/savings/SavingAccounts.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/savings/edit_saving_account_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/savings/js/SavingAccountEditController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/account/savings/js/SavingAccountsController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/admin.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/css/admin.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/js/controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/js/directive.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/js/filter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/js/route.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/actions/js/onetime_actions.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/actions/onetime_actions.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/actions/template/action.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/actions/template/col1_actions.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/actions/template/col2_actions.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/breeze/breeze_auth.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/breeze/css/breeze_auth.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/breeze/js/breeze_auth_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/categories/dialog/change_parent_category_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/categories/dialog/merge_category_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/categories/dialog/view_ledger_entries_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/categories/dialog/yearly_cap_editor_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/categories/js/manage_ledger_categories_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/categories/manage_ledger_categories.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/categories/template/ledger_cat_editor.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/config/css/manage_config.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/config/js/manage_config_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/config/manage_config.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/idx/dialog/idxmeta_editor_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/idx/js/manage_index_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/idx/manage_index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/rules/dialog/rule_editor_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/rules/js/manage_classification_rules_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/admin/route/rules/manage_classification_rules.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/budget_tracker.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/css/budget_tracker.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/js/BudgetTrackerHomeController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/js/budget-table-renderer.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/js/controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/js/directive.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/js/filter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/js/route.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/template/BudgetTrackerHome.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/budget_tracker/template/view_ledger_entries_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/cash_entry.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/css/cash_entry.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/js/CashEntryEditController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/js/CashEntryHomeController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/js/controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/js/filter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/js/route.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/js/service.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/template/CashEntryEdit.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/cash_entry/template/CashEntryHome.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/css/equity_mkt.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/css/graph.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/graph_display_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/graph_display_dialog_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/adx/adx.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/adx/adx_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/atr/atr.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/atr/atr_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/bollinger/bollinger_cfg.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/bollinger/bollinger_cfg_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/indicator_menu.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/keltner/keltner_cfg.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/keltner/keltner_cfg_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/macd/macd.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/macd/macd_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/rsi/rsi.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/rsi/rsi_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/dialog/graph/ind/sma/sma_cfg.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/equity_mkt.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/js/controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/js/directive.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/js/filter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/js/route.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/buy/buy.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/buy/css/buy.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/buy/js/buy_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/hist/css/hist.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/hist/dialog/upload_bse_bhavcopy_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/hist/dialog/upload_bse_bhavcopy_dialog_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/hist/dialog/upload_hist_data_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/hist/dialog/upload_hist_data_dialog_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/hist/dialog/upload_nse_bhavcopy_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/hist/dialog/upload_nse_bhavcopy_dialog_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/hist/hist.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/hist/js/hist_eod_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/portfolio/css/portfolio.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/portfolio/dialog/txns_display_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/portfolio/js/portfolio_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/portfolio/js/txns_display_dialog_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/portfolio/portfolio.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/portfolio/portfolio_desktop.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/portfolio/portfolio_mobile.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/profitloss/css/profitloss.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/profitloss/js/profitloss_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/profitloss/profitloss.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/reco/css/reco.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/reco/dialog/stock_detail_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/reco/js/gradient_gen.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/reco/js/reco_controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/equity_mkt/route/reco/reco.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/landing/js/controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/landing/landing.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/css/ledger.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/js/AssociatedCreditsController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/js/DebitRecoveryDialogController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/js/LedgerHomeController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/js/controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/js/directive.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/js/filter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/js/ledger_exporter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/js/route.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/ledger.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/template/LedgerHome.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/template/dialog/associated_credits_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/template/dialog/debit_recovery_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/template/dialog/ledger_entry_categorization_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/template/dialog/ledger_entry_split_dialog.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/ledger/template/ledger_table.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/txn_pivot/css/txn_pivot.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/txn_pivot/js/TxnPivotHomeController.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/txn_pivot/js/controller.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/txn_pivot/js/directive.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/txn_pivot/js/filter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/txn_pivot/js/route.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/txn_pivot/template/TxnPivotHome.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/views/txn_pivot/txn_pivot.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scripts/capitalyst" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scripts/capitalyst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/Scratch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/Scratch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/bhavcopy/JSoupTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/bhavcopy/JSoupTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/breeze/BreezeTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/breeze/BreezeTester.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/breeze/GraphDataGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/breeze/GraphDataGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/core/ledger/classifier/LEClassifierBuilderTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/core/ledger/classifier/LEClassifierBuilderTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/http_headers/eod-pricevol.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/http_headers/eod-pricevol.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -365,6 +20,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CompilerWorkspaceConfiguration">
+    <option name="CLEAR_OUTPUT_DIRECTORY" value="false" />
     <option name="MAKE_PROJECT_ON_SAVE" value="true" />
     <option name="PARALLEL_COMPILATION" value="true" />
   </component>
@@ -408,6 +64,14 @@
     <scope name="Source Folders" pattern="(file[capitalyst-server]:doc//*||file[capitalyst-server]:src//*||file:.gitignore||file:pom.xml)&amp;&amp;!file[capitalyst-server]:src/main/resources/static/js/lib//*&amp;&amp;!file[capitalyst-server]:src/test/config/*" />
   </component>
   <component name="ProblemsViewState">
+    <hideBySeverity>
+      <option value="11" />
+      <option value="12" />
+      <option value="13" />
+      <option value="14" />
+      <option value="15" />
+      <option value="16" />
+    </hideBySeverity>
     <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2M26svxjHeMokT5nG0zhbSWHcgk" />
@@ -415,7 +79,6 @@
     <ConfirmationsSetting value="1" id="Add" />
   </component>
   <component name="ProjectViewState">
-    <option name="autoscrollFromSource" value="true" />
     <option name="autoscrollToSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -440,7 +103,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors",
+    "settings.editor.selected.configurable": "project.propCompiler",
     "spring.configuration.checksum": "8d08fabdab186cde2d19ca8bcaea4309",
     "vue.rearranger.settings.migration": "true"
   },
@@ -458,17 +121,18 @@
       <recent name="$PROJECT_DIR$/src/main/web/angularjs" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.sandy.capitalyst.server.test.standalone" />
       <recent name="com.sandy.capitalyst.server.core.network" />
       <recent name="com.sandy.capitalyst.server.test.bhavcopy" />
     </key>
   </component>
-  <component name="RunManager" selected="Spring Boot.CapitalystServer">
-    <configuration name="NSEBhavcopyDownloader" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.sandy.capitalyst.server.job.equity.eodrefresh.NSEBhavcopyDownloader" />
+  <component name="RunManager" selected="Application.EquityHistDataImporterExecutor">
+    <configuration name="EquityHistDataImporterExecutor" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.sandy.capitalyst.server.test.standalone.EquityHistDataImporterExecutor" />
       <module name="capitalyst-server" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.sandy.capitalyst.server.job.equity.eodrefresh.*" />
+          <option name="PATTERN" value="com.sandy.capitalyst.server.test.standalone.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -550,7 +214,7 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.NSEBhavcopyDownloader" />
+      <item itemvalue="Application.EquityHistDataImporterExecutor" />
       <item itemvalue="HTTP Request.generated-requests | #1" />
       <item itemvalue="JUnit.NSEBhavcopyImportJobTest" />
       <item itemvalue="JUnit.NSEIndexImportJobTest.jobRun" />
@@ -559,11 +223,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.EquityHistDataImporterExecutor" />
         <item itemvalue="HTTP Request.generated-requests | #1" />
         <item itemvalue="JUnit.NSEIndexImportJobTest.jobRun" />
         <item itemvalue="JUnit.NSEReportsMetaRepoTest" />
         <item itemvalue="JUnit.NSEBhavcopyImportJobTest" />
-        <item itemvalue="Application.NSEBhavcopyDownloader" />
       </list>
     </recent_temporary>
   </component>
@@ -597,7 +261,7 @@
       <workItem from="1705559943382" duration="624000" />
       <workItem from="1706933690487" duration="14031000" />
       <workItem from="1707113261493" duration="9397000" />
-      <workItem from="1707123898339" duration="13397000" />
+      <workItem from="1707123898339" duration="32538000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -641,7 +305,23 @@
       <option name="project" value="LOCAL" />
       <updated>1680635798157</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Major refactor - static file separation, latest version upgrades">
+      <option name="closed" value="true" />
+      <created>1707154842707</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1707154842707</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Major refactor - static file separation, latest version upgrades">
+      <option name="closed" value="true" />
+      <created>1707154883299</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1707154883299</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -677,7 +357,19 @@
     <MESSAGE value="Budget tracking for 2023" />
     <MESSAGE value="NSE new site changes for bhavcopy" />
     <MESSAGE value="Log config" />
-    <option name="LAST_COMMIT_MESSAGE" value="Log config" />
+    <MESSAGE value="Major refactor - static file separation, latest version upgrades" />
+    <option name="LAST_COMMIT_MESSAGE" value="Major refactor - static file separation, latest version upgrades" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/standalone/EquityHistDataImporterExecutor.java</url>
+          <line>39</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

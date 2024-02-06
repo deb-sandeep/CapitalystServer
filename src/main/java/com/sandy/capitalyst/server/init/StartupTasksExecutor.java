@@ -4,7 +4,10 @@ import static com.sandy.capitalyst.server.CapitalystServer.getConfig ;
 
 import java.io.File ;
 import java.net.URL;
+import java.util.Objects;
 
+import com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDSnapshotService;
+import com.sandy.capitalyst.server.daemon.equity.intraday.EquityLTPRepository;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired ;
 import org.springframework.stereotype.Component ;
@@ -25,16 +28,36 @@ public class StartupTasksExecutor {
 
     private static final Logger log = Logger.getLogger( StartupTasksExecutor.class ) ;
     
-    @Autowired
     private AccountRepo aiRepo = null ;
-    
-    @Autowired
     private LedgerRepo ledgerRepo = null ;
-    
+    private EquityLTPRepository ltpRepository ;
+    private EquityITDSnapshotService itdSnapshotService ;
+
+    @Autowired
+    public void setAccountRepo( AccountRepo repo ) {
+        this.aiRepo = repo ;
+    }
+
+    @Autowired
+    public void setLedgerRepo( LedgerRepo repo ) {
+        this.ledgerRepo = repo ;
+    }
+
+    @Autowired
+    public void setEquityLTPRepository( EquityLTPRepository repo ) {
+        this.ltpRepository = repo ;
+    }
+
+    @Autowired
+    public void setEquityITDSnapshotService( EquityITDSnapshotService svc ) {
+        this.itdSnapshotService = svc ;
+    }
+
     public void initialize() throws Exception {
         
         CapitalystConfig cfg = CapitalystServer.getConfig() ;
-        
+
+        assert cfg != null;
         if( cfg.isRunClassificationOnStartup() ) {
             log.debug( "Startup Task :: Running Ledger Classifier" ) ;
             LEClassifier classifier = new LEClassifier() ;
@@ -59,6 +82,9 @@ public class StartupTasksExecutor {
         else {
             log.debug( "Startup Task :: DevMode :: Not initializing reco mgr." ) ;
         }
+
+        this.ltpRepository.init() ;
+        this.itdSnapshotService.init() ;
         
         log.debug( "Startup Task :: Initializing Breeze subsystem" ) ; 
         initializeBreeze() ;
@@ -66,18 +92,16 @@ public class StartupTasksExecutor {
 
     private void initializeRecoManager() {
         
-        Thread t = new Thread() {
-            public void run() {
-                try {
-                    Thread.sleep( 1000 ) ;
-                    RecoManager.instance().getAllRecos() ;
-                    log.debug( "  Recommendation manager initialized" ) ;
-                }
-                catch( Exception e ) {
-                    log.error( "  Reco manager initialization failed.", e ) ;
-                }
+        Thread t = new Thread(() -> {
+            try {
+                Thread.sleep( 1000 ) ;
+                RecoManager.instance().getAllRecos() ;
+                log.debug( "  Recommendation manager initialized" ) ;
             }
-        } ;
+            catch( Exception e ) {
+                log.error( "  Reco manager initialization failed.", e ) ;
+            }
+        });
         t.start() ;
     }
     
@@ -86,7 +110,7 @@ public class StartupTasksExecutor {
         for( Account account : aiRepo.findAll() ) {
             if( account.getBankName().equals( Bank.PO.name() ) ) {
                 // Note that PO balance is zero based on the statements 
-                // The PO balance is updated when a statements is uploaded. 
+                // The PO balance is updated when a statements are uploaded.
                 // No need to update the balance on startup.
                 continue ;
             }
@@ -100,7 +124,7 @@ public class StartupTasksExecutor {
     
     private void initializeBreeze() throws Exception {
         
-        File cfgPath = getConfig().getBreezeCfgFile() ;
+        File cfgPath = Objects.requireNonNull(getConfig()).getBreezeCfgFile() ;
         if( cfgPath == null || !cfgPath.exists() ) {
             log.info( "Breeze configuration not found. Trying classpath." ) ;
             URL url = getClass().getResource( "/breeze-config.yaml" ) ;

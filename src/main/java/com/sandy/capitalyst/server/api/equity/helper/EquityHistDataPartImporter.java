@@ -19,41 +19,43 @@ import com.sandy.capitalyst.server.dao.equity.repo.HistoricEQDataRepo ;
 
 /**
  * One shot class. Imports the next iteration of historic data.
- * 
+ * <p>
  * The server keeps historic EoD records for all the stocks whose 
  * indicators are being tracked. This list can grow/shrink over a period
  * based on intent.
- * 
+ * <p>
  * The process of importing data is broken into chunks, such that for
  * each iteration (part import), only a certain range of eod data for a
  * particular stock is updated. This way, we spread the network access
  * over a period of time.
- * 
+ * <p>
  * This class can be used both by the daemon and OTA.
  * 
  */
 public class EquityHistDataPartImporter {
     
     private static final Logger log = Logger.getLogger( EquityHistDataPartImporter.class ) ;
-    
+
+    // Why 60 days? The NSE API used to fetch historic data returns JSON
+    // which is limited to a few rows only. For example, if we try fetching
+    // EOD data from 1-1-2023 to 1-1-2024, we get results from 1-1-2023 till
+    // say 22nd May. I believe there is a row limiting logic. So, we scoop
+    // for lesser number of days to avoid introducing gaps in the history.
+    public static final int MAX_SCOOP_SIZE_DAYS = 60;
+
     public static final String CFG_GRP_NAME         = "IndexHistDataImporter" ;
     public static final String CFG_EOD_START_DATE   = "eod_bar_start_date" ;
     public static final String CFG_SCOOP_SIZE_DAYS  = "scoop_size_in_days" ;
     public static final String CFG_IGNORE_SYMBOLS   = "ignore_symbols" ;
-    
-    public static final String CFG_DEF_EOD_START_DATE  = "01-01-2014" ;
-    public static final int    CFG_DEF_SCOOP_SIZE_DAYS = 365 ;
-    
-    private NVPConfigGroup cfg = null ;
-    
+
     private Date earliestEodStartDateLimit = null ;
-    private int scoopSizeInDays = CFG_DEF_SCOOP_SIZE_DAYS ;
+    private int scoopSizeInDays = MAX_SCOOP_SIZE_DAYS ;
     private List<String> ignoreSymbols = null ;
     
     private EquityIndicatorsRepo eiRepo = null ;
     private HistoricEQDataMetaRepo eodMetaRepo = null ;
     private HistoricEQDataRepo eodRepo = null ;
-    
+
     public EquityHistDataPartImporter() {
         loadRepositories() ;
     }
@@ -65,7 +67,7 @@ public class EquityHistDataPartImporter {
         eodMetaRepo = getBean( HistoricEQDataMetaRepo.class ) ;
     }
     
-    public void execute() throws Exception {
+    public ImportResult execute() throws Exception {
         
         log.debug( "" ) ;
         log.debug( "!- Executing EOD data import >" ) ;
@@ -80,25 +82,31 @@ public class EquityHistDataPartImporter {
                 log.info( "- All symbols have required historic data." ) ;
             }
             else {
-                importHistoricValues( meta ) ;
+                return importHistoricValues( meta ) ;
             } 
         }
         finally {
             log.debug( "<< Finished execution" ) ;
         }
+        return null ;
     }
 
     private void loadConfiguration() {
         
         log.debug( "- Loading configuration" ) ;
-        
-        cfg = NVPManager.instance().getConfigGroup( CFG_GRP_NAME ) ;
+
+        NVPConfigGroup cfg = NVPManager.instance().getConfigGroup(CFG_GRP_NAME);
         
         earliestEodStartDateLimit = cfg.getDateValue( CFG_EOD_START_DATE, 
-                                                 "01-01-2014" ) ;
+                                                      "01-01-2014" ) ;
         
         scoopSizeInDays = cfg.getIntValue( CFG_SCOOP_SIZE_DAYS, 
-                                           CFG_DEF_SCOOP_SIZE_DAYS ) ;
+                                           MAX_SCOOP_SIZE_DAYS ) ;
+
+        if( scoopSizeInDays > MAX_SCOOP_SIZE_DAYS ) {
+            scoopSizeInDays = MAX_SCOOP_SIZE_DAYS ;
+            cfg.setValue( CFG_SCOOP_SIZE_DAYS, MAX_SCOOP_SIZE_DAYS ) ;
+        }
         
         ignoreSymbols = cfg.getListValue( CFG_IGNORE_SYMBOLS, "" ) ;
         
@@ -151,20 +159,20 @@ public class EquityHistDataPartImporter {
     private ImportResult importHistoricValues( HistoricEQDataMeta meta ) 
         throws Exception {
         
-        EquityHistDataImporter importer = null ;
-        ImportResult           result   = null ;
+        EquityHistDataImporter importer ;
+        ImportResult result ;
         
-        Date toDate   = meta.getEarliestEodDate() ;
-        Date fromDate = null ;
+        Date toDate = meta.getEarliestEodDate() ;
+        Date fromDate ;
         
         String symbol = meta.getSymbolNse() ;
         
         toDate   = toDate == null ? new Date() : toDate ;
         fromDate = DateUtils.addDays( toDate, -scoopSizeInDays ) ;
         
-        importer = new EquityHistDataImporter( symbol, fromDate, toDate ) ;
+        importer = new EquityHistDataImporter( eodRepo ) ;
 
-        result = importer.execute() ;
+        result = importer.importFromServer( symbol, fromDate, toDate ) ;
         
         if( result.isDataForWrongSymbolReceived() ) {
             // In effect, don't let the daemon process this symbol anymore

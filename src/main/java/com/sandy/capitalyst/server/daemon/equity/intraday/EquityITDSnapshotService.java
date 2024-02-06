@@ -18,6 +18,7 @@ import java.util.Map ;
 import java.util.Properties ;
 import java.util.Set ;
 
+import com.sandy.capitalyst.server.core.util.CookieUtil;
 import jakarta.annotation.PostConstruct ;
 
 import org.apache.commons.io.FileUtils ;
@@ -86,17 +87,11 @@ public class EquityITDSnapshotService {
     private boolean debugEnable  = true ;
     private boolean captureRawSnapshot = false ;
     
-    private File cookieFile = null ;
-
     public EquityITDSnapshotService() {}
     
-    @PostConstruct
     public void init() {
         
         log.debug( "Initializing Equity ITD snapshot service." ) ;
-        
-        cookieFile = new File( CapitalystServer.getConfig().getWorkspaceDir(),
-                               "cookies/nse-itd-cookie.properties" ) ;
         
         ehRepo.findNonZeroHoldings()
               .forEach( h -> qualifiedStocks.add( h.getSymbolNse() ) ) ;
@@ -253,7 +248,7 @@ public class EquityITDSnapshotService {
         
         String response = null ;
         HTTPResourceDownloader httpClient = HTTPResourceDownloader.instance() ;
-        Map<String, String> cookies = loadCookies() ;
+        Map<String, String> cookies = CookieUtil.loadNSECookies() ;
         
         response = httpClient.getResource( url, headerFile, cookies ) ;
         
@@ -278,24 +273,6 @@ public class EquityITDSnapshotService {
         File snapshotFile = new File( snapshotDir, fileName ) ;
         
         FileUtils.write( snapshotFile, response, "UTF-8" ) ;
-    }
-    
-    private Map<String, String> loadCookies() {
-        
-        Map<String, String> cookies = new HashMap<>() ;
-        try {
-            if( cookieFile.exists() ) {
-                Properties props = new Properties() ;
-                props.load( new FileReader( cookieFile ) ) ;
-                props.forEach( (key,value)-> {
-                    cookies.put( key.toString(), value.toString() ) ;
-                }) ;
-            }
-        }
-        catch( Exception e ) {
-            log.error( "Error loading nse itd cookies", e ) ;
-        }
-        return cookies ;
     }
     
     private void refreshConfiguration() {

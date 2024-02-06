@@ -44,19 +44,26 @@ public class EquityHistoricDataController {
     public static final String CFG_GRP_NAME = "EquityHistDataExporter" ;
     public static final String CFG_EXPORT_PERIOD = "export_period" ;
 
-    @Autowired
-    private HistoricEQDataMetaRepo hedmRepo = null ;
-    
-    @Autowired
     private HistoricEQDataRepo hedRepo = null ;
-    
-    @GetMapping( "/Equity/HistoricData/Meta/{symbol}" ) 
-    public ResponseEntity<List<HistoricEQDataMeta>> getGraphData( 
+    private HistoricEQDataMetaRepo hedmRepo = null ;
+
+    @Autowired
+    public void setHistoricEQDataMetaRepo( HistoricEQDataMetaRepo repo ) {
+        this.hedmRepo = repo ;
+    }
+
+    @Autowired
+    public void setHistoricEQDataRepo( HistoricEQDataRepo repo ) {
+        this.hedRepo = repo ;
+    }
+
+    @GetMapping( "/Equity/HistoricData/Meta/{symbol}" )
+    public ResponseEntity<List<HistoricEQDataMeta>> getGraphData(
                                                 @PathVariable String symbol ) {
 
         try {
-            List<HistoricEQDataMeta> results = null ;
-            
+            List<HistoricEQDataMeta> results ;
+
             if( symbol.equalsIgnoreCase( "All" ) ) {
                 results = hedmRepo.findAll() ;
             }
@@ -64,7 +71,7 @@ public class EquityHistoricDataController {
                 results = new ArrayList<>() ;
                 results.add( hedmRepo.findBySymbolNse( symbol ) ) ;
             }
-            
+
             return ResponseEntity.status( OK ).body( results ) ;
         }
         catch( Exception e ) {
@@ -72,14 +79,14 @@ public class EquityHistoricDataController {
             return ResponseEntity.status( INTERNAL_SERVER_ERROR ).body( null ) ;
         }
     }
-    
+
     @GetMapping( "/Equity/HistoricData/{symbol}" ) 
     public ResponseEntity<Resource> getHistoricData( @PathVariable String symbol ) {
 
-        EquityHistoricDataCSVGenerator csvGen = null ;
-        ByteArrayResource resource = null ;
-        String csvContent = null ;
-        String fileName = null ;
+        EquityHistoricDataCSVGenerator csvGen ;
+        ByteArrayResource resource ;
+        String csvContent ;
+        String fileName ;
         
         try {
             
@@ -107,18 +114,19 @@ public class EquityHistoricDataController {
     @PostMapping( "/Equity/EquityHistoricEODData/FileUpload" ) 
     public ResponseEntity<List<ImportResult>> uploadEquityHistoricEODRecords( 
                     @RequestParam( "files" ) MultipartFile[] multipartFiles ) {
-        
+
         try {
             log.debug( "!! Uploading equity EOD records" ) ;
             
             List<ImportResult> results = new ArrayList<>() ;
-            ImportResult result = null ;
+            ImportResult result ;
             
             for( MultipartFile file : multipartFiles ) {
                 
                 log.debug( "!> Processing file : " + file.getOriginalFilename() + " >" ) ;
-                
-                result = new EquityHistDataImporter().importFile( file ) ;
+                String fileContent = new String( file.getBytes() ) ;
+
+                result = new EquityHistDataImporter( hedRepo ).importCSVData( fileContent ) ;
                 result.setFileName( file.getOriginalFilename() ) ;
                 
                 results.add( result ) ;
@@ -149,7 +157,7 @@ public class EquityHistoricDataController {
     public ResponseEntity<List<BhavcopyImportResult>> uploadNSEBhavcopies( 
                     @RequestParam( "files" ) MultipartFile[] multipartFiles ) {
         
-        List<BhavcopyImportResult> results = null ;
+        List<BhavcopyImportResult> results ;
         
         try {
             results = importBhavcopies( multipartFiles, "NSE" ) ;
@@ -168,7 +176,7 @@ public class EquityHistoricDataController {
     public ResponseEntity<List<BhavcopyImportResult>> uploadBSEBhavcopies( 
             @RequestParam( "files" ) MultipartFile[] multipartFiles ) {
         
-        List<BhavcopyImportResult> results = null ;
+        List<BhavcopyImportResult> results ;
         
         try {
             results = importBhavcopies( multipartFiles, "BSE" ) ;
@@ -189,8 +197,8 @@ public class EquityHistoricDataController {
         
         log.debug( "!! Uploading " + exchange + " Bhavcopy files" ) ;
         
-        String fileContents = null ;
-        BhavcopyImportResult result = null ;
+        String fileContents ;
+        BhavcopyImportResult result ;
         List<BhavcopyImportResult> results = new ArrayList<>() ;
         
         for( MultipartFile file : multipartFiles ) {

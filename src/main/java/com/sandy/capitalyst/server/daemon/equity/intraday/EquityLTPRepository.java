@@ -104,7 +104,16 @@ public class EquityLTPRepository {
     private EquityMasterRepo emRepo = null ;
     
     private Map<String, LTP> itdSnapshots = new HashMap<>() ;
-    
+
+    public void init() {
+
+        log.debug( "Initializing equity LTP repository" ) ;
+        loadLatestEndOfDayPrice() ;
+        loadHoldingCMP() ;
+        loadITDSnapshots() ;
+        log.debug( "Equity LTP repository initialized" ) ;
+    }
+
     public void addSnapshot( ITDSnapshot snapshot ) {
         addLTP( new LTP( snapshot ) ) ;
     }
@@ -140,16 +149,6 @@ public class EquityLTPRepository {
         return itdSnapshots ;
     }
 
-    @PostConstruct
-    public void init() {
-        
-        log.debug( "Initializing equity LTP repository" ) ;
-        loadLatestEndOfDayPrice() ;
-        loadHoldingCMP() ;
-        loadITDSnapshots() ;
-        log.debug( "Equity LTP repository initialized" ) ;
-    }
-    
     private void loadLatestEndOfDayPrice() {
         
         log.debug( "  Loading latest end of day price." ) ;
