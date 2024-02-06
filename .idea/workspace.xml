@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Major refactor - static file separation, latest version upgrades">
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Upgrading defunct external URL">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityHistoricDataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/EquityHistoricDataController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistDataImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistDataImporter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistDataPartImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/equity/helper/EquityHistDataPartImporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityITDSnapshotService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityITDSnapshotService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityLTPRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityLTPRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/init/StartupTasksExecutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/init/StartupTasksExecutor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/http_headers/eod-pricevol.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/http_headers/eod-pricevol.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/equity_mkt/route/hist/dialog/upload_bse_bhavcopy_dialog.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/equity_mkt/route/hist/dialog/upload_bse_bhavcopy_dialog.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -261,7 +256,7 @@
       <workItem from="1705559943382" duration="624000" />
       <workItem from="1706933690487" duration="14031000" />
       <workItem from="1707113261493" duration="9397000" />
-      <workItem from="1707123898339" duration="32538000" />
+      <workItem from="1707123898339" duration="34453000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -321,7 +316,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707154883299</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Upgrading defunct external URL">
+      <option name="closed" value="true" />
+      <created>1707234232099</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1707234232099</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -358,7 +361,8 @@
     <MESSAGE value="NSE new site changes for bhavcopy" />
     <MESSAGE value="Log config" />
     <MESSAGE value="Major refactor - static file separation, latest version upgrades" />
-    <option name="LAST_COMMIT_MESSAGE" value="Major refactor - static file separation, latest version upgrades" />
+    <MESSAGE value="Upgrading defunct external URL" />
+    <option name="LAST_COMMIT_MESSAGE" value="Upgrading defunct external URL" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

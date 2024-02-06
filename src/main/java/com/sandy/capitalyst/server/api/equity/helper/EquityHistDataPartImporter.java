@@ -43,7 +43,7 @@ public class EquityHistDataPartImporter {
     // for lesser number of days to avoid introducing gaps in the history.
     public static final int MAX_SCOOP_SIZE_DAYS = 60;
 
-    public static final String CFG_GRP_NAME         = "IndexHistDataImporter" ;
+    public static final String CFG_GRP_NAME         = "EquityHistDataImporter" ;
     public static final String CFG_EOD_START_DATE   = "eod_bar_start_date" ;
     public static final String CFG_SCOOP_SIZE_DAYS  = "scoop_size_in_days" ;
     public static final String CFG_IGNORE_SYMBOLS   = "ignore_symbols" ;
