@@ -127,21 +127,25 @@ public class EquityHistoricDataController {
                 String fileContent = new String( file.getBytes() ) ;
 
                 result = new EquityHistDataImporter( hedRepo ).importCSVData( fileContent ) ;
-                result.setFileName( file.getOriginalFilename() ) ;
-                
-                results.add( result ) ;
-                
-                log.debug( "- Processed symbol     = " + result.getSymbol() ) ;
-                log.debug( "- Num records found    = " + result.getNumRecordsFounds() ) ;
-                log.debug( "- Num records imported = " + result.getNumAdditions() ) ;
-                log.debug( "- Num records modified = " + result.getNumModified() ) ;
-                log.debug( "- Num dups deleted     = " + result.getNumDeletions() ) ;
-                
-                updateMeta( result.getSymbol() ) ;
-                
+                if( result != null ) {
+                    result.setFileName( file.getOriginalFilename() ) ;
+
+                    results.add( result ) ;
+
+                    log.debug( "- Processed symbol     = " + result.getSymbol() ) ;
+                    log.debug( "- Num records found    = " + result.getNumRecordsFounds() ) ;
+                    log.debug( "- Num records imported = " + result.getNumAdditions() ) ;
+                    log.debug( "- Num records modified = " + result.getNumModified() ) ;
+                    log.debug( "- Num dups deleted     = " + result.getNumDeletions() ) ;
+
+                    updateMeta( result.getSymbol() ) ;
+                }
+                else {
+                    log.info( "- Uploaded file (" + file.getOriginalFilename() + ") does not contain any records." ) ;
+                }
+
                 log.debug( "- Done! <<" ) ;
             }
-
             return status( HttpStatus.OK ).body( results ) ;
         }
         catch( Exception e ) {

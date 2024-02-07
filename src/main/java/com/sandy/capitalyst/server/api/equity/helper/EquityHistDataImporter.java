@@ -87,17 +87,21 @@ public class EquityHistDataImporter {
             HistoricEODRecord record = new HistoricEODRecord() ;
 
             record.symbol        = row[0].trim() ;
-            record.date          = RES_SDF.parse   ( row[ 2].trim() ) ;
-            record.prevClose     = Float.parseFloat( row[ 3].trim() ) ;
-            record.open          = Float.parseFloat( row[ 4].trim() ) ;
-            record.high          = Float.parseFloat( row[ 5].trim() ) ;
-            record.low           = Float.parseFloat( row[ 6].trim() ) ;
-            record.close         = Float.parseFloat( row[ 8].trim() ) ;
-            record.totalTradeQty = Long.parseLong  ( row[10].trim() ) ;
-            record.totalTradeVal = Float.parseFloat( row[11].trim() ) ;
-            record.totalTrades   = Long.parseLong  ( row[12].trim() ) ;
+            record.date          = RES_SDF.parse   ( row[ 2] ) ;
+            record.prevClose     = Float.parseFloat( decomma( row[ 3] ) ) ;
+            record.open          = Float.parseFloat( decomma( row[ 4] ) ) ;
+            record.high          = Float.parseFloat( decomma( row[ 5] ) ) ;
+            record.low           = Float.parseFloat( decomma( row[ 6] ) ) ;
+            record.close         = Float.parseFloat( decomma( row[ 8] ) ) ;
+            record.totalTradeQty = Long.parseLong  ( decomma( row[10] ) ) ;
+            record.totalTradeVal = Float.parseFloat( decomma( row[11] ) ) ;
+            record.totalTrades   = Long.parseLong  ( decomma( row[12] ) ) ;
 
             return record ;
+        }
+
+        private static String decomma( String input ) {
+            return input.replaceAll( ",", "" ).trim() ;
         }
     }
     
@@ -161,26 +165,23 @@ public class EquityHistDataImporter {
 
         CsvParserSettings settings = new CsvParserSettings() ;
         CsvParser parser = new CsvParser( settings ) ;
-        ImportResult results = new ImportResult() ;
 
         List<String[]> csvRecords = parser.parseAll( new StringReader( csvContent ) ) ;
         List<HistoricEODRecord> records = new ArrayList<>() ;
 
-        results.setNumRecordsFounds( csvRecords.size()-1 ) ;
-        log.debug( "-> Num records found = " + (csvRecords.size()-1) );
-
         log.info( "-> Importing eod data." ) ;
-        if( csvRecords.size() > 1 ) {
+        String symbol = null ;
 
+        if( csvRecords.size() > 1 ) {
             String[] firstRecord = csvRecords.get( 1 ) ;
-            results.symbol = firstRecord[0].trim() ;
+            symbol = firstRecord[0].trim() ;
 
             for( int i=1; i<csvRecords.size(); i++ ) {
                 records.add( HistoricEODRecord.build( csvRecords.get(i) ) ) ;
             }
+            return importHistoricData( symbol, records ) ;
         }
-
-        return importHistoricData( results.symbol, records ) ;
+        return null ;
     }
     
     private ImportResult importHistoricData( String symbol, List<HistoricEODRecord> records )
@@ -190,6 +191,8 @@ public class EquityHistDataImporter {
 
         try {
             results.setNumRecordsFounds( records.size() ) ;
+            results.setSymbol( symbol ) ;
+
             log.debug( "-> Num records found = " + (records.size()-1) );
 
             if( records.size() > 1 ) {
