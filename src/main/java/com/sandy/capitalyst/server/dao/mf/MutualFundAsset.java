@@ -13,7 +13,7 @@ import jakarta.persistence.Table ;
 public class MutualFundAsset {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @GeneratedValue( strategy=GenerationType.IDENTITY )
     private Integer id = null ;
     
     private String ownerName = null ;

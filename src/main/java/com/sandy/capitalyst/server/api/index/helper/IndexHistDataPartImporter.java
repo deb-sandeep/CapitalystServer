@@ -20,16 +20,16 @@ import com.sandy.capitalyst.server.dao.index.repo.IndexMasterRepo ;
 
 /**
  * One shot class. Imports the next iteration of historic data.
- * 
+ * <p>
  * The server keeps historic EoD records for all the index whose 
  * indicators are being tracked. For the historic data of an index ot be 
  * tracked the histEnabled flag in the IndexMaster should be turned on.
- * 
+ * <p>
  * The process of importing data is broken into chunks, such that for
  * each iteration (part import), only a certain range of eod data for a
  * particular index is updated. This way, we spread the network access
  * over a period of time.
- * 
+ * <p>
  * This class can be used both by the daemon and OTA.
  */
 public class IndexHistDataPartImporter {
@@ -41,11 +41,8 @@ public class IndexHistDataPartImporter {
     public static final String CFG_SCOOP_SIZE_DAYS  = "scoop_size_in_days" ;
     public static final String CFG_IGNORE_SYMBOLS   = "ignore_indexes" ;
     
-    public static final String CFG_DEF_EOD_START_DATE  = "01-01-2014" ;
     public static final int    CFG_DEF_SCOOP_SIZE_DAYS = 364 ;
-    
-    private NVPConfigGroup cfg = null ;
-    
+
     private Date earliestEodStartDateLimit = null ;
     private int scoopSizeInDays = CFG_DEF_SCOOP_SIZE_DAYS ;
     private List<String> ignoreIndexes = null ;
@@ -93,8 +90,8 @@ public class IndexHistDataPartImporter {
     private void loadConfiguration() {
         
         log.debug( "- Loading configuration" ) ;
-        
-        cfg = NVPManager.instance().getConfigGroup( CFG_GRP_NAME ) ;
+
+        NVPConfigGroup cfg = NVPManager.instance().getConfigGroup(CFG_GRP_NAME);
         
         earliestEodStartDateLimit = cfg.getDateValue( CFG_EOD_START_DATE, 
                                                  "01-01-2014" ) ;
@@ -143,7 +140,6 @@ public class IndexHistDataPartImporter {
                     break ;
                 }
                 else {
-                    // Boundary condition. Else ZYDUSLIFE keeps looping :)
                     meta = null ;
                 }
             }
@@ -154,11 +150,11 @@ public class IndexHistDataPartImporter {
     private ImportResult importHistoricValues( HistoricIdxDataMeta meta ) 
         throws Exception {
         
-        IndexHistDataImporter  importer = null ;
-        ImportResult           result   = null ;
+        IndexHistDataImporter importer ;
+        ImportResult result ;
         
-        Date toDate   = meta.getEarliestEodDate() ;
-        Date fromDate = null ;
+        Date toDate = meta.getEarliestEodDate() ;
+        Date fromDate ;
         
         toDate   = toDate == null ? new Date() : toDate ;
         fromDate = DateUtils.addDays( toDate, -scoopSizeInDays ) ;

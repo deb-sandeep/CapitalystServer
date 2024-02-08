@@ -18,7 +18,7 @@ import lombok.Data ;
 public class IndexEquity {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @GeneratedValue( strategy=GenerationType.IDENTITY )
     private Integer id = null ;
     
     @ManyToOne

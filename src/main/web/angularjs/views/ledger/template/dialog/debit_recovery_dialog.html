@@ -105,7 +105,9 @@
 				                <th style="width:25px;"></th>
 				                <th style="width:100px;" class="js-sort-valueDate">Date</th>
 				                <th style="width:300px;">Remarks</th>
-				                <th style="width:75px;">Owner</th>
+								<td style="width:75px;" ng-if="searchQuery.accountIds.length > 1">
+									Owner
+								</td>
 				                <th style="width:90px;" class="js-sort-number">Amount</th>
 				                <th style="width:150px;" >Notes</th>
 				                <th style="width:130px;">L1</th>

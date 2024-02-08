@@ -15,7 +15,7 @@ import lombok.Data ;
 public class SebiPenalty {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @GeneratedValue( strategy=GenerationType.IDENTITY )
     private Integer id = null ;
     
     private String orderId = null ;

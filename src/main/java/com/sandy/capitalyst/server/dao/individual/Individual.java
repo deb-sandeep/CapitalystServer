@@ -13,7 +13,7 @@ import jakarta.persistence.Table ;
 public class Individual {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id = null ;
     
     private String firstName = null ;

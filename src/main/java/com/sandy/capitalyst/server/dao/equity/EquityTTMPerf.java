@@ -21,7 +21,7 @@ import lombok.Data ;
 public class EquityTTMPerf {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @GeneratedValue( strategy=GenerationType.IDENTITY )
     private Integer id = null ;
     
     private String  symbolNse = null ;

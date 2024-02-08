@@ -14,7 +14,7 @@ import jakarta.persistence.Table ;
 public class MutualFundTxn {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @GeneratedValue( strategy=GenerationType.IDENTITY )
     private Integer id = null ;
     
     private Integer mfId = null ;

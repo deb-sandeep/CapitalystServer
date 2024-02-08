@@ -14,7 +14,7 @@ import lombok.Data ;
 public class IDGen {
     
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @GeneratedValue( strategy=GenerationType.IDENTITY )
     private Integer id = null ;
     
     private String genKey ;

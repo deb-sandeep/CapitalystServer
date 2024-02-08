@@ -26,7 +26,7 @@ public class LedgerEntry implements Cloneable {
     public static final SimpleDateFormat HASH_SDF = new SimpleDateFormat( "dd/MM/yyyy" ) ;
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id ;
     
     @ManyToOne

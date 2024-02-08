@@ -18,7 +18,7 @@ import com.sandy.capitalyst.server.dao.account.Account ;
 public class FixedDeposit {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @GeneratedValue( strategy=GenerationType.IDENTITY )
     private Integer id = null ;
     
     @ManyToOne( cascade= {CascadeType.ALL} )

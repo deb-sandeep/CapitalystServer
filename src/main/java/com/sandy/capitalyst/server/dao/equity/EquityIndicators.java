@@ -19,7 +19,7 @@ import lombok.Data ;
 public class EquityIndicators {
 
     @Id
-    @GeneratedValue( strategy=GenerationType.AUTO )
+    @GeneratedValue( strategy=GenerationType.IDENTITY )
     private Integer id = null ;
     
     private String isin           = null ;

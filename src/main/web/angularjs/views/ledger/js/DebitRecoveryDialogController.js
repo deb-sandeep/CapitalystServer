@@ -193,8 +193,11 @@ capitalystNgApp.controller( 'DebitRecoveryDialogController',
                 setTimeout( function(){
                     $scope.saveSuccessFlag = false ;
                     $scope.$apply() ;
-                }, 1000 ) ;
-            }, 
+                    if( $scope.isValidAssociation() ) {
+                        $scope.$parent.hideDebitRecoveryDialog() ;
+                    }
+                }, 500 ) ;
+            },
             function(){
                 $scope.$parent.addErrorAlert( "Error saving associations." ) ;
             }
