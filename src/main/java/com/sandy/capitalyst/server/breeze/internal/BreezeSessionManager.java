@@ -1,12 +1,6 @@
 package com.sandy.capitalyst.server.breeze.internal;
 
-import java.io.File ;
-import java.io.FileInputStream ;
-import java.io.FileOutputStream ;
-import java.io.IOException ;
-import java.io.ObjectInputStream ;
-import java.io.ObjectOutputStream ;
-import java.io.Serializable ;
+import java.io.*;
 import java.util.Calendar ;
 import java.util.Date ;
 import java.util.HashMap ;
@@ -30,6 +24,7 @@ public class BreezeSessionManager {
     
     public static class BreezeSession implements Serializable {
         
+        @Serial
         private static final long serialVersionUID = -1427026265072334302L ;
 
         @Getter private String  userId          = null ;
@@ -268,12 +263,10 @@ public class BreezeSessionManager {
         FileOutputStream fOs = null ;
         
         try {
-            if( session != null ) {
-                fOs = new FileOutputStream( serFile ) ;
-                oOs = new ObjectOutputStream( fOs ) ;
-                
-                oOs.writeObject( session ) ;
-            }
+            fOs = new FileOutputStream(serFile);
+            oOs = new ObjectOutputStream( fOs ) ;
+
+            oOs.writeObject( session ) ;
         }
         catch( Exception e ) {
             log.error( "Error deserializing session.", e ) ;
@@ -303,8 +296,7 @@ public class BreezeSessionManager {
         
         String fileName = "session-" + userId.toLowerCase() + ".ser" ;
         File   serDir   = Breeze.instance().getSerializationDir() ;
-        File   serFile  = new File( serDir, fileName ) ;
 
-        return serFile ;
+        return new File( serDir, fileName );
     }
 }

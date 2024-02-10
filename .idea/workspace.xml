@@ -4,19 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Code compatibility for framework upgrades">
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="New ledger functionality - bulk delete">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICICreditCardAccountStmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICICreditCardAccountStmtParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICISavingsAccountStmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICISavingsAccountStmtParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/LedgerRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/LedgerRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/repo/LedgerRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/repo/LedgerRepo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/js/app/filter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/js/app/filter.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/admin/js/filter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/admin/js/filter.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/LedgerHomeController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/LedgerHomeController.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/filter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/filter.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/template/ledger_table.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/template/ledger_table.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/txn_pivot/js/TxnPivotHomeController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/txn_pivot/js/TxnPivotHomeController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/tradeupdater/EquityTradeUpdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/tradeupdater/EquityTradeUpdater.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeSessionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeSessionManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +255,7 @@
       <workItem from="1705559943382" duration="624000" />
       <workItem from="1706933690487" duration="14031000" />
       <workItem from="1707113261493" duration="9397000" />
-      <workItem from="1707123898339" duration="71964000" />
+      <workItem from="1707123898339" duration="75038000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -356,7 +347,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707373619216</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="New ledger functionality - bulk delete">
+      <option name="closed" value="true" />
+      <created>1707548858110</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1707548858110</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -396,7 +395,8 @@
     <MESSAGE value="Upgrading defunct external URL" />
     <MESSAGE value="Bug fixes" />
     <MESSAGE value="Code compatibility for framework upgrades" />
-    <option name="LAST_COMMIT_MESSAGE" value="Code compatibility for framework upgrades" />
+    <MESSAGE value="New ledger functionality - bulk delete" />
+    <option name="LAST_COMMIT_MESSAGE" value="New ledger functionality - bulk delete" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -405,6 +405,11 @@
           <url>file://$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/standalone/EquityHistDataImporterExecutor.java</url>
           <line>39</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/breeze/BreezeAuthController.java</url>
+          <line>57</line>
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

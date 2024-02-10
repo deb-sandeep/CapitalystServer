@@ -56,7 +56,7 @@ public class EquityTradeUpdater extends OTA {
     public static final String CFG_UPDATE_AVG_COST_PRICE = "update_avg_cost_price" ;
 
     public static final String CFG_DEF_LAST_UPDATE_DATE = "01-01-2014" ;
-    public static final int    CFG_DEF_ITER_DUR_IN_DAYS = 7 ;
+    public static final int    CFG_DEF_ITER_DUR_IN_DAYS = 60 ;
 
     private EquityMasterRepo  emRepo    = null ;
     private EquityTradeRepo   etrdRepo  = null ;
@@ -105,17 +105,12 @@ public class EquityTradeUpdater extends OTA {
         
         exclPortfolioStocks = cfg.getListValue( CFG_EXCL_PORTFOLIO_STOCKS, "" ) ;
 
-        iterToDate = DateUtils.addDays( lastUpdateDate, iterDurationDays ) ;
-        
-        updateAvgCostPrice = cfg.getBoolValue( CFG_UPDATE_AVG_COST_PRICE, 
+        updateAvgCostPrice = cfg.getBoolValue( CFG_UPDATE_AVG_COST_PRICE,
                                                updateAvgCostPrice ) ;
         
         exclUserIds = cfg.getListValue( CFG_EXCLUDE_USER_IDS, "" ) ;
-        
-        Date now = new Date() ;
-        if( iterToDate.after( now ) ) {
-            iterToDate = now ;
-        }
+
+        updateToDate() ;
     }
 
     @Override
@@ -138,6 +133,7 @@ public class EquityTradeUpdater extends OTA {
         
         if( super.parameters.containsKey( CFG_ITER_DUR_IN_DAYS ) ) {
             iterDurationDays = super.parameters.getInt( CFG_ITER_DUR_IN_DAYS ) ;
+            updateToDate() ;
         }
         
         if( super.parameters.containsKey( CFG_INCL_PORTFOLIO_STOCKS ) ) {
@@ -157,6 +153,14 @@ public class EquityTradeUpdater extends OTA {
         if( super.parameters.containsKey( CFG_EXCLUDE_USER_IDS ) ) {
             exclUserIds = Arrays.asList( 
                     parameters.getStringArray( CFG_EXCLUDE_USER_IDS ) ) ;
+        }
+    }
+
+    private void updateToDate() {
+        Date now = new Date() ;
+        iterToDate = DateUtils.addDays( lastUpdateDate, iterDurationDays ) ;
+        if( iterToDate.after( now ) ) {
+            iterToDate = now ;
         }
     }
 
