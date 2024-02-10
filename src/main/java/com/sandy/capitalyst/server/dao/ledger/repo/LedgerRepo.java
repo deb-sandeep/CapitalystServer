@@ -304,7 +304,7 @@ public interface LedgerRepo
     @Query( nativeQuery = true,
             value =   
               "SELECT "
-            + "    if( amount < 0, 0, 1 ) as isCreditEntry, "
+            + "    1 as isCreditEntry, "
             + "    l1_cat as l1CatName, "
             + "    l2_cat as l2CatName, "
             + "    count(id) as numEntries "
@@ -320,7 +320,7 @@ public interface LedgerRepo
     @Query( nativeQuery = true,
             value =   
               "SELECT "
-            + "    if( amount < 0, 0, 1 ) as isCreditEntry, "
+            + "    0 as isCreditEntry, "
             + "    l1_cat as l1CatName, "
             + "    l2_cat as l2CatName, "
             + "    count(id) as numEntries "

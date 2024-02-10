@@ -1,8 +1,8 @@
 capitalystNgApp.filter( "amt", function() {
     return function( amt ) {
-        
-        var fmt = "0.00" ;
-        
+
+        let fmt = "0.00";
+
         if( amt != null ) {
             fmt = amt.toLocaleString('en-IN', {
                 maximumFractionDigits: 2,
@@ -11,7 +11,7 @@ capitalystNgApp.filter( "amt", function() {
             } ) ;
         }
         
-        if( fmt.indexOf( '.' ) != -1 ) {
+        if( fmt.indexOf( '.' ) !== -1 ) {
             fmt = fmt.substring( 0, fmt.indexOf( '.' ) ) ; 
         }
         

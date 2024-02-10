@@ -4,34 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Bug fixes">
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Code compatibility for framework upgrades">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexHistDataPartImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/index/helper/IndexHistDataPartImporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/account/Account.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/account/Account.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityHolding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityHolding.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityIndicators.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityIndicators.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityMonitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityMonitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTTMPerf.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/EquityTTMPerf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/HistoricEQDataMeta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/HistoricEQDataMeta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/SebiPenalty.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/equity/SebiPenalty.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/fixed_deposit/FixedDeposit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/fixed_deposit/FixedDeposit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/idgen/IDGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/idgen/IDGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/IndexEquity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/IndexEquity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/IndexMaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/index/IndexMaster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/individual/Individual.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/individual/Individual.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/JobEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/JobEntry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/DebitCreditAssoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/DebitCreditAssoc.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntryCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntryCategory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntryClassificationRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/LedgerEntryClassificationRule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundAsset.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundAsset.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundMaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundMaster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundTxn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/mf/MutualFundTxn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/nvp/NVP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/nvp/NVP.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICICreditCardAccountStmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICICreditCardAccountStmtParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICISavingsAccountStmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/account/stmtparser/ICICISavingsAccountStmtParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/LedgerRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ledger/LedgerRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/repo/LedgerRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/ledger/repo/LedgerRepo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/config/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/DebitRecoveryDialogController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/DebitRecoveryDialogController.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/template/dialog/debit_recovery_dialog.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/template/dialog/debit_recovery_dialog.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/js/app/filter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/js/app/filter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/admin/js/filter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/admin/js/filter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/LedgerHomeController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/LedgerHomeController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/filter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/js/filter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/template/ledger_table.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/ledger/template/ledger_table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/txn_pivot/js/TxnPivotHomeController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/txn_pivot/js/TxnPivotHomeController.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,23 +145,21 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="generated-requests | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http" requestIdentifier="#1" runType="Run single request">
-      <method v="2" />
-    </configuration>
-    <configuration name="NSEBhavcopyImportJobTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="ICICICreditCardAccountStmtParser" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.sandy.capitalyst.server.api.account.stmtparser.ICICICreditCardAccountStmtParser" />
       <module name="capitalyst-server" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.sandy.capitalyst.server.test.bhavcopy.*" />
+          <option name="PATTERN" value="com.sandy.capitalyst.server.api.account.stmtparser.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="com.sandy.capitalyst.server.test.bhavcopy" />
-      <option name="MAIN_CLASS_NAME" value="com.sandy.capitalyst.server.test.bhavcopy.NSEBhavcopyImportJobTest" />
-      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
+    </configuration>
+    <configuration name="generated-requests | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http" requestIdentifier="#1" runType="Run single request">
+      <method v="2" />
     </configuration>
     <configuration name="NSEIndexImportJobTest.jobRun" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="capitalyst-server" />
@@ -235,19 +218,19 @@
     </configuration>
     <list>
       <item itemvalue="Application.EquityHistDataImporterExecutor" />
+      <item itemvalue="Application.ICICICreditCardAccountStmtParser" />
       <item itemvalue="HTTP Request.generated-requests | #1" />
-      <item itemvalue="JUnit.NSEBhavcopyImportJobTest" />
       <item itemvalue="JUnit.NSEIndexImportJobTest.jobRun" />
       <item itemvalue="JUnit.NSEReportsMetaRepoTest" />
       <item itemvalue="Spring Boot.CapitalystServer" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.ICICICreditCardAccountStmtParser" />
         <item itemvalue="Application.EquityHistDataImporterExecutor" />
         <item itemvalue="HTTP Request.generated-requests | #1" />
         <item itemvalue="JUnit.NSEIndexImportJobTest.jobRun" />
         <item itemvalue="JUnit.NSEReportsMetaRepoTest" />
-        <item itemvalue="JUnit.NSEBhavcopyImportJobTest" />
       </list>
     </recent_temporary>
   </component>
@@ -281,7 +264,7 @@
       <workItem from="1705559943382" duration="624000" />
       <workItem from="1706933690487" duration="14031000" />
       <workItem from="1707113261493" duration="9397000" />
-      <workItem from="1707123898339" duration="50042000" />
+      <workItem from="1707123898339" duration="71964000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -365,7 +348,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707284552267</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Code compatibility for framework upgrades">
+      <option name="closed" value="true" />
+      <created>1707373619216</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1707373619216</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -404,7 +395,8 @@
     <MESSAGE value="Major refactor - static file separation, latest version upgrades" />
     <MESSAGE value="Upgrading defunct external URL" />
     <MESSAGE value="Bug fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug fixes" />
+    <MESSAGE value="Code compatibility for framework upgrades" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code compatibility for framework upgrades" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

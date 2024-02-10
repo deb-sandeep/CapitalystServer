@@ -1,48 +1,49 @@
 package com.sandy.capitalyst.server.api.account.stmtparser;
 
-import java.io.File ;
-import java.io.FileInputStream ;
-import java.sql.Date ;
-import java.text.ParseException ;
-import java.text.SimpleDateFormat ;
-import java.util.ArrayList ;
-import java.util.Comparator ;
-import java.util.List ;
-
+import com.sandy.capitalyst.server.api.account.helper.CCTxnEntry;
+import com.sandy.capitalyst.server.core.CapitalystConstants.AccountType;
+import com.sandy.capitalyst.server.core.CapitalystConstants.Bank;
 import com.sandy.capitalyst.server.core.util.StringUtil;
 import com.sandy.capitalyst.server.core.xlsutil.XLSRow;
 import com.sandy.capitalyst.server.core.xlsutil.XLSRowFilter;
 import com.sandy.capitalyst.server.core.xlsutil.XLSUtil;
 import com.sandy.capitalyst.server.core.xlsutil.XLSWrapper;
-import org.apache.log4j.Logger ;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook ;
-import org.apache.poi.ss.usermodel.Cell ;
-import org.apache.poi.ss.usermodel.Row ;
-import org.apache.poi.ss.usermodel.Sheet ;
-import org.apache.poi.ss.usermodel.Workbook ;
+import com.sandy.capitalyst.server.dao.account.Account;
+import com.sandy.capitalyst.server.dao.ledger.LedgerEntry;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
-import com.sandy.capitalyst.server.api.account.helper.CCTxnEntry ;
-import com.sandy.capitalyst.server.core.CapitalystConstants.AccountType ;
-import com.sandy.capitalyst.server.core.CapitalystConstants.Bank ;
-import com.sandy.capitalyst.server.dao.account.Account ;
-import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
+import java.io.File;
+import java.io.FileInputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
     
     static final Logger log = Logger.getLogger( ICICICreditCardAccountStmtParser.class ) ;
     
     public static final SimpleDateFormat SDF = new SimpleDateFormat( "dd/MM/yyyy" ) ;
-    
-    private class RowFilter implements XLSRowFilter {
+    public static Date EPOCH_START = null ;
+
+    static{try{ EPOCH_START = SDF.parse( "30/12/1899" ); } catch(ParseException ignore){}}
+
+    private static class RowFilter implements XLSRowFilter {
         public boolean accept( XLSRow row ) {
             String col0Val = row.getCellValue( 0 ) ;
             if( StringUtil.isEmptyOrNull( col0Val ) ) {
                 return false ;
             }
-            else if( col0Val.trim().startsWith( "Transaction Details" ) ) {
-                return false ;
-            }
-            return true ;
+            else return !col0Val.trim()
+                                .startsWith("Transaction Details") ;
         }
     }
     
@@ -61,10 +62,10 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
         
         XLSWrapper wrapper = new XLSWrapper( file ) ;
         List<LedgerEntry> entries = new ArrayList<>() ;
-        List<XLSRow> rows = null ;
+        List<XLSRow> rows ;
         
         extractBalanceAndStartRow( file ) ;
-        rows = wrapper.getRows( new RowFilter(), startRow, 3, 11 ) ;
+        rows = wrapper.getRows(new RowFilter(), startRow, 3, 11 ) ;
         
         XLSUtil.printRows( rows ) ;
         
@@ -72,35 +73,24 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
             entries.add( constructLedgerEntry( account, row, balance ) ) ;
         }
         
-        entries.sort( new Comparator<LedgerEntry>() {
-            public int compare( LedgerEntry le1, LedgerEntry le2 ) {
-                return le1.getValueDate().compareTo( le2.getValueDate() ) ;
-            }
-        } ) ;
+        entries.sort(Comparator.comparing(LedgerEntry::getValueDate)) ;
         
         return entries ;
     }
     
     private void extractBalanceAndStartRow( File xlsFile ) throws Exception {
-        
-        Workbook workbook = null ;
-        FileInputStream fIs = null ;
-        
-        try {
-            fIs = new FileInputStream( xlsFile ) ;
-            workbook = new HSSFWorkbook( fIs ) ; 
-            Sheet sheet = workbook.getSheetAt( 0 ) ;
-            
-            this.startRow = getStartRow( sheet ) ;
-            this.balance = extractBalance( sheet ) ;
-        }
-        finally {
-            fIs.close() ;
-            workbook.close() ;
+
+        try( FileInputStream fIs = new FileInputStream(xlsFile);
+             Workbook workbook = new HSSFWorkbook(fIs)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+
+            this.startRow = getStartRow(sheet);
+            this.balance = extractBalance(sheet);
         }
     }
     
-    private int getStartRow( Sheet sheet ) throws Exception {
+    private int getStartRow( Sheet sheet ) {
         
         Row row = sheet.getRow( 12 ) ;
         Cell cell = row.getCell( 2 ) ;
@@ -115,7 +105,7 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
         return 14 ;
     }
     
-    public float extractBalance( Sheet sheet ) throws Exception {
+    public float extractBalance( Sheet sheet ) {
         
         Row row = sheet.getRow( 6 ) ;
         Cell cell = row.getCell( 7 ) ;
@@ -124,7 +114,7 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
         boolean isDebit = cellVal.endsWith( "Dr." ) ;
         cellVal = cellVal.substring( 4, cellVal.length()-4 ) ;
         cellVal = cellVal.replace( ",", "" ) ;
-        Float val = Float.parseFloat( cellVal ) ;
+        float val = Float.parseFloat( cellVal ) ;
         
         if( isDebit ) {
             val *= -1 ;
@@ -133,8 +123,7 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
     }
     
     private LedgerEntry constructLedgerEntry( Account account, 
-                                              XLSRow row, float balance ) 
-        throws Exception {
+                                              XLSRow row, float balance ) {
         
         CCTxnEntry ccTxnEntry = new CCTxnEntry() ;
         
@@ -148,8 +137,16 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
         return ccTxnEntry.convertToLedgerEntry() ;
     }
     
-    private Date getDate( String val ) throws ParseException {
-        return new Date( SDF.parse( val ).getTime() ) ;
+    private Date getDate( String val ) {
+        Date retVal ;
+        try {
+            retVal = SDF.parse( val ) ;
+        }
+        catch( ParseException pe ) {
+            int numDaysSinceEpoch = Integer.parseInt( val ) ;
+            retVal = DateUtils.addDays( EPOCH_START, numDaysSinceEpoch ) ;
+        }
+        return retVal ;
     }
     
     private Float getAmt( String val ) {
@@ -159,7 +156,7 @@ public class ICICICreditCardAccountStmtParser extends AccountStmtParser {
         amtStr = amtStr.replace( ",", "" ) ;
         amtStr = amtStr.substring( 0, amtStr.length()-4 ) ;
 
-        Float amt = Float.parseFloat( amtStr ) ;
+        float amt = Float.parseFloat( amtStr ) ;
         amt = isDebit ? -1*amt : amt ;
         
         return amt ;

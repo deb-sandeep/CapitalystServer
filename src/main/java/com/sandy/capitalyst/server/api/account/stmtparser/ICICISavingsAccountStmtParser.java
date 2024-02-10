@@ -11,14 +11,14 @@ import com.sandy.capitalyst.server.core.xlsutil.XLSRow;
 import com.sandy.capitalyst.server.core.xlsutil.XLSRowFilter;
 import com.sandy.capitalyst.server.core.xlsutil.XLSUtil;
 import com.sandy.capitalyst.server.core.xlsutil.XLSWrapper;
-import org.apache.log4j.Logger ;
+// import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.dao.account.Account ;
 import com.sandy.capitalyst.server.dao.ledger.LedgerEntry ;
 
 public class ICICISavingsAccountStmtParser extends AccountStmtParser {
     
-    static final Logger log = Logger.getLogger( ICICISavingsAccountStmtParser.class ) ;
+    // static final Logger log = Logger.getLogger( ICICISavingsAccountStmtParser.class ) ;
     
     public static final SimpleDateFormat SDF = new SimpleDateFormat( "dd/MM/yyyy" ) ;
     
@@ -43,13 +43,10 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
             }
             
             try {
-                if( isContinuationRow( row ) ) {
-                    return true ;
+                if( !isContinuationRow(row) ) {
+                    Integer.parseInt(col0Val.trim());
                 }
-                else {
-                    Integer.parseInt( col0Val.trim() ) ;
-                    return true ;
-                }
+                return true ;
             }
             catch( Exception e ){
                 return false ;
@@ -92,7 +89,7 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
     
     private boolean isContinuationRow( XLSRow row ) {
         
-        boolean emptyCells[] = { true, true, true, true, false, true, true, true } ;
+        boolean[] emptyCells = { true, true, true, true, false, true, true, true } ;
         for( int i=0; i<8; i++ ) {
             if( emptyCells[i] ) { 
                 if( !StringUtil.isEmptyOrNull( row.getCellValue( i ) ) ) {
@@ -127,8 +124,8 @@ public class ICICISavingsAccountStmtParser extends AccountStmtParser {
         
         entry.setRemarks( row.getRawCellValue( 4 ) ) ;
         
-        Float withdrawalAmt = Float.parseFloat( row.getCellValue( 5 ) ) ;
-        Float depositAmt = Float.parseFloat( row.getCellValue( 6 ) ) ;
+        float withdrawalAmt = Float.parseFloat( row.getCellValue( 5 ) ) ;
+        float depositAmt = Float.parseFloat( row.getCellValue( 6 ) ) ;
         if( depositAmt > 0 ) {
             entry.setAmount( depositAmt ) ;
         }

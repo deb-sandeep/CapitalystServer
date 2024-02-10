@@ -14,37 +14,93 @@
         <span class="glyphicon glyphicon-save"></span>
         Export
     </button>
+    <button class="btn btn-default btn-sm"
+            style="float: right"
+            ng-click="deleteSelectedEntries()">
+        <span class="glyphicon glyphicon-remove-circle" style="color:red"></span>
+        Delete Selected Entries
+    </button>
 </div>
 <div style="padding: 0px; margin: 10px" align="center">
     <table class="ledger-table"
            style="width: 100%;">
         <thead>
             <tr class="success">
-                <th></th>
-                <th class="js-sort-none">
+                <th style="width:25px;"></th>
+                <th style="width:25px;" class="js-sort-none">
                  <input type="checkbox" 
                         ng-model="bulkSelState.value"
                         ng-change="toggleSelectionForAllEntries()"/>
                 </th>
                 <th style="width:100px;" class="js-sort-valueDate">Date</th>
-                <th style="width:300px;">
-                    <div style="display:inline-block;">Remarks</div>
-                    <div style="display:inline-block;padding-left:10px;">
+                <th style="width:450px;">
+                    <div style="display:block;text-align: center;">
+                        <label for="remarkFilter">Remarks</label>
+                    </div>
+                    <div style="display:block;padding-left:5px;">
 	                    <input type="text"
-	                           ng-model="$parent.entryFilterText"
-	                           ng-change="entryFilterTextChanged()"
+                               id="remarkFilter"
+	                           ng-model="$parent.remarksFilterText"
+	                           ng-change="remarksFilterTextChanged()"
 	                           size="50"/>
                     </div>
                 </th>
-                <th ng-if="searchQuery.accountIds.length > 1">
+                <th ng-if="searchQuery.accountIds.length > 1"
+                    style="width:75px;">
+                    Owner
                 </th>
-                <th></th>
-                <th class="js-sort-number">Amount</th>
-                <th>Notes</th>
-                <th style="width:130px;">L1</th>
-                <th style="width:130px;">L2</th>
+                <th style="width:25px;"></th>
+                <th style="width:100px;" class="js-sort-number">
+                    <div style="display:block;text-align: center;">
+                        <label for="amountFilter">Amount</label>
+                    </div>
+                    <div style="display:block;padding-left:5px;">
+                        <input type="text"
+                               id="amountFilter"
+                               ng-model="$parent.amountFilterText"
+                               ng-change="amountFilterTextChanged()"
+                               size="12"/>
+                    </div>
+                </th>
+                <th style="width:200px;">
+                    <div style="display:block;text-align: center;">
+                        <label for="notesFilter">Notes</label>
+                    </div>
+                    <div style="display:block;padding-left:5px;">
+                        <input type="text"
+                               id="notesFilter"
+                               ng-model="$parent.notesFilterText"
+                               ng-change="notesFilterTextChanged()"
+                               size="25"/>
+                    </div>
+                </th>
+                <th style="width:130px;">
+                    <div style="display:block;text-align: center;">
+                        <label for="l1Filter">L1</label>
+                    </div>
+                    <div style="display:block;padding-left:5px;">
+                        <input type="text"
+                               id="l1Filter"
+                               ng-model="$parent.l1FilterText"
+                               ng-change="l1FilterTextChanged()"
+                               size="17"/>
+                    </div>
+                </th>
+                <th style="width:130px;">
+                    <div style="display:block;text-align: center;">
+                        <label for="l2Filter">L1</label>
+                    </div>
+                    <div style="display:block;padding-left:5px;">
+                        <input type="text"
+                               id="l2Filter"
+                               ng-model="$parent.l2FilterText"
+                               ng-change="l2FilterTextChanged()"
+                               size="17"/>
+                    </div>
+                </th>
                 <th class="js-sort-number"
-                    ng-if="searchQuery.accountIds.length == 1">Balance</th>
+                    ng-if="searchQuery.accountIds.length == 1"
+                    style="width:150px;">Balance</th>
                 <th></th>
             </tr>
         </thead>
@@ -138,8 +194,9 @@
                    class="fixed-font amt">
                     {{entry.balance | amt}}
                </td>
-               <td>
+               <td style="text-align: right;">
                  <span class="glyphicon glyphicon-trash"
+                       style="color:red;"
                        ng-click="deleteLedgerEntry( $index )"></span>
                </td>
             </tr>

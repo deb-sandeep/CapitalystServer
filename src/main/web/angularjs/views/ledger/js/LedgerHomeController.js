@@ -2,13 +2,13 @@ capitalystNgApp.controller( 'LedgerHomeController',
     function( $scope, $http, $rootScope, $location, $window, $ngConfirm ) {
     
     // ---------------- Local variables --------------------------------------
-    var selectedEntries = [] ;
-    var pivotSrcColNames = [ "Type", "L1", "L2", "Amount" ] ;
-    var pivotSrcData = [] ;
-    var l1FilterSelections = [] ;
-    var l2FilterSelections = [] ;
-    
-    // ---------------- Scope variables --------------------------------------
+    const selectedEntries = [];
+    const pivotSrcColNames = ["Type", "L1", "L2", "Amount"];
+    const l1FilterSelections = [];
+    const l2FilterSelections = [];
+    let pivotSrcData = [];
+
+        // ---------------- Scope variables --------------------------------------
     $scope.$parent.navBarTitle = "Ledger View" ;
     $scope.account = null ;
     
@@ -52,7 +52,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
         notes : null
     } ;
     
-    $scope.entryFilterText = null ;
+    $scope.remarksFilterText = null ;
+    $scope.notesFilterText = null ;
+    $scope.l1FilterText = null ;
+    $scope.l2FilterText = null ;
+    $scope.amountFilterText = null ;
     $scope.entryBeingSplit = null ;
     $scope.splitEntryDetails = {
        amount : 0,
@@ -92,20 +96,15 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $scope.searchQuery.creditClassifier = false ;
         $scope.searchQuery.l1CatName = null ;
         $scope.searchQuery.l2CatName = null ;
-        $scope.entryFilterText = null ;
+        $scope.remarksFilterText = null ;
         
         fetchLedgerEntries() ;
     }
     
     $scope.toggleSelectionForAllEntries = function() {
-        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
-            var entry = $scope.ledgerEntries[i] ;
-            entry.selected = false ;
-            
-            if( $scope.bulkSelState.value == true && 
-                entry.visible ) {
-                entry.selected = true ;
-            }
+        for( let i=0; i<$scope.ledgerEntries.length; i++ ) {
+            const entry = $scope.ledgerEntries[i] ;
+            entry.selected = ( $scope.bulkSelState.value === true ) && entry.visible ;
         }
     }
     
@@ -118,16 +117,15 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.selectEntry = function( entry ) {
         
         entry.selected = !entry.selected ;
-        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
-            var entry = $scope.ledgerEntries[i] ;
-            entry.editing = false ;
+        for( let i=0; i<$scope.ledgerEntries.length; i++ ) {
+            $scope.ledgerEntries[i].editing = false ;
         }
     }
     
     $scope.showCategorizationDialog = function() {
-        
-        var errMsg = validateSelectedEntriesForClassification() ;
-        
+
+        const errMsg = validateSelectedEntriesForClassification();
+
         if( errMsg == null ) {
             $scope.relevantCategoriesForSelectedEntries = 
                                     ( selectedEntries[0].amount < 0 ) ?
@@ -146,17 +144,17 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.applyClassification = function() {
-        
-        var input = $scope.userSel ;
+
+        const input = $scope.userSel;
         if( ( input.l1Cat == null && input.l1CatNew == null ) ||
             ( input.l2Cat == null && input.l2CatNew == null ) ) {
             $ngConfirm( "Please add valid L1 and L2 categorization." ) ;
             return ;
         }
-        
-        var newCategory = false ;
-        var l1Cat = input.l1Cat ;
-        var l2Cat = input.l2Cat ;
+
+        let newCategory = false;
+        let l1Cat = input.l1Cat;
+        let l2Cat = input.l2Cat;
 
         if( l1Cat == null || l2Cat == null ) {
             newCategory = true ;
@@ -171,15 +169,15 @@ capitalystNgApp.controller( 'LedgerHomeController',
             }
             
             if( input.ruleName == null ) {
-                $ngConfigm( "Please enter an unique rule name." ) ;
+                $ngConfirm( "Please enter an unique rule name." ) ;
                 return ;
             }
         }
             
-        for( var i=0; i<selectedEntries.length; i++ ) {
-            
-            var entry = selectedEntries[i] ;
-            
+        for( let i=0; i<selectedEntries.length; i++ ) {
+
+            const entry = selectedEntries[i];
+
             entry.l1Cat = l1Cat ;
             entry.l2Cat = l2Cat ;
             
@@ -187,7 +185,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
             // it overrides the existing notes of all the impacted entries.
             // If the note is kept blank, the entries retain their existing
             // notes.
-            if( input.notes == null || input.notes == "" ) {
+            if( input.notes == null || input.notes === "" ) {
                 input.notes = "" ;
             }
             else {
@@ -225,12 +223,45 @@ capitalystNgApp.controller( 'LedgerHomeController',
             $scope.validateSplitEntry() ;
         }
     }
-    
-    $scope.entryFilterTextChanged = function() {
-        $scope.bulkSelState.value = false ;
-        filterEntries( true ) ;
+
+    $scope.applyAllFilters = function() {
+        $scope.remarksFilterTextChanged() ;
+        $scope.l1FilterTextChanged() ;
+        $scope.l2FilterTextChanged() ;
+        $scope.notesFilterTextChanged() ;
+        $scope.amountFilterTextChanged() ;
     }
     
+    $scope.remarksFilterTextChanged = function() {
+        if( $scope.remarksFilterText != null ) {
+            filterEntries( true, "remarks", $scope.remarksFilterText.toLowerCase() ) ;
+        }
+    }
+    
+    $scope.l1FilterTextChanged = function() {
+        if( $scope.l1FilterText != null ) {
+            filterEntries( true, "l1Cat", $scope.l1FilterText.toLowerCase() ) ;
+        }
+    }
+
+    $scope.l2FilterTextChanged = function() {
+        if( $scope.l2FilterText != null ) {
+            filterEntries( true, "l2Cat", $scope.l2FilterText.toLowerCase() ) ;
+        }
+    }
+
+    $scope.notesFilterTextChanged = function() {
+        if( $scope.notesFilterText != null ) {
+            filterEntries( true, "notes", $scope.notesFilterText.toLowerCase() ) ;
+        }
+    }
+
+    $scope.amountFilterTextChanged = function() {
+        if( $scope.amountFilterText != null ) {
+            filterEntries( true, "amount", $scope.amountFilterText, true ) ;
+        }
+    }
+
     $scope.selectPrevMonth = function() {
         selectPrevNextMonth( false ) ;
     }
@@ -240,13 +271,13 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.showOnlyUnclassifiedCriteriaChanged = function() {
-        filterEntries( true ) ;
+        $scope.applyAllFilters() ;
     }
-    
+
     $scope.deleteLedgerEntry = function( index ) {
         console.log( "Deleting entry at index = " + index ) ;
-        var entry = $scope.ledgerEntries[ index ] ;
-        
+        const entry = $scope.ledgerEntries[index];
+
         $ngConfirm({
             title: 'Confirm!',
             content: 'Delete ledger entry ' + entry.remarks ,
@@ -272,14 +303,14 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     $scope.isCreditCardEntry = function( entry ) {
         if( entry != null ) {
-            return entry.account.accountType == "CREDIT" ;
+            return entry.account.accountType === "CREDIT" ;
         }
         return false ;
     }
     
     $scope.isCashEntry = function( entry ) {
         if( entry != null ) {
-            return entry.account.accountNumber == "CASH@HOME" ;
+            return entry.account.accountNumber === "CASH@HOME" ;
         }
         return false ;
     }
@@ -308,43 +339,43 @@ capitalystNgApp.controller( 'LedgerHomeController',
     $scope.saveSplitLedgerEntry = function() {
         
         console.log( "Applying entry split." ) ;
-        
-        var input = $scope.splitEntryDetails ;
-        
+
+        const input = $scope.splitEntryDetails;
+
         $scope.validateSplitEntry() ;
         if( input.errMsgs.length > 0 ) {
             $ngConfirm( "Please fix the errors first." ) ;
             return ;
         }
-        
-        var newCategory = false ;
-        var l1Cat = input.l1Cat ;
-        var l2Cat = input.l2Cat ;
+
+        let newCategory = false;
+        let l1Cat = input.l1Cat;
+        let l2Cat = input.l2Cat;
 
         if( l1Cat == null || l2Cat == null ) {
             newCategory = true ;
             l1Cat = ( l1Cat == null ) ? input.l1CatNew : l1Cat ;
             l2Cat = ( l2Cat == null ) ? input.l2CatNew : l2Cat ;
         }
-        
-        var postData = {
-            entryId          : $scope.entryBeingSplit.id, 
-            amount           : input.amount,
-            l1Cat            : l1Cat,
-            l2Cat            : l2Cat,
-            newClassifier    : newCategory,
-            notes            : input.notes
-        } ;
-        
+
+        const postData = {
+            entryId: $scope.entryBeingSplit.id,
+            amount: input.amount,
+            l1Cat: l1Cat,
+            l2Cat: l2Cat,
+            newClassifier: newCategory,
+            notes: input.notes
+        };
+
         console.log( postData ) ;
         applySplitOnServer( postData ) ;
     }
     
     $scope.validateSplitEntry = function() {
-        
-        var splitDetails = $scope.splitEntryDetails ;
-        var parentEntry = $scope.entryBeingSplit ;
-        
+
+        const splitDetails = $scope.splitEntryDetails;
+        const parentEntry = $scope.entryBeingSplit;
+
         splitDetails.errMsgs.length = 0 ;
         
         if( splitDetails.amount <= 0 ) {
@@ -369,8 +400,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     $scope.editEntry = function( entry ) {
         // Disable editing of all other entries except this one
-        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
-            var anEntry = $scope.ledgerEntries[i] ;
+        for( let i=0; i<$scope.ledgerEntries.length; i++ ) {
+            const anEntry = $scope.ledgerEntries[i];
             anEntry.editing = false ;
         }
                 
@@ -391,16 +422,16 @@ capitalystNgApp.controller( 'LedgerHomeController',
         
         console.log( "Saving edited entry" ) ;
         
-        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
-            var entry = $scope.ledgerEntries[i] ;
+        for( let i=0; i<$scope.ledgerEntries.length; i++ ) {
+            const entry = $scope.ledgerEntries[i];
             if( entry.selected ) {
                 entry.l1Cat = $scope.userSel.l1Cat ;
                 entry.l2Cat = $scope.userSel.l2Cat ;
                 entry.notes = $scope.userSel.notes ;
             }
         }
-        
-        var errMsg = validateSelectedEntriesForClassification() ;
+
+        const errMsg = validateSelectedEntriesForClassification() ;
         if( errMsg == null ) {
             applyClassificationOnServer( $scope.userSel.l1Cat, 
                                          $scope.userSel.l2Cat,
@@ -425,8 +456,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.showDebitRecoveryDialog = function( index ) {
-        
-        var creditTxn = $scope.ledgerEntries[ index ] ;
+
+        const creditTxn = $scope.ledgerEntries[index];
         $scope.$broadcast( 'creditTxnSetForDebitRecoveryDialog', creditTxn ) ;
         
         $( '#debitRecoveryDialog' ).modal( 'show' ) ;
@@ -438,8 +469,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.showAssociatedCreditsDialog = function( index ) {
-        
-        var debitTxn = $scope.ledgerEntries[ index ] ;
+
+        const debitTxn = $scope.ledgerEntries[index];
         $scope.$broadcast( 'debitTxnSetForAssociatedCreditsDialog', debitTxn ) ;
         
         $( '#associatedCreditsDialog' ).modal( 'show' ) ;
@@ -452,9 +483,45 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     $scope.exportLedgerAsExcel = function() {
-        
-        var exporter = new LedgerExporter( $scope.ledgerEntries ) ;
+
+        const exporter = new LedgerExporter($scope.ledgerEntries);
         exporter.export() ;
+    }
+
+    $scope.deleteSelectedEntries = function() {
+        let selectedEntryIds = [] ;
+        for( let i=0; i<$scope.ledgerEntries.length; i++ ) {
+            const entry = $scope.ledgerEntries[i];
+            if( entry.selected ) {
+                selectedEntryIds.push(entry.id) ;
+            }
+        }
+
+        if( selectedEntryIds.length === 0 ) {
+            $ngConfirm( 'No entries are selected.' ) ;
+        }
+        else {
+            $ngConfirm({
+                title: 'Confirm!',
+                content: 'Delete ' + selectedEntryIds.length + ' selected entries' ,
+                scope: $scope,
+                buttons: {
+                    close: function(scope, button){
+                        console.log( "User cancelled." ) ;
+                    },
+                    yes: {
+                        text: 'Yes',
+                        btnClass: 'btn-blue',
+                        action: function(scope, button){
+                            console.log( "Ok to delete account." ) ;
+                            deleteLedgerEntriesOnServer( selectedEntryIds, function() {
+                                fetchLedgerEntries() ;
+                            }) ;
+                        }
+                    }
+                }
+            });
+        }
     }
 
     // --- [END] Scope functions
@@ -463,11 +530,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
     // --- [START] Local functions -------------------------------------------
     
     function validateSelectedEntriesForClassification() {
-        var numEntriesSelected = 0 ;
-        var entryTypeCount = 0 ;
-        
-        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
-            var entry = $scope.ledgerEntries[i] ;
+        let numEntriesSelected = 0;
+        let entryTypeCount = 0;
+
+        for( let i=0; i<$scope.ledgerEntries.length; i++ ) {
+            const entry = $scope.ledgerEntries[i];
             if( entry.selected ) {
                 selectedEntries.push( entry ) ;
                 numEntriesSelected++ ;
@@ -481,7 +548,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }
         
         if( numEntriesSelected > 0 ) {
-            if( Math.abs( entryTypeCount ) != numEntriesSelected ) {
+            if( Math.abs( entryTypeCount ) !== numEntriesSelected ) {
                 return "Selected entries contain both credit and debit entries." ;
             }
         }
@@ -504,10 +571,10 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     function initializeController() {
-        var parameters = new URLSearchParams( window.location.search ) ;
-        var accountIds = parameters.get( 'accountIds' ) ;
-        
-        if( accountIds == null || accountIds.length == 0 ) {
+        const parameters = new URLSearchParams(window.location.search);
+        const accountIds = parameters.get('accountIds');
+
+        if( accountIds == null || accountIds.length === 0 ) {
             $scope.searchQuery.accountIds = null ;
         }
         else {
@@ -522,11 +589,11 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     function initializeDateRange() {
 
-        var startDt = $scope.searchQuery.startDate ;
-        var endDt = $scope.searchQuery.endDate ;
-        var text = moment( startDt ).format( 'MMM D, YYYY' ) + ' - ' +
-                   moment( endDt ).format( 'MMM D, YYYY' ) ;
-        
+        const startDt = $scope.searchQuery.startDate;
+        const endDt = $scope.searchQuery.endDate;
+        const text = moment(startDt).format('MMM D, YYYY') + ' - ' +
+                            moment(endDt).format('MMM D, YYYY');
+
         $('#ledgerDuration span').html( text ) ;            
      
         $('#ledgerDuration').daterangepicker({
@@ -573,7 +640,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
             }
         }, 
         function( start, end, label ) {
-            var text = start.format( 'MMM D, YYYY' ) + ' - ' + end.format('MMM D, YYYY') ;
+            const text = start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY');
             $('#ledgerDuration span').html( text ) ;
             $scope.searchQuery.startDate = start.toDate() ;
             $scope.searchQuery.endDate   = end.toDate() ;
@@ -584,21 +651,21 @@ capitalystNgApp.controller( 'LedgerHomeController',
     function fetchLedgerEntries() {
         
         if( $scope.searchQuery.accountIds == null || 
-            $scope.searchQuery.accountIds.length == 0 ) return ;
+            $scope.searchQuery.accountIds.length === 0 ) return ;
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
         $http.post( '/Ledger/Search', $scope.searchQuery )
         .then ( 
             function( response ){
-                
-                var ledgerEntries    = response.data[ "ledgerEntries" ] ;
-                var associatedTxnIds = response.data[ "associatedTxnIds" ] ;
-                
+
+                const ledgerEntries= response.data["ledgerEntries"];
+                const associatedTxnIds = response.data["associatedTxnIds"];
+
                 $scope.ledgerEntries.length = 0 ;
-                for( var i=0; i<ledgerEntries.length; i++ ) {
-                    
-                    var entry = ledgerEntries[i] ;
-                    if( i == 0 && $scope.searchQuery.accountIds.length == 1 ) {
+                for( let i=0; i<ledgerEntries.length; i++ ) {
+
+                    const entry = ledgerEntries[i];
+                    if( i === 0 && $scope.searchQuery.accountIds.length === 1 ) {
                         $scope.$parent.navBarTitle = 
                             entry.account.accountOwner + " - " + 
                             entry.account.accountNumber + " - " + 
@@ -616,7 +683,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
                 
                 resetClassificationState() ;
                 resetPivotCatSelection() ;
-                filterEntries( true ) ;
+                $scope.applyAllFilters() ;
                 fetchClassificationCategories() ;
             }, 
             function(){
@@ -654,8 +721,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $scope.selectedL1Category = null ;
         $scope.selectedL2Category = null ;
         
-        for( var i=0; i<categories.length; i++ ) {
-            var category = categories[i] ;
+        for( let i=0; i<categories.length; i++ ) {
+            const category = categories[i];
             if( category.creditClassification ) {
                 classifyCategoryInMasterList( 
                         $scope.masterCategories.credit.l1Categories, 
@@ -674,39 +741,39 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     function classifyCategoryInMasterList( l1CatList, l2CatMap, category ) {
-        
-        var l1 = category.l1CatName ;
-        var l2 = category.l2CatName ;
-        
-        if( l1CatList.indexOf( l1 ) == -1 ) {
+
+        const l1 = category.l1CatName;
+        const l2 = category.l2CatName;
+
+        if( l1CatList.indexOf( l1 ) === -1 ) {
             l1CatList.push( l1 ) ;
         }
         
         if( !l2CatMap.has( l1 ) ) {
             l2CatMap.set( l1, [] ) ;
         }
-        
-        var l2List = l2CatMap.get( l1 ) ;
+
+        const l2List = l2CatMap.get(l1);
         l2List.push( l2 ) ;
     }
     
     function applyClassificationOnServer( l1Cat, l2Cat, newCategory )  {
 
-        var postData = {
-            entryIdList      : [], 
-            l1Cat            : l1Cat,
-            l2Cat            : l2Cat,
-            newClassifier    : newCategory,
-            rule             : $scope.searchQuery.customRule,
-            saveRule         : $scope.userSel.saveRule,
-            creditClassifier : false,
-            ruleName         : $scope.userSel.ruleName,
-            notes            : $scope.userSel.notes
-        } ;
+        const postData = {
+            entryIdList: [],
+            l1Cat: l1Cat,
+            l2Cat: l2Cat,
+            newClassifier: newCategory,
+            rule: $scope.searchQuery.customRule,
+            saveRule: $scope.userSel.saveRule,
+            creditClassifier: false,
+            ruleName: $scope.userSel.ruleName,
+            notes: $scope.userSel.notes
+        };
 
-        for( var i=0; i<selectedEntries.length; i++ ) {
-            var entry = selectedEntries[i] ;
-            if( i == 0 ) {
+        for( let i=0; i<selectedEntries.length; i++ ) {
+            const entry = selectedEntries[i];
+            if( i === 0 ) {
                 postData.creditClassifier = ( entry.amount > 0 ) ;
             }
             postData.entryIdList.push( entry.id ) ;
@@ -735,8 +802,8 @@ capitalystNgApp.controller( 'LedgerHomeController',
     
     function resetClassificationState() {
         
-        for( var i=0; i<selectedEntries.length; i++ ) {
-            var entry = selectedEntries[i] ;
+        for( let i=0; i<selectedEntries.length; i++ ) {
+            const entry = selectedEntries[i];
             entry.selected = false ;
             entry.editing = false ;
         }
@@ -753,23 +820,42 @@ capitalystNgApp.controller( 'LedgerHomeController',
         $scope.userSel.notes    = null ;
     }
     
-    function filterEntries( refreshPivot ) {
-        
+    function filterEntries( refreshPivot, entryAttribName, filterText, numeric=false ) {
+
+        $scope.bulkSelState.value = false ;
         pivotSrcData = [] ;
+        let compOp = '=' ;
+        let compValue = 0 ;
+
+        if( numeric ) {
+            let str = filterText.replace( ' ', '' ) ;
+            let op = str.charAt(0)
+
+            if( op === '>' || op === '<' ) {
+                compOp = op ;
+                compValue = parseInt( str.substring(1) ) ;
+            }
+            else {
+                compOp = '=' ;
+                compValue = parseInt( str ) ;
+            }
+        }
         
-        for( var i=0; i<$scope.ledgerEntries.length; i++ ) {
-            var entry = $scope.ledgerEntries[i] ;
-            
+        for( let i=0; i<$scope.ledgerEntries.length; i++ ) {
+            const entry = $scope.ledgerEntries[i];
+
             entry.selected = false ;
             entry.visible = true ;
             
-            if( !( $scope.entryFilterText == null || 
-                   $scope.entryFilterText.trim() == "" ) ) {
-                
-                if( !entry.remarks
-                          .toLowerCase()
-                          .includes( $scope.entryFilterText
-                                           .toLowerCase() ) ) {
+            if( !( filterText == null || filterText.trim() === "" ) ) {
+
+                const attribVal = entry[entryAttribName] ;
+                if( numeric ) {
+                    entry.visible = (compOp === '=' && Math.floor(attribVal) === compValue) ||
+                                    (compOp === '>' && attribVal >= compValue) ||
+                                    (compOp === '<' && attribVal <= compValue);
+                }
+                else if( attribVal == null || !attribVal.toLowerCase().includes( filterText ) ) {
                     entry.visible = false ;
                 }
             }
@@ -785,7 +871,7 @@ capitalystNgApp.controller( 'LedgerHomeController',
             }
             
             if( entry.visible ) {
-                var type = entry.amount >= 0 ? "Income" : "Expense" ;
+                const type = entry.amount >= 0 ? "Income" : "Expense";
                 pivotSrcData.push( [ 
                     type, 
                     entry.l1Cat == null ? "": entry.l1Cat, 
@@ -804,26 +890,25 @@ capitalystNgApp.controller( 'LedgerHomeController',
                            l2FilterSelections.length > 0 ) ;
         
         if( l1FilterSelections.length > 0 && 
-            l1FilterSelections.indexOf( entry.l1Cat ) != -1 ) {
+            l1FilterSelections.indexOf( entry.l1Cat ) !== -1 ) {
             entry.visible = true ;
         }
         
         if( !entry.visible && 
             l2FilterSelections.length > 0 && 
-            l2FilterSelections.indexOf( entry.l2Cat ) != -1 ) {
+            l2FilterSelections.indexOf( entry.l2Cat ) !== -1 ) {
             entry.visible = true ;
         }
     }
     
     function refreshPivotTable() {
-        var pivotTable = new PivotTable() ;
+        const pivotTable = new PivotTable();
         pivotSrcData.sort( function( tupule1, tupule2 ) {
-            var typeCompare = tupule1[0].localeCompare( tupule2[0] ) ;
-            if( typeCompare == 0 ) {
-                var l1Compare = tupule1[1].localeCompare( tupule2[1] ) ;
-                if( l1Compare == 0 ) {
-                    var l2Compare = tupule1[2].localeCompare( tupule2[2] ) ;
-                    return l2Compare ;
+            const typeCompare = tupule1[0].localeCompare(tupule2[0]);
+            if( typeCompare === 0 ) {
+                const l1Compare = tupule1[1].localeCompare(tupule2[1]);
+                if( l1Compare === 0 ) {
+                    return tupule1[2].localeCompare(tupule2[2]) ;
                 }
                 return l1Compare
             }
@@ -841,21 +926,21 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     function ledgerPivotRenderHelperCallback( rowIndex, colIndex, renderData ) {
-        var fmt = "" ;
-        var cellData = renderData.content ;
+        let fmt = "";
+        const cellData = renderData.content;
         if( cellData != null ) {
             if( isNaN( cellData ) ) {
                 fmt = cellData ;
             }
             else {
-                var amt = parseFloat( cellData ) ;
-                var fmt = amt.toLocaleString( 'en-IN', {
+                const amt = parseFloat(cellData);
+                fmt = amt.toLocaleString('en-IN', {
                     maximumFractionDigits: 2,
                     style: 'currency',
                     currency: 'INR'
-                } ) ;
-                
-                if( fmt.indexOf( '.' ) != -1 ) {
+                });
+
+                if( fmt.indexOf( '.' ) !== -1 ) {
                     fmt = fmt.substring( 0, fmt.indexOf( '.' ) ) ; 
                 }
                 
@@ -868,32 +953,32 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     function ledgerPivotRowSelectionCallback( depth, selected, rowCellValues ) {
-        var cat = rowCellValues[0] ;
-        var catArray = null ;
-        
-        if( depth == 2 ){ catArray = l1FilterSelections ; }
-        else if( depth == 3 ){ catArray = l2FilterSelections ; }
+        const cat = rowCellValues[0];
+        let catArray = null;
+
+        if( depth === 2 ){ catArray = l1FilterSelections ; }
+        else if( depth === 3 ){ catArray = l2FilterSelections ; }
         
         if( catArray != null ) {
             if( selected ) {
                 catArray.push( cat ) ;
             }
             else {
-                var index = catArray.indexOf( cat ) ;
-                if ( index != -1 )catArray.splice( index, 1 ) ;
+                const index = catArray.indexOf(cat);
+                if ( index !== -1 )catArray.splice( index, 1 ) ;
             }
         }
         
         console.log( catArray ) ;
         
-        filterEntries( false ) ;
+        $scope.applyAllFilters() ;
         $scope.$apply() ;
     }
 
     function selectPrevNextMonth( isNext ) {
-        
-        var crit = $scope.searchQuery ;
-        var m1, m2 ;
+
+        const crit = $scope.searchQuery;
+        let m1, m2;
         if( isNext ) {
             m1 = moment( crit.endDate ).add( 1, 'month' ) ;
             m2 = moment( crit.endDate ).add( 1, 'month' ) ;
@@ -911,9 +996,9 @@ capitalystNgApp.controller( 'LedgerHomeController',
     }
     
     function refreshDatePickerLabel() {
-        var crit = $scope.searchQuery ;
-        var text = crit.startDate.format('MMM D, YYYY') + ' - ' + 
-                   crit.endDate.format('MMM D, YYYY') ; 
+        const crit = $scope.searchQuery;
+        const text = crit.startDate.format('MMM D, YYYY') + ' - ' +
+                            crit.endDate.format('MMM D, YYYY');
         $('#ledgerDuration span').html( text ) ;
     }
     
@@ -939,6 +1024,23 @@ capitalystNgApp.controller( 'LedgerHomeController',
         }) ;
     }
     
+    function deleteLedgerEntriesOnServer( entryIds, successCallback ) {
+        $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        $http.post( '/Ledger/BulkDelete', entryIds )
+        .then (
+            function( response ){
+                console.log( "Deleted ledger entries" ) ;
+                successCallback() ;
+            },
+            function( error ){
+                $scope.$parent.addErrorAlert( "Error deleting ledger entries." ) ;
+            }
+        )
+        .finally(function() {
+            $scope.$emit( 'interactingWithServer', { isStart : false } ) ;
+        }) ;
+    }
+
     function applySplitOnServer( postData ) {
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;

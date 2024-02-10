@@ -1,13 +1,7 @@
 package com.sandy.capitalyst.server.api.ledger;
 
 import java.text.SimpleDateFormat ;
-import java.util.ArrayList ;
-import java.util.Calendar ;
-import java.util.Date ;
-import java.util.HashMap ;
-import java.util.Iterator ;
-import java.util.List ;
-import java.util.Map ;
+import java.util.*;
 
 import org.apache.commons.lang3.time.DateUtils ;
 import org.apache.log4j.Logger ;
@@ -45,21 +39,34 @@ public class LedgerRestController {
 
     private static final Logger log = Logger.getLogger( LedgerRestController.class ) ;
     private static final SimpleDateFormat PIVOT_SDF = new SimpleDateFormat( "yyyy-MM" ) ;
-    
-    @Autowired
+
     private LedgerRepo lRepo = null ;
-    
-    @Autowired
     private AccountRepo aRepo = null ;
-    
-    @Autowired
     private LedgerEntryCategoryRepo lecRepo = null ;
-    
-    @Autowired
     private DebitCreditAssocRepo dcaRepo = null ;
-    
-    @GetMapping( "/Ledger/PivotData" ) 
-    public ResponseEntity<List<String[]>> getPivotDataEntries( 
+
+    @Autowired
+    public void setlRepo( LedgerRepo lRepo ) {
+        this.lRepo = lRepo;
+    }
+
+    @Autowired
+    public void setaRepo( AccountRepo aRepo ) {
+        this.aRepo = aRepo;
+    }
+
+    @Autowired
+    public void setLecRepo( LedgerEntryCategoryRepo lecRepo ) {
+        this.lecRepo = lecRepo;
+    }
+
+    @Autowired
+    public void setDcaRepo( DebitCreditAssocRepo dcaRepo ) {
+        this.dcaRepo = dcaRepo;
+    }
+
+    @GetMapping( "/Ledger/PivotData" )
+    public ResponseEntity<List<String[]>> getPivotDataEntries(
                            @RequestParam( "startDate" ) 
                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                            Date startDate,
@@ -86,7 +93,7 @@ public class LedgerRestController {
                 @RequestParam( "l2CatName" ) String l2CatName ) {
         
         try {
-            List<LedgerEntry> entries = null ;
+            List<LedgerEntry> entries ;
             if( selectCreditEntries ) {
                 entries = lRepo.findCreditEntries( l1CatName, l2CatName ) ; 
             }
@@ -112,12 +119,13 @@ public class LedgerRestController {
         
         try {
             List<LedgerEntry> entries = null ;
-            
-            LedgerEntry le = lRepo.findById( refTxnId ).get() ;
-            Date refDate = le.getValueDate() ;
-            
-            entries = lRepo.findDebitEntries( refDate, offset, numTxns ) ;
-            
+            LedgerEntry le = lRepo.findById( refTxnId ).orElse( null ) ;
+
+            if( le != null ) {
+                Date refDate = le.getValueDate() ;
+                entries = lRepo.findDebitEntries( refDate, offset, numTxns ) ;
+            }
+
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( entries ) ;
         }
@@ -141,7 +149,7 @@ public class LedgerRestController {
                                 Date startOfMonth ) {
         
         try {
-            List<LedgerEntry> entries = null ;
+            List<LedgerEntry> entries ;
             List<LedgerEntry> returnValue = new ArrayList<>() ;
             
             startOfMonth = DateUtils.truncate( startOfMonth, Calendar.DAY_OF_MONTH ) ;
@@ -165,13 +173,13 @@ public class LedgerRestController {
             // which have valid debit amount (<0)
             if( entries != null && !entries.isEmpty() ) {
                 entries.forEach( entry -> {
-                    List<DebitCreditAssoc> creditAssocs = null ;
+                    List<DebitCreditAssoc> creditAssocs ;
                     creditAssocs = dcaRepo.findByDebitTxnId( entry.getId() ) ;
                     
                     if( creditAssocs != null && !creditAssocs.isEmpty() ) {
-                        creditAssocs.forEach( credit ->{
-                            entry.setAmount( entry.getAmount() + credit.getAmount() ) ;
-                        } ) ;
+                        creditAssocs.forEach( credit ->
+                                entry.setAmount( entry.getAmount() +
+                                                 credit.getAmount() )) ;
                     }
                     
                     if( entry.getAmount() < 0 ) {
@@ -196,10 +204,12 @@ public class LedgerRestController {
             
             Map<String, List<?>> response = new HashMap<>() ;
             
-            List<LedgerEntry> entries = null ;
+            List<LedgerEntry> entries ;
+            List<LedgerEntry> filteredEntries ;
+
             entries = searchEntries( searchCriteria ) ;
-            entries = filterResultsByCustomRule( searchCriteria, entries ) ;
-            response.put( "ledgerEntries", entries ) ;
+            filteredEntries = filterResultsByCustomRule( searchCriteria, entries ) ;
+            response.put( "ledgerEntries", filteredEntries ) ;
             
             List<Integer> associatedIds = new ArrayList<>() ;
             associatedIds.addAll( dcaRepo.findDistinctDebitTxnId() ) ;
@@ -219,27 +229,58 @@ public class LedgerRestController {
     public ResponseEntity<APIMsgResponse> deleteLedgerEntry( @PathVariable Integer id ) {
         try {
             log.debug( "Deleting ledger entry. " + id ) ;
-            LedgerEntry entry = lRepo.findById( id ).get() ;
-            
-            lRepo.deleteById( id ) ;
 
-            Account account = entry.getAccount() ;
-            if( account.getAccountNumber().equals( "CASH@HOME" ) ) {
-                Float balance = lRepo.summateAccountBalance( account.getId() ) ;
-                account.setBalance( balance ) ;
-                aRepo.save( account ) ;
+            LedgerEntry entry = lRepo.findById( id ).orElse( null ) ;
+            if( entry != null ) {
+                lRepo.deleteById( id ) ;
+                Account account = entry.getAccount() ;
+                if( account.getAccountNumber().equals( "CASH@HOME" ) ) {
+                    Float balance = lRepo.summateAccountBalance( account.getId() ) ;
+                    account.setBalance( balance ) ;
+                    aRepo.save( account ) ;
+                }
             }
-            
+
             return status( HttpStatus.OK ).
                    body( new APIMsgResponse( "Successfully deleted" ) ) ;
         }
         catch( Exception e ) {
-            log.error( "Error :: Saving account data.", e ) ;
+            log.error( "Error :: Deleting ledger entry data.", e ) ;
             return status( HttpStatus.INTERNAL_SERVER_ERROR )
                    .body( null ) ;
         }
     }
-    
+
+    @PostMapping( "/Ledger/BulkDelete" )
+    public ResponseEntity<APIMsgResponse> deleteBulkLedgerEntry( @RequestBody Integer[] ids ) {
+        try {
+            log.debug( "Deleting ledger entries. " + Arrays.toString(ids) ) ;
+            for( Integer id : ids ) {
+
+                log.debug( "Deleting ledger entry " + id ) ;
+                LedgerEntry entry = lRepo.findById(id).orElse( null ) ;
+                if( entry != null ) {
+                    lRepo.deleteById(id);
+
+                    Account account = entry.getAccount() ;
+                    if (account.getAccountNumber().equals("CASH@HOME")) {
+                        Float balance = lRepo.summateAccountBalance(account.getId());
+                        account.setBalance(balance);
+                        aRepo.save(account);
+                    }
+                }
+            }
+
+            return status( HttpStatus.OK ).
+                    body( new APIMsgResponse( "Successfully deleted" ) ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Deleting ledger entry data.", e ) ;
+            return status( HttpStatus.INTERNAL_SERVER_ERROR )
+                    .body( null ) ;
+        }
+    }
+
     private List<String[]> findPivotDataEntries( Date startDate, Date endDate ) {
         
         List<LedgerEntry> lEntries = lRepo.findEntries( startDate, endDate ) ;
@@ -278,19 +319,21 @@ public class LedgerRestController {
         try {
             log.debug( "Splitting ledger entry. Details = " + splitDetails );
             
-            LedgerEntry entryBeingSplit = null ;
-            LedgerEntry newEntry = null ;
+            LedgerEntry entryBeingSplit ;
+            LedgerEntry newEntry ;
             
             if( splitDetails.isNewClassifier() ) {
                 saveNewClassifier( splitDetails.getL1Cat(), splitDetails.getL2Cat() ) ;
             }
             
-            entryBeingSplit = lRepo.findById( splitDetails.getEntryId() ).get() ;
-            newEntry = entryBeingSplit.split( splitDetails ) ;
-            
-            lRepo.save( entryBeingSplit ) ;
-            lRepo.save( newEntry ) ;
-            
+            entryBeingSplit = lRepo.findById( splitDetails.getEntryId() ).orElse( null ) ;
+            if( entryBeingSplit != null ) {
+                newEntry = entryBeingSplit.split( splitDetails ) ;
+
+                lRepo.save( entryBeingSplit ) ;
+                lRepo.save( newEntry ) ;
+            }
+
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( APIMsgResponse.SUCCESS ) ;
         }
@@ -303,7 +346,7 @@ public class LedgerRestController {
     
     
     private void saveNewClassifier( String l1Cat, String l2Cat ) {
-        LedgerEntryCategory newCat = null ;
+        LedgerEntryCategory newCat ;
         newCat = new LedgerEntryCategory() ;
         newCat.setCreditClassification( false ) ;
         newCat.setL1CatName( l1Cat ) ;
@@ -313,7 +356,7 @@ public class LedgerRestController {
 
     private List<LedgerEntry> searchEntries( LedgerSearchCriteria sc ) {
         
-        List<LedgerEntry> results = null ;
+        List<LedgerEntry> results ;
         
         if( sc.getMinAmt() == null && 
             sc.getMaxAmt() == null ) {
@@ -322,10 +365,8 @@ public class LedgerRestController {
                                          sc.getStartDate(),
                                          sc.getEndDate() ) ;
         }
-        else if( sc.getMinAmt() != null || 
-                 sc.getMaxAmt() != null ) {
-            
-            Float lowerLim = sc.getMinAmt() == null ? 
+        else {
+            Float lowerLim = sc.getMinAmt() == null ?
                              -Float.MAX_VALUE : sc.getMinAmt() ;
             Float upperLim = sc.getMaxAmt() == null ?
                              Float.MAX_VALUE : sc.getMaxAmt() ;
@@ -338,7 +379,7 @@ public class LedgerRestController {
         
         if( results != null ) {
             
-            Iterator<LedgerEntry> entries = null ;
+            Iterator<LedgerEntry> entries ;
             
             if( sc.isShowOnlyUnclassified() ) {
                 for( entries = results.iterator(); entries.hasNext(); ) {
@@ -378,7 +419,6 @@ public class LedgerRestController {
                         if( StringUtil.isNotEmptyOrNull( entry.getL2Cat() ) ) {
                             if( !sc.getL2CatName().equals( entry.getL2Cat() ) ) {
                                 entries.remove() ;
-                                continue ;
                             }
                         }
                     }
@@ -397,13 +437,8 @@ public class LedgerRestController {
             LEClassifierRuleBuilder ruleBuilder = new LEClassifierRuleBuilder() ;
             LEClassifierRule rule = ruleBuilder.buildClassifier( "Temp rule", 
                                                                  customRule ) ;
-            
-            for( Iterator<LedgerEntry> iter = entries.iterator(); iter.hasNext(); ) {
-                LedgerEntry entry = iter.next() ;
-                if( rule.getMatchResult( entry ) == null ) {
-                    iter.remove() ;
-                }
-            }
+
+            entries.removeIf(entry -> rule.getMatchResult(entry) == null);
         }
         
         return entries ;

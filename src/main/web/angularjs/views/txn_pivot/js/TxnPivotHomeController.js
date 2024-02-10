@@ -233,6 +233,9 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
             }
             else {
                 var l2Node = l1Node.getChild( tupule[2] ) ;
+                if( l2Node === undefined ) {
+                    debugger
+                }
                 if( l2Node.selected ) {
                     filteredPivotSrcData.push( tupule ) ;
                 }
@@ -241,10 +244,10 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         
         filteredPivotSrcData.sort( function( tupule1, tupule2 ) {
             var typeCompare = tupule1[0].localeCompare( tupule2[0] ) ;
-            if( typeCompare == 0 ) {
+            if( typeCompare === 0 ) {
                 var l1Compare = tupule1[1].localeCompare( tupule2[1] ) ;
-                if( l1Compare == 0 ) {
-                    var l2Compare = tupule1[2].localeCompare( tupule2[2] ) ;
+                if( l1Compare === 0 ) {
+                    const l2Compare = tupule1[2].localeCompare(tupule2[2]);
                     return l2Compare ;
                 }
                 return l1Compare
@@ -256,22 +259,22 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
     }
     
     function pivotRenderCallback( rowIndex, colIndex, renderData ) {
-        
-        var fmt = "" ;
-        var cellData = renderData.content ;
+
+        let fmt = "";
+        const cellData = renderData.content;
         if( cellData != null ) {
             if( isNaN( cellData ) ) {
                 fmt = cellData ;
             }
             else {
                 var amt = parseFloat( cellData ) ;
-                var fmt = amt.toLocaleString( 'en-IN', {
+                fmt = amt.toLocaleString('en-IN', {
                     maximumFractionDigits: 2,
                     style: 'currency',
                     currency: 'INR'
-                } ) ;
-                
-                if( fmt.indexOf( '.' ) != -1 ) {
+                });
+
+                if( fmt.indexOf( '.' ) !== -1 ) {
                     fmt = fmt.substring( 0, fmt.indexOf( '.' ) ) ; 
                 }
                 
@@ -371,7 +374,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         var l1 = category.l1CatName ;
         var l2 = category.l2CatName ;
         
-        if( l1CatList.indexOf( l1 ) == -1 ) {
+        if( l1CatList.indexOf( l1 ) === -1 ) {
             l1CatList.push( l1 ) ;
         }
         
@@ -380,7 +383,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         }
         
         var l2List = l2CatMap.get( l1 ) ;
-        l2List.push( [ l2, category.selectedForTxnPivot == 1 ] ) ;
+        l2List.push( [ l2, category.selectedForTxnPivot === 1 ] ) ;
     }
     
     function createCategoryTree( masterCategoryCluster, rootDisplayCatNode ) {
@@ -411,7 +414,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
                 
                 anySelected |= l2Node.selected ;
             }
-            l1Node.selected = ( anySelected == 1 ) ;
+            l1Node.selected = ( anySelected === 1 ) ;
         }
     }
     
