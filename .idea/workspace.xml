@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="New ledger functionality - bulk delete">
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Bug fixes in equity trade updater">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/tradeupdater/EquityTradeUpdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/ota/action/tradeupdater/EquityTradeUpdater.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeSessionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeSessionManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/CapitalystServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/CapitalystServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/BudgetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/budget/BudgetController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeAPIProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/breeze/internal/BreezeAPIProxy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityITDSnapshotService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/daemon/equity/intraday/EquityITDSnapshotService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +100,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.keymap",
+    "settings.editor.selected.configurable": "spring.boot",
     "spring.configuration.checksum": "8d08fabdab186cde2d19ca8bcaea4309",
     "vue.rearranger.settings.migration": "true"
   },
@@ -116,6 +118,7 @@
       <recent name="$PROJECT_DIR$/src/main/web/angularjs" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.sandy.capitalyst.server.core" />
       <recent name="com.sandy.capitalyst.server.api.index.helper" />
       <recent name="com.sandy.capitalyst.server.test.standalone" />
       <recent name="com.sandy.capitalyst.server.core.network" />
@@ -226,6 +229,9 @@
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpringBootOptions">
+    <option name="showAdditionalConfigNotification" value="false" />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="" />
@@ -255,7 +261,7 @@
       <workItem from="1705559943382" duration="624000" />
       <workItem from="1706933690487" duration="14031000" />
       <workItem from="1707113261493" duration="9397000" />
-      <workItem from="1707123898339" duration="75038000" />
+      <workItem from="1707123898339" duration="85134000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -355,7 +361,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707548858110</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Bug fixes in equity trade updater">
+      <option name="closed" value="true" />
+      <created>1707553995903</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1707553995903</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -396,7 +410,8 @@
     <MESSAGE value="Bug fixes" />
     <MESSAGE value="Code compatibility for framework upgrades" />
     <MESSAGE value="New ledger functionality - bulk delete" />
-    <option name="LAST_COMMIT_MESSAGE" value="New ledger functionality - bulk delete" />
+    <MESSAGE value="Bug fixes in equity trade updater" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bug fixes in equity trade updater" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

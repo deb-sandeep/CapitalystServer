@@ -1,43 +1,29 @@
 package com.sandy.capitalyst.server.daemon.equity.intraday;
 
-import static com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon.CFG_GRP_NAME ;
-import static com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon.CFG_PRINT_DEBUG_STMT ;
-import static com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon.CFG_CAPTRE_RAW_SNAPSHOT ;
-
-import java.io.File ;
-import java.io.FileReader ;
-import java.net.SocketTimeoutException ;
-import java.text.ParseException ;
-import java.text.SimpleDateFormat ;
-import java.util.ArrayList ;
-import java.util.Date ;
-import java.util.HashMap ;
-import java.util.HashSet ;
-import java.util.List ;
-import java.util.Map ;
-import java.util.Properties ;
-import java.util.Set ;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sandy.capitalyst.server.CapitalystServer;
+import com.sandy.capitalyst.server.core.CapitalystConfig;
+import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup;
+import com.sandy.capitalyst.server.core.nvpconfig.NVPManager;
 import com.sandy.capitalyst.server.core.util.CookieUtil;
-import jakarta.annotation.PostConstruct ;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo;
+import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo;
+import com.sandy.capitalyst.server.dao.index.repo.IndexEquityRepo;
+import lombok.Data;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import org.apache.commons.io.FileUtils ;
-import org.apache.log4j.Logger ;
-import org.springframework.beans.factory.annotation.Autowired ;
-import org.springframework.stereotype.Component ;
+import java.io.File;
+import java.net.SocketTimeoutException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-import com.fasterxml.jackson.databind.JsonNode ;
-import com.fasterxml.jackson.databind.ObjectMapper ;
-import com.sandy.capitalyst.server.CapitalystServer ;
-import com.sandy.capitalyst.server.core.CapitalystConfig ;
-import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
-import com.sandy.capitalyst.server.core.nvpconfig.NVPConfigGroup ;
-import com.sandy.capitalyst.server.core.nvpconfig.NVPManager ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityHoldingRepo ;
-import com.sandy.capitalyst.server.dao.equity.repo.EquityMasterRepo ;
-import com.sandy.capitalyst.server.dao.index.repo.IndexEquityRepo ;
-
-import lombok.Data ;
+import static com.sandy.capitalyst.server.daemon.equity.intraday.EquityITDImporterDaemon.*;
 
 @Component
 public class EquityITDSnapshotService {
@@ -65,24 +51,37 @@ public class EquityITDSnapshotService {
         private float  totalVal = 0    ; 
     }
     
-    @Autowired
     private EquityHoldingRepo ehRepo = null ;
-    
-    @Autowired
     private IndexEquityRepo ieRepo = null ;
-    
-    @Autowired
     private EquityMasterRepo emRepo = null ;
-    
-    @Autowired
     private EquityLTPRepository ltpRepo = null ;
-    
+
     @FunctionalInterface
-    private static interface ITDSnapshotBuilder {
+    private interface ITDSnapshotBuilder {
         ITDSnapshot buildSnapshot( JsonNode node ) ;
     }
-    
-    private Set<String> qualifiedStocks = new HashSet<>() ;
+
+    @Autowired
+    public void setEhRepo(EquityHoldingRepo ehRepo) {
+        this.ehRepo = ehRepo;
+    }
+
+    @Autowired
+    public void setIeRepo(IndexEquityRepo ieRepo) {
+        this.ieRepo = ieRepo;
+    }
+
+    @Autowired
+    public void setEmRepo(EquityMasterRepo emRepo) {
+        this.emRepo = emRepo;
+    }
+
+    @Autowired
+    public void setLtpRepo(EquityLTPRepository ltpRepo) {
+        this.ltpRepo = ltpRepo;
+    }
+
+    private final Set<String> qualifiedStocks = new HashSet<>() ;
     
     private boolean debugEnable  = true ;
     private boolean captureRawSnapshot = false ;
@@ -95,12 +94,9 @@ public class EquityITDSnapshotService {
         
         ehRepo.findNonZeroHoldings()
               .forEach( h -> qualifiedStocks.add( h.getSymbolNse() ) ) ;
-        
-        ieRepo.findEquitiesForIndex( "Nifty 200" )
-              .forEach( qualifiedStocks::add ) ;
-        
-        emRepo.findETFStocks()
-              .forEach( qualifiedStocks::add ) ;
+
+        qualifiedStocks.addAll( ieRepo.findEquitiesForIndex("Nifty 200") ) ;
+        qualifiedStocks.addAll( emRepo.findETFStocks() ) ;
         
         log.debug( "-> # qualified stocks = " + qualifiedStocks.size() ) ;
     }
@@ -108,7 +104,6 @@ public class EquityITDSnapshotService {
     public List<ITDSnapshot> getSnapshots() {
         
         refreshConfiguration() ;
-        
         List<ITDSnapshot> snapshots = new ArrayList<>() ;
         
         try {
@@ -118,7 +113,7 @@ public class EquityITDSnapshotService {
             collateEquityITDSnapshot( snapshots, EQ_ITD_URL, 
                                       "itd-eq-pricevol.txt", 
                                       this::buildEquityITDSnapshot, 2, "eqt" ) ;
-            
+
             if( debugEnable ) {
                 log.debug( "- Collating ETF ITD snapshots" ) ;
             }
@@ -173,7 +168,6 @@ public class EquityITDSnapshotService {
         catch( SocketTimeoutException ste ) {
             
             log.debug( "->  Socket timeout." ) ;
-            
             if( remainingTries > 0 ) {
                 if( debugEnable ) {
                     log.debug( "->  Timeout detected. Retrying" ) ;
@@ -181,7 +175,7 @@ public class EquityITDSnapshotService {
                 try {
                     Thread.sleep( 2000 ) ;
                 }
-                catch( InterruptedException e ) {}
+                catch( InterruptedException ignored) {}
                 collateEquityITDSnapshot( snapshots, url, headerFile,
                                           builder, remainingTries-1, filePrefix );
             }
@@ -246,7 +240,7 @@ public class EquityITDSnapshotService {
             log.debug( "-> Downloading intraday data." ) ;
         }
         
-        String response = null ;
+        String response ;
         HTTPResourceDownloader httpClient = HTTPResourceDownloader.instance() ;
         Map<String, String> cookies = CookieUtil.loadNSECookies() ;
         
@@ -255,12 +249,11 @@ public class EquityITDSnapshotService {
         if( debugEnable ) {
             log.debug( "->> Response " + response.length() + " bytes." ) ;
         }
-        
+
         if( captureRawSnapshot ) {
             log.debug( "->> Capturing raw snapshot." ) ;
             captureRawSnapshot( filePrefix, response ) ;
         }
-        
         return response ;
     }
     
@@ -278,7 +271,7 @@ public class EquityITDSnapshotService {
     private void refreshConfiguration() {
         
         NVPManager nvpMgr = NVPManager.instance() ;
-        NVPConfigGroup cfg = nvpMgr.getConfigGroup( CFG_GRP_NAME ) ; ;
+        NVPConfigGroup cfg = nvpMgr.getConfigGroup( CFG_GRP_NAME ) ;
 
         debugEnable        = cfg.getBoolValue( CFG_PRINT_DEBUG_STMT, debugEnable ) ;
         captureRawSnapshot = cfg.getBoolValue( CFG_CAPTRE_RAW_SNAPSHOT,captureRawSnapshot ) ;

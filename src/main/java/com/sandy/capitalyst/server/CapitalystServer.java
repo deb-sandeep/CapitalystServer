@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server ;
 
+import com.sandy.capitalyst.server.core.DefaultCapitalystConfig;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.BeansException ;
 import org.springframework.beans.factory.annotation.Autowired ;
@@ -34,7 +35,7 @@ public class CapitalystServer
     public static String CFG_RUN_EQ_ITD_DAEMON       = "run_eq_itd_daemon" ;
     
     public static CapitalystConfig getConfig() {
-        if( APP_CTX == null ) return null ;
+        if( APP_CTX == null ) return new DefaultCapitalystConfig() ;
         return (CapitalystConfig) APP_CTX.getBean( "config" ) ;
     }
     

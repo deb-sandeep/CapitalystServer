@@ -178,15 +178,11 @@ public abstract class BreezeAPIProxy<T> {
                     response.setTimeTakenInMillis( timeTaken ) ;
                 }
                 
-                if( cfg.isPrintAPICallLog() ) {
-                    
+                if( cfg.isPrintAPICallLog() && response != null ) {
                     log.debug( "API Response:" ) ;
                     log.debug( "  Call status = " + response.getStatus() ) ;
                     log.debug( "  Time taken  = " + timeTaken + " ms."   ) ;
-                    
-                    if( response != null ) {
-                        log.debug( "  Num entities= " + response.getEntities().size() ) ;
-                    }
+                    log.debug( "  Num entities= " + response.getEntities().size() ) ;
                 }
                 
                 invInfo.setCallDurationInMillis( timeTaken ) ;

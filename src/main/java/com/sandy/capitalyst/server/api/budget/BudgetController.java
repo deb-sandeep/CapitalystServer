@@ -92,7 +92,6 @@ public class BudgetController {
         Map<String, Object> result = new HashMap<>() ;
         
         try {
-            
             MonthlyLoadingCalculator calc = null ;
             calc = new MonthlyLoadingCalculator( ruleText ) ;
             
