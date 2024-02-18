@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.dao.job.repo;
 
 import java.util.List ;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying ;
 import org.springframework.data.jpa.repository.Query ;
@@ -12,7 +13,7 @@ import com.sandy.capitalyst.server.dao.IDCompressor ;
 import com.sandy.capitalyst.server.dao.job.JobRunEntry ;
 
 public interface JobRunEntryRepo extends
-        CrudRepository<JobRunEntry, Integer>,
+        JpaRepository<JobRunEntry, Integer>,
         IDCompressor,
         JpaSpecificationExecutor<JobRunEntry> {
 

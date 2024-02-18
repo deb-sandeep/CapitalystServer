@@ -6,6 +6,9 @@ import com.sandy.capitalyst.server.dao.job.repo.JobRunEntryRepo;
 import com.sandy.capitalyst.server.dao.job.repo.JobRunEntrySpecifications;
 import org.apache.log4j.Logger ;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -68,17 +71,20 @@ public class JobController {
     }
 
     @GetMapping( "/Job/SearchRunStatusEntries" )
-    public ResponseEntity<List<JobRunEntry>> searchJobRunStatusEntries(
+    public ResponseEntity<Page<JobRunEntry>> searchJobRunStatusEntries(
             @RequestParam( name="jobName",  required = false ) String[] jobNames,
             @RequestParam( name="result",   required = false ) String result,
             @RequestParam( name="fromDate", required = false ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromDate,
-            @RequestParam( name="toDate",   required = false ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date toDate ) {
+            @RequestParam( name="toDate",   required = false ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date toDate,
+            @RequestParam( name="pageNum",  required = false, defaultValue = "0" ) int pageNum,
+            @RequestParam( name="pageSize", required = false, defaultValue = "50" ) int pageSize ) {
 
         Specification<JobRunEntry> rootSpec ;
 
         try {
+            Pageable pageable = PageRequest.of( pageNum, pageSize, Sort.Direction.DESC, "id" ) ;
             rootSpec = buildRootSpecification( jobNames, result, fromDate, toDate ) ;
-            List<JobRunEntry> entries = jreRepo.findAll( rootSpec, Sort.by( Sort.Direction.DESC, "id" ) );
+            Page<JobRunEntry> entries = jreRepo.findAll( rootSpec, pageable ) ;
             return ResponseEntity.status( HttpStatus.OK )
                                  .body( entries ) ;
         }
