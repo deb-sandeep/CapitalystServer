@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.dao.job;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity ;
 import jakarta.persistence.GeneratedValue ;
 import jakarta.persistence.GenerationType ;
@@ -12,10 +13,15 @@ public class JobEntry {
 
     @Id
     @GeneratedValue( strategy=GenerationType.IDENTITY )
+    @JsonIgnore
     private Integer id = null ;
     
     private String identity = null ;
+
+    @JsonIgnore
     private int lastRunId = 0 ;
+
+    @JsonIgnore
     private String state = null ;
 
     public JobEntry() {}

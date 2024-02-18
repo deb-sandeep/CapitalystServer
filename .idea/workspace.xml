@@ -4,11 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Hardening and formatting">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Integration with Angular modules">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/landing/landing.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/landing/landing.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/job/JobController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/job/JobController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/JobEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/JobEntry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/repo/JobRunEntryRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/repo/JobRunEntryRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/css/app/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/css/app/app.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/admin/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/admin/admin.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +46,9 @@
         <option name="url" value="https://github.com/deb-sandeep/CapitalystServer.git" />
       </UrlAndAccount>
     </option>
+  </component>
+  <component name="HttpClientSelectedEnvironments">
+    <file url="jar://$APPLICATION_HOME_DIR$/plugins/restClient/lib/restClient.jar!/com/intellij/ws/rest/client/requests/collection/get-requests.http" environment="test" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -79,36 +85,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "last_directory_selection": "/Users/sandeep/projects/source/CapitalystServer/src/main/java/com/sandy/capitalyst/server",
-    "last_opened_file_path": "/Users/sandeep/projects/capitalyst/CapitalystServer/src/main/java/com/sandy/capitalyst/server/core",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "spring.boot",
-    "spring.configuration.checksum": "8d08fabdab186cde2d19ca8bcaea4309",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_directory_selection&quot;: &quot;/Users/sandeep/projects/source/CapitalystServer/src/main/java/com/sandy/capitalyst/server&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/sandeep/projects/capitalyst/CapitalystServer/src/main/java/com/sandy/capitalyst/server/core&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;spring.boot&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;8d08fabdab186cde2d19ca8bcaea4309&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core" />
@@ -151,7 +157,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="generated-requests | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http" requestIdentifier="#1" runType="Run single request">
+    <configuration name="JobRunStatusEntries" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$APPLICATION_CONFIG_DIR$/scratches/rest-api.http" requestIdentifier="#1" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="NSEIndexImportJobTest.jobRun" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
@@ -212,16 +218,16 @@
     <list>
       <item itemvalue="Application.EquityHistDataImporterExecutor" />
       <item itemvalue="Application.ICICICreditCardAccountStmtParser" />
-      <item itemvalue="HTTP Request.generated-requests | #1" />
+      <item itemvalue="HTTP Request.JobRunStatusEntries" />
       <item itemvalue="JUnit.NSEIndexImportJobTest.jobRun" />
       <item itemvalue="JUnit.NSEReportsMetaRepoTest" />
       <item itemvalue="Spring Boot.CapitalystServer" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="HTTP Request.JobRunStatusEntries" />
         <item itemvalue="Application.ICICICreditCardAccountStmtParser" />
         <item itemvalue="Application.EquityHistDataImporterExecutor" />
-        <item itemvalue="HTTP Request.generated-requests | #1" />
         <item itemvalue="JUnit.NSEIndexImportJobTest.jobRun" />
         <item itemvalue="JUnit.NSEReportsMetaRepoTest" />
       </list>
@@ -260,7 +266,8 @@
       <workItem from="1705559943382" duration="624000" />
       <workItem from="1706933690487" duration="14031000" />
       <workItem from="1707113261493" duration="9397000" />
-      <workItem from="1707123898339" duration="91835000" />
+      <workItem from="1707123898339" duration="100586000" />
+      <workItem from="1708107370589" duration="9223000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -376,7 +383,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707637092802</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Integration with Angular modules">
+      <option name="closed" value="true" />
+      <created>1707899158756</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1707899158757</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -419,7 +434,8 @@
     <MESSAGE value="New ledger functionality - bulk delete" />
     <MESSAGE value="Bug fixes in equity trade updater" />
     <MESSAGE value="Hardening and formatting" />
-    <option name="LAST_COMMIT_MESSAGE" value="Hardening and formatting" />
+    <MESSAGE value="Integration with Angular modules" />
+    <option name="LAST_COMMIT_MESSAGE" value="Integration with Angular modules" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
