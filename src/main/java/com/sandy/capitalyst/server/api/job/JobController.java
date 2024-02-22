@@ -2,6 +2,7 @@ package com.sandy.capitalyst.server.api.job;
 
 import com.sandy.capitalyst.server.dao.fixed_deposit.FixedDeposit;
 import com.sandy.capitalyst.server.dao.job.JobRunEntry;
+import com.sandy.capitalyst.server.dao.job.repo.JobEntryRepo;
 import com.sandy.capitalyst.server.dao.job.repo.JobRunEntryRepo;
 import com.sandy.capitalyst.server.dao.job.repo.JobRunEntrySpecifications;
 import org.apache.log4j.Logger ;
@@ -30,10 +31,16 @@ public class JobController {
     private static final Logger log = Logger.getLogger( JobController.class ) ;
 
     private JobRunEntryRepo jreRepo = null ;
+    private JobEntryRepo jeRepo = null ;
 
     @Autowired
     public void setJobRunEntryRepo( JobRunEntryRepo repo ) {
         this.jreRepo = repo ;
+    }
+
+    @Autowired
+    public void setJobEntryRepo( JobEntryRepo repo ) {
+        this.jeRepo = repo ;
     }
     
     @PostMapping( "/Job/TriggerNow/{jobName}" ) 
@@ -92,6 +99,21 @@ public class JobController {
             log.error( "Error :: Getting job run status entries.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                     .body( null ) ;
+        }
+    }
+
+    @GetMapping( "/Job/JobNames" )
+    public ResponseEntity<String[]> getDistinctJobNames() {
+
+        try {
+            String[] jobNames = jeRepo.findDistinctJobNames() ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( jobNames ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Getting distinct job names.", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
         }
     }
 }
