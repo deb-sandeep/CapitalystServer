@@ -6,12 +6,12 @@ import java.io.FileOutputStream ;
 import java.util.zip.ZipEntry ;
 import java.util.zip.ZipInputStream ;
 
+import com.sandy.capitalyst.server.external.nse.NSEReportsMetaRepo;
 import org.apache.log4j.Logger ;
 
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.core.CapitalystConfig ;
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader ;
-import com.sandy.capitalyst.server.external.nse.NSEReportsMetaRepo.ReportMeta;
 
 public class NSEBhavcopyDownloader {
 
@@ -19,7 +19,7 @@ public class NSEBhavcopyDownloader {
     
     private static final int BUFFER_SIZE = 10*1024 ;
     
-    public File downloadBhavcopy( ReportMeta reportMeta ) throws Exception {
+    public File downloadBhavcopy( NSEReportsMetaRepo.ReportMeta reportMeta ) throws Exception {
         
         log.debug( "Downloading bhavcopy for " + reportMeta.getTradingDate() ) ;
 

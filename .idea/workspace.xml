@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Job names">
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Job status all changes done.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/job/JobController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/job/JobController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/repo/JobRunEntrySpecifications.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/repo/JobRunEntrySpecifications.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/external/nse/NSEReportsMetaRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/external/nse/NSEReportsMetaRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyDownloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyDownloader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/Scratch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/sandy/capitalyst/server/test/Scratch.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,7 +127,7 @@
       <recent name="com.sandy.capitalyst.server.test.bhavcopy" />
     </key>
   </component>
-  <component name="RunManager" selected="Spring Boot.CapitalystServer">
+  <component name="RunManager" selected="Application.Scratch">
     <configuration name="EquityHistDataImporterExecutor" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.sandy.capitalyst.server.test.standalone.EquityHistDataImporterExecutor" />
       <module name="capitalyst-server" />
@@ -153,6 +154,19 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Scratch" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.sandy.capitalyst.server.test.Scratch" />
+      <module name="capitalyst-server" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sandy.capitalyst.server.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="JobRunStatusEntries" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$APPLICATION_CONFIG_DIR$/scratches/rest-api.http" requestIdentifier="#1" runType="Run single request">
       <method v="2" />
     </configuration>
@@ -168,21 +182,6 @@
       <option name="MAIN_CLASS_NAME" value="com.sandy.capitalyst.server.test.bhavcopy.NSEIndexImportJobTest" />
       <option name="METHOD_NAME" value="jobRun" />
       <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="NSEReportsMetaRepoTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="capitalyst-server" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.sandy.capitalyst.server.test.bhavcopy.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.sandy.capitalyst.server.test.bhavcopy" />
-      <option name="MAIN_CLASS_NAME" value="com.sandy.capitalyst.server.test.bhavcopy.NSEReportsMetaRepoTest" />
-      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -212,20 +211,20 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Application.Scratch" />
       <item itemvalue="Application.EquityHistDataImporterExecutor" />
       <item itemvalue="Application.ICICICreditCardAccountStmtParser" />
       <item itemvalue="HTTP Request.JobRunStatusEntries" />
       <item itemvalue="JUnit.NSEIndexImportJobTest.jobRun" />
-      <item itemvalue="JUnit.NSEReportsMetaRepoTest" />
       <item itemvalue="Spring Boot.CapitalystServer" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Scratch" />
         <item itemvalue="HTTP Request.JobRunStatusEntries" />
         <item itemvalue="Application.ICICICreditCardAccountStmtParser" />
         <item itemvalue="Application.EquityHistDataImporterExecutor" />
         <item itemvalue="JUnit.NSEIndexImportJobTest.jobRun" />
-        <item itemvalue="JUnit.NSEReportsMetaRepoTest" />
       </list>
     </recent_temporary>
   </component>
@@ -263,7 +262,8 @@
       <workItem from="1706933690487" duration="14031000" />
       <workItem from="1707113261493" duration="9397000" />
       <workItem from="1707123898339" duration="100586000" />
-      <workItem from="1708107370589" duration="30423000" />
+      <workItem from="1708107370589" duration="30461000" />
+      <workItem from="1708713023801" duration="986000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -427,7 +427,15 @@
       <option name="project" value="LOCAL" />
       <updated>1708614712507</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Job status all changes done.">
+      <option name="closed" value="true" />
+      <created>1708697437535</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1708697437535</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -475,7 +483,8 @@
     <MESSAGE value="Paging implemented in job_run status query" />
     <MESSAGE value="Get now has search criteria parameters." />
     <MESSAGE value="Job names" />
-    <option name="LAST_COMMIT_MESSAGE" value="Job names" />
+    <MESSAGE value="Job status all changes done." />
+    <option name="LAST_COMMIT_MESSAGE" value="Job status all changes done." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

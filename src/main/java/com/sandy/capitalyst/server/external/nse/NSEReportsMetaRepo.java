@@ -70,12 +70,12 @@ public class NSEReportsMetaRepo {
     private Date prevDate = null ;
     private Date lastLoadTime = null ;
 
-    private Map<String, ReportMeta> curMetaMap = new HashMap<>() ;
-    private Map<String, ReportMeta> prevMetaMap = new HashMap<>() ;
+    private final Map<String, ReportMeta> curMetaMap = new HashMap<>() ;
+    private final Map<String, ReportMeta> prevMetaMap = new HashMap<>() ;
 
-    private HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
+    private final HTTPResourceDownloader downloader = HTTPResourceDownloader.instance() ;
 
-    private static NSEReportsMetaRepo instance = new NSEReportsMetaRepo() ;
+    private static final NSEReportsMetaRepo instance = new NSEReportsMetaRepo() ;
 
     public static NSEReportsMetaRepo instance() throws Exception {
         if( instance.reloadRequired() ) {
