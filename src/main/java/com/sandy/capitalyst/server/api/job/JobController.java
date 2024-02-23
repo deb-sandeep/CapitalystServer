@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import com.sandy.capitalyst.server.CapitalystServer ;
 import com.sandy.capitalyst.server.core.api.APIMsgResponse ;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -43,24 +44,6 @@ public class JobController {
         this.jeRepo = repo ;
     }
     
-    @PostMapping( "/Job/TriggerNow/{jobName}" ) 
-    public ResponseEntity<APIMsgResponse> triggerJob(
-                                     @PathVariable String jobName ) {
-        try {
-            log.debug( "Triggering job = " + jobName ) ;
-            CapitalystServer.getApp()
-                            .getScheduler()
-                            .triggerJob( jobName ) ;
-            return ResponseEntity.status( HttpStatus.OK )
-                                 .body( APIMsgResponse.SUCCESS ) ;
-        }
-        catch( Exception e ) {
-            log.error( "Error :: Triggering Job " + jobName, e ) ;
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
-                                 .body( null ) ;
-        }
-    }
-
     @GetMapping( "/Job/RunStatusEntries" )
     public ResponseEntity<List<JobRunEntry>> getJobRunStatusEntries(
             @RequestParam( name="offset"   , defaultValue="0"  , required = false ) Integer offset,
@@ -81,8 +64,8 @@ public class JobController {
     public ResponseEntity<Page<JobRunEntry>> searchJobRunStatusEntries(
             @RequestParam( name="jobName",  required = false ) String[] jobNames,
             @RequestParam( name="result",   required = false ) String result,
-            @RequestParam( name="fromDate", required = false ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromDate,
-            @RequestParam( name="toDate",   required = false ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date toDate,
+            @RequestParam( name="fromDate", required = false ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date fromDate,
+            @RequestParam( name="toDate",   required = false ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date toDate,
             @RequestParam( name="pageNum",  required = false, defaultValue = "0" ) int pageNum,
             @RequestParam( name="pageSize", required = false, defaultValue = "50" ) int pageSize ) {
 
@@ -114,6 +97,69 @@ public class JobController {
             log.error( "Error :: Getting distinct job names.", e ) ;
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                                  .body( null ) ;
+        }
+    }
+
+    @PostMapping( "/Job/TriggerNow/{jobName}" )
+    public ResponseEntity<APIMsgResponse> triggerJob(
+            @PathVariable String jobName ) {
+        try {
+            log.debug( "Triggering job = " + jobName ) ;
+            CapitalystServer.getApp()
+                    .getScheduler()
+                    .triggerJob( jobName ) ;
+            return ResponseEntity.status( HttpStatus.OK )
+                    .body( APIMsgResponse.SUCCESS ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Triggering Job " + jobName, e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                    .body( null ) ;
+        }
+    }
+
+    @DeleteMapping( "/Job/RunStatusEntries" )
+    public ResponseEntity<APIMsgResponse> deleteJobEntries(
+            @RequestBody Integer[] idList ) {
+
+        try {
+            log.debug( "Deleting job run status entries = " + Arrays.toString( idList ) ) ;
+            jreRepo.deleteAllById( Arrays.asList(idList) ) ;
+            return ResponseEntity.status( HttpStatus.OK )
+                                 .body( APIMsgResponse.SUCCESS ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Deleting job run status entries", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                                 .body( null ) ;
+        }
+    }
+
+    @DeleteMapping( "/Job/DeleteAllSearchResults" )
+    public ResponseEntity<APIMsgResponse> deleteAllSearchResults(
+            @RequestParam( name="jobName",  required = false ) String[] jobNames,
+            @RequestParam( name="result",   required = false ) String result,
+            @RequestParam( name="fromDate", required = false ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date fromDate,
+            @RequestParam( name="toDate",   required = false ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date toDate,
+            @RequestParam( name="pageNum",  required = false, defaultValue = "0" ) int pageNum,
+            @RequestParam( name="pageSize", required = false, defaultValue = "50" ) int pageSize ) {
+
+        Specification<JobRunEntry> rootSpec ;
+
+        try {
+            log.debug( "Deleting all search results " ) ;
+            rootSpec = buildRootSpecification( jobNames, result, fromDate, toDate ) ;
+
+            List<JobRunEntry> searchResults = jreRepo.findAll( rootSpec ) ;
+            jreRepo.deleteAll( searchResults ) ;
+
+            return ResponseEntity.status( HttpStatus.OK )
+                    .body( APIMsgResponse.SUCCESS ) ;
+        }
+        catch( Exception e ) {
+            log.error( "Error :: Deleting all search results", e ) ;
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                    .body( null ) ;
         }
     }
 }

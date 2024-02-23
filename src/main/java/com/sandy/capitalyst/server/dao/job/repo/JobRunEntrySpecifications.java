@@ -4,6 +4,7 @@ import com.sandy.capitalyst.server.dao.job.JobEntry;
 import com.sandy.capitalyst.server.dao.job.JobRunEntry;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Date;
@@ -56,7 +57,7 @@ public class JobRunEntrySpecifications {
 
     private static Specification<JobRunEntry> getToDateSpecification( Date toDate ) {
         return ((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.lessThanOrEqualTo( root.get( "date" ), toDate ) ;
+            return criteriaBuilder.lessThan( root.get( "date" ), DateUtils.addDays(toDate,1)) ;
         }) ;
     }
 

@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Get now has search criteria parameters.">
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Job names">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/job/JobController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/api/job/JobController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/repo/JobEntryRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/repo/JobEntryRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/repo/JobRunEntrySpecifications.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/dao/job/repo/JobRunEntrySpecifications.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -263,7 +263,7 @@
       <workItem from="1706933690487" duration="14031000" />
       <workItem from="1707113261493" duration="9397000" />
       <workItem from="1707123898339" duration="100586000" />
-      <workItem from="1708107370589" duration="18427000" />
+      <workItem from="1708107370589" duration="30423000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -419,7 +419,15 @@
       <option name="project" value="LOCAL" />
       <updated>1708527742376</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Job names">
+      <option name="closed" value="true" />
+      <created>1708614712507</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1708614712507</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -466,7 +474,8 @@
     <MESSAGE value="Querying job_run status" />
     <MESSAGE value="Paging implemented in job_run status query" />
     <MESSAGE value="Get now has search criteria parameters." />
-    <option name="LAST_COMMIT_MESSAGE" value="Get now has search criteria parameters." />
+    <MESSAGE value="Job names" />
+    <option name="LAST_COMMIT_MESSAGE" value="Job names" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
