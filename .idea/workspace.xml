@@ -4,16 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Hardening">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Batch processes made more expressive">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/CapitalystJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/CapitalystJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/external/nse/NSEReportsMetaRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/external/nse/NSEReportsMetaRepo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/corpus/CorpusSnapshotJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/corpus/CorpusSnapshotJob.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyImportJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyImportJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idirectmap/ICICIDirectSymbolMappingJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idirectmap/ICICIDirectSymbolMappingJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/mf/eodrefresh/MFEODNAVRefreshJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/mf/eodrefresh/MFEODNAVRefreshJob.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,7 +126,7 @@
       <recent name="com.sandy.capitalyst.server.test.bhavcopy" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Scratch">
+  <component name="RunManager" selected="Spring Boot.CapitalystServer">
     <configuration name="EquityHistDataImporterExecutor" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.sandy.capitalyst.server.test.standalone.EquityHistDataImporterExecutor" />
       <module name="capitalyst-server" />
@@ -268,7 +262,8 @@
       <workItem from="1707113261493" duration="9397000" />
       <workItem from="1707123898339" duration="100586000" />
       <workItem from="1708107370589" duration="30461000" />
-      <workItem from="1708713023801" duration="6909000" />
+      <workItem from="1708713023801" duration="7605000" />
+      <workItem from="1708780707249" duration="2757000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -448,7 +443,15 @@
       <option name="project" value="LOCAL" />
       <updated>1708714037835</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Batch processes made more expressive">
+      <option name="closed" value="true" />
+      <created>1708774442902</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1708774442902</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -498,7 +501,8 @@
     <MESSAGE value="Job names" />
     <MESSAGE value="Job status all changes done." />
     <MESSAGE value="Hardening" />
-    <option name="LAST_COMMIT_MESSAGE" value="Hardening" />
+    <MESSAGE value="Batch processes made more expressive" />
+    <option name="LAST_COMMIT_MESSAGE" value="Batch processes made more expressive" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

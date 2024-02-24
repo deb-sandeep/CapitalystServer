@@ -52,9 +52,14 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
         }
         else {
             importResult = importBhavcopy( prevBhavcopyMeta, lastImportDate, state ) ;
-            successMessage += "[" +
-                    SDF.format( importResult.getBhavcopyDate() ) + ", " +
-                    importResult.getNumRecordsImported() + " rows]" ;
+            if( importResult != null ) {
+                successMessage += "[" +
+                        SDF.format( importResult.getBhavcopyDate() ) + ", " +
+                        importResult.getNumRecordsImported() + " rows]" ;
+            }
+            else {
+                successMessage += "[" + SDF.format( prevBhavcopyMeta.getTradingDate() ) + " @ latest ] "  ;
+            }
         }
 
         curBhavcopyMeta  = metaRepo.getCurrentReportMeta( BHAVCOPY_META_KEY ) ;
@@ -63,9 +68,14 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
         }
         else {
             importResult = importBhavcopy( curBhavcopyMeta,  lastImportDate, state ) ;
-            successMessage += ", [" +
-                    SDF.format( importResult.getBhavcopyDate() ) + ", " +
-                    importResult.getNumRecordsImported() + " rows]" ;
+            if( importResult != null ) {
+                successMessage += "[" +
+                        SDF.format( importResult.getBhavcopyDate() ) + ", " +
+                        importResult.getNumRecordsImported() + " rows]" ;
+            }
+            else {
+                successMessage += "[" + SDF.format( curBhavcopyMeta.getTradingDate() ) + " @ latest]"  ;
+            }
         }
 
         log.debug( "NSEBhavcopyRefreshJob completed execution." ) ;

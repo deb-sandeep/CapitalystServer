@@ -56,7 +56,7 @@ public abstract class CapitalystJob implements Job {
             serializedJobState = jobEntry.getState() ;
             JobState jobState = getJobState( serializedJobState ) ;
             preExecute( context, jobState ) ;
-            executeJob( context, jobState ) ;
+            remarks = executeJob( context, jobState ) ;
             postExecute( context, jobState ) ;
             serializedJobState = mapper.writeValueAsString( jobState ) ;
         }
