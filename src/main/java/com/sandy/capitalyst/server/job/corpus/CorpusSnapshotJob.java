@@ -38,7 +38,7 @@ public class CorpusSnapshotJob extends CapitalystJob {
     private FixedDepositRepo   fdRepo = null ;
 
     @Override
-    public void executeJob( JobExecutionContext context,
+    public String executeJob( JobExecutionContext context,
                                JobState state ) 
         throws Exception {
         
@@ -59,6 +59,8 @@ public class CorpusSnapshotJob extends CapitalystJob {
         
         log.debug( "- Saving todays corpus snapshot" ) ;
         csRepo.save(todaySnapshot) ;
+
+        return "Total corpus = " + Integer.toString( (int)todaySnapshot.getTotalCorpus() ) ;
     }
     
     private CorpusSnapshot getTodaySnapshot() 

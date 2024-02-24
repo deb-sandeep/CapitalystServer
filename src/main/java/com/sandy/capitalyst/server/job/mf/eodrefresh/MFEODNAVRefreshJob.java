@@ -20,8 +20,8 @@ public class MFEODNAVRefreshJob extends CapitalystJob {
     private static final String KEY_LAST_IMPORT_DATE = "LAST_IMPORT_DATE" ;
     
     @Override
-    public void executeJob( JobExecutionContext context,
-                               JobState state ) 
+    public String executeJob( JobExecutionContext context,
+                              JobState state )
         throws Exception {
         
         log.debug( "MFEODNAVRefreshJob executeJob" ) ;
@@ -38,12 +38,16 @@ public class MFEODNAVRefreshJob extends CapitalystJob {
         
         String newImportDateVal = SDF.format( lastImportDate ) ;
         state.setState( KEY_LAST_IMPORT_DATE, newImportDateVal ) ;
-        
+
+        String result ;
         if( !newImportDateVal.equals( lastImportDateVal ) ) {
             log.debug( "\tMF NAV refreshed."  ) ;
+            result = "MF NAV refreshed for " + newImportDateVal ;
         }
         else {
             log.debug( "\tMF NAV refresh skipped. Already at latest." ) ;
+            result = "MF NAV already at latest. Update skipped." ;
         }
+        return result ;
     }
 }

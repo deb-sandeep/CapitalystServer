@@ -29,34 +29,52 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
     public static final SimpleDateFormat SDF = new SimpleDateFormat( "ddMMMyyyy" ) ;
     public static final String KEY_LAST_IMPORT_DATE = "LAST_IMPORT_DATE" ;
 
-    private NSEBhavcopyDownloader downloader = new NSEBhavcopyDownloader() ;
-    private NSEReportsMetaRepo metaRepo = null ;
+    private final NSEBhavcopyDownloader downloader = new NSEBhavcopyDownloader() ;
 
     @Override
-    public void executeJob( JobExecutionContext context, JobState state )
+    public String executeJob( JobExecutionContext context, JobState state )
         throws Exception {
 
         log.debug( "Executing NSEBhavcopyRefreshJob" ) ;
 
-        Date lastImportDate = null ;
-        ReportMeta curBhavcopyMeta = null ;
-        ReportMeta prevBhavcopyMeta = null ;
+        Date lastImportDate ;
+        ReportMeta curBhavcopyMeta ;
+        ReportMeta prevBhavcopyMeta ;
+        BhavcopyImportResult importResult ;
+        String successMessage = "Bhavcopy imported for " ;
 
-        metaRepo = NSEReportsMetaRepo.instance() ;
-
-        curBhavcopyMeta  = metaRepo.getCurrentReportMeta( BHAVCOPY_META_KEY ) ;
-        prevBhavcopyMeta = metaRepo.getPrevReportMeta( BHAVCOPY_META_KEY ) ;
+        NSEReportsMetaRepo metaRepo = NSEReportsMetaRepo.instance();
         lastImportDate = getLastImportDate( state ) ;
 
-        importBhavcopy( prevBhavcopyMeta, lastImportDate, state ) ;
-        importBhavcopy( curBhavcopyMeta,  lastImportDate, state ) ;
+        prevBhavcopyMeta = metaRepo.getPrevReportMeta( BHAVCOPY_META_KEY ) ;
+        if( prevBhavcopyMeta == null ) {
+            throw new Exception( "Current Bhavcopy meta is not available." ) ;
+        }
+        else {
+            importResult = importBhavcopy( prevBhavcopyMeta, lastImportDate, state ) ;
+            successMessage += "[" +
+                    SDF.format( importResult.getBhavcopyDate() ) + ", " +
+                    importResult.getNumRecordsImported() + " rows]" ;
+        }
+
+        curBhavcopyMeta  = metaRepo.getCurrentReportMeta( BHAVCOPY_META_KEY ) ;
+        if( curBhavcopyMeta == null ) {
+            throw new Exception( "Current Bhavcopy meta is not available." ) ;
+        }
+        else {
+            importResult = importBhavcopy( curBhavcopyMeta,  lastImportDate, state ) ;
+            successMessage += ", [" +
+                    SDF.format( importResult.getBhavcopyDate() ) + ", " +
+                    importResult.getNumRecordsImported() + " rows]" ;
+        }
 
         log.debug( "NSEBhavcopyRefreshJob completed execution." ) ;
+        return successMessage ;
     }
 
     private Date getLastImportDate( JobState state ) throws Exception {
 
-        Date lastImportDate = null ;
+        Date lastImportDate ;
         String lastImportDateVal = state.getStateAsString( KEY_LAST_IMPORT_DATE ) ;
 
         if( StringUtil.isNotEmptyOrNull( lastImportDateVal ) ) {
@@ -73,12 +91,12 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
         return lastImportDate ;
     }
 
-    private void importBhavcopy( ReportMeta reportMeta, Date lastImportDate,
+    private BhavcopyImportResult importBhavcopy( ReportMeta reportMeta, Date lastImportDate,
                                  JobState state )
             throws Exception {
 
-        String bhavcopyContents = null ;
-        NSEBhavcopyImporter importer = null ;
+        String bhavcopyContents ;
+        NSEBhavcopyImporter importer ;
         BhavcopyImportResult result = null ;
 
         Date tradeDate = reportMeta.getTradingDate() ;
@@ -95,8 +113,7 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
             //       exception emitted from this method. Do no subdue
             //       exceptions.
             result = importer.importContents( bhavcopyContents ) ;
-
-            updateJobState( state, result ) ;
+            updateJobState( state, result.getBhavcopyDate() ) ;
 
             log.debug( "\tBhavcopy for " + tradeDateStr + " imported."  ) ;
         }
@@ -104,12 +121,13 @@ public class NSEBhavcopyImportJob extends CapitalystJob {
             log.debug( "\tBhavcopy import for " + tradeDateStr + " skipped. " +
                        "Already imported." ) ;
         }
+
+        return result ;
     }
 
-    private void updateJobState( JobState state,
-                                 BhavcopyImportResult importResult ) {
+    private void updateJobState( JobState state, Date importDate ) {
     
-        String newImportDateVal = SDF.format( importResult.getBhavcopyDate() ) ;
+        String newImportDateVal = SDF.format( importDate ) ;
         state.setState( KEY_LAST_IMPORT_DATE, newImportDateVal ) ;
     }
 }

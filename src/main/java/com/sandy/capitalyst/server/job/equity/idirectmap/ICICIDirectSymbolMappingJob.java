@@ -24,21 +24,21 @@ public class ICICIDirectSymbolMappingJob extends CapitalystJob {
     private static final Logger log = Logger.getLogger( ICICIDirectSymbolMappingJob.class ) ;
     
     @Override
-    public void executeJob( JobExecutionContext context,
+    public String executeJob( JobExecutionContext context,
                                JobState state ) 
         throws Exception {
         
         log.debug( "ICICIDirectSymbolMappingJob executeJob" ) ;
-        mapICICIDirectSymbols( null ) ;
+        return mapICICIDirectSymbols( null ) ;
     }
     
-    public void mapICICIDirectSymbols( OTA ota ) throws Exception {
+    public String mapICICIDirectSymbols( OTA ota ) throws Exception {
         
-        List<SecMapping> mappings = null ;
-        IDirectSecurityMapDownloader downloader = null ;
+        List<SecMapping> mappings ;
+        IDirectSecurityMapDownloader downloader ;
         
-        EquityMasterRepo emRepo = null ;
-        EquityHoldingRepo ehRepo = null ;
+        EquityMasterRepo emRepo ;
+        EquityHoldingRepo ehRepo ;
         
         emRepo     = getBean( EquityMasterRepo.class ) ;
         ehRepo     = getBean( EquityHoldingRepo.class ) ;
@@ -104,5 +104,8 @@ public class ICICIDirectSymbolMappingJob extends CapitalystJob {
             ota.addResult( "Num equity masters updated - " + numEquityMastersUpdated );
             ota.addResult( "Num holdings updated - " + numHoldingsUpdated );
         }
+
+        return numEquityMastersUpdated + " equity masters and " +
+               numHoldingsUpdated + " holdings updated." ;
     }
 }

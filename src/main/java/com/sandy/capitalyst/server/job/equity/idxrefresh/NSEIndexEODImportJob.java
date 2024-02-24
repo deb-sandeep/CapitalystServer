@@ -20,7 +20,7 @@ public class NSEIndexEODImportJob extends CapitalystJob {
     private static final String KEY_LAST_IMPORT_DATE = "LAST_IMPORT_DATE" ;
 
     @Override
-    public void executeJob( JobExecutionContext context, JobState state )
+    public String executeJob( JobExecutionContext context, JobState state )
         throws Exception {
         
         log.debug( "NSEIndexEODImportJob executeJob" ) ;
@@ -28,6 +28,7 @@ public class NSEIndexEODImportJob extends CapitalystJob {
         Date now = new Date() ;
         Date lastImportDate = getLastImportDate( state ) ;
         Date nextImportDate = DateUtils.addDays( lastImportDate, 1 ) ;
+        StringBuilder successMsg = new StringBuilder();
         
         NSEIndexEODImporter importer = null ;
         
@@ -37,12 +38,16 @@ public class NSEIndexEODImportJob extends CapitalystJob {
             int numRecordsImported = importer.importEODValues() ;
             
             if( numRecordsImported > 0 ) {
-                
                 state.setState( KEY_LAST_IMPORT_DATE, 
                                 SDF.format( nextImportDate ) ) ;
                 
                 log.debug( "Index EOD values imported for date " + 
                            SDF.format( nextImportDate ) ) ;
+                successMsg.append(" [")
+                          .append( SDF.format(nextImportDate) )
+                          .append(" = ")
+                          .append( numRecordsImported )
+                          .append( " records] " ) ;
             }
             else {
                 log.debug( "No Index EOD file for " + 
@@ -50,6 +55,7 @@ public class NSEIndexEODImportJob extends CapitalystJob {
             }
             nextImportDate = DateUtils.addDays( nextImportDate, 1 ) ;
         }
+        return successMsg.toString() ;
     }
     
     private Date getLastImportDate( JobState state ) throws Exception {

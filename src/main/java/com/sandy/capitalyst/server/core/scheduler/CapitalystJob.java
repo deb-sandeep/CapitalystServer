@@ -134,9 +134,17 @@ public abstract class CapitalystJob implements Job {
         throws Exception {
         // Default no-op
     }
-    
-    public abstract void executeJob( JobExecutionContext context,
-                                        JobState state ) 
+
+    /**
+     * @return Any remarks that needs to be logged against the job run
+     *         status on successful execution. Please note that the value
+     *         of the return does not signify whether the job has failed or
+     *         succeeded. If the executeJob method returns, it is assumed
+     *         that the job succeeded. An exception should be raised with
+     *         proper failure cause in case of job failures.
+     */
+    public abstract String executeJob( JobExecutionContext context,
+                                       JobState state )
         throws Exception ;
 
     protected void postExecute( JobExecutionContext context, JobState state )

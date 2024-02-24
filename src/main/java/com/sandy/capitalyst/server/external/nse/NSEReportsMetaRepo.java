@@ -1,5 +1,6 @@
 package com.sandy.capitalyst.server.external.nse;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sandy.capitalyst.server.core.network.HTTPResourceDownloader;
@@ -77,7 +78,7 @@ public class NSEReportsMetaRepo {
 
     private static final NSEReportsMetaRepo instance = new NSEReportsMetaRepo() ;
 
-    public static NSEReportsMetaRepo instance() throws Exception {
+    public static NSEReportsMetaRepo instance() throws NSEReportsMetaLoadException {
         if( instance.reloadRequired() ) {
             instance.loadMeta() ;
         }
@@ -100,7 +101,10 @@ public class NSEReportsMetaRepo {
         return  reloadRequired ;
     }
 
-    private void loadMeta() throws Exception {
+    private void loadMeta() throws NSEReportsMetaLoadException {
+
+        lastLoadTime = null ;
+
         log.info( "Loading CM reports meta." ) ;
         loadMeta( CM_REPORT_META_URL ) ;
 
@@ -110,27 +114,52 @@ public class NSEReportsMetaRepo {
         lastLoadTime = new Date() ;
     }
 
-    private void loadMeta( String url ) throws Exception {
+    private void loadMeta( String url ) throws NSEReportsMetaLoadException {
 
-        String jsonStr = downloader.getResource( url, "nse-reports-headers.txt" ) ;
-
+        String jsonStr = null ;
         ObjectMapper objMapper = new ObjectMapper() ;
-        JsonNode jsonRoot  = objMapper.readTree( jsonStr ) ;
+        JsonNode jsonRoot = null ;
 
-        curDate  = loadMeta( "currentDate",  curMetaMap,  jsonRoot ) ;
-        prevDate = loadMeta( "previousDate", prevMetaMap, jsonRoot ) ;
+        try {
+            jsonStr = downloader.getResource(url, "nse-reports-headers.txt");
+        }
+        catch( Exception e ) {
+            String msg = "NSE report meta download failed. " + e.getMessage() ;
+            throw new NSEReportsMetaLoadException( msg, e ) ;
+        }
+
+        try {
+            jsonRoot  = objMapper.readTree( jsonStr ) ;
+
+            curDate  = loadMeta( "currentDate",  curMetaMap,  jsonRoot ) ;
+            prevDate = loadMeta( "previousDate", prevMetaMap, jsonRoot ) ;
+        }
+        catch( JacksonException | ParseException e ) {
+            String msg = "Invalid MSE report meta JSON. " + e.getMessage() ;
+            throw new NSEReportsMetaLoadException( msg, e ) ;
+        }
     }
 
     private Date loadMeta( String dateKey, Map<String, ReportMeta> metaMap,
                            JsonNode rootNode )
-            throws Exception {
+            throws NSEReportsMetaLoadException, ParseException {
+
+        if( !rootNode.has( dateKey ) ) {
+            throw new NSEReportsMetaLoadException(
+                    "NSE report meta does not have '" + dateKey + "' key." ) ;
+        }
 
         Date date = REPORT_DATE_FMT.parse( rootNode.get( dateKey ).asText() ) ;
         log.info( "-> Date = " + REPORT_DATE_FMT.format( date ) ) ;
 
         String metaArrayKey = dateKey.equals( "currentDate" ) ? "CurrentDay" : "PreviousDay" ;
-        JsonNode dataNode  = rootNode.get( metaArrayKey ) ;
 
+        if( !rootNode.has( metaArrayKey ) ) {
+            throw new NSEReportsMetaLoadException(
+                    "NSE report meta does not have '" + metaArrayKey + "' key." ) ;
+        }
+
+        JsonNode dataNode = rootNode.get( metaArrayKey ) ;
         for( int i=1; i<dataNode.size(); i++ ) {
 
             JsonNode jsonNode = dataNode.get( i ) ;
@@ -148,4 +177,8 @@ public class NSEReportsMetaRepo {
     public ReportMeta getPrevReportMeta( String reportKey ) {
         return prevMetaMap.get( reportKey ) ;
     }
+
+    public Date getCurDate() { return this.curDate ; }
+
+    public Date getPrevDate() { return this.prevDate ; }
 }
