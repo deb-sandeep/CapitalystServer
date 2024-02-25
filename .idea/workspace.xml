@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Batch processes made more expressive">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/CapitalystJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/core/scheduler/CapitalystJob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyImportJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/eodrefresh/NSEBhavcopyImportJob.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -263,7 +262,9 @@
       <workItem from="1707123898339" duration="100586000" />
       <workItem from="1708107370589" duration="30461000" />
       <workItem from="1708713023801" duration="7605000" />
-      <workItem from="1708780707249" duration="2757000" />
+      <workItem from="1708780707249" duration="2825000" />
+      <workItem from="1708836658952" duration="16000" />
+      <workItem from="1708836762852" duration="184000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -451,7 +452,15 @@
       <option name="project" value="LOCAL" />
       <updated>1708774442902</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Batch processes made more expressive">
+      <option name="closed" value="true" />
+      <created>1708794701364</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1708794701364</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
