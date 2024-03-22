@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e4221ba5-14e9-4a82-b0dd-48f6e903404d" name="Changes" comment="Batch processes made more expressive">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sandy/capitalyst/server/job/equity/idxrefresh/NSEIndexEODImportJob.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/web/angularjs/views/txn_pivot/js/TxnPivotHomeController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/web/angularjs/views/txn_pivot/js/TxnPivotHomeController.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +264,8 @@
       <workItem from="1708713023801" duration="7605000" />
       <workItem from="1708780707249" duration="2825000" />
       <workItem from="1708836658952" duration="16000" />
-      <workItem from="1708836762852" duration="184000" />
+      <workItem from="1708836762852" duration="861000" />
+      <workItem from="1711109662154" duration="1074000" />
     </task>
     <task id="LOCAL-00001" summary="Moving to IntelliJ.. bye bye Eclipse">
       <created>1676958486216</created>
@@ -460,7 +461,15 @@
       <option name="project" value="LOCAL" />
       <updated>1708794701364</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Batch processes made more expressive">
+      <option name="closed" value="true" />
+      <created>1708837010447</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1708837010447</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

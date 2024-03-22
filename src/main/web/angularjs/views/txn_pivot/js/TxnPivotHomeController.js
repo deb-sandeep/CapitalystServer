@@ -293,6 +293,8 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
     function fetchClassificationCategories() {
         
         $scope.$emit( 'interactingWithServer', { isStart : true } ) ;
+        console.log( 'Fetching classification categories.' ) ;
+
         $http.get( '/Ledger/Categories' )
         .then ( 
             function( response ){
@@ -347,13 +349,15 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         
         $scope.masterCategories.credit.l1Categories.length = 0 ;
         $scope.masterCategories.credit.l2Categories.clear() ;
+
         $scope.masterCategories.debit.l1Categories.length = 0 ;
         $scope.masterCategories.debit.l2Categories.clear() ;
+
         $scope.selectedL1Category = null ;
         $scope.selectedL2Category = null ;
         
-        for( var i=0; i<categories.length; i++ ) {
-            var category = categories[i] ;
+        for( let i=0; i<categories.length; i++ ) {
+            const category = categories[i];
             if( category.creditClassification ) {
                 classifyCategoryInMasterList( 
                         $scope.masterCategories.credit.l1Categories, 
@@ -370,10 +374,12 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
     }
     
     function classifyCategoryInMasterList( l1CatList, l2CatMap, category ) {
-        
-        var l1 = category.l1CatName ;
-        var l2 = category.l2CatName ;
-        
+
+        const l1 = category.l1CatName;
+        const l2 = category.l2CatName;
+
+        console.log( l1 + "::" + l2 ) ;
+
         if( l1CatList.indexOf( l1 ) === -1 ) {
             l1CatList.push( l1 ) ;
         }
@@ -381,9 +387,9 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         if( !l2CatMap.has( l1 ) ) {
             l2CatMap.set( l1, [] ) ;
         }
-        
-        var l2List = l2CatMap.get( l1 ) ;
-        l2List.push( [ l2, category.selectedForTxnPivot === 1 ] ) ;
+
+        const l2List = l2CatMap.get(l1);
+        l2List.push( [ l2, category.selectedForTxnPivot ] ) ;
     }
     
     function createCategoryTree( masterCategoryCluster, rootDisplayCatNode ) {
@@ -391,21 +397,21 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
         rootDisplayCatNode.linearIndex = $scope.catLinearTree.length + 1 ;
         $scope.catLinearTree.push( rootDisplayCatNode ) ;
 
-        for( var i=0; i<masterCategoryCluster.l1Categories.length; i++ ) {
-            var l1CatName = masterCategoryCluster.l1Categories[i] ;
-            var l1Node = new CatNode( l1CatName, rootDisplayCatNode ) ;
-            
+        for( let i=0; i<masterCategoryCluster.l1Categories.length; i++ ) {
+            const l1CatName = masterCategoryCluster.l1Categories[i];
+            const l1Node = new CatNode(l1CatName, rootDisplayCatNode);
+
             l1Node.linearIndex = $scope.catLinearTree.length + 1 ;
             $scope.catLinearTree.push( l1Node ) ;
             
             rootDisplayCatNode.addChild( l1Node ) ;
-            var l2Nodes = masterCategoryCluster.l2Categories.get( l1CatName ) ;
-            var anySelected = false ;
-            
-            for( var j=0; j<l2Nodes.length; j++ ) {
-                var l2NodeMeta = l2Nodes[j] ;
-                var l2Node = new CatNode( l2NodeMeta[0], l1Node ) ;
-                
+            const l2Nodes = masterCategoryCluster.l2Categories.get(l1CatName);
+            let anySelected = false;
+
+            for( let j=0; j<l2Nodes.length; j++ ) {
+                const l2NodeMeta = l2Nodes[j];
+                const l2Node = new CatNode(l2NodeMeta[0], l1Node);
+
                 l2Node.selected = l2NodeMeta[1] ;
                 l2Node.linearIndex = $scope.catLinearTree.length + 1 ;
                 
@@ -414,7 +420,7 @@ capitalystNgApp.controller( 'TxnPivotHomeController',
                 
                 anySelected |= l2Node.selected ;
             }
-            l1Node.selected = ( anySelected === 1 ) ;
+            l1Node.selected = anySelected ;
         }
     }
     
